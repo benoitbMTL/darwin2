@@ -1,20 +1,24 @@
 package main
 
 import (
-    "fmt"
     "net/http"
+    "github.com/labstack/echo/v4"
+    "github.com/labstack/echo/v4/middleware"
 )
 
-func echoHandler(w http.ResponseWriter, r *http.Request) {
-    // Echo back the request method and URL
-    fmt.Fprintf(w, "Request Method: %s\nRequested URL: %s", r.Method, r.URL.Path)
-}
-
 func main() {
-    // Route to handle requests
-    http.HandleFunc("/", echoHandler)
+    // Create a new Echo instance
+    e := echo.New()
+
+    // Middleware
+    e.Use(middleware.Logger())
+    e.Use(middleware.Recover())
+
+    // Route to handle the root request
+    e.GET("/", func(c echo.Context) error {
+        return c.String(http.StatusOK, "Welcome to the backend server!")
+    })
 
     // Start the server on port 8080
-    fmt.Println("Server started at http://localhost:8080")
-    http.ListenAndServe(":8080", nil)
+    e.Logger.Fatal(e.Start(":8080"))
 }
