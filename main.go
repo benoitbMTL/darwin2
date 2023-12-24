@@ -12,7 +12,7 @@ func main() {
 
 	// Middleware
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "method=${method}, uri=${uri}, status=${status}\n",
+		Format: "${method}\t${uri}\t\t${status}\n",
 	}))
 	e.Use(middleware.Recover())
 
