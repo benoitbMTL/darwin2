@@ -1,9 +1,10 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"net/http"
 )
 
 func main() {
@@ -12,7 +13,7 @@ func main() {
 
 	// Middleware
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "${method}\t${uri}\t\t${status}\n",
+		Format: "${method}\t${uri}\t\t\t\t${status}\n",
 	}))
 	e.Use(middleware.Recover())
 
