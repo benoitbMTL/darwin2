@@ -18,7 +18,8 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Serve static files
-	e.Static("/", "public")
+	e.Static("/", "web/public")
+
 
 	// Route to handle version request
 	e.GET("/version", func(c echo.Context) error {
