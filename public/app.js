@@ -1,7 +1,9 @@
 const app = Vue.CreateApp({
 
     data() {
-        age: 17
+        return {
+            age: 17
+        }
     }
 })
 app.mount('#app')
