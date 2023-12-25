@@ -1,4 +1,4 @@
-module darwin2
+module darwin2/go
 
 go 1.21.5
 
