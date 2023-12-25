@@ -5,12 +5,12 @@ module.exports = defineConfig({
 
   // Development server configuration
   devServer: {
+    port: 8081, // Run Vue.js on port 8081
     proxy: {
-      // Proxy all requests starting with /api to your Echo server
       '/api': {
-        target: 'http://localhost:8080', // Change this to your Echo server's URL
+        target: 'http://localhost:8080', // Proxy to Go server on port 8080
         changeOrigin: true,
-        pathRewrite: { '^/api': '' }, // Remove '/api' prefix when forwarding to Echo server
+        pathRewrite: { '^/api': '' },
       },
     },
   },
