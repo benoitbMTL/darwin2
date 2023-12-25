@@ -3,7 +3,7 @@
     <div class="title-bar">
       <h1>FortiWeb Demo Tool</h1>
     </div>
-    <n-menu :options="menuOptions" v-model:value="menuValue" />
+    <n-menu :options="menuOptions" :value="menuValue" @update:value="handleMenuSelect" />
     <router-view />
   </div>
 </template>
@@ -27,28 +27,15 @@ export default {
         { label: 'Configuration', key: 'configuration' }
       ]
     }
+  },
+  methods: {
+    handleMenuSelect(key) {
+      this.$router.push({ name: key });
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
-.title-bar {
-  text-align: center;
-  padding: 20px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>

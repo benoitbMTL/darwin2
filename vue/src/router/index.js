@@ -1,20 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import WebProtection from '../views/WebProtection.vue'
 import BotMitigation from '../views/BotMitigation.vue'
 import ApiProtection from '../views/ApiProtection.vue'
+import RestApi from '../views/RestApi.vue'
 import Configuration from '../views/Configuration.vue'
 import HealthCheck from '../views/HealthCheck.vue'
-import RestApi from '../views/RestApi.vue'
-import WebProtection from '../views/WebProtection.vue'
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/web-protection',
     name: 'web-protection',
     component: WebProtection
   },
