@@ -29,13 +29,10 @@ build_and_serve_app() {
     fi
     cd ..
 
-    # Building and Running Go Server
-    echo "Building and running Go server..."
+    # Running Go Server
+    echo "Running Go server..."
     cd go
-    if ! go run .; then
-        echo "Go server failed to start."
-        exit 1
-    fi
+    go run .
 }
 
 # Main script execution
