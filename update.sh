@@ -15,18 +15,16 @@ if ! git merge origin/main; then
     exit 1
 fi
 
-echo "Building Vue.js application..."
+# Start Vue.js Development Server
+echo "Starting Vue.js development server..."
 cd vue
-if ! npm run build; then
-    echo "Vue.js build failed."
-    exit 1
-fi
+npm run serve &
 cd ..
 
+# Start Go Server
 echo "Building and running Go server..."
 cd go
-if ! go build -o server; then
-    echo "Go build failed."
+if ! go run .; then
+    echo "Go server failed to start."
     exit 1
 fi
-./server
