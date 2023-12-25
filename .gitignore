@@ -1,7 +1,16 @@
-.DS_Store
 node_modules
-/dist
+# Dependency directories
+node_modules/
+vendor/
 
+# Vue build output
+vue/dist/
+
+# Go build output
+go/server
+
+# MacOS file system files
+.DS_Store
 
 # local env files
 .env.local
