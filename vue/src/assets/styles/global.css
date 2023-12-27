@@ -1,0 +1,16 @@
+.code-block-container {
+  background-color: #f8f9fa; /* Couleur de fond claire */
+  border: 1px solid #e1e4e8; /* Bordure légère */
+  border-radius: 5px; /* Coins arrondis */
+  padding: 15px; /* Espacement interne */
+  overflow: auto; /* Barre de défilement si nécessaire */
+}
+
+.code-block {
+  background-color: #282c34; /* Fond sombre pour le code */
+  color: #abb2bf; /* Couleur du texte */
+  border-radius: 4px; /* Coins arrondis */
+  padding: 10px; /* Espacement interne */
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* Police monospace */
+  overflow-x: auto; /* Défilement horizontal */
+}

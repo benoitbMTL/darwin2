@@ -1,8 +1,7 @@
 package main
 
 import (
-	// "path/filepath"
-
+	"darwin2/routes"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -16,15 +15,11 @@ func main() {
 		Format: "${method}, ${uri}, ${status}\n",
 	}))
 	e.Use(middleware.Recover())
+    e.Use(middleware.CORS())
 
-	// Serve static files from the Vue dist directory
-	e.Static("/", "../vue/dist")
+    // Routes
+    routes.Configure(e)
 
-	// Catch-all route to serve index.html for any non-static file request
-	// e.GET("*", func(c echo.Context) error {
-	// 	return c.File(filepath.Join("../vue/dist", "index.html"))
-	// })
-
-	// Start the server on port 8080
+	// Démarrer le serveur sur le port 8080
 	e.Logger.Fatal(e.Start(":8080"))
 }

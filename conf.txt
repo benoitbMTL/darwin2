@@ -1,0 +1,618 @@
+====================
+./vue/src/App.vue
+./vue/src/components/03-api-protection/ApiRequests.vue
+./vue/src/components/03-api-protection/MLBasedAPIProtection.vue
+./vue/src/components/02-bot-mitigation/BiometricsBasedDetection.vue
+./vue/src/components/02-bot-mitigation/BotDeception.vue
+./vue/src/components/02-bot-mitigation/MLBasedBotDetection.vue
+./vue/src/components/02-bot-mitigation/KnownBots.vue
+./vue/src/components/02-bot-mitigation/ThresholdBasedDetection.vue
+./vue/src/components/04-rest-api/DeleteApplicationPolicy.vue
+./vue/src/components/04-rest-api/CreateNewApplicationPolicy.vue
+./vue/src/components/NavBar.vue
+./vue/src/components/05-system/HealthCheck.vue
+./vue/src/components/05-system/AppConfiguration.vue
+./vue/src/components/01-web-protection/WebAttacks.vue
+./vue/src/components/01-web-protection/MachineLearning.vue
+./vue/src/components/01-web-protection/CookieSecurity.vue
+./vue/src/components/01-web-protection/CredentialStuffingDefense.vue
+./vue/src/components/01-web-protection/WebScan.vue
+====================
+File content of ./vue/src/App.vue
+<template>
+  <div id="app" class="container mt-5">
+    <NavBar />
+    <router-view></router-view> <!-- Vue Router will render the component here based on the current route -->
+
+  </div>
+</template>
+
+<script>
+import NavBar from "./components/NavBar.vue";
+
+
+export default {
+  components: {
+    NavBar,
+  },
+};
+</script>
+
+<style></style>
+====================
+File content of ./vue/src/components/03-api-protection/ApiRequests.vue
+<template>
+  <p>Bonjour</p>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/03-api-protection/MLBasedAPIProtection.vue
+<template>
+  <p>Bonjour</p>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/02-bot-mitigation/BiometricsBasedDetection.vue
+<template>
+  <p>Bonjour</p>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/02-bot-mitigation/BotDeception.vue
+<template>
+  <p>Bonjour</p>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/02-bot-mitigation/MLBasedBotDetection.vue
+<template>
+  <p>Bonjour</p>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/02-bot-mitigation/KnownBots.vue
+<template>
+  <p>Bonjour</p>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/02-bot-mitigation/ThresholdBasedDetection.vue
+<template>
+  <p>Bonjour</p>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/04-rest-api/DeleteApplicationPolicy.vue
+<template>
+  <p>Bonjour</p>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/04-rest-api/CreateNewApplicationPolicy.vue
+<template>
+  <p>Bonjour</p>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/NavBar.vue
+<template>
+  <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <div class="container">
+      <span class="navbar-brand mb-0 h1">
+        <img src="../assets/logo-fortiweb-white.svg" alt="FortiWeb Logo" height="30" class="me-2"/>
+        FortiWeb Demo Tool
+      </span>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <!-- Web Protection Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="webProtectionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Web Protection
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="webProtectionDropdown">
+              <li><router-link class="dropdown-item" to="/web-scan">Web Scan</router-link></li>
+              <li><router-link class="dropdown-item" to="/web-attacks">Web Attacks</router-link></li>
+              <li><router-link class="dropdown-item" to="/machine-learning">Machine Learning</router-link></li>
+              <li><router-link class="dropdown-item" to="/cookie-security">Cookie Security</router-link></li>
+              <li><router-link class="dropdown-item" to="/credential-stuffing-defense">Credential Stuffing Defense</router-link></li>
+            </ul>
+          </li>
+
+          <!-- Bot Mitigation Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="botMitigationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Bot Mitigation
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="botMitigationDropdown">
+              <li><router-link class="dropdown-item" to="/known-bots">Known Bots</router-link></li>
+              <li><router-link class="dropdown-item" to="/biometrics-based-detection">Biometrics Based Detection</router-link></li>
+              <li><router-link class="dropdown-item" to="/bot-deception">Bot Deception</router-link></li>
+              <li><router-link class="dropdown-item" to="/threshold-based-detection">Threshold Based Detection</router-link></li>
+              <li><router-link class="dropdown-item" to="/ml-based-bot-detection">ML Based Bot Detection</router-link></li>
+            </ul>
+          </li>
+
+          <!-- API Protection Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="apiProtectionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              API Protection
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="apiProtectionDropdown">
+              <li><router-link class="dropdown-item" to="/api-requests">API Requests</router-link></li>
+              <li><router-link class="dropdown-item" to="/ml-based-api-protection">ML Based API Protection</router-link></li>
+            </ul>
+          </li>
+
+          <!-- REST API Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="restApiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              REST API
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="restApiDropdown">
+              <li><router-link class="dropdown-item" to="/create-new-application-policy">Create New Application Policy</router-link></li>
+              <li><router-link class="dropdown-item" to="/delete-application-policy">Delete Application Policy</router-link></li>
+            </ul>
+          </li>
+
+          <!-- System Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="systemDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              System
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="systemDropdown">
+              <li><router-link class="dropdown-item" to="/configuration">Configuration</router-link></li>
+              <li><router-link class="dropdown-item" to="/health-check">Health Check</router-link></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</template>
+
+<script>
+import WebScan from "./WebScan.vue";
+import WebAttacks from "./WebAttacks.vue";
+
+export default {
+  data() {
+    return {
+      currentSection: null,
+    };
+  },
+  components: {
+    WebScan,
+    WebAttacks,
+  },
+};
+</script>
+====================
+File content of ./vue/src/components/05-system/HealthCheck.vue
+<template>
+  <p>Bonjour</p>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/05-system/AppConfiguration.vue
+<template>
+  <p>Bonjour</p>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/01-web-protection/WebAttacks.vue
+<template>
+  <div class="card my-4">
+    <h5 class="card-header">Web Attacks</h5>
+    <div class="card-body">
+      <p class="card-text">
+        Select a user from the list and generate an attack scenario.
+      </p>
+
+      <div class="d-flex align-items-center mb-3">
+        <select
+          class="form-select form-select-sm me-2"
+          v-model="selectedUser"
+          style="width: 250px"
+        >
+          <option value="admin">admin</option>
+          <option value="gordonb">gordonb</option>
+          <option value="1337">1337</option>
+          <option value="pablo">pablo</option>
+          <option value="smithy">smithy</option>
+        </select>
+
+        <button
+          class="btn btn-primary btn-sm me-2"
+          @click="performCommandInjection"
+        >
+          Command Injection
+        </button>
+        <button
+          class="btn btn-primary btn-sm me-2"
+          @click="performSQLInjection"
+        >
+          SQL Injection
+        </button>
+        <button
+          class="btn btn-primary btn-sm me-2"
+          @click="performCrossSiteScripting"
+        >
+          Cross-site Scripting
+        </button>
+        <button
+          class="btn btn-warning btn-sm me-2"
+          @click="performZeroDayCommandInjection"
+        >
+          Zero Day Command Injection
+        </button>
+        <button
+          class="btn btn-warning btn-sm me-2"
+          @click="performZeroDayCrossSiteScripting"
+        >
+          Zero Day Cross-site Scripting
+        </button>
+        <button class="btn btn-secondary btn-sm" @click="resetGenericAttack">
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      selectedUser: "admin",
+    };
+  },
+  methods: {
+    performCommandInjection() {
+      // Logique de Command Injection...
+    },
+    // Définissez d'autres méthodes ici...
+    resetGenericAttack() {
+      // Logique de réinitialisation...
+    },
+  },
+};
+</script>
+
+<style></style>
+====================
+File content of ./vue/src/components/01-web-protection/MachineLearning.vue
+<template>
+  <div class="card my-4">
+    <h5 class="card-header">MachineLearning</h5>
+    <div class="card-body">
+      <p class="card-text">Choose a scan test to perform on your target.</p>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/01-web-protection/CookieSecurity.vue
+<template>
+  <div class="card my-4">
+    <h5 class="card-header">CookieSecurity</h5>
+    <div class="card-body">
+      <p class="card-text">Choose a scan test to perform on your target.</p>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {};
+</script>
+
+<style>
+</style>====================
+File content of ./vue/src/components/01-web-protection/CredentialStuffingDefense.vue
+<template>
+  <div class="card my-4">
+    <h5 class="card-header">CredentialStuffingDefense</h5>
+    <div class="card-body">
+      <p class="card-text">Choose a scan test to perform on your target.</p>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>====================
+File content of ./vue/src/components/01-web-protection/WebScan.vue
+<template>
+  <div class="card my-4">
+    <h5 class="card-header">Web Vulnerability Scanner</h5>
+    <div class="card-body">
+      <p class="card-text">Choose a scan test to perform on your target.</p>
+      <div class="d-flex align-items-center mb-3">
+        <select
+          class="form-select form-select-sm me-2"
+          v-model="selectedOption"
+          style="width: 350px"
+        >
+          <option value="All">All</option>
+          <option value="Interesting File">Interesting File</option>
+          <option value="Misconfiguration / Default File">
+            Misconfiguration / Default File
+          </option>
+          <option value="Information Disclosure">Information Disclosure</option>
+          <option value="Injection">Injection (XSS/Script/HTML)</option>
+          <option value="Remote File Retrieval - Inside Web Root">
+            Remote File Retrieval - Inside Web Root
+          </option>
+          <option value="Denial of Service">Denial of Service</option>
+          <option value="Remote File Retrieval - Server Wide">
+            Remote File Retrieval - Server Wide
+          </option>
+          <option value="Command Execution / Remote Shell">
+            Command Execution / Remote Shell
+          </option>
+          <option value="SQL Injection">SQL Injection</option>
+          <option value="File Upload">File Upload</option>
+          <option value="Authentication Bypass">Authentication Bypass</option>
+          <option value="Software Identification">
+            Software Identification
+          </option>
+          <option value="Remote Source Inclusion">
+            Remote Source Inclusion
+          </option>
+          <option value="WebService">WebService</option>
+          <option value="Administrative Console">Administrative Console</option>
+        </select>
+
+        <button class="btn btn-primary btn-sm me-2" @click="runScan">
+          Run
+        </button>
+        <button class="btn btn-secondary btn-sm" @click="resetScan">
+          Reset
+        </button>
+      </div>
+
+      <div v-if="scanResult" class="mt-3">
+        <h6>Scan Result:</h6>
+        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import hljs from "highlight.js";
+import "highlight.js/styles/monokai.css"; // Monokai theme for Highlight.js
+
+export default {
+  data() {
+    return {
+      selectedOption: "All",
+      scanResult: "", // Your scan result data
+      highlightedCode: "",
+    };
+  },
+  watch: {
+    scanResult(newVal) {
+      if (newVal) {
+        this.highlightedCode = hljs.highlightAuto(newVal).value;
+      }
+    },
+  },
+  methods: {
+    runScan() {
+      this.scanResult = ""; // Réinitialiser le résultat du scan
+      fetch("http://localhost:8080/web-scan", {
+        // Assurez-vous que l'URL correspond à votre route API
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ selectedOption: this.selectedOption }),
+      })
+        .then((response) => response.text())
+        .then((data) => {
+          this.scanResult = data; // Mettre à jour le résultat du scan
+        })
+        .catch((error) => console.error("Error:", error));
+    },
+    resetScan() {
+      this.selectedOption = "All"; // Reset selected option
+      this.scanResult = ""; // Clear scan result
+    },
+  },
+};
+</script>
+====================
+./go/main.go
+./go/routes/routes.go
+./go/handlers/webScanHandler.go
+./go/handlers/webAttacksHandler.go
+====================
+File content of ./go/main.go
+package main
+
+import (
+	"darwin2/routes"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+)
+
+func main() {
+	// Create a new Echo instance
+	e := echo.New()
+
+	// Middleware
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "${method}, ${uri}, ${status}\n",
+	}))
+	e.Use(middleware.Recover())
+    e.Use(middleware.CORS())
+
+    // Routes
+    routes.Configure(e)
+
+	// Démarrer le serveur sur le port 8080
+	e.Logger.Fatal(e.Start(":8080"))
+}
+====================
+File content of ./go/routes/routes.go
+package routes
+
+import (
+    "darwin2/handlers"
+    "github.com/labstack/echo/v4"
+)
+
+func Configure(e *echo.Echo) {
+    e.POST("/web-scan", handlers.HandleWebScan)
+    e.POST("/web-attacks", handlers.HandleWebAttacks)
+}
+====================
+File content of ./go/handlers/webScanHandler.go
+package handlers
+
+import (
+    "bytes"
+    "os/exec"
+    "github.com/labstack/echo/v4"
+)
+
+type RequestData struct {
+    SelectedOption string `json:"selectedOption"`
+}
+
+func HandleWebScan(c echo.Context) error {
+    var requestData RequestData
+    if err := c.Bind(&requestData); err != nil {
+        return echo.NewHTTPError(400, "Invalid data")
+    }
+
+    // Exécution de la commande nikto
+    cmd := exec.Command("nikto", "-h", "https://192.168.4.10", "-timeout", "2", "-followredirects", "-until", "60s", "-useragent", "Nikto'\n''\r'X-Forwarded-For: 51.13.51.13")
+    var out bytes.Buffer
+    cmd.Stdout = &out
+    err := cmd.Run()
+    if err != nil {
+        return echo.NewHTTPError(500, "Error executing nikto command: "+err.Error())
+    }
+
+    // Renvoyer la sortie de la commande au client
+    return c.String(200, out.String())
+}
+====================
+File content of ./go/handlers/webAttacksHandler.go
+package handlers
+
+import (
+    "github.com/labstack/echo/v4"
+)
+
+func HandleWebAttacks(c echo.Context) error {
+    // Logique pour Web Attacks
+    return c.String(200, "Web Attacks handled")
+}
+====================

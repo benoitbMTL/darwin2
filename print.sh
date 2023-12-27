@@ -1,28 +1,25 @@
 #!/bin/bash
 
-# Print the content of App.vue
-echo "#######################################"
-echo "Content of vue/src/App.vue:"
-echo "#######################################"
-cat vue/src/App.vue
-echo "#######################################"
+# Step 1: Remove the conf.txt file if it exists
+rm -f conf.txt
 
-# Print the contents of all .vue files in the views folder
-for file in vue/src/views/*.vue; do
-    echo "Content of $file:"
-    echo "#######################################"
-    cat "$file"
-    echo "#######################################"
+# Step 2: Traverse the "./vue/src" directory for .vue files
+echo "====================" >> conf.txt
+find ./vue/src -type f -name "*.vue" -exec echo "{}" >> conf.txt \;
+for file in $(find ./vue/src -type f -name "*.vue"); do
+    echo "====================" >> conf.txt
+    echo "File content of $file" >> conf.txt
+    cat "$file" >> conf.txt
 done
+echo "====================" >> conf.txt
 
-# Print the content of index.js in the router folder
-echo "Content of vue/src/router/index.js:"
-echo "#######################################"
-cat vue/src/router/index.js
-echo "#######################################"
+# Step 3: Traverse the "./go" directory for .go files
+find ./go -type f -name "*.go" -exec echo "{}" >> conf.txt \;
+for file in $(find ./go -type f -name "*.go"); do
+    echo "====================" >> conf.txt
+    echo "File content of $file" >> conf.txt
+    cat "$file" >> conf.txt
+done
+echo "====================" >> conf.txt
 
-# Print the content of index.html in the public folder
-echo "Content of vue/public/index.html:"
-echo "#######################################"
-cat vue/public/index.html
-echo "#######################################"
+echo "Done!"

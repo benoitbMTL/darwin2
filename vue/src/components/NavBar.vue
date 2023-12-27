@@ -1,0 +1,90 @@
+<template>
+  <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <div class="container">
+      <span class="navbar-brand mb-0 h1">
+        <img src="../assets/logo-fortiweb-white.svg" alt="FortiWeb Logo" height="30" class="me-2"/>
+        FortiWeb Demo Tool
+      </span>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <!-- Web Protection Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="webProtectionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Web Protection
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="webProtectionDropdown">
+              <li><router-link class="dropdown-item" to="/web-scan">Web Scan</router-link></li>
+              <li><router-link class="dropdown-item" to="/web-attacks">Web Attacks</router-link></li>
+              <li><router-link class="dropdown-item" to="/machine-learning">Machine Learning</router-link></li>
+              <li><router-link class="dropdown-item" to="/cookie-security">Cookie Security</router-link></li>
+              <li><router-link class="dropdown-item" to="/credential-stuffing-defense">Credential Stuffing Defense</router-link></li>
+            </ul>
+          </li>
+
+          <!-- Bot Mitigation Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="botMitigationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Bot Mitigation
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="botMitigationDropdown">
+              <li><router-link class="dropdown-item" to="/known-bots">Known Bots</router-link></li>
+              <li><router-link class="dropdown-item" to="/biometrics-based-detection">Biometrics Based Detection</router-link></li>
+              <li><router-link class="dropdown-item" to="/bot-deception">Bot Deception</router-link></li>
+              <li><router-link class="dropdown-item" to="/threshold-based-detection">Threshold Based Detection</router-link></li>
+              <li><router-link class="dropdown-item" to="/ml-based-bot-detection">ML Based Bot Detection</router-link></li>
+            </ul>
+          </li>
+
+          <!-- API Protection Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="apiProtectionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              API Protection
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="apiProtectionDropdown">
+              <li><router-link class="dropdown-item" to="/api-requests">API Requests</router-link></li>
+              <li><router-link class="dropdown-item" to="/ml-based-api-protection">ML Based API Protection</router-link></li>
+            </ul>
+          </li>
+
+          <!-- REST API Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="restApiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              REST API
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="restApiDropdown">
+              <li><router-link class="dropdown-item" to="/create-new-application-policy">Create New Application Policy</router-link></li>
+              <li><router-link class="dropdown-item" to="/delete-application-policy">Delete Application Policy</router-link></li>
+            </ul>
+          </li>
+
+          <!-- System Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="systemDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              System
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="systemDropdown">
+              <li><router-link class="dropdown-item" to="/configuration">Configuration</router-link></li>
+              <li><router-link class="dropdown-item" to="/health-check">Health Check</router-link></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+    <div class="pt-3"></div>
+
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      currentSection: null,
+    };
+  },
+};
+</script>

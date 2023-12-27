@@ -1,41 +1,20 @@
 <template>
-  <div id="app">
-    <div class="title-bar">
-      <h1>FortiWeb Demo Tool</h1>
-    </div>
-    <n-menu :options="menuOptions" :value="menuValue" @update:value="handleMenuSelect" />
-    <router-view />
+  <div id="app" class="container mt-5">
+    <NavBar />
+    <router-view></router-view> <!-- Vue Router will render the component here based on the current route -->
+
   </div>
 </template>
 
 <script>
-import { NMenu } from 'naive-ui'
+import NavBar from "./components/NavBar.vue";
+
 
 export default {
   components: {
-    NMenu
+    NavBar,
   },
-  data() {
-    return {
-      menuValue: 'web-protection',
-      menuOptions: [
-        { label: 'Web Protection', key: 'web-protection' },
-        { label: 'Bot Mitigation', key: 'bot-mitigation' },
-        { label: 'API Protection', key: 'api-protection' },
-        { label: 'REST API', key: 'rest-api' },
-        { label: 'Health Check', key: 'health-check' },
-        { label: 'Configuration', key: 'configuration' }
-      ]
-    }
-  },
-  methods: {
-    handleMenuSelect(key) {
-      this.$router.push({ name: key });
-    }
-  }
-}
+};
 </script>
 
-<style>
-
-</style>
+<style></style>
