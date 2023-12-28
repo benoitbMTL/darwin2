@@ -2,10 +2,10 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>MachineLearning</h5>
-      <i class="bi bi-question-square bs-icon" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
+      <i class="bi bi-question-circle-fill bs-icon" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
+      <p class="card-text">Machine Learning Options.</p>
     </div>
   </div>
   
