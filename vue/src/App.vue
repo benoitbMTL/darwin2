@@ -2,7 +2,6 @@
   <div id="app" class="container mt-5">
     <NavBar />
     <router-view></router-view> <!-- Vue Router will render the component here based on the current route -->
-
   </div>
 </template>
 

@@ -1,0 +1,111 @@
+<template>
+  <div class="card my-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5>Traffic Generation</h5>
+      <i class="bi bi-question-circle-fill bs-icon" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
+    </div>
+    <div class="card-body">
+      <p class="card-text">Generate random cyber attacks from various public IP addresses.</p>
+      <div class="d-flex align-items-center mb-3">
+
+        <button class="btn btn-primary btn-sm" @click="generateTraffic" :disabled="isLoading">
+          <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span>{{ isLoading ? 'Generating...' : 'Generate Traffic' }}</span>
+        </button>
+
+        <button class="btn btn-secondary btn-sm ms-2" @click="resetTraffic">
+          Reset
+        </button>
+      </div>
+
+      <div v-if="trafficResult" class="mt-3">
+        <h6>Traffic Result:</h6>
+        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+      </div>
+    </div>
+    </div>
+
+    <!-- Help Card -->
+    <div v-if="showHelp" class="card bg-light mb-3">
+      <div class="card-header">
+        <h5>About Traffic Generation</h5>
+      </div>
+      <div class="card-body">
+        <p>The Traffic Generator creates simulated cyber attacks using random public IP addresses.</p>
+        <p>Utilizing Nikto for dynamic attack scenarios, it generates traffic to enhance FortiWeb logs, enriching
+          FortiView
+          analysis.</p>
+        <p>Each attack, with its varied nature and random tuning options, mimics real-world patterns, aiding in robust
+          defense
+          evaluation and vulnerability identification.</p>
+
+      </div>
+    </div>
+</template>
+
+<script>
+import hljs from "highlight.js";
+import "highlight.js/styles/monokai.css"; // Monokai theme for Highlight.js
+
+export default {
+  data() {
+    return {
+      isLoading: false,
+      trafficResult: '',
+      showHelp: false,
+      highlightedCode: "",
+    };
+  },
+  watch: {
+    trafficResult(newVal) {
+      if (newVal) {
+        this.highlightedCode = hljs.highlightAuto(newVal).value;
+      }
+    },
+  },
+  methods: {
+    generateTraffic() {
+      console.log('Starting traffic generation...');
+      this.isLoading = true;
+      this.trafficResult = ''; // Reset traffic result
+
+      // Make HTTP POST request to the server
+      fetch("http://localhost:8080/traffic-generation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then(response => {
+          console.log('Received response from server');
+          if (!response.ok) {
+            console.error('Network response was not ok');
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
+        })
+        .then(data => {
+          console.log('Traffic generation successful:', data);
+          this.trafficResult = data;
+          this.isLoading = false;
+        })
+        .catch(error => {
+          console.error('Error during fetch operation:', error);
+          this.trafficResult = 'Error: Unable to generate traffic.';
+          this.isLoading = false;
+        });
+    },
+    resetTraffic() {
+      console.log('Resetting traffic result');
+      this.trafficResult = '';
+    },
+  },
+};
+</script>
+
+<style>
+.bs-icon {
+  cursor: pointer;
+  font-size: 1.5em;
+}
+</style>

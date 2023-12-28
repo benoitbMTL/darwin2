@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 // Import components from each folder
+import WebScan from '../components/01-web-protection/WebScan.vue';
+import TrafficGeneration from '../components/01-web-protection/TrafficGeneration.vue';
+import WebAttacks from '../components/01-web-protection/WebAttacks.vue';
+import MachineLearning from '../components/01-web-protection/MachineLearning.vue';
 import CookieSecurity from '../components/01-web-protection/CookieSecurity.vue';
 import CredentialStuffingDefense from '../components/01-web-protection/CredentialStuffingDefense.vue';
-import MachineLearning from '../components/01-web-protection/MachineLearning.vue';
-import WebAttacks from '../components/01-web-protection/WebAttacks.vue';
-import WebScan from '../components/01-web-protection/WebScan.vue';
 
 import BiometricsBasedDetection from '../components/02-bot-mitigation/BiometricsBasedDetection.vue';
 import BotDeception from '../components/02-bot-mitigation/BotDeception.vue';
@@ -23,11 +24,12 @@ import AppConfiguration from '../components/05-tool/AppConfiguration.vue';
 import HealthCheck from '../components/05-tool/HealthCheck.vue';
 
 const routes = [
+  { path: '/web-scan', component: WebScan },
+  { path: '/traffic-generation', component: TrafficGeneration },
+  { path: '/web-attacks', component: WebAttacks },
+  { path: '/machine-learning', component: MachineLearning },
   { path: '/cookie-security', component: CookieSecurity },
   { path: '/credential-stuffing-defense', component: CredentialStuffingDefense },
-  { path: '/machine-learning', component: MachineLearning },
-  { path: '/web-attacks', component: WebAttacks },
-  { path: '/web-scan', component: WebScan },
 
   { path: '/biometrics-based-detection', component: BiometricsBasedDetection },
   { path: '/bot-deception', component: BotDeception },
