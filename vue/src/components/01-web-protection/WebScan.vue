@@ -48,12 +48,12 @@
           <span>{{ isLoading ? 'Scanning...' : 'Scan' }}</span>
         </button>
 
-        <button class="btn btn-secondary btn-sm" @click="resetScan">
+        <button class="btn btn-secondary btn-sm" @click="resetResult">
           Reset
         </button>
       </div>
 
-      <div v-if="scanResult" class="mt-3">
+      <div v-if="jobResult" class="mt-3">
         <h6>Scan Result:</h6>
         <pre class="code-block"><code v-html="highlightedCode"></code></pre>
       </div>
@@ -111,14 +111,14 @@ export default {
   data() {
     return {
       selectedOption: "All",
-      scanResult: "", // Your scan result data
+      jobResult: "", // Your scan result data
       highlightedCode: "",
       isLoading: false, // Initialize isLoading
       showHelp: false,
     };
   },
   watch: {
-    scanResult(newVal) {
+    jobResult(newVal) {
       if (newVal) {
         this.highlightedCode = hljs.highlightAuto(newVal).value;
       }
@@ -127,7 +127,7 @@ export default {
   methods: {
     runScan() {
       this.isLoading = true; // Set loading state to true
-      this.scanResult = ""; // Reset scan result
+      this.jobResult = ""; // Reset Result
       const niktoTuningFlags = {
         All: "1234567890abcde",
         "Interesting File / Seen in logs": "1",
@@ -158,7 +158,7 @@ export default {
       })
         .then((response) => response.text())
         .then((data) => {
-          this.scanResult = data;
+          this.jobResult = data;
           this.isLoading = false; // Set loading state to false when data is received
         })
         .catch((error) => {
@@ -167,9 +167,9 @@ export default {
         });
     },
 
-    resetScan() {
+    resetResult() {
       this.selectedOption = "All"; // Reset selected option
-      this.scanResult = ""; // Clear scan result
+      this.jobResult = ""; // Clear Result
     },
   },
 };

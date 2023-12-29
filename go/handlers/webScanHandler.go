@@ -1,10 +1,13 @@
 package handlers
 
 import (
-	//"fmt"
+	"darwin2/config"
 	"darwin2/utils"
+	"fmt"
 	"github.com/labstack/echo/v4"
+	"net/http"
 	"os/exec"
+	"time"
 )
 
 type RequestData struct {
@@ -12,7 +15,18 @@ type RequestData struct {
 }
 
 func HandleWebScan(c echo.Context) error {
-	_, err := exec.LookPath("nikto")
+
+	dvwaHost := config.CurrentConfig.DVWAHOST
+
+	// Test if dvwaHost is responding on HTTP port 80
+	client := &http.Client{Timeout: 5 * time.Second}
+
+	_, err := client.Get("http://" + dvwaHost)
+	if err != nil {
+		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("DVWA Host (%s) is not responding on HTTP port 80: %s", dvwaHost, err.Error()))
+	}
+
+	_, err = exec.LookPath("nikto")
 	if err != nil {
 		return c.String(200, "Nikto is not installed on your system")
 	}
@@ -27,7 +41,7 @@ func HandleWebScan(c echo.Context) error {
 	// Construct the command
 	cmd := exec.Command(
 		"nikto",
-		"-host", "192.168.4.40",
+		"-host", dvwaHost,
 		"-ask", "no",
 		"-followredirects",
 		"-maxtime", "60s",
@@ -36,11 +50,6 @@ func HandleWebScan(c echo.Context) error {
 		"-timeout", "2",
 		"-useragent", "Nikto\r\nX-Forwarded-For: "+randomIP,
 		"-T", requestData.SelectedOption)
-
-	//cmd.Dir = "/tmp" // Set the working directory to /tmp
-
-	// Debug print of the command
-	//fmt.Printf("Executing command: %v\n", cmd)
 
 	// Execute the command and get its output
 	output, _ := cmd.CombinedOutput()

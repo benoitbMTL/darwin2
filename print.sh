@@ -1,35 +1,33 @@
 #!/bin/bash
 
-# Remove the conf.txt file if it exists
-rm -f conf.txt
+# File to store the output
+output_file="conf.txt"
 
-# Traverse the "./vue/src" directory for .vue files
-echo "====================" >> conf.txt
-find ./vue/src -type f -name "*.vue" -exec echo "{}" >> conf.txt \;
-for file in $(find ./vue/src -type f -name "*.vue"); do
-    echo "====================" >> conf.txt
-    echo "File content of $file" >> conf.txt
-    cat "$file" >> conf.txt
+# Remove the output file if it exists
+rm -f "$output_file"
+
+# List of files to process
+files=(
+    "go/config/app_config.go"
+    "go/config/attack_config.go"
+    "go/config/dvwa_credentials.go"
+    "go/handlers/webAttacksHandler.go"
+    "vue/src/components/01-web-protection/WebAttacks.vue"
+)
+
+# Loop through the files and append their content to conf.txt
+for file in "${files[@]}"; do
+    if [ -f "$file" ]; then
+        echo "========================================================" >> "$output_file"
+        echo "File content of $file" >> "$output_file"
+        echo "========================================================" >> "$output_file"
+        cat "$file" >> "$output_file"
+        echo "" >> "$output_file" # Add an extra newline for readability
+    else
+        echo "Warning: File $file not found." >> "$output_file"
+    fi
 done
 
-# Add contents of vue/src/router/index.js
-echo "====================" >> conf.txt
-echo "File content of vue/src/router/index.js" >> conf.txt
-cat "vue/src/router/index.js" >> conf.txt
-
-# Add contents of vue/src/main.js
-echo "====================" >> conf.txt
-echo "File content of vue/src/main.js" >> conf.txt
-cat "vue/src/main.js" >> conf.txt
-
-# Traverse the "./go" directory for .go files
-echo "====================" >> conf.txt
-find ./go -type f -name "*.go" -exec echo "{}" >> conf.txt \;
-for file in $(find ./go -type f -name "*.go"); do
-    echo "====================" >> conf.txt
-    echo "File content of $file" >> conf.txt
-    cat "$file" >> conf.txt
-done
-echo "====================" >> conf.txt
+echo "========================================================" >> "$output_file"
 
 echo "Done!"

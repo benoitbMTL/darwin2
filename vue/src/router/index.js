@@ -20,7 +20,7 @@ import MLBasedAPIProtection from '../components/03-api-protection/MLBasedAPIProt
 import CreateNewApplicationPolicy from '../components/04-rest-api/CreateNewApplicationPolicy.vue';
 import DeleteApplicationPolicy from '../components/04-rest-api/DeleteApplicationPolicy.vue';
 
-import AppConfiguration from '../components/05-tool/AppConfiguration.vue';
+import ConfigForm from '../components/05-tool/ConfigForm.vue';
 import HealthCheck from '../components/05-tool/HealthCheck.vue';
 
 const routes = [
@@ -43,7 +43,7 @@ const routes = [
   { path: '/create-new-application-policy', component: CreateNewApplicationPolicy },
   { path: '/delete-application-policy', component: DeleteApplicationPolicy },
 
-  { path: '/configuration', component: AppConfiguration },
+  { path: '/configuration', component: ConfigForm },
   { path: '/health-check', component: HealthCheck },
 
 ];

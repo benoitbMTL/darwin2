@@ -1,22 +1,36 @@
 package handlers
 
 import (
+	"darwin2/config"
 	"darwin2/utils"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"math/rand"
+	"net/http"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 func HandleTrafficGenerator(c echo.Context) error {
+
+	dvwaHost := config.CurrentConfig.DVWAHOST
+
+	// Test if dvwaHost is responding on HTTP port 80
+	client := &http.Client{Timeout: 5 * time.Second}
+
+	_, err := client.Get("http://" + dvwaHost)
+	if err != nil {
+		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("DVWA Host (%s) is not responding on HTTP port 80: %s", dvwaHost, err.Error()))
+	}
+
 	// Check if nikto is installed
-	_, err := exec.LookPath("nikto")
+	_, err = exec.LookPath("nikto")
 	if err != nil {
 		return c.String(200, "Nikto is not installed on your system")
 	}
 
-	const loopCount = 15 // Number of iterations for each loop
+	const loopCount = 2 // Number of iterations for each loop
 
 	var summary strings.Builder
 	summary.WriteString(fmt.Sprintf("Traffic Generator executed %d rounds of attacks:\n", loopCount))
@@ -28,7 +42,7 @@ func HandleTrafficGenerator(c echo.Context) error {
 		// Construct the nikto command
 		cmd := exec.Command(
 			"nikto",
-			"-host", "192.168.4.40",
+			"-host", dvwaHost,
 			"-ask", "no",
 			"-followredirects",
 			"-maxtime", "60s",

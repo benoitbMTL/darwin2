@@ -1,284 +1,281 @@
-====================
-./vue/src/App.vue
-./vue/src/components/03-api-protection/ApiRequests.vue
-./vue/src/components/03-api-protection/MLBasedAPIProtection.vue
-./vue/src/components/02-bot-mitigation/BiometricsBasedDetection.vue
-./vue/src/components/02-bot-mitigation/BotDeception.vue
-./vue/src/components/02-bot-mitigation/MLBasedBotDetection.vue
-./vue/src/components/02-bot-mitigation/KnownBots.vue
-./vue/src/components/02-bot-mitigation/ThresholdBasedDetection.vue
-./vue/src/components/04-rest-api/DeleteApplicationPolicy.vue
-./vue/src/components/04-rest-api/CreateNewApplicationPolicy.vue
-./vue/src/components/NavBar.vue
-./vue/src/components/01-web-protection/WebAttacks.vue
-./vue/src/components/01-web-protection/MachineLearning.vue
-./vue/src/components/01-web-protection/CookieSecurity.vue
-./vue/src/components/01-web-protection/CredentialStuffingDefense.vue
-./vue/src/components/01-web-protection/WebScan.vue
-./vue/src/components/01-web-protection/TrafficGeneration.vue
-./vue/src/components/05-tool/HealthCheck.vue
-./vue/src/components/05-tool/AppConfiguration.vue
-====================
-File content of ./vue/src/App.vue
-<template>
-  <div id="app" class="container mt-5">
-    <NavBar />
-    <router-view></router-view> <!-- Vue Router will render the component here based on the current route -->
+========================================================
+File content of go/config/app_config.go
+========================================================
+package config
 
-  </div>
-</template>
+import (
+	"github.com/labstack/echo/v4"
+	"net/http"
+	"sync"
+)
 
-<script>
-import NavBar from "./components/NavBar.vue";
+// AppConfig defines the structure for your application configuration
+type AppConfig struct {
+	DVWAURL      string
+	DVWAHOST     string
+	SHOPURL      string
+	APPURL       string
+	SPEEDTESTURL string
+	PETSTOREURL  string
+	USERNAMEAPI  string
+	PASSWORDAPI  string
+	VDOMAPI      string
+	FWBMGTIP     string
+	MLPOLICY     string
+	USERAGENT    string
+}
+
+var (
+	// CurrentConfig holds the current application configuration
+	CurrentConfig AppConfig
+	DefaultConfig AppConfig
+
+	// configMutex is used to handle concurrent access to the configuration
+	configMutex sync.RWMutex
+)
+
+// Initialize sets up the default values for the application configuration
+func Initialize() {
+	configMutex.Lock()
+	defer configMutex.Unlock()
+
+	DefaultConfig = AppConfig{
+		DVWAURL:      "https://192.168.4.40",
+		DVWAHOST:     "192.168.4.40",
+		SHOPURL:      "https://shop.corp.fabriclab.ca",
+		APPURL:       "https://app.corp.fabriclab.ca/",
+		SPEEDTESTURL: "https://speedtest.corp.fabriclab.ca",
+		PETSTOREURL:  "https://petstore.corp.fabriclab.ca/api/v3/pet",
+		USERNAMEAPI:  "userapi",
+		PASSWORDAPI:  "userAPI123!",
+		VDOMAPI:      "root",
+		FWBMGTIP:     "192.168.4.100",
+		MLPOLICY:     "DVWA_POLICY",
+		USERAGENT:    "FortiWeb Demo Tool",
+	}
+
+	CurrentConfig = DefaultConfig
+}
+
+// GetConfig handles the GET request for the current configuration
+func GetConfig(c echo.Context) error {
+	configMutex.RLock()
+	defer configMutex.RUnlock()
+	return c.JSON(http.StatusOK, CurrentConfig)
+}
+
+// UpdateConfig handles the POST request to update the configuration
+func UpdateConfig(c echo.Context) error {
+	var newConfig AppConfig
+	if err := c.Bind(&newConfig); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	configMutex.Lock()
+	defer configMutex.Unlock()
+	CurrentConfig = newConfig
+	return c.JSON(http.StatusOK, newConfig)
+}
+
+// ResetConfig handles the GET request to reset the configuration
+func ResetConfig(c echo.Context) error {
+	configMutex.Lock()
+	defer configMutex.Unlock()
+	CurrentConfig = DefaultConfig
+	return c.JSON(http.StatusOK, CurrentConfig)
+}
+
+========================================================
+File content of go/config/attack_config.go
+========================================================
+package config
+
+// AttackConfig holds the configuration details for each attack type
+type AttackConfig struct {
+    Method   string // GET or POST
+    URL      string
+    PostData string // Data for POST requests
+}
+
+// AttackConfigs maps attack types to their configurations
+var AttackConfigs = map[string]AttackConfig{
+    "command_injection": {
+        Method:   "POST",
+        URL:      CurrentConfig.DVWAURL + "/vulnerabilities/exec/",
+        PostData: "ip=%3Bmore+%2Fetc%2Fpasswd&Submit=Submit",
+    },
+    "sql_injection": {
+        Method: "GET",
+        URL:    CurrentConfig.DVWAURL + "/vulnerabilities/sqli/?id=%27OR+1%3D1%23&Submit=Submit",
+    },
+    "xss": {
+        Method: "GET",
+        URL:    CurrentConfig.DVWAURL + "/vulnerabilities/xss_r/?name=%3Cscript%3Ealert%28%22XSS-hack-attempt%22%29%3C%2Fscript%3E",
+    },
+    "zero_day_sql_injection": {
+        Method: "GET",
+        URL:    CurrentConfig.DVWAURL + "/vulnerabilities/sqli/?id=A%20'DIV'%20B%20-%20A%20'DIV%20B&Submit=Submit",
+    },
+    "zero_day_command_injection": {
+        Method:   "POST",
+        URL:      CurrentConfig.DVWAURL + "/vulnerabilities/exec/",
+        PostData: "/%3F%3F%3F/1%3F - /???/1?&Submit=Submit",
+    },
+}
 
 
-export default {
-  components: {
-    NavBar,
-  },
-};
-</script>
+// GetAttackConfig returns the configuration for the given attack type
+func GetAttackConfig(attackType string) (AttackConfig, bool) {
+    config, exists := AttackConfigs[attackType]
+    return config, exists
+}
 
-<style></style>
-====================
-File content of ./vue/src/components/03-api-protection/ApiRequests.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">ApiRequests</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
+========================================================
+File content of go/config/dvwa_credentials.go
+========================================================
+package config
 
-<script>
-export default {};
-</script>
+// DVWA Credentials
+var dvwaUserCredentials = map[string]string{
+	"admin":                          "password",
+	"gordonb":                        "abc123",
+	"1337":                           "charley",
+	"pablo":                          "letmein",
+	"smithy":                         "password",
+	"pklangdon4@msn.com":             "ppl11266",
+	"muldersstan@gmail.com":          "renzo1205",
+	"forsternp2@aol.com":             "freedom1",
+	"cragsy@msn.com":                 "Snatch01",
+	"bjrehdorf@hotmail.com":          "Apollo25504",
+	"baz2709@icloud.com":             "sophie12",
+	"amysiura@ymail.com":             "active95",
+	"jond714@gmail.com":              "jonloveslax",
+	"josefahorenstein87@hotmail.com": "qel737Xf3",
+	"bizotic6@gmail.com":             "snaker26"}
 
-<style>
-</style>====================
-File content of ./vue/src/components/03-api-protection/MLBasedAPIProtection.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">MLBasedAPIProtection</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
+// GetDVWAPassword returns the password for a given DVWA user
+func GetDVWAPassword(username string) string {
+	return dvwaUserCredentials[username]
+}
 
-<script>
-export default {};
-</script>
+========================================================
+File content of go/handlers/webAttacksHandler.go
+========================================================
+package handlers
 
-<style>
-</style>====================
-File content of ./vue/src/components/02-bot-mitigation/BiometricsBasedDetection.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">BiometricsBasedDetection</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
+import (
+	"darwin2/config"
+	"fmt"
+	"github.com/labstack/echo/v4"
+	"io"
+	"net/http"
+	"net/url"
+	"strings"
+)
 
-<script>
-export default {};
-</script>
+// HandleWebAttacks decides which attack to perform based on the request
+func HandleWebAttacks(c echo.Context) error {
+	attackType := c.FormValue("type")
+	username := c.FormValue("username")
+	password := "passwordForUser" // Replace with logic to get password for the user
 
-<style>
-</style>====================
-File content of ./vue/src/components/02-bot-mitigation/BotDeception.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">BotDeception</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
+	// Print values to console
+	fmt.Printf("Attack Type: %s\n", attackType)
+	fmt.Printf("Username: %s\n", username)
+	fmt.Printf("Password: %s\n", password)
 
-<script>
-export default {};
-</script>
+	return performAttack(c, attackType, username, password)
+}
 
-<style>
-</style>====================
-File content of ./vue/src/components/02-bot-mitigation/MLBasedBotDetection.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">MLBasedBotDetection</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
+func performAttack(c echo.Context, attackType, username, password string) error {
+	// Authenticate and get session cookie
+	sessionCookie, err := authenticateUser(username, password)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Authentication failed: "+err.Error())
+	}
 
-<script>
-export default {};
-</script>
+	// Get attack configuration
+	attackConfig, exists := config.GetAttackConfig(attackType)
+	if !exists {
+		return c.String(http.StatusBadRequest, "Invalid attack type")
+	}
 
-<style>
-</style>====================
-File content of ./vue/src/components/02-bot-mitigation/KnownBots.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">KnownBots</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
+	// Craft the request for the attack
+	var req *http.Request
+	if attackConfig.Method == "POST" {
+		req, err = http.NewRequest(attackConfig.Method, attackConfig.URL, strings.NewReader(attackConfig.PostData))
+	} else {
+		req, err = http.NewRequest(attackConfig.Method, attackConfig.URL, nil)
+	}
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Failed to create request: "+err.Error())
+	}
 
-<script>
-export default {};
-</script>
+	// Add session cookie to request
+	req.AddCookie(sessionCookie)
 
-<style>
-</style>====================
-File content of ./vue/src/components/02-bot-mitigation/ThresholdBasedDetection.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">ThresholdBasedDetection</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
+	// Set necessary headers for the attack
+	req.Header.Set("User-Agent", "FortiWeb Demo Script")
 
-<script>
-export default {};
-</script>
+	// Perform the attack request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Attack request failed: "+err.Error())
+	}
+	defer resp.Body.Close()
 
-<style>
-</style>====================
-File content of ./vue/src/components/04-rest-api/DeleteApplicationPolicy.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">DeleteApplicationPolicy</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Failed to read response body: "+err.Error())
+	}
 
-<script>
-export default {};
-</script>
+	// Return the response from the attack
+	return c.String(http.StatusOK, string(body))
+}
 
-<style>
-</style>====================
-File content of ./vue/src/components/04-rest-api/CreateNewApplicationPolicy.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">CreateNewApplicationPolicy</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
+// authenticate performs login to the web application and returns the session cookie
+func authenticateUser(username, password string) (*http.Cookie, error) {
+	loginURL := config.CurrentConfig.DVWAURL + "/login.php"
 
-<script>
-export default {};
-</script>
+	// Prepare the data for the POST request
+	formData := url.Values{}
+	formData.Set("username", username)
+	formData.Set("password", password)
+	formData.Set("Login", "Login")
 
-<style>
-</style>====================
-File content of ./vue/src/components/NavBar.vue
-<template>
-  <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
-    <div class="container">
-      <span class="navbar-brand mb-0 h1">
-        <img src="../assets/logo-fortiweb-white.svg" alt="FortiWeb Logo" height="30" class="me-2"/>
-        FortiWeb Demo Tool
-      </span>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <!-- Web Protection Dropdown -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="webProtectionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Web Protection
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="webProtectionDropdown">
-              <li><router-link class="dropdown-item" to="/web-scan">Web Scan</router-link></li>
-                <li><router-link class="dropdown-item" to="/traffic-generation">Traffic Generation</router-link></li>
-                <li><router-link class="dropdown-item" to="/web-attacks">Web Attacks</router-link></li>
-                <li><router-link class="dropdown-item" to="/machine-learning">Machine Learning</router-link></li>
-              <li><router-link class="dropdown-item" to="/cookie-security">Cookie Security</router-link></li>
-              <li><router-link class="dropdown-item" to="/credential-stuffing-defense">Credential Stuffing Defense</router-link></li>
-            </ul>
-          </li>
+	// Create the request
+	req, err := http.NewRequest("POST", loginURL, strings.NewReader(formData.Encode()))
+	if err != nil {
+		return nil, err
+	}
 
-          <!-- Bot Mitigation Dropdown -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="botMitigationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Bot Mitigation
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="botMitigationDropdown">
-              <li><router-link class="dropdown-item" to="/known-bots">Known Bots</router-link></li>
-              <li><router-link class="dropdown-item" to="/biometrics-based-detection">Biometrics Based Detection</router-link></li>
-              <li><router-link class="dropdown-item" to="/bot-deception">Bot Deception</router-link></li>
-              <li><router-link class="dropdown-item" to="/threshold-based-detection">Threshold Based Detection</router-link></li>
-              <li><router-link class="dropdown-item" to="/ml-based-bot-detection">ML Based Bot Detection</router-link></li>
-            </ul>
-          </li>
+	// Set necessary headers
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("User-Agent", "FortiWeb Demo Script")
 
-          <!-- API Protection Dropdown -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="apiProtectionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              API Protection
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="apiProtectionDropdown">
-              <li><router-link class="dropdown-item" to="/api-requests">API Requests</router-link></li>
-              <li><router-link class="dropdown-item" to="/ml-based-api-protection">ML Based API Protection</router-link></li>
-            </ul>
-          </li>
+	// Perform the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
 
-          <!-- REST API Dropdown -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="restApiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              REST API
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="restApiDropdown">
-              <li><router-link class="dropdown-item" to="/create-new-application-policy">Create New Application Policy</router-link></li>
-              <li><router-link class="dropdown-item" to="/delete-application-policy">Delete Application Policy</router-link></li>
-            </ul>
-          </li>
+	// Find and return the session cookie
+	for _, cookie := range resp.Cookies() {
+		if cookie.Name == "sessionCookieName" { // Replace with actual session cookie name
+			return cookie, nil
+		}
+	}
 
-          <!-- System Dropdown -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="systemDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              System
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="systemDropdown">
-              <li><router-link class="dropdown-item" to="/configuration">Configuration</router-link></li>
-              <li><router-link class="dropdown-item" to="/health-check">Health Check</router-link></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+	return nil, fmt.Errorf("session cookie not found")
+}
 
-    <div class="pt-3"></div>
-
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      currentSection: null,
-    };
-  },
-};
-</script>
-====================
-File content of ./vue/src/components/01-web-protection/WebAttacks.vue
+========================================================
+File content of vue/src/components/01-web-protection/WebAttacks.vue
+========================================================
 <template>
   <div class="card my-4">
     <h5 class="card-header">Web Attacks</h5>
@@ -288,11 +285,7 @@ File content of ./vue/src/components/01-web-protection/WebAttacks.vue
       </p>
 
       <div class="d-flex align-items-center mb-3">
-        <select
-          class="form-select form-select-sm me-2"
-          v-model="selectedUser"
-          style="width: 250px"
-        >
+        <select class="form-select form-select-sm me-2" v-model="selectedUser" style="width: 250px">
           <option value="admin">admin</option>
           <option value="gordonb">gordonb</option>
           <option value="1337">1337</option>
@@ -300,34 +293,19 @@ File content of ./vue/src/components/01-web-protection/WebAttacks.vue
           <option value="smithy">smithy</option>
         </select>
 
-        <button
-          class="btn btn-primary btn-sm me-2"
-          @click="performCommandInjection"
-        >
+        <button class="btn btn-primary btn-sm me-2" @click="performCommandInjection">
           Command Injection
         </button>
-        <button
-          class="btn btn-primary btn-sm me-2"
-          @click="performSQLInjection"
-        >
+        <button class="btn btn-primary btn-sm me-2" @click="performSQLInjection">
           SQL Injection
         </button>
-        <button
-          class="btn btn-primary btn-sm me-2"
-          @click="performCrossSiteScripting"
-        >
+        <button class="btn btn-primary btn-sm me-2" @click="performCrossSiteScripting">
           Cross-site Scripting
         </button>
-        <button
-          class="btn btn-warning btn-sm me-2"
-          @click="performZeroDayCommandInjection"
-        >
+        <button class="btn btn-warning btn-sm me-2" @click="performZeroDayCommandInjection">
           Zero Day Command Injection
         </button>
-        <button
-          class="btn btn-warning btn-sm me-2"
-          @click="performZeroDayCrossSiteScripting"
-        >
+        <button class="btn btn-warning btn-sm me-2" @click="performZeroDayCrossSiteScripting">
           Zero Day Cross-site Scripting
         </button>
         <button class="btn btn-secondary btn-sm" @click="resetGenericAttack">
@@ -336,6 +314,7 @@ File content of ./vue/src/components/01-web-protection/WebAttacks.vue
       </div>
     </div>
   </div>
+  <iframe v-html="attackResult" v-if="attackResult"></iframe>
 </template>
 
 <script>
@@ -343,709 +322,52 @@ export default {
   data() {
     return {
       selectedUser: "admin",
+      attackResult: '', // HTML content received from the server
     };
   },
   methods: {
     performCommandInjection() {
-      // Logique de Command Injection...
+      this.sendAttackRequest("command_injection");
     },
-    // Définissez d'autres méthodes ici...
-    resetGenericAttack() {
-      // Logique de réinitialisation...
+    performSQLInjection() {
+      this.sendAttackRequest("sql_injection");
     },
-  },
-};
-</script>
-
-<style></style>
-====================
-File content of ./vue/src/components/01-web-protection/MachineLearning.vue
-<template>
-  <div class="card my-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5>Machine Learning</h5>
-      <i class="bi bi-question-circle-fill bs-icon" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
-    </div>
-    <div class="card-body">
-      <p class="card-text">Machine Learning Options.</p>
-    </div>
-  </div>
-
-  <!-- Help Card -->
-  <div v-if="showHelp" class="card text-white bg-secondary mt-3">
-    <div class="card-header">
-      <h5>About Machine Learning</h5>
-    </div>
-    <div class="card-body">
-      <p>Help content goes here...</p>
-    </div>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      showHelp: false,
-    };
-  },
-};
-</script>
-
-<style>
-.bs-icon {
-  cursor: pointer;
-  font-size: 1.5em;
-}
-</style>
-====================
-File content of ./vue/src/components/01-web-protection/CookieSecurity.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">CookieSecurity</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
-
-<script>
-export default {};
-</script>
-
-<style>
-</style>====================
-File content of ./vue/src/components/01-web-protection/CredentialStuffingDefense.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">CredentialStuffingDefense</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
-
-<script>
-export default {
-
-}
-</script>
-
-<style>
-
-</style>====================
-File content of ./vue/src/components/01-web-protection/WebScan.vue
-<template>
-  <div class="card my-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5>Web Vulnerability Scanner</h5>
-      <i class="bi bi-question-circle-fill bs-icon" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
-    </div>
-    <div class="card-body">
-      <p class="card-text">Select a Nikto scan option to analyze web server security and identify potential
-        vulnerabilities.</p>
-      <div class="d-flex align-items-center mb-3">
-        <select class="form-select form-select-sm me-2" v-model="selectedOption" style="width: 350px">
-          <option value="All">All</option>
-          <option value="Interesting File / Seen in logs">
-            Interesting File / Seen in logs
-          </option>
-          <option value="Misconfiguration / Default File">
-            Misconfiguration / Default File
-          </option>
-          <option value="Information Disclosure">Information Disclosure</option>
-          <option value="Injection (XSS/Script/HTML)">
-            Injection (XSS/Script/HTML)
-          </option>
-          <option value="Remote File Retrieval - Inside Web Root">
-            Remote File Retrieval - Inside Web Root
-          </option>
-          <option value="Denial of Service">Denial of Service</option>
-          <option value="Remote File Retrieval - Server Wide">
-            Remote File Retrieval - Server Wide
-          </option>
-          <option value="Command Execution / Remote Shell">
-            Command Execution / Remote Shell
-          </option>
-          <option value="SQL Injection">SQL Injection</option>
-          <option value="File Upload">File Upload</option>
-          <option value="Authentication Bypass">Authentication Bypass</option>
-          <option value="Software Identification">
-            Software Identification
-          </option>
-          <option value="Remote Source Inclusion">
-            Remote Source Inclusion
-          </option>
-          <option value="WebService">WebService</option>
-          <option value="Administrative Console">Administrative Console</option>
-        </select>
-
-        <button class="btn btn-primary btn-sm me-2" @click="runScan" :disabled="isLoading">
-          <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          <span>{{ isLoading ? 'Scanning...' : 'Scan' }}</span>
-        </button>
-
-        <button class="btn btn-secondary btn-sm" @click="resetScan">
-          Reset
-        </button>
-      </div>
-
-      <div v-if="scanResult" class="mt-3">
-        <h6>Scan Result:</h6>
-        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-      </div>
-    </div>
-  </div>
-
-  <!-- Help Card -->
-  <div v-if="showHelp" class="card bg-light mb-3">
-    <div class="card-header">
-      <h5>Introducing Nikto Scans</h5>
-    </div>
-    <div class="card-body">
-      <p><strong>Nikto 2.5</strong> is a comprehensive web server scanner used for security testing. It's an open-source
-        tool designed to perform extensive checks against web servers.</p>
-  <p>
-    <a href="https://github.com/sullo/nikto" class="d-inline-flex align-items-center" target="_blank" rel="noopener noreferrer">
-      <i class="bi bi-github bs-icon me-2"></i>https://github.com/sullo/nikto
-    </a>
-  </p>
-
-   <ul>
-      <li><strong>Comprehensive Tests:</strong> Checks over 7,000 files/programs and more than 1250 server types for potential risks and outdated versions.</li>
-      <li><strong>Configuration Checks:</strong> Inspects server configurations and identifies installed web servers and software.</li>
-      <li><strong>Updates and Plugins:</strong> Nikto's scan items and plugins are regularly updated to detect new vulnerabilities.</li>
-      <li><strong>Visibility:</strong> Detectable in logs and by IPS/IDS systems, but offers some anti-IDS techniques.</li>
-      <li><strong>Informational Checks:</strong> Reports both security flaws and 'information only' items for webmasters and security engineers.</li>
-    </ul>
-    <p>The valid tuning options are:</p>
-    <ul>
-      <li><strong>File Upload:</strong> Exploits which allow a file to be uploaded to the target server.</li>
-      <li><strong>Interesting File / Seen in logs:</strong> An unknown but suspicious file or attack that has been seen in web server logs.</li>
-      <li><strong>Misconfiguration / Default File:</strong> Default files or files which have been misconfigured. This could include documentation, or a resource which should be password protected.</li>
-      <li><strong>Information Disclosure:</strong> A resource that reveals information about the target, such as a file system path or account name.</li>
-      <li><strong>Injection (XSS/Script/HTML):</strong> Any form of injection, including cross-site scripting (XSS) or content (HTML) injection. Does not include command injection.</li>
-      <li><strong>Remote File Retrieval - Inside Web Root:</strong> Allows remote users to retrieve unauthorized files from within the web server's root directory.</li>
-      <li><strong>Denial of Service:</strong> Resource permits a denial of service against the application, web server, or host.</li>
-      <li><strong>Remote File Retrieval - Server Wide:</strong> Allows remote users to retrieve unauthorized files from anywhere on the target.</li>
-      <li><strong>Command Execution / Remote Shell:</strong> Permits the execution of system commands or spawning of a remote shell.</li>
-      <li><strong>SQL Injection:</strong> Any attack allowing SQL execution against a database.</li>
-      <li><strong>Authentication Bypass:</strong> Allows clients to access resources they should not have access to.</li>
-      <li><strong>Software Identification:</strong> Identifies installed software or programs.</li>
-        <li><strong>Remote Source Inclusion:</strong> Allows remote inclusion of source code.</li>
-        <li><strong>Web Service:</strong> Checks for issues that can affect APIs, SOAP services, and other web service endpoints.</li>
-        <li><strong>Administrative Console:</strong> Vulnerabilities related to administrative consoles.</li>
-        </ul>
-    </div>
-  </div>
-</template>
-
-<script>
-import hljs from "highlight.js";
-import "highlight.js/styles/monokai.css"; // Monokai theme for Highlight.js
-
-export default {
-  data() {
-    return {
-      selectedOption: "All",
-      scanResult: "", // Your scan result data
-      highlightedCode: "",
-      isLoading: false, // Initialize isLoading
-      showHelp: false,
-    };
-  },
-  watch: {
-    scanResult(newVal) {
-      if (newVal) {
-        this.highlightedCode = hljs.highlightAuto(newVal).value;
-      }
+    performCrossSiteScripting() {
+      this.sendAttackRequest("xss");
     },
-  },
-  methods: {
-    runScan() {
-      this.isLoading = true; // Set loading state to true
-      this.scanResult = ""; // Reset scan result
-      const niktoTuningFlags = {
-        All: "1234567890abcde",
-        "Interesting File / Seen in logs": "1",
-        "Misconfiguration / Default File": "2",
-        "Information Disclosure": "3",
-        "Injection (XSS/Script/HTML)": "4",
-        "Remote File Retrieval - Inside Web Root": "5",
-        "Denial of Service": "6",
-        "Remote File Retrieval - Server Wide": "7",
-        "Command Execution / Remote Shell": "8",
-        "SQL Injection": "9",
-        "File Upload": "0",
-        "Authentication Bypass": "a",
-        "Software Identification": "b",
-        "Remote Source Inclusion": "c",
-        WebService: "d",
-        "Administrative Console": "e",
-      };
+    performZeroDayCommandInjection() {
+      this.sendAttackRequest("zero_day_sql_injection");
+    },
+    performZeroDayCrossSiteScripting() {
+      this.sendAttackRequest("zero_day_command_injection");
+    },
+    sendAttackRequest(attackType) {
+      const url = 'http://localhost:8080/web-attacks';
+      const formData = new URLSearchParams();
+      formData.append('type', attackType);
+      formData.append('username', this.selectedUser);
 
-      const tuningFlag = niktoTuningFlags[this.selectedOption] || "";
-
-      fetch("http://localhost:8080/web-scan", {
-        method: "POST",
+      fetch(url, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({ selectedOption: tuningFlag }),
+        body: formData
       })
-        .then((response) => response.text())
-        .then((data) => {
-          this.scanResult = data;
-          this.isLoading = false; // Set loading state to false when data is received
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          this.isLoading = false; // Set loading state to false on error
-        });
-    },
-
-    resetScan() {
-      this.selectedOption = "All"; // Reset selected option
-      this.scanResult = ""; // Clear scan result
-    },
-  },
-};
-</script>
-
-<style>
-.bs-icon {
-  cursor: pointer;
-  font-size: 1.5em;
-}
-</style>====================
-File content of ./vue/src/components/01-web-protection/TrafficGeneration.vue
-<template>
-  <div class="card my-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5>Traffic Generation</h5>
-      <i class="bi bi-question-circle-fill bs-icon" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
-    </div>
-    <div class="card-body">
-      <p class="card-text">Generate random cyber attacks from various public IP addresses.</p>
-
-      <button class="btn btn-primary btn-sm" @click="generateTraffic" :disabled="isLoading">
-        <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-        <span>{{ isLoading ? 'Generating...' : 'Generate Traffic' }}</span>
-      </button>
-
-      <button class="btn btn-secondary btn-sm ms-2" @click="resetTraffic">
-        Reset
-      </button>
-    </div>
-
-    <div v-if="trafficResult" class="mt-3">
-      <h6>Traffic Result:</h6>
-      <pre class="code-block"><code>{{ trafficResult }}</code></pre>
-    </div>
-  </div>
-
-  <!-- Help Card -->
-  <div v-if="showHelp" class="card bg-light mb-3">
-    <div class="card-header">
-      <h5>About Traffic Generation</h5>
-    </div>
-    <div class="card-body">
-      <p>The Traffic Generator creates simulated cyber attacks using random public IP addresses.</p>
-      <p>Utilizing Nikto for dynamic attack scenarios, it generates traffic to enhance FortiWeb logs, enriching FortiView analysis.</p>
-      <p>Each attack, with its varied nature and random tuning options, mimics real-world patterns, aiding in robust defense
-        evaluation and vulnerability identification.</p>
-
-    </div>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      isLoading: false,
-      trafficResult: '',
-      showHelp: false,
-    };
-  },
-  methods: {
-    generateTraffic() {
-      this.isLoading = true;
-      this.trafficResult = ''; // Reset traffic result
-
-      // Make HTTP POST request to the server
-      fetch("http://localhost:8080/traffic-generation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.text();
-        })
-        .then(data => {
-          this.trafficResult = data;
-          this.isLoading = false;
+        .then(response => response.text())
+        .then(html => {
+          this.attackResult = html;
         })
         .catch(error => {
-          console.error('There has been a problem with your fetch operation:', error);
-          this.trafficResult = 'Error: Unable to generate traffic.';
-          this.isLoading = false;
+          console.error('Error:', error);
+          this.attackResult = 'Failed to perform attack';
         });
     },
-    resetTraffic() {
-      this.trafficResult = '';
-    },
-  },
+  }
 };
 </script>
 
-<style>
-.bs-icon {
-  cursor: pointer;
-  font-size: 1.5em;
-}
-</style>
-====================
-File content of ./vue/src/components/05-tool/HealthCheck.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">HealthCheck</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
 
-<script>
-export default {};
-</script>
+<style></style>
 
-<style>
-</style>====================
-File content of ./vue/src/components/05-tool/AppConfiguration.vue
-<template>
-  <div class="card my-4">
-    <h5 class="card-header">AppConfiguration</h5>
-    <div class="card-body">
-      <p class="card-text">Choose a scan test to perform on your target.</p>
-    </div>
-  </div>
-</template>
-
-<script>
-export default {};
-</script>
-
-<style>
-</style>====================
-File content of vue/src/router/index.js
-import { createRouter, createWebHistory } from 'vue-router';
-
-// Import components from each folder
-import WebScan from '../components/01-web-protection/WebScan.vue';
-import TrafficGeneration from '../components/01-web-protection/TrafficGeneration.vue';
-import MachineLearning from '../components/01-web-protection/MachineLearning.vue';
-import WebAttacks from '../components/01-web-protection/WebAttacks.vue';
-import CookieSecurity from '../components/01-web-protection/CookieSecurity.vue';
-import CredentialStuffingDefense from '../components/01-web-protection/CredentialStuffingDefense.vue';
-
-import BiometricsBasedDetection from '../components/02-bot-mitigation/BiometricsBasedDetection.vue';
-import BotDeception from '../components/02-bot-mitigation/BotDeception.vue';
-import KnownBots from '../components/02-bot-mitigation/KnownBots.vue';
-import MLBasedBotDetection from '../components/02-bot-mitigation/MLBasedBotDetection.vue';
-import ThresholdBasedDetection from '../components/02-bot-mitigation/ThresholdBasedDetection.vue';
-
-import ApiRequests from '../components/03-api-protection/ApiRequests.vue';
-import MLBasedAPIProtection from '../components/03-api-protection/MLBasedAPIProtection.vue';
-
-import CreateNewApplicationPolicy from '../components/04-rest-api/CreateNewApplicationPolicy.vue';
-import DeleteApplicationPolicy from '../components/04-rest-api/DeleteApplicationPolicy.vue';
-
-import AppConfiguration from '../components/05-tool/AppConfiguration.vue';
-import HealthCheck from '../components/05-tool/HealthCheck.vue';
-
-const routes = [
-  { path: '/cookie-security', component: CookieSecurity },
-  { path: '/credential-stuffing-defense', component: CredentialStuffingDefense },
-  { path: '/machine-learning', component: MachineLearning },
-  { path: '/web-attacks', component: WebAttacks },
-  { path: '/web-scan', component: WebScan },
-  { path: '/traffic-generation', component: TrafficGeneration },
-
-  { path: '/biometrics-based-detection', component: BiometricsBasedDetection },
-  { path: '/bot-deception', component: BotDeception },
-  { path: '/known-bots', component: KnownBots },
-  { path: '/ml-based-bot-detection', component: MLBasedBotDetection },
-  { path: '/threshold-based-detection', component: ThresholdBasedDetection },
-
-  { path: '/api-requests', component: ApiRequests },
-  { path: '/ml-based-api-protection', component: MLBasedAPIProtection },
-
-  { path: '/create-new-application-policy', component: CreateNewApplicationPolicy },
-  { path: '/delete-application-policy', component: DeleteApplicationPolicy },
-
-  { path: '/configuration', component: AppConfiguration },
-  { path: '/health-check', component: HealthCheck },
-
-];
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-});
-
-export default router;
-====================
-File content of vue/src/main.js
-import { createApp } from 'vue' // Import the createApp function from the Vue framework
-import App from './App.vue' // Import the root component App from the current directory
-import router from './router'; // Import the router configuration from the router directory
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS for styling
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Import Bootstrap JavaScript for interactivity (includes Popper.js)
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import './assets/styles/global.css'; // Import global CSS styles from the assets directory
-
-const app = createApp(App); // Create a new Vue application instance with the root component App
-app.use(router); // Use the Vue Router for handling navigation within the app
-app.mount('#app'); // Mount the Vue application to the DOM element with the id 'app'====================
-./go/main.go
-./go/utils/ip_generator.go
-./go/routes/routes.go
-./go/handlers/webScanHandler.go
-./go/handlers/webAttacksHandler.go
-./go/handlers/webTrafficHandler.go
-====================
-File content of ./go/main.go
-package main
-
-import (
-	"darwin2/routes"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-)
-
-func main() {
-	// Create a new Echo instance
-	e := echo.New()
-
-	// Middleware
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "${method}, ${uri}, ${status}\n",
-	}))
-	e.Use(middleware.Recover())
-    e.Use(middleware.CORS())
-
-    // Routes
-    routes.Configure(e)
-
-	// Démarrer le serveur sur le port 8080
-	e.Logger.Fatal(e.Start(":8080"))
-}
-====================
-File content of ./go/utils/ip_generator.go
-package utils
-
-import (
-	"math/rand"
-	"net"
-)
-
-func GenerateRandomPublicIP() string {
-
-	for {
-		ip := net.IPv4(
-			byte(rand.Intn(256)),
-			byte(rand.Intn(256)),
-			byte(rand.Intn(256)),
-			byte(rand.Intn(256)),
-		)
-
-		if isPublicIP(ip) {
-			return ip.String()
-		}
-	}
-}
-
-func isPublicIP(ip net.IP) bool {
-	// Check if the IP is private, loopback, multicast, link-local, or in reserved ranges
-	if ip.IsPrivate() || ip.IsLoopback() || ip.IsMulticast() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast() {
-		return false
-	}
-
-	// Check for specific reserved ranges
-	reservedRanges := []string{
-		"0.0.0.0/8",       // Current network (only valid as source address)
-		"10.0.0.0/8",      // Private network
-		"100.64.0.0/10",   // Shared Address Space
-		"127.0.0.0/8",     // Loopback
-		"169.254.0.0/16",  // Link Local
-		"172.16.0.0/12",   // Private network
-		"192.0.0.0/24",    // IETF Protocol Assignments
-		"192.0.2.0/24",    // TEST-NET-1, documentation and examples
-		"192.88.99.0/24",  // 6to4 Relay Anycast
-		"192.168.0.0/16",  // Private network
-		"198.18.0.0/15",   // Network benchmark tests
-		"198.51.100.0/24", // TEST-NET-2, documentation and examples
-		"203.0.113.0/24",  // TEST-NET-3, documentation and examples
-		"224.0.0.0/4",     // IP multicast (former Class D network)
-		"240.0.0.0/4",     // Reserved (former Class E network)
-	}
-
-    for _, cidr := range reservedRanges {
-        _, reservedNet, _ := net.ParseCIDR(cidr)
-        if reservedNet.Contains(ip) {
-            return false
-        }
-    }
-
-	return true
-}
-====================
-File content of ./go/routes/routes.go
-package routes
-
-import (
-    "darwin2/handlers"
-    "github.com/labstack/echo/v4"
-)
-
-func Configure(e *echo.Echo) {
-    e.POST("/web-scan", handlers.HandleWebScan)
-    e.POST("/web-attacks", handlers.HandleWebAttacks)
-    e.POST("/traffic-generation", handlers.HandleTrafficGenerator)
-}
-====================
-File content of ./go/handlers/webScanHandler.go
-package handlers
-
-import (
-	//"fmt"
-	"darwin2/utils"
-	"github.com/labstack/echo/v4"
-	"os/exec"
-)
-
-type RequestData struct {
-	SelectedOption string `json:"selectedOption"`
-}
-
-func HandleWebScan(c echo.Context) error {
-	_, err := exec.LookPath("nikto")
-	if err != nil {
-		return c.String(200, "Nikto is not installed on your system")
-	}
-
-	var requestData RequestData
-	if err := c.Bind(&requestData); err != nil {
-		return echo.NewHTTPError(400, "Invalid data")
-	}
-
-	randomIP := utils.GenerateRandomPublicIP()
-
-	// Construct the command
-	cmd := exec.Command(
-		"nikto",
-		"-host", "192.168.4.40",
-		"-ask", "no",
-		"-followredirects",
-		"-maxtime", "60s",
-		"-nointeractive",
-		"-no404",
-		"-timeout", "2",
-		"-useragent", "Nikto\r\nX-Forwarded-For: "+randomIP,
-		"-T", requestData.SelectedOption)
-
-	//cmd.Dir = "/tmp" // Set the working directory to /tmp
-
-	// Debug print of the command
-	//fmt.Printf("Executing command: %v\n", cmd)
-
-	// Execute the command and get its output
-	output, _ := cmd.CombinedOutput()
-
-	// Return the command output to the client
-	return c.String(200, string(output))
-}
-====================
-File content of ./go/handlers/webAttacksHandler.go
-package handlers
-
-import (
-    "github.com/labstack/echo/v4"
-)
-
-func HandleWebAttacks(c echo.Context) error {
-    // Logique pour Web Attacks
-    return c.String(200, "Web Attacks handled")
-}
-====================
-File content of ./go/handlers/webTrafficHandler.go
-package handlers
-
-import (
-	"fmt"
-	"darwin2/utils"
-	"github.com/labstack/echo/v4"
-	"math/rand"
-	"os/exec"
-	"strings"
-)
-
-func HandleTrafficGenerator(c echo.Context) error {
-	// Check if nikto is installed
-	_, err := exec.LookPath("nikto")
-	if err != nil {
-		fmt.Println("Debug: Nikto is not installed on the system.")
-		return c.String(200, "Nikto is not installed on your system")
-	}
-
-	const loopCount = 2 // Number of iterations for each loop
-
-	var summary strings.Builder
-	summary.WriteString(fmt.Sprintf("Traffic Generator executed %d rounds of attacks:\n", loopCount))
-
-	for i := 0; i < loopCount; i++ {
-		randomIP := utils.GenerateRandomPublicIP()
-		randomTuning := generateRandomTuning()
-
-		fmt.Printf("Debug: Generating attack #%d with IP: %s and Tuning: %s\n", i+1, randomIP, randomTuning)
-
-		// Construct the nikto command
-		cmd := exec.Command(
-			"nikto",
-			"-host", "192.168.4.40",
-			"-ask", "no",
-			"-followredirects",
-			"-maxtime", "60s",
-			"-nointeractive",
-			"-no404",
-			"-timeout", "2",
-			"-useragent", "Nikto\r\nX-Forwarded-For: "+randomIP,
-			"-T", randomTuning,
-		)
-
-		// Execute the nikto command
-		output, err := cmd.CombinedOutput()
-		if err != nil {
-			fmt.Printf("Debug: Error encountered during execution: %s\n", err)
-			summary.WriteString(fmt.Sprintf("Error executing nikto command for IP %s with tuning %s\n", randomIP, randomTuning))
-		} else {
-			fmt.Printf("Debug: Successfully executed command. Output: %s\n", string(output))
-			summary.WriteString(fmt.Sprintf("Executed nikto command for IP %s with tuning %s\n", randomIP, randomTuning))
-		}
-	}
-
-	// Return the summary of actions
-	fmt.Println("Debug: Returning summary to client.")
-	return c.String(200, summary.String())
-}
-
-func generateRandomTuning() string {
-	tuningOptions := "0123456789abcde"
-	return string(tuningOptions[rand.Intn(len(tuningOptions))])
-}
-====================
+========================================================

@@ -13,34 +13,33 @@
           <span>{{ isLoading ? 'Generating...' : 'Generate Traffic' }}</span>
         </button>
 
-        <button class="btn btn-secondary btn-sm ms-2" @click="resetTraffic">
+        <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">
           Reset
         </button>
       </div>
 
-      <div v-if="trafficResult" class="mt-3">
+      <div v-if="jobResult" class="mt-3">
         <h6>Traffic Result:</h6>
         <pre class="code-block"><code v-html="highlightedCode"></code></pre>
       </div>
     </div>
-    </div>
+  </div>
 
-    <!-- Help Card -->
-    <div v-if="showHelp" class="card bg-light mb-3">
-      <div class="card-header">
-        <h5>About Traffic Generation</h5>
-      </div>
-      <div class="card-body">
-        <p>The Traffic Generator creates simulated cyber attacks using random public IP addresses.</p>
-        <p>Utilizing Nikto for dynamic attack scenarios, it generates traffic to enhance FortiWeb logs, enriching
-          FortiView
-          analysis.</p>
-        <p>Each attack, with its varied nature and random tuning options, mimics real-world patterns, aiding in robust
-          defense
-          evaluation and vulnerability identification.</p>
-
-      </div>
+  <!-- Help Card -->
+  <div v-if="showHelp" class="card bg-light mb-3">
+    <div class="card-header">
+      <h5>About Traffic Generation</h5>
     </div>
+    <div class="card-body">
+      <ul>
+        <li>The Traffic Generator simulates cyber attacks using randomly generated public IP addresses.</li>
+        <li>Nikto is utilized by the Traffic Generator to generate random attacks.</li>
+        <li>Launch the Traffic Generator before a demonstration to populate FortiWeb logs and FortiView dashboards.</li>
+      </ul>
+
+
+    </div>
+  </div>
 </template>
 
 <script>
@@ -51,13 +50,13 @@ export default {
   data() {
     return {
       isLoading: false,
-      trafficResult: '',
+      jobResult: '',
       showHelp: false,
       highlightedCode: "",
     };
   },
   watch: {
-    trafficResult(newVal) {
+    jobResult(newVal) {
       if (newVal) {
         this.highlightedCode = hljs.highlightAuto(newVal).value;
       }
@@ -67,7 +66,7 @@ export default {
     generateTraffic() {
       console.log('Starting traffic generation...');
       this.isLoading = true;
-      this.trafficResult = ''; // Reset traffic result
+      this.jobResult = ''; // Reset windows result
 
       // Make HTTP POST request to the server
       fetch("http://localhost:8080/traffic-generation", {
@@ -86,18 +85,18 @@ export default {
         })
         .then(data => {
           console.log('Traffic generation successful:', data);
-          this.trafficResult = data;
+          this.jobResult = data;
           this.isLoading = false;
         })
         .catch(error => {
           console.error('Error during fetch operation:', error);
-          this.trafficResult = 'Error: Unable to generate traffic.';
+          this.jobResult = 'Error: Unable to generate traffic.';
           this.isLoading = false;
         });
     },
-    resetTraffic() {
-      console.log('Resetting traffic result');
-      this.trafficResult = '';
+    resetResult() {
+      console.log('Resetting Result');
+      this.jobResult = '';
     },
   },
 };
