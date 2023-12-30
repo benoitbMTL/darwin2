@@ -8,11 +8,10 @@ rm -f "$output_file"
 
 # List of files to process
 files=(
-    "go/config/app_config.go"
-    "go/config/attack_config.go"
-    "go/config/dvwa_credentials.go"
-    "go/handlers/webAttacksHandler.go"
-    "vue/src/components/01-web-protection/WebAttacks.vue"
+"vue/src/App.vue"
+vue/src/router/index.js
+vue/src/components/NavBar.vue
+vue/src/components/HomePage.vue
 )
 
 # Loop through the files and append their content to conf.txt

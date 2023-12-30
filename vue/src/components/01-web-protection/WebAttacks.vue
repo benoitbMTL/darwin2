@@ -39,7 +39,8 @@
       </div>
 
       <div v-if="jobResult" class="mt-4">
-        <iframe ref="attackIframe" :srcdoc="jobResult" @load="adjustIframeHeight"
+      <h6>{{ currentAttackName }} Result:</h6>
+          <iframe ref="attackIframe" :srcdoc="jobResult" @load="adjustIframeHeight"
           style="width: 100%; border: 1px solid lightgray;"></iframe>
       </div>
 
@@ -105,18 +106,23 @@ export default {
   },
   methods: {
     performCommandInjection() {
+      this.currentAttackName = 'Command Injection';
       this.sendAttackRequest("command_injection");
     },
     performSQLInjection() {
+      this.currentAttackName = 'SQL Injection';
       this.sendAttackRequest("sql_injection");
     },
     performCrossSiteScripting() {
+      this.currentAttackName = 'Cross-site Scripting';
       this.sendAttackRequest("xss");
     },
     performZeroDayCommandInjection() {
+      this.currentAttackName = 'Zero Day Command Injection';
       this.sendAttackRequest("zero_day_sql_injection");
     },
     performZeroDayCrossSiteScripting() {
+      this.currentAttackName = 'Zero Day Cross-site Scripting';
       this.sendAttackRequest("zero_day_command_injection");
     },
     sendAttackRequest(attackType) {

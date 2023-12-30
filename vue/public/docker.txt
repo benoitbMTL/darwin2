@@ -1,0 +1,5 @@
+docker run -d --restart unless-stopped --name web-dvwa     -p 1000:80     vulnerables/web-dvwa
+docker run -d --restart unless-stopped --name demo-web-app -p 2000:80     -e HOST_MACHINE_NAME=$(hostname) benoitbmtl/demo-web-app 
+docker run -d --restart unless-stopped --name juice-shop   -p 3000:3000   bkimminich/juice-shop
+docker run -d --restart unless-stopped --name petstore3    -p 4000:8080   swaggerapi/petstore3
+docker run -d --restart unless-stopped --name speedtest    -p 5000:80     adolfintel/speedtest

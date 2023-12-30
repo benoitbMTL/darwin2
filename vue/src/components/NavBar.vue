@@ -1,10 +1,11 @@
 <template>
   <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
     <div class="container">
-      <span class="navbar-brand mb-0 h1">
+      <router-link to="/" class="navbar-brand mb-0 h1">
         <img src="../assets/logo-fortiweb-white.svg" alt="FortiWeb Logo" height="30" class="me-2" />
         FortiWeb Demo Tool
-      </span>
+      </router-link>
+
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -81,8 +82,10 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="systemDropdown">
               <li><router-link class="dropdown-item" to="/configuration">Configuration</router-link></li>
-              <li><router-link class="dropdown-item" to="/health-check">Health Check</router-link></li>
-            </ul>
+                <li><router-link class="dropdown-item" to="/health-check">Health Check</router-link></li>
+                  <li><router-link class="dropdown-item" to="/app-docker">App Docker</router-link></li>
+                  <li><router-link class="dropdown-item" to="/bootstrap">FortiWeb Bootstrap</router-link></li>
+                </ul>
           </li>
         </ul>
       </div>

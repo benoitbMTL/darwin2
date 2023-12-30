@@ -12,6 +12,7 @@ func Configure(e *echo.Echo) {
     e.POST("/web-scan", handlers.HandleWebScan)
     e.POST("/web-attacks", handlers.HandleWebAttacks)
     e.POST("/traffic-generation", handlers.HandleTrafficGenerator)
+    e.POST("/machine-learning", handlers.HandleMachineLearning)
 
 
     // Bot Mitigation

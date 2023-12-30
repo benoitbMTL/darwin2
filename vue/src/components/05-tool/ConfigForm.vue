@@ -53,12 +53,12 @@
                     <input type="text" class="form-control" id="dvwaHost" v-model="config.DVWAHOST">
                 </div>
                 <div class="mb-3">
-                    <label for="shopUrl" class="form-label">Shop URL</label>
-                    <input type="text" class="form-control" id="shopUrl" v-model="config.SHOPURL">
+                    <label for="juiceShopUrl" class="form-label">Juice Shop URL</label>
+                    <input type="text" class="form-control" id="juiceShopUrl" v-model="config.JUICESHOPURL">
                 </div>
                 <div class="mb-3">
-                    <label for="appUrl" class="form-label">App URL</label>
-                    <input type="text" class="form-control" id="appUrl" v-model="config.APPURL">
+                    <label for="bankUrl" class="form-label">Bank URL</label>
+                    <input type="text" class="form-control" id="bankUrl" v-model="config.BANKURL">
                 </div>
                 <div class="mb-3">
                     <label for="speedtestUrl" class="form-label">Speedtest URL</label>
@@ -119,8 +119,8 @@ export default {
             config: {
                 DVWAURL: '',
                 DVWAHOST: '',
-                SHOPURL: '',
-                APPURL: '',
+                JUICESHOPURL: '',
+                BANKURL: '',
                 SPEEDTESTURL: '',
                 PETSTOREURL: '',
                 USERNAMEAPI: '',

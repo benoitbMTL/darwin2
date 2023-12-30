@@ -1,11 +1,27 @@
-import { createApp } from 'vue' // Import the createApp function from the Vue framework
-import App from './App.vue' // Import the root component App from the current directory
-import router from './router'; // Import the router configuration from the router directory
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS for styling
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Import Bootstrap JavaScript for interactivity (includes Popper.js)
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import './assets/styles/global.css'; // Import global CSS styles from the assets directory
+import { createApp } from 'vue'; // Vue 3 import
+import App from './App.vue';
+import router from './router';
 
-const app = createApp(App); // Create a new Vue application instance with the root component App
-app.use(router); // Use the Vue Router for handling navigation within the app
-app.mount('#app'); // Mount the Vue application to the DOM element with the id 'app'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+// Import the necessary icons from FontAwesome
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faGithub } from '@fortawesome/free-brands-svg-icons/faGithub'; // Correct import for GitHub
+import { faDocker } from '@fortawesome/free-brands-svg-icons/faDocker'; // Correct import for Docker
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+// Add the imported icons to the library
+library.add(faGithub, faDocker);
+
+import './assets/styles/global.css';
+
+const app = createApp(App); // Create the app using Vue 3 syntax
+
+// Register the FontAwesomeIcon component globally
+app.component('font-awesome-icon', FontAwesomeIcon);
+
+app.use(router); // Use the router
+
+app.mount('#app'); // Mount the app to the DOM

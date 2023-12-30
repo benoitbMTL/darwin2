@@ -1,17 +1,18 @@
 package config
 
 import (
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"sync"
+
+	"github.com/labstack/echo/v4"
 )
 
 // AppConfig defines the structure for your application configuration
 type AppConfig struct {
 	DVWAURL      string
 	DVWAHOST     string
-	SHOPURL      string
-	APPURL       string
+	JUICESHOPURL string
+	BANKURL      string
 	SPEEDTESTURL string
 	PETSTOREURL  string
 	USERNAMEAPI  string
@@ -37,10 +38,10 @@ func Initialize() {
 	defer configMutex.Unlock()
 
 	DefaultConfig = AppConfig{
-		DVWAURL:      "https://192.168.4.10",
-		DVWAHOST:     "192.168.4.10",
-		SHOPURL:      "https://shop.corp.fabriclab.ca",
-		APPURL:       "https://app.corp.fabriclab.ca/",
+		DVWAURL:      "https://dvwa.corp.fabriclab.ca",
+		DVWAHOST:     "dvwa.corp.fabriclab.ca",
+		JUICESHOPURL: "https://juiceshop.corp.fabriclab.ca",
+		BANKURL:      "https://bank.corp.fabriclab.ca/bank.html",
 		SPEEDTESTURL: "https://speedtest.corp.fabriclab.ca",
 		PETSTOREURL:  "https://petstore.corp.fabriclab.ca/api/v3/pet",
 		USERNAMEAPI:  "userapi",

@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 // Import components from each folder
+import HomePage from '../components/HomePage.vue';
+
 import WebScan from '../components/01-web-protection/WebScan.vue';
 import TrafficGeneration from '../components/01-web-protection/TrafficGeneration.vue';
 import WebAttacks from '../components/01-web-protection/WebAttacks.vue';
@@ -22,8 +24,12 @@ import DeleteApplicationPolicy from '../components/04-rest-api/DeleteApplication
 
 import ConfigForm from '../components/05-tool/ConfigForm.vue';
 import HealthCheck from '../components/05-tool/HealthCheck.vue';
+import AppDocker from '../components/05-tool/AppDocker.vue';
+import FortiWebBootstrap from '../components/05-tool/FortiWebBootstrap.vue';
 
 const routes = [
+  { path: '/', component: HomePage },
+
   { path: '/web-scan', component: WebScan },
   { path: '/traffic-generation', component: TrafficGeneration },
   { path: '/web-attacks', component: WebAttacks },
@@ -45,6 +51,8 @@ const routes = [
 
   { path: '/configuration', component: ConfigForm },
   { path: '/health-check', component: HealthCheck },
+  { path: '/app-docker', component: AppDocker },
+  { path: '/bootstrap', component: FortiWebBootstrap },
 
 ];
 

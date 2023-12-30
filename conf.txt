@@ -1,373 +1,276 @@
 ========================================================
-File content of go/config/app_config.go
-========================================================
-package config
-
-import (
-	"github.com/labstack/echo/v4"
-	"net/http"
-	"sync"
-)
-
-// AppConfig defines the structure for your application configuration
-type AppConfig struct {
-	DVWAURL      string
-	DVWAHOST     string
-	SHOPURL      string
-	APPURL       string
-	SPEEDTESTURL string
-	PETSTOREURL  string
-	USERNAMEAPI  string
-	PASSWORDAPI  string
-	VDOMAPI      string
-	FWBMGTIP     string
-	MLPOLICY     string
-	USERAGENT    string
-}
-
-var (
-	// CurrentConfig holds the current application configuration
-	CurrentConfig AppConfig
-	DefaultConfig AppConfig
-
-	// configMutex is used to handle concurrent access to the configuration
-	configMutex sync.RWMutex
-)
-
-// Initialize sets up the default values for the application configuration
-func Initialize() {
-	configMutex.Lock()
-	defer configMutex.Unlock()
-
-	DefaultConfig = AppConfig{
-		DVWAURL:      "https://192.168.4.40",
-		DVWAHOST:     "192.168.4.40",
-		SHOPURL:      "https://shop.corp.fabriclab.ca",
-		APPURL:       "https://app.corp.fabriclab.ca/",
-		SPEEDTESTURL: "https://speedtest.corp.fabriclab.ca",
-		PETSTOREURL:  "https://petstore.corp.fabriclab.ca/api/v3/pet",
-		USERNAMEAPI:  "userapi",
-		PASSWORDAPI:  "userAPI123!",
-		VDOMAPI:      "root",
-		FWBMGTIP:     "192.168.4.100",
-		MLPOLICY:     "DVWA_POLICY",
-		USERAGENT:    "FortiWeb Demo Tool",
-	}
-
-	CurrentConfig = DefaultConfig
-}
-
-// GetConfig handles the GET request for the current configuration
-func GetConfig(c echo.Context) error {
-	configMutex.RLock()
-	defer configMutex.RUnlock()
-	return c.JSON(http.StatusOK, CurrentConfig)
-}
-
-// UpdateConfig handles the POST request to update the configuration
-func UpdateConfig(c echo.Context) error {
-	var newConfig AppConfig
-	if err := c.Bind(&newConfig); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-
-	configMutex.Lock()
-	defer configMutex.Unlock()
-	CurrentConfig = newConfig
-	return c.JSON(http.StatusOK, newConfig)
-}
-
-// ResetConfig handles the GET request to reset the configuration
-func ResetConfig(c echo.Context) error {
-	configMutex.Lock()
-	defer configMutex.Unlock()
-	CurrentConfig = DefaultConfig
-	return c.JSON(http.StatusOK, CurrentConfig)
-}
-
-========================================================
-File content of go/config/attack_config.go
-========================================================
-package config
-
-// AttackConfig holds the configuration details for each attack type
-type AttackConfig struct {
-    Method   string // GET or POST
-    URL      string
-    PostData string // Data for POST requests
-}
-
-// AttackConfigs maps attack types to their configurations
-var AttackConfigs = map[string]AttackConfig{
-    "command_injection": {
-        Method:   "POST",
-        URL:      CurrentConfig.DVWAURL + "/vulnerabilities/exec/",
-        PostData: "ip=%3Bmore+%2Fetc%2Fpasswd&Submit=Submit",
-    },
-    "sql_injection": {
-        Method: "GET",
-        URL:    CurrentConfig.DVWAURL + "/vulnerabilities/sqli/?id=%27OR+1%3D1%23&Submit=Submit",
-    },
-    "xss": {
-        Method: "GET",
-        URL:    CurrentConfig.DVWAURL + "/vulnerabilities/xss_r/?name=%3Cscript%3Ealert%28%22XSS-hack-attempt%22%29%3C%2Fscript%3E",
-    },
-    "zero_day_sql_injection": {
-        Method: "GET",
-        URL:    CurrentConfig.DVWAURL + "/vulnerabilities/sqli/?id=A%20'DIV'%20B%20-%20A%20'DIV%20B&Submit=Submit",
-    },
-    "zero_day_command_injection": {
-        Method:   "POST",
-        URL:      CurrentConfig.DVWAURL + "/vulnerabilities/exec/",
-        PostData: "/%3F%3F%3F/1%3F - /???/1?&Submit=Submit",
-    },
-}
-
-
-// GetAttackConfig returns the configuration for the given attack type
-func GetAttackConfig(attackType string) (AttackConfig, bool) {
-    config, exists := AttackConfigs[attackType]
-    return config, exists
-}
-
-========================================================
-File content of go/config/dvwa_credentials.go
-========================================================
-package config
-
-// DVWA Credentials
-var dvwaUserCredentials = map[string]string{
-	"admin":                          "password",
-	"gordonb":                        "abc123",
-	"1337":                           "charley",
-	"pablo":                          "letmein",
-	"smithy":                         "password",
-	"pklangdon4@msn.com":             "ppl11266",
-	"muldersstan@gmail.com":          "renzo1205",
-	"forsternp2@aol.com":             "freedom1",
-	"cragsy@msn.com":                 "Snatch01",
-	"bjrehdorf@hotmail.com":          "Apollo25504",
-	"baz2709@icloud.com":             "sophie12",
-	"amysiura@ymail.com":             "active95",
-	"jond714@gmail.com":              "jonloveslax",
-	"josefahorenstein87@hotmail.com": "qel737Xf3",
-	"bizotic6@gmail.com":             "snaker26"}
-
-// GetDVWAPassword returns the password for a given DVWA user
-func GetDVWAPassword(username string) string {
-	return dvwaUserCredentials[username]
-}
-
-========================================================
-File content of go/handlers/webAttacksHandler.go
-========================================================
-package handlers
-
-import (
-	"darwin2/config"
-	"fmt"
-	"github.com/labstack/echo/v4"
-	"io"
-	"net/http"
-	"net/url"
-	"strings"
-)
-
-// HandleWebAttacks decides which attack to perform based on the request
-func HandleWebAttacks(c echo.Context) error {
-	attackType := c.FormValue("type")
-	username := c.FormValue("username")
-	password := "passwordForUser" // Replace with logic to get password for the user
-
-	// Print values to console
-	fmt.Printf("Attack Type: %s\n", attackType)
-	fmt.Printf("Username: %s\n", username)
-	fmt.Printf("Password: %s\n", password)
-
-	return performAttack(c, attackType, username, password)
-}
-
-func performAttack(c echo.Context, attackType, username, password string) error {
-	// Authenticate and get session cookie
-	sessionCookie, err := authenticateUser(username, password)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "Authentication failed: "+err.Error())
-	}
-
-	// Get attack configuration
-	attackConfig, exists := config.GetAttackConfig(attackType)
-	if !exists {
-		return c.String(http.StatusBadRequest, "Invalid attack type")
-	}
-
-	// Craft the request for the attack
-	var req *http.Request
-	if attackConfig.Method == "POST" {
-		req, err = http.NewRequest(attackConfig.Method, attackConfig.URL, strings.NewReader(attackConfig.PostData))
-	} else {
-		req, err = http.NewRequest(attackConfig.Method, attackConfig.URL, nil)
-	}
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "Failed to create request: "+err.Error())
-	}
-
-	// Add session cookie to request
-	req.AddCookie(sessionCookie)
-
-	// Set necessary headers for the attack
-	req.Header.Set("User-Agent", "FortiWeb Demo Script")
-
-	// Perform the attack request
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "Attack request failed: "+err.Error())
-	}
-	defer resp.Body.Close()
-
-	// Read the response body
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "Failed to read response body: "+err.Error())
-	}
-
-	// Return the response from the attack
-	return c.String(http.StatusOK, string(body))
-}
-
-// authenticate performs login to the web application and returns the session cookie
-func authenticateUser(username, password string) (*http.Cookie, error) {
-	loginURL := config.CurrentConfig.DVWAURL + "/login.php"
-
-	// Prepare the data for the POST request
-	formData := url.Values{}
-	formData.Set("username", username)
-	formData.Set("password", password)
-	formData.Set("Login", "Login")
-
-	// Create the request
-	req, err := http.NewRequest("POST", loginURL, strings.NewReader(formData.Encode()))
-	if err != nil {
-		return nil, err
-	}
-
-	// Set necessary headers
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("User-Agent", "FortiWeb Demo Script")
-
-	// Perform the request
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	// Find and return the session cookie
-	for _, cookie := range resp.Cookies() {
-		if cookie.Name == "sessionCookieName" { // Replace with actual session cookie name
-			return cookie, nil
-		}
-	}
-
-	return nil, fmt.Errorf("session cookie not found")
-}
-
-========================================================
-File content of vue/src/components/01-web-protection/WebAttacks.vue
+File content of vue/src/App.vue
 ========================================================
 <template>
-  <div class="card my-4">
-    <h5 class="card-header">Web Attacks</h5>
-    <div class="card-body">
-      <p class="card-text">
-        Select a user from the list and generate an attack scenario.
-      </p>
+  <div id="app" class="container mt-5">
+    <NavBar />
+    <router-view></router-view> <!-- Vue Router will render the component here based on the current route -->
+  </div>
+</template>
 
-      <div class="d-flex align-items-center mb-3">
-        <select class="form-select form-select-sm me-2" v-model="selectedUser" style="width: 250px">
-          <option value="admin">admin</option>
-          <option value="gordonb">gordonb</option>
-          <option value="1337">1337</option>
-          <option value="pablo">pablo</option>
-          <option value="smithy">smithy</option>
-        </select>
+<script>
+import NavBar from "./components/NavBar.vue";
 
-        <button class="btn btn-primary btn-sm me-2" @click="performCommandInjection">
-          Command Injection
-        </button>
-        <button class="btn btn-primary btn-sm me-2" @click="performSQLInjection">
-          SQL Injection
-        </button>
-        <button class="btn btn-primary btn-sm me-2" @click="performCrossSiteScripting">
-          Cross-site Scripting
-        </button>
-        <button class="btn btn-warning btn-sm me-2" @click="performZeroDayCommandInjection">
-          Zero Day Command Injection
-        </button>
-        <button class="btn btn-warning btn-sm me-2" @click="performZeroDayCrossSiteScripting">
-          Zero Day Cross-site Scripting
-        </button>
-        <button class="btn btn-secondary btn-sm" @click="resetGenericAttack">
-          Reset
-        </button>
+
+export default {
+  components: {
+    NavBar,
+  },
+};
+</script>
+
+<style></style>
+
+========================================================
+File content of vue/src/router/index.js
+========================================================
+import { createRouter, createWebHistory } from 'vue-router';
+
+// Import components from each folder
+import HomePage from '../components/HomePage.vue';
+
+import WebScan from '../components/01-web-protection/WebScan.vue';
+import TrafficGeneration from '../components/01-web-protection/TrafficGeneration.vue';
+import WebAttacks from '../components/01-web-protection/WebAttacks.vue';
+import MachineLearning from '../components/01-web-protection/MachineLearning.vue';
+import CookieSecurity from '../components/01-web-protection/CookieSecurity.vue';
+import CredentialStuffingDefense from '../components/01-web-protection/CredentialStuffingDefense.vue';
+
+import BiometricsBasedDetection from '../components/02-bot-mitigation/BiometricsBasedDetection.vue';
+import BotDeception from '../components/02-bot-mitigation/BotDeception.vue';
+import KnownBots from '../components/02-bot-mitigation/KnownBots.vue';
+import MLBasedBotDetection from '../components/02-bot-mitigation/MLBasedBotDetection.vue';
+import ThresholdBasedDetection from '../components/02-bot-mitigation/ThresholdBasedDetection.vue';
+
+import ApiRequests from '../components/03-api-protection/ApiRequests.vue';
+import MLBasedAPIProtection from '../components/03-api-protection/MLBasedAPIProtection.vue';
+
+import CreateNewApplicationPolicy from '../components/04-rest-api/CreateNewApplicationPolicy.vue';
+import DeleteApplicationPolicy from '../components/04-rest-api/DeleteApplicationPolicy.vue';
+
+import ConfigForm from '../components/05-tool/ConfigForm.vue';
+import HealthCheck from '../components/05-tool/HealthCheck.vue';
+
+const routes = [
+  { path: '/', component: HomePage },
+
+  { path: '/web-scan', component: WebScan },
+  { path: '/traffic-generation', component: TrafficGeneration },
+  { path: '/web-attacks', component: WebAttacks },
+  { path: '/machine-learning', component: MachineLearning },
+  { path: '/cookie-security', component: CookieSecurity },
+  { path: '/credential-stuffing-defense', component: CredentialStuffingDefense },
+
+  { path: '/biometrics-based-detection', component: BiometricsBasedDetection },
+  { path: '/bot-deception', component: BotDeception },
+  { path: '/known-bots', component: KnownBots },
+  { path: '/ml-based-bot-detection', component: MLBasedBotDetection },
+  { path: '/threshold-based-detection', component: ThresholdBasedDetection },
+
+  { path: '/api-requests', component: ApiRequests },
+  { path: '/ml-based-api-protection', component: MLBasedAPIProtection },
+
+  { path: '/create-new-application-policy', component: CreateNewApplicationPolicy },
+  { path: '/delete-application-policy', component: DeleteApplicationPolicy },
+
+  { path: '/configuration', component: ConfigForm },
+  { path: '/health-check', component: HealthCheck },
+
+];
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+export default router;
+
+========================================================
+File content of vue/src/components/NavBar.vue
+========================================================
+<template>
+  <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <div class="container">
+      <router-link to="/" class="navbar-brand mb-0 h1">
+        <img src="../assets/logo-fortiweb-white.svg" alt="FortiWeb Logo" height="30" class="me-2" />
+        FortiWeb Demo Tool
+      </router-link>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <!-- Web Protection Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="webProtectionDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Web Protection
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="webProtectionDropdown">
+              <li><router-link class="dropdown-item" to="/web-scan">Web Scan</router-link></li>
+              <li><router-link class="dropdown-item" to="/traffic-generation">Traffic Generation</router-link></li>
+              <li><router-link class="dropdown-item" to="/web-attacks">Web Attacks</router-link></li>
+              <li><router-link class="dropdown-item" to="/machine-learning">Machine Learning</router-link></li>
+              <li><router-link class="dropdown-item" to="/cookie-security">Cookie Security</router-link></li>
+              <li><router-link class="dropdown-item" to="/credential-stuffing-defense">Credential Stuffing
+                  Defense</router-link></li>
+            </ul>
+          </li>
+
+          <!-- Bot Mitigation Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="botMitigationDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Bot Mitigation
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="botMitigationDropdown">
+              <li><router-link class="dropdown-item" to="/known-bots">Known Bots</router-link></li>
+              <li><router-link class="dropdown-item" to="/biometrics-based-detection">Biometrics Based
+                  Detection</router-link></li>
+              <li><router-link class="dropdown-item" to="/bot-deception">Bot Deception</router-link></li>
+              <li><router-link class="dropdown-item" to="/threshold-based-detection">Threshold Based
+                  Detection</router-link></li>
+              <li><router-link class="dropdown-item" to="/ml-based-bot-detection">ML Based Bot Detection</router-link>
+              </li>
+            </ul>
+          </li>
+
+          <!-- API Protection Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="apiProtectionDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              API Protection
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="apiProtectionDropdown">
+              <li><router-link class="dropdown-item" to="/api-requests">API Requests</router-link></li>
+              <li><router-link class="dropdown-item" to="/ml-based-api-protection">ML Based API Protection</router-link>
+              </li>
+            </ul>
+          </li>
+
+          <!-- REST API Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="restApiDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              REST API
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="restApiDropdown">
+              <li><router-link class="dropdown-item" to="/create-new-application-policy">Create New Application
+                  Policy</router-link></li>
+              <li><router-link class="dropdown-item" to="/delete-application-policy">Delete Application
+                  Policy</router-link></li>
+            </ul>
+          </li>
+
+          <!-- System Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="systemDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              System
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="systemDropdown">
+              <li><router-link class="dropdown-item" to="/configuration">Configuration</router-link></li>
+              <li><router-link class="dropdown-item" to="/health-check">Health Check</router-link></li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
-  </div>
-  <iframe v-html="attackResult" v-if="attackResult"></iframe>
+  </nav>
+
+  <div class="pt-3"></div>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      selectedUser: "admin",
-      attackResult: '', // HTML content received from the server
+      currentSection: null,
     };
   },
-  methods: {
-    performCommandInjection() {
-      this.sendAttackRequest("command_injection");
-    },
-    performSQLInjection() {
-      this.sendAttackRequest("sql_injection");
-    },
-    performCrossSiteScripting() {
-      this.sendAttackRequest("xss");
-    },
-    performZeroDayCommandInjection() {
-      this.sendAttackRequest("zero_day_sql_injection");
-    },
-    performZeroDayCrossSiteScripting() {
-      this.sendAttackRequest("zero_day_command_injection");
-    },
-    sendAttackRequest(attackType) {
-      const url = 'http://localhost:8080/web-attacks';
-      const formData = new URLSearchParams();
-      formData.append('type', attackType);
-      formData.append('username', this.selectedUser);
-
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData
-      })
-        .then(response => response.text())
-        .then(html => {
-          this.attackResult = html;
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          this.attackResult = 'Failed to perform attack';
-        });
-    },
-  }
 };
 </script>
 
+========================================================
+File content of vue/src/components/HomePage.vue
+========================================================
+<template>
+    <div>
+
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="Web Protection Image">
+            <div class="card-body">
+                <h5 class="card-title">Web Protection</h5>
+                <p class="card-text">
+                    <a href="/web-scan">Web Scan</a><br>
+                    <a href="/traffic-generation">Traffic Generation</a><br>
+                    <a href="/web-attacks">Web Attacks</a><br>
+                    <a href="/machine-learning">Machine Learning</a><br>
+                    <a href="/cookie-security">Cookie Security</a><br>
+                    <a href="/credential-stuffing-defense">Credential Stuffing Defense</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="Bot Mitigation Image">
+            <div class="card-body">
+                <h5 class="card-title">Bot Mitigation</h5>
+                <p class="card-text">
+                    <a href="/known-bots">Known Bots</a><br>
+                    <a href="/biometrics-based-detection">Biometrics Based Detection</a><br>
+                    <a href="/bot-deception">Bot Deception</a><br>
+                    <a href="/threshold-based-detection">Threshold Based Detection</a><br>
+                    <a href="/ml-based-bot-detection">ML Based Bot Detection</a>
+                </p>
+            </div>
+        </div>
+
+
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="Bot Mitigation Image">
+            <div class="card-body">
+                <h5 class="card-title">Bot Mitigation</h5>
+                <p class="card-text">
+                    <a href="/known-bots">Known Bots</a><br>
+                    <a href="/biometrics-based-detection">Biometrics Based Detection</a><br>
+                    <a href="/bot-deception">Bot Deception</a><br>
+                    <a href="/threshold-based-detection">Threshold Based Detection</a><br>
+                    <a href="/ml-based-bot-detection">ML Based Bot Detection</a>
+                </p>
+            </div>
+        </div>
+
+
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="API Protection Image">
+            <div class="card-body">
+                <h5 class="card-title">API Protection</h5>
+                <p class="card-text">
+                    <a href="/api-requests">API Requests</a><br>
+                    <a href="/ml-based-api-protection">ML Based API Protection</a>
+                </p>
+            </div>
+        </div>
+
+
+
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="REST API Image">
+            <div class="card-body">
+                <h5 class="card-title">REST API</h5>
+                <p class="card-text">
+                    <a href="/create-new-application-policy">Create New Application Policy</a><br>
+                    <a href="/delete-application-policy">Delete Application Policy</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script></script>
 
 <style></style>
-
 ========================================================
