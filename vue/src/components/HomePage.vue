@@ -1,85 +1,81 @@
 <template>
-    <div class="table-container">
-        <table class="simple-table">
-            <tbody>
-                <tr>
-                    <td>
-                        <div class="card" style="width: 20rem; margin: 10px; height: 390px;">
-                            <img src="../assets/web-protection.png" class="card-img-top" alt="Web Protection Image">
-                            <div class="card-body">
-                                <h5 class="card-title">Web Protection</h5>
-                                <p class="card-text">
-                                    <a href="/web-scan">Web Scan</a><br>
-                                    <a href="/traffic-generation">Traffic Generation</a><br>
-                                    <a href="/web-attacks">Web Attacks</a><br>
-                                    <a href="/machine-learning">Machine Learning</a><br>
-                                    <a href="/cookie-security">Cookie Security</a><br>
-                                    <a href="/credential-stuffing-defense">Credential Stuffing Defense</a>
-                                </p>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="card" style="width: 20rem; margin: 10px; height: 390px;">
-                            <img src="../assets/bot-mitigation.png" class="card-img-top" alt="Bot Mitigation Image">
-                            <div class="card-body">
-                                <h5 class="card-title">Bot Mitigation</h5>
-                                <p class="card-text">
-                                    <a href="/known-bots">Known Bots</a><br>
-                                    <a href="/biometrics-based-detection">Biometrics Based Detection</a><br>
-                                    <a href="/bot-deception">Bot Deception</a><br>
-                                    <a href="/threshold-based-detection">Threshold Based Detection</a><br>
-                                    <a href="/ml-based-bot-detection">ML Based Bot Detection</a>
-                                </p>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="card" style="width: 20rem; margin: 10px; height: 300px;">
-                            <img src="../assets/api-protection.png" class="card-img-top" alt="API Protection Image">
-                            <div class="card-body">
-                                <h5 class="card-title">API Protection</h5>
-                                <p class="card-text">
-                                    <a href="/api-requests">API Requests</a><br>
-                                    <a href="/ml-based-api-protection">ML Based API Protection</a>
-                                </p>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="card" style="width: 20rem; margin: 10px; height: 300px;">
-                            <img src="../assets/rest-api.png" class="card-img-top" alt="REST API Image">
-                            <div class="card-body">
-                                <h5 class="card-title">REST API Management</h5>
-                                <p class="card-text">
-                                    <a href="/create-new-application-policy">Create New Application Policy</a><br>
-                                    <a href="/delete-application-policy">Delete Application Policy</a>
-                                </p>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="card-container" style="display: flex; flex-wrap: wrap; justify-content: flex-start;">
+
+
+        <div class="card" style="margin: 15px;">
+            <div class="card-header">
+    <i class="bi bi-shield-shaded me-2"></i><strong>Web Protection</strong>
+                </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><a href="/web-scan">Web Scan</a></li>
+                <li class="list-group-item"><a href="/traffic-generation">Traffic Generation</a></li>
+                <li class="list-group-item"><a href="/web-attacks">Web Attacks</a></li>
+                <li class="list-group-item"><a href="/machine-learning">Machine Learning</a></li>
+                <li class="list-group-item"><a href="/cookie-security">Cookie Security</a></li>
+                <li class="list-group-item"><a href="/credential-stuffing-defense">Credential Stuffing Defense</a></li>
+            </ul>
+        </div>
+
+
+
+        <div class="card" style="margin: 15px;">
+            <div class="card-header">
+                <i class="bi bi-robot me-2"></i><strong>Bot Mitigation</strong>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><a href="/known-bots">Known Bots</a></li>
+                <li class="list-group-item"><a href="/biometrics-based-detection">Biometrics Based Detection</a></li>
+                <li class="list-group-item"><a href="/bot-deception">Bot Deception</a></li>
+                <li class="list-group-item"><a href="/threshold-based-detection">Threshold Based Detection</a></li>
+                <li class="list-group-item"><a href="/ml-based-bot-detection">ML Based Bot Detection</a></li>
+            </ul>
+        </div>
+
+        <div class="card" style="margin: 15px;">
+            <div class="card-header">
+                <i class="bi bi-braces me-2"></i><strong>API Protection</strong>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><a href="/api-requests">API Requests</a></li>
+                <li class="list-group-item"><a href="/ml-based-api-protection">ML Based API Protection</a></li>
+            </ul>
+        </div>
+
+        <div class="card" style="margin: 15px;">
+            <div class="card-header">
+                <i class="bi bi-terminal me-2"></i><strong>REST API Management</strong>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><a href="/create-new-application-policy">Create New Application Policy</a></li>
+                <li class="list-group-item"><a href="/delete-application-policy">Delete Application Policy</a></li>
+            </ul>
+        </div>
+
+
+
     </div>
 </template>
 
 <script></script>
 
 <style>
-.table-container {
-    padding: 20px;
-    /* Add padding around the table */
+.card-container {
+    display: flex;
+    justify-content: flex-start;
+    /* This will space out your cards evenly */
+    flex-wrap: wrap;
+    /* This allows cards to wrap onto the next line if there's not enough space */
 }
 
-.simple-table td {
-    padding: 10px;
-    /* Padding inside each cell */
+.list-group-item a {
+    color: #000;
+    /* Set your desired color, here it's black */
+    text-decoration: none;
+    /* Removes the underline */
 }
 
-.card-text {
-    font-size: 95%;
+.list-group-item a:hover {
+    /* text-decoration: underline; */
+    /* Optional: add underline on hover for better user experience */
 }
 </style>

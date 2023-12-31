@@ -8,15 +8,15 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
                     <ul class="nav nav-tabs card-header-tabs" role="button">
-                        <li class="nav-item">
+                        <li class="nav-conf-item">
                             <a class="nav-link" :class="{ 'active': activeTab === 'applications' }"
                                 @click="activeTab = 'applications'">Applications</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-conf-item">
                             <a class="nav-link" :class="{ 'active': activeTab === 'restApi' }"
                                 @click="activeTab = 'restApi'">REST API</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-conf-item">
                             <a class="nav-link" :class="{ 'active': activeTab === 'misc' }"
                                 @click="activeTab = 'misc'">Miscellaneous</a>
                         </li>
@@ -198,4 +198,11 @@ export default {
 </script>
 
 
-
+<style>
+.nav-conf-item a {
+    color: #000;
+    /* Set your desired color, here it's black */
+    text-decoration: none;
+    /* Removes the underline */
+}
+</style>

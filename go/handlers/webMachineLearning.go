@@ -28,41 +28,60 @@ type FakeData struct {
 	Ipv4      string `json:"ipv4"`
 }
 
+    type MLRequest struct {
+        SampleCount int `json:"sampleCount"`
+    }
+
 func HandleMachineLearning(c echo.Context) error {
 
-	requestCount := 200
-	bankURL := config.CurrentConfig.BANKURL
+    var mlRequest MLRequest
+
+    // Parse request body
+    if err := c.Bind(&mlRequest); err != nil {
+        return c.String(http.StatusBadRequest, fmt.Sprintf("Invalid request: %v", err))
+    }
+
+    // Use the provided sample count or default to 10
+    requestCount := mlRequest.SampleCount
+    if requestCount <= 0 {
+        requestCount = 10
+    }
+
+    bankURL := config.CurrentConfig.BANKURL
     var fakeData *FakeData 
     var err error
-	
-	for i := 0; i < requestCount; i++ {
+    
+    for i := 0; i < requestCount; i++ {
+        log.Printf("Machine Learning: %d\n", i)
 
-		log.Printf("Machine Learning: %d\n", i) //
+        // Fetch random data
+        fakeData, err = fetchRandomData()
+        if err != nil {
+            log.Printf("Error fetching random data: %v\n", err)
+            return c.String(http.StatusInternalServerError, fmt.Sprintf("Error fetching random data: %v", err))
+        }
 
+        // Prepare data for POST request
+        postData := preparePostData(*fakeData)
 
-		// Fetch random data
-		fakeData, err = fetchRandomData()
-		if err != nil {
-			log.Printf("Error fetching random data: %v\n", err) // Log the error
-			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error fetching random data: %v", err))
-		}
-
-		// Prepare data for POST request
-		postData := preparePostData(*fakeData)
-
-		// Send POST request
-		_, err = sendPostRequest(bankURL, postData, fakeData.Useragent, fakeData.Ipv4)
-		if err != nil {
-			log.Printf("Error sending POST request: %v\n", err) // Log the error
-			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error sending POST request: %v", err))
-		}
-	}
+        // Send POST request
+        _, err = sendPostRequest(bankURL, postData, fakeData.Useragent, fakeData.Ipv4)
+        if err != nil {
+            log.Printf("Error sending POST request: %v\n", err)
+            return c.String(http.StatusInternalServerError, fmt.Sprintf("Error sending POST request: %v", err))
+        }
+    }
 
     // Format the last data for display
     displayData := formatDisplayData(*fakeData)
 
-	// Return a success message with the last data sent
-	return c.String(http.StatusOK, fmt.Sprintf("Completed %d requests.\nLast data sent:\n\n%s", requestCount, displayData))
+    // Return a success message with the last data sent
+    if requestCount == 1 {
+        return c.String(http.StatusOK, fmt.Sprintf("Completed %d request.\n\nLast data sent:\n\n%s", requestCount, displayData))
+    } else {
+        return c.String(http.StatusOK, fmt.Sprintf("Completed %d requests.\n\nLast data sent:\n\n%s", requestCount, displayData))
+    }
+
 }
 
 func fetchRandomData() (*FakeData, error) {
@@ -108,10 +127,15 @@ func formatDisplayData(data FakeData) string {
     email := fmt.Sprintf("%s@%s", data.EmailU, data.EmailD)
     phone := data.PhoneH
 
+    // Sanitize the address
+    sanitizedAddress := strings.ReplaceAll(data.Address, "\n", " ") // Replace newline characters
+    sanitizedAddress = strings.ReplaceAll(sanitizedAddress, "\t", " ") // Replace tab characters
+
     return fmt.Sprintf(
         "Firstname:\t%s\nLastname:\t%s\nEmail:\t\t%s\nPhone:\t\t%s\nAddress:\t%s\nBirthday:\t%s\nUsername:\t%s\nPassword:\t%s",
-        firstName, lastName, email, phone, data.Address, data.Birthday, data.Username, data.Password)
+        firstName, lastName, email, phone, sanitizedAddress, data.Birthday, data.Username, data.Password)
 }
+
 
 func sendPostRequest(url, data, userAgent, ipv4 string) (*http.Response, error) {
 

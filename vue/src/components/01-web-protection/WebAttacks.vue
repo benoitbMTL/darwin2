@@ -5,12 +5,14 @@
       <i class="bi bi-question-circle-fill bs-icon" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
+
+      
       <p class="card-text">
-        Select a user from the list and generate an attack scenario.
+        Select a user and an attack type from the list, then click "Run" to generate the attack scenario.
       </p>
 
-      <div class="d-flex align-items-center mb-3">
-        <select class="form-select form-select-sm me-2" v-model="selectedUser" style="width: 250px">
+      <div class="d-flex align-items-center mb-3 flex-wrap">
+        <select class="form-select form-select-sm me-2 mb-3" v-model="selectedUser" style="width: 250px">
           <option value="admin">admin</option>
           <option value="gordonb">gordonb</option>
           <option value="1337">1337</option>
@@ -18,29 +20,47 @@
           <option value="smithy">smithy</option>
         </select>
 
-        <button class="btn btn-primary btn-sm me-2" @click="performCommandInjection">
-          Command Injection
+        <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType" style="width: 250px">
+          <option value="command_injection">Command Injection</option>
+          <option value="sql_injection">SQL Injection</option>
+          <option value="xss">Cross-site Scripting</option>
+          <option value="os_command_injection">OS Command Injection Attacks</option>
+          <option value="coldfusion_injection">Coldfusion Injection</option>
+          <option value="ldap_injection">LDAP Injection</option>
+          <option value="session_fixation">Session Fixation</option>
+          <option value="file_injection">File Injection</option>
+          <option value="php_injection">PHP Injection</option>
+          <option value="ssi_injection">SSI Injection</option>
+          <option value="updf_xss">UPDF XSS</option>
+          <option value="email_injection">Email Injection</option>
+          <option value="http_response_splitting">HTTP Response Splitting</option>
+          <option value="rfi_injection">RFI Injection</option>
+          <option value="lfi_injection">LFI Injection</option>
+          <option value="src_disclosure">SRC Disclosure</option>
+          <option value="java_method_injection">Java Method Injection</option>
+          <option value="directory_traversal">Directory Traversal</option>
+          <option value="format_string_attack">Format String Attack</option>
+          <option value="xpath_xquery_injection">Xpath/XQuery Injection</option>
+          <option value="xslt_injection">XSLT Injection</option>
+          <option value="trojans">Trojans</option>
+        </select>
+
+
+
+        <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
+          Run
         </button>
-        <button class="btn btn-primary btn-sm me-2" @click="performSQLInjection">
-          SQL Injection
-        </button>
-        <button class="btn btn-primary btn-sm me-2" @click="performCrossSiteScripting">
-          Cross-site Scripting
-        </button>
-        <button class="btn btn-warning btn-sm me-2" @click="performZeroDayCommandInjection">
-          Zero Day Command Injection
-        </button>
-        <button class="btn btn-warning btn-sm me-2" @click="performZeroDayCrossSiteScripting">
-          Zero Day Cross-site Scripting
-        </button>
-        <button class="btn btn-secondary btn-sm" @click="resetResult">
+
+
+
+        <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
           Reset
         </button>
       </div>
 
-      <div v-if="jobResult" class="mt-4">
-      <h6>{{ currentAttackName }} Result:</h6>
-          <iframe ref="attackIframe" :srcdoc="jobResult" @load="adjustIframeHeight"
+      <div v-if="jobResult" class="mt-4 mb-3">
+        <h6>{{ currentAttackName }} Result:</h6>
+        <iframe ref="attackIframe" :srcdoc="jobResult" @load="adjustIframeHeight"
           style="width: 100%; border: 1px solid lightgray;"></iframe>
       </div>
 
@@ -54,44 +74,37 @@
     </div>
     <div class="card-body">
 
-      
+
       <table style="border-collapse: collapse; width: 100%;">
-    <tr>
-      <th style="border-bottom: 1px solid #ddd; padding: 8px;">Attack Name</th>
-      <th style="border-bottom: 1px solid #ddd; padding: 8px;">Description</th>
-      <th style="border-bottom: 1px solid #ddd; padding: 8px;">Example</th>
-    </tr>
-    <tr>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">Command Injection</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">Injects arbitrary commands into a vulnerable application for execution by the server.</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">;more /etc/passwd</td>
-    </tr>
-    <tr>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">SQL Injection</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">Exploits vulnerabilities in SQL query execution.</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">'OR 1=1#</td>
-    </tr>
-    <tr>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">XSS</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">Injects malicious scripts into web pages viewed by other users.</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">&lt;script&gt;alert("XSS-hack-attempt")&lt;/script&gt;</td>
-    </tr>
-    <tr>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">Zero Day SQL Injection</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">Exploits zero-day vulnerabilities in SQL query processing.</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">A%20'DIV'%20B%20-%20A%20'DIV%20B</td>
-    </tr>
-    <tr>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">Zero Day Command Injection</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">Injects commands exploiting zero-day vulnerabilities in server command processing.</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">/???/1? - /???/1?</td>
-    </tr>
-  </table>
+        <tr>
+          <th style="border-bottom: 1px solid #ddd; padding: 8px;">Attack Name</th>
+          <th style="border-bottom: 1px solid #ddd; padding: 8px;">Description</th>
+          <th style="border-bottom: 1px solid #ddd; padding: 8px;">Example</th>
+        </tr>
+        <tr>
+          <td style="border-bottom: 1px solid #ddd; padding: 8px;">Command Injection</td>
+          <td style="border-bottom: 1px solid #ddd; padding: 8px;">Injects arbitrary commands into a vulnerable
+            application for execution by the server.</td>
+          <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">;more /etc/passwd</td>
+        </tr>
+        <tr>
+          <td style="border-bottom: 1px solid #ddd; padding: 8px;">SQL Injection</td>
+          <td style="border-bottom: 1px solid #ddd; padding: 8px;">Exploits vulnerabilities in SQL query execution.</td>
+          <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">'OR 1=1#</td>
+        </tr>
+        <tr>
+          <td style="border-bottom: 1px solid #ddd; padding: 8px;">Cross-site Scripting</td>
+          <td style="border-bottom: 1px solid #ddd; padding: 8px;">Injects malicious scripts into web pages viewed by
+            other users.</td>
+          <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">
+            &lt;script&gt;alert("XSS-hack-attempt")&lt;/script&gt;</td>
+        </tr>
+      </table>
 
 
 
 
-      </div>
+    </div>
   </div>
 </template>
 
@@ -100,31 +113,90 @@ export default {
   data() {
     return {
       selectedUser: "admin",
+      selectedAttackType: "command_injection",
       jobResult: '',
       showHelp: false,
     };
   },
   methods: {
-    performCommandInjection() {
-      this.currentAttackName = 'Command Injection';
-      this.sendAttackRequest("command_injection");
+    performAttack() {
+
+
+      switch (this.selectedAttackType) {
+        case "command_injection":
+          this.currentAttackName = 'Command Injection';
+          break;
+        case "sql_injection":
+          this.currentAttackName = 'SQL Injection';
+          break;
+        case "xss":
+          this.currentAttackName = 'Cross-site Scripting';
+          break;
+        // New cases
+        case "os_command_injection":
+          this.currentAttackName = 'OS Command Injection Attacks';
+          break;
+        case "coldfusion_injection":
+          this.currentAttackName = 'Coldfusion Injection';
+          break;
+        case "ldap_injection":
+          this.currentAttackName = 'LDAP Injection';
+          break;
+        case "session_fixation":
+          this.currentAttackName = 'Session Fixation';
+          break;
+        case "file_injection":
+          this.currentAttackName = 'File Injection';
+          break;
+        case "php_injection":
+          this.currentAttackName = 'PHP Injection';
+          break;
+        case "ssi_injection":
+          this.currentAttackName = 'SSI Injection';
+          break;
+        case "updf_xss":
+          this.currentAttackName = 'UPDF XSS';
+          break;
+        case "email_injection":
+          this.currentAttackName = 'Email Injection';
+          break;
+        case "http_response_splitting":
+          this.currentAttackName = 'HTTP Response Splitting';
+          break;
+        case "rfi_injection":
+          this.currentAttackName = 'RFI Injection';
+          break;
+        case "lfi_injection":
+          this.currentAttackName = 'LFI Injection';
+          break;
+        case "src_disclosure":
+          this.currentAttackName = 'SRC Disclosure';
+          break;
+        case "java_method_injection":
+          this.currentAttackName = 'Java Method Injection';
+          break;
+        case "directory_traversal":
+          this.currentAttackName = 'Directory Traversal';
+          break;
+        case "format_string_attack":
+          this.currentAttackName = 'Format String Attack';
+          break;
+        case "xpath_xquery_injection":
+          this.currentAttackName = 'Xpath/XQuery Injection';
+          break;
+        case "xslt_injection":
+          this.currentAttackName = 'XSLT Injection';
+          break;
+        case "trojans":
+          this.currentAttackName = 'Trojans';
+          break;
+        default:
+          this.currentAttackName = '';
+      }
+      this.sendAttackRequest(this.selectedAttackType);
     },
-    performSQLInjection() {
-      this.currentAttackName = 'SQL Injection';
-      this.sendAttackRequest("sql_injection");
-    },
-    performCrossSiteScripting() {
-      this.currentAttackName = 'Cross-site Scripting';
-      this.sendAttackRequest("xss");
-    },
-    performZeroDayCommandInjection() {
-      this.currentAttackName = 'Zero Day Command Injection';
-      this.sendAttackRequest("zero_day_sql_injection");
-    },
-    performZeroDayCrossSiteScripting() {
-      this.currentAttackName = 'Zero Day Cross-site Scripting';
-      this.sendAttackRequest("zero_day_command_injection");
-    },
+
+
     sendAttackRequest(attackType) {
       const url = 'http://localhost:8080/web-attacks';
       const formData = new URLSearchParams();
@@ -147,6 +219,8 @@ export default {
           this.jobResult = 'Failed to perform attack';
         });
     },
+
+
     adjustIframeHeight() {
       const iframe = this.$refs.attackIframe;
       if (iframe && iframe.contentWindow && iframe.contentWindow.document.body) {

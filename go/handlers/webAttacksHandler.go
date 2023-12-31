@@ -19,36 +19,36 @@ func HandleWebAttacks(c echo.Context) error {
 	password := config.GetDVWAPassword(username) // Get password for the user
 
 	// Print values to console
-	fmt.Printf("Handling web attack - Type: %s, Username: %s, Password: %s\n", attackType, username, password)
+	// fmt.Printf("Handling web attack - Type: %s, Username: %s, Password: %s\n", attackType, username, password)
 
 	return performAttack(c, attackType, username, password)
 }
 
 func performAttack(c echo.Context, attackType, username, password string) error {
-	fmt.Println("Performing attack:", attackType)
+	// fmt.Println("Performing attack:", attackType)
 
 	// Authenticate and get cookie jar
 	cookieJar, err := authenticateUser(username, password)
 	if err != nil {
-		fmt.Println("Authentication failed:", err)
+		// fmt.Println("Authentication failed:", err)
 		return c.String(http.StatusInternalServerError, "Authentication failed: "+err.Error())
 	}
 
 	// Get attack configuration
-	fmt.Println("Getting attack configuration for:", attackType)
+	// fmt.Println("Getting attack configuration for:", attackType)
 	attackConfig, exists := config.GetAttackConfig(attackType)
 	if !exists {
-		fmt.Println("Invalid attack type:", attackType)
+		// fmt.Println("Invalid attack type:", attackType)
 		return c.String(http.StatusBadRequest, "Invalid attack type")
 	}
 
 	// Print attack configuration details
-	fmt.Println("Attack Method:", attackConfig.Method)
-	fmt.Println("Attack URL:", attackConfig.URL)
-	fmt.Println("Attack Post Data:", attackConfig.PostData)
+	// fmt.Println("Attack Method:", attackConfig.Method)
+	// fmt.Println("Attack URL:", attackConfig.URL)
+	// fmt.Println("Attack Post Data:", attackConfig.PostData)
 
 	// Craft the request for the attack
-	fmt.Println("Crafting request for attack")
+	// fmt.Println("Crafting request for attack")
 	var req *http.Request
 	if attackConfig.Method == "POST" {
 		req, err = http.NewRequest(attackConfig.Method, attackConfig.URL, strings.NewReader(attackConfig.PostData))
@@ -74,31 +74,31 @@ func performAttack(c echo.Context, attackType, username, password string) error 
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Attack request failed:", err)
+		// fmt.Println("Attack request failed:", err)
 		return c.String(http.StatusInternalServerError, "Attack request failed: "+err.Error())
 	}
 	defer resp.Body.Close()
 
 	// Read the response body
-	fmt.Println("Reading response body")
+	// fmt.Println("Reading response body")
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Failed to read response body:", err)
+		// fmt.Println("Failed to read response body:", err)
 		return c.String(http.StatusInternalServerError, "Failed to read response body: "+err.Error())
 	}
 
 	// Return the response from the attack
-	fmt.Println("Attack performed successfully, response length:", len(body))
+	// fmt.Println("Attack performed successfully, response length:", len(body))
 	return c.String(http.StatusOK, string(body))
 }
 
 // User performs login to the web application and returns the session cookie PHPSESSID
 func authenticateUser(username, password string) (*cookiejar.Jar, error) {
 	loginURL := config.CurrentConfig.DVWAURL + "/login.php"
-	fmt.Println("Login URL:", loginURL)
+	// fmt.Println("Login URL:", loginURL)
 
 	formDataString := "username=" + url.QueryEscape(username) + "&password=" + url.QueryEscape(password) + "&Login=Login"
-	fmt.Println("Encoded Form Data:", formDataString)
+	// fmt.Println("Encoded Form Data:", formDataString)
 
 	req, err := http.NewRequest("POST", loginURL, strings.NewReader(formDataString))
 	if err != nil {

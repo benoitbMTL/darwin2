@@ -103,8 +103,5 @@ export default {
 </script>
 
 <style>
-.bs-icon {
-  cursor: pointer;
-  font-size: 1.5em;
-}
+
 </style>

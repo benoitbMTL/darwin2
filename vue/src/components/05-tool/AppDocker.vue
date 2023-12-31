@@ -26,9 +26,9 @@
           <div class="card-body">
             <h5 class="card-title">
               web-dvwa (Damn Vulnerable Web Application)
-              <a href="https://github.com/digininja/dvwa" class="card-link">
+              <a href="https://github.com/digininja/dvwa" class="card-link" target="_blank">
                 <font-awesome-icon :icon="['fab', 'github']" /></a>
-              <a href="https://hub.docker.com/r/vulnerables/web-dvwa" class="card-link">
+              <a href="https://hub.docker.com/r/vulnerables/web-dvwa" class="card-link" target="_blank">
                 <font-awesome-icon :icon="['fab', 'docker']" /></a>
             </h5>
             <ul>
@@ -44,10 +44,10 @@
       <div class="card-body">
         <h5 class="card-title">
           demo-web-app
-          <a href="https://github.com/benoitbMTL/web-app" class="card-link">
+          <a href="https://github.com/benoitbMTL/web-app" class="card-link" target="_blank">
             <font-awesome-icon :icon="['fab', 'github']" />
           </a>
-          <a href="https://hub.docker.com/r/benoitbmtl/demo-web-app" class="card-link">
+          <a href="https://hub.docker.com/r/benoitbmtl/demo-web-app" class="card-link" target="_blank">
             <font-awesome-icon :icon="['fab', 'docker']" />
           </a>
         </h5>
@@ -65,10 +65,10 @@
       <div class="card-body">
         <h5 class="card-title">
           juice-shop
-          <a href="https://github.com/juice-shop/juice-shop" class="card-link">
+          <a href="https://github.com/juice-shop/juice-shop" class="card-link" target="_blank">
             <font-awesome-icon :icon="['fab', 'github']" />
           </a>
-          <a href="https://hub.docker.com/r/bkimminich/juice-shop" class="card-link">
+          <a href="https://hub.docker.com/r/bkimminich/juice-shop" class="card-link" target="_blank">
             <font-awesome-icon :icon="['fab', 'docker']" />
           </a>
         </h5>
@@ -86,10 +86,10 @@
         <div class="card-body">
         <h5 class="card-title">
           petstore3
-          <a href="https://github.com/swagger-api/swagger-petstore" class="card-link">
+          <a href="https://github.com/swagger-api/swagger-petstore" class="card-link" target="_blank">
             <font-awesome-icon :icon="['fab', 'github']" />
           </a>
-          <a href="https://hub.docker.com/r/swaggerapi/petstore3" class="card-link">
+          <a href="https://hub.docker.com/r/swaggerapi/petstore3" class="card-link" target="_blank">
             <font-awesome-icon :icon="['fab', 'docker']" />
           </a>
         </h5>
@@ -107,10 +107,10 @@
       <div class="card-body">
         <h5 class="card-title">
           speedtest
-          <a href="https://github.com/librespeed/speedtest" class="card-link">
+          <a href="https://github.com/librespeed/speedtest" class="card-link" target="_blank">
             <font-awesome-icon :icon="['fab', 'github']" />
           </a>
-          <a href="https://hub.docker.com/r/adolfintel/speedtest" class="card-link">
+          <a href="https://hub.docker.com/r/adolfintel/speedtest" class="card-link" target="_blank">
             <font-awesome-icon :icon="['fab', 'docker']" />
           </a>
         </h5>

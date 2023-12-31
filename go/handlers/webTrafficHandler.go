@@ -30,7 +30,7 @@ func HandleTrafficGenerator(c echo.Context) error {
 		return c.String(200, "Nikto is not installed on your system")
 	}
 
-	const loopCount = 2 // Number of iterations for each loop
+	const loopCount = 100 // Number of iterations for each loop
 
 	var summary strings.Builder
 	summary.WriteString(fmt.Sprintf("Traffic Generator executed %d rounds of attacks:\n", loopCount))
