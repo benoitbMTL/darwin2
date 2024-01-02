@@ -2,7 +2,7 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>Machine Learning & Zero-Day Attacks</h5>
-      <i class="bi bi-question-circle-fill bs-icon" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
+      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem;" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
 
@@ -25,10 +25,10 @@
                 aria-hidden="true"></span>
               <span>{{ isLoading10 ? 'Simulating...' : 'Send 10 Samples' }}</span>
             </button>
-            <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(3000)" :disabled="isLoading3000">
-              <span v-if="isLoading3000" class="spinner-border spinner-border-sm me-2" role="status"
+            <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isLoading500">
+              <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
                 aria-hidden="true"></span>
-              <span>{{ isLoading3000 ? 'Simulating...' : 'Send 3000 Samples' }}</span>
+              <span>{{ isLoading500 ? 'Simulating...' : 'Send 500 Samples' }}</span>
             </button>
             <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">
               Reset
@@ -44,21 +44,23 @@
         <div class="card col-md-6 align-items-center">
           <!-- Card #2 content goes here... -->
           <p class="card-text mt-3">
-            Select a user and a zero-day, then click "Run" to generate the attack scenario.
+            Select a zero-day and "Run" to generate the attack scenario.
           </p>
 
           <div class="d-flex align-items-center mb-3 flex-wrap">
-            <select class="form-select form-select-sm me-2 mb-3" v-model="selectedUser" style="width: 100px">
-              <option value="admin">admin</option>
-              <option value="gordonb">gordonb</option>
-              <option value="1337">1337</option>
-              <option value="pablo">pablo</option>
-              <option value="smithy">smithy</option>
-            </select>
 
-            <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType" style="width: 250px">
-              <option value="command_injection">Command Injection</option>
-              <option value="sql_injection">SQL Injection</option>
+
+            <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType" style="width: 350px">
+              <option value="zero_day_sqli_1">Zero Day SQL Injection: A 'DIV' B</option>
+              <option value="zero_day_sqli_2">Zero Day SQL Injection: A '^' B</option>
+              <option value="zero_day_sqli_3">Zero Day SQL Injection: 3)+1+(0</option>
+              <option value="zero_day_sqli_4">Zero Day SQL Injection: 3||1</option>
+              <option value="zero_day_remote_exploit_1">Zero Day Remote Exploits: %X%X%X%X%X</option>
+              <option value="zero_day_remote_exploit_2">Zero Day Remote Exploits: %p%p%p%p%p</option>
+              <option value="zero_day_command_injection_1">Zero Day Command Injection: /???/l?</option>
+              <option value="zero_day_command_injection_2">Zero Day Command Injection: var1=l var2=s</option>
+              <option value="zero_day_xss_1">Zero Day Cross Site Scripting: window['ale'+'rt'](1)</option>
+              <option value="zero_day_xss_2">Zero Day Cross Site Scripting: ___=1?'ert(123)</option>
             </select>
 
             <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
@@ -83,7 +85,7 @@
         <div v-if="performAttackResult" class="mt-4 mb-3">
           <h6>{{ currentAttackName }} Result:</h6>
           <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
-            style="width: 100%; border: 2px solid lightgray;"></iframe>
+            style="width: 100%; border: 1px solid lightgray;"></iframe>
         </div>
 
 
@@ -128,10 +130,9 @@ export default {
     return {
       isLoading1: false,
       isLoading10: false,
-      isLoading3000: false,
+      isLoading500: false,
       sendSampleResult: '',
-      selectedUser: "admin",
-      selectedAttackType: "command_injection",
+      selectedAttackType: "zero_day_sqli_1",
       performAttackResult: '',
       showHelp: false,
       highlightedCode: "",
@@ -158,8 +159,8 @@ export default {
         case 10:
           isLoadingKey = 'isLoading10';
           break;
-        case 3000:
-          isLoadingKey = 'isLoading3000';
+        case 500:
+          isLoadingKey = 'isLoading500';
           break;
       }
       this[isLoadingKey] = true;
@@ -206,15 +207,28 @@ export default {
       console.log('Performing attack, selected attack type:', this.selectedAttackType);
 
       switch (this.selectedAttackType) {
-        case "command_injection":
-          this.currentAttackName = 'Command Injection';
+        case "zero_day_sqli_1":
+        case "zero_day_sqli_2":
+        case "zero_day_sqli_3":
+        case "zero_day_sqli_4":
+          this.currentAttackName = 'Zero Day SQL Injection';
           break;
-        case "sql_injection":
-          this.currentAttackName = 'SQL Injection';
+        case "zero_day_remote_exploit_1":
+        case "zero_day_remote_exploit_2":
+          this.currentAttackName = 'Zero Day Remote Exploits';
+          break;
+        case "zero_day_command_injection_1":
+        case "zero_day_command_injection_2":
+          this.currentAttackName = 'Zero Day Command Injection';
+          break;
+        case "zero_day_xss_1":
+        case "zero_day_xss_2":
+          this.currentAttackName = 'Zero Day Cross Site Scripting';
           break;
         default:
           this.currentAttackName = '';
       }
+
 
       console.log('Current attack name set to:', this.currentAttackName);
       this.sendAttackRequest(this.selectedAttackType);
@@ -226,7 +240,6 @@ export default {
       const url = 'http://localhost:8080/web-attacks';
       const formData = new URLSearchParams();
       formData.append('type', attackType);
-      formData.append('username', this.selectedUser);
 
       fetch(url, {
         method: 'POST',

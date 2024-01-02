@@ -3,6 +3,7 @@ package handlers
 import (
 	"crypto/tls"
 	"darwin2/config"
+	"darwin2/utils"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"io"
@@ -25,34 +26,45 @@ func HandleWebAttacks(c echo.Context) error {
 }
 
 func performAttack(c echo.Context, attackType, username, password string) error {
-	// fmt.Println("Performing attack:", attackType)
+	// Print the username
+	fmt.Println("Username:", username)
 
-	// Authenticate and get cookie jar
-	cookieJar, err := authenticateUser(username, password)
-	if err != nil {
-		// fmt.Println("Authentication failed:", err)
-		return c.String(http.StatusInternalServerError, "Authentication failed: "+err.Error())
+	var cookieJar *cookiejar.Jar
+	var err error
+	needsAuthentication := username != ""
+	randomIP := utils.GenerateRandomPublicIP()
+
+
+	// Authenticate only if needed
+	if needsAuthentication {
+		cookieJar, err = authenticateUser(username, password)
+		if err != nil {
+			fmt.Println("Authentication failed:", err)
+			return c.String(http.StatusInternalServerError, "Authentication failed: "+err.Error())
+		}
 	}
 
 	// Get attack configuration
-	// fmt.Println("Getting attack configuration for:", attackType)
+	fmt.Println("Getting attack configuration for:", attackType)
 	attackConfig, exists := config.GetAttackConfig(attackType)
 	if !exists {
-		// fmt.Println("Invalid attack type:", attackType)
+		fmt.Println("Invalid attack type:", attackType)
 		return c.String(http.StatusBadRequest, "Invalid attack type")
 	}
 
 	// Print attack configuration details
-	// fmt.Println("Attack Method:", attackConfig.Method)
-	// fmt.Println("Attack URL:", attackConfig.URL)
-	// fmt.Println("Attack Post Data:", attackConfig.PostData)
+	fmt.Println("Attack Method:", attackConfig.Method)
+	fmt.Println("Attack URL:", attackConfig.URL)
+	fmt.Println("Attack Post Data:", attackConfig.PostData)
 
 	// Craft the request for the attack
-	// fmt.Println("Crafting request for attack")
+	fmt.Println("Crafting request for attack")
 	var req *http.Request
 	if attackConfig.Method == "POST" {
+			fmt.Println("attackConfig.Method == POST")
 		req, err = http.NewRequest(attackConfig.Method, attackConfig.URL, strings.NewReader(attackConfig.PostData))
 	} else {
+					fmt.Println("attackConfig.Method == GET")
 		req, err = http.NewRequest(attackConfig.Method, attackConfig.URL, nil)
 	}
 	if err != nil {
@@ -64,31 +76,37 @@ func performAttack(c echo.Context, attackType, username, password string) error 
 	req.Header.Set("User-Agent", config.CurrentConfig.USERAGENT)
 	req.Header.Set("Referer", config.CurrentConfig.DVWAURL+"/")
 	req.Header.Set("Origin", config.CurrentConfig.DVWAURL)
+	req.Header.Set("X-FORWARDED-FOR", randomIP)
 
-	// Perform the attack request using the cookie jar
+	// Set up the client
 	client := &http.Client{
-		Jar: cookieJar,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
 	}
+
+	// Use cookieJar only if authentication was performed
+	if needsAuthentication {
+		client.Jar = cookieJar
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
-		// fmt.Println("Attack request failed:", err)
+		fmt.Println("Attack request failed:", err)
 		return c.String(http.StatusInternalServerError, "Attack request failed: "+err.Error())
 	}
 	defer resp.Body.Close()
 
 	// Read the response body
-	// fmt.Println("Reading response body")
+	fmt.Println("Reading response body")
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		// fmt.Println("Failed to read response body:", err)
+		fmt.Println("Failed to read response body:", err)
 		return c.String(http.StatusInternalServerError, "Failed to read response body: "+err.Error())
 	}
 
 	// Return the response from the attack
-	// fmt.Println("Attack performed successfully, response length:", len(body))
+	fmt.Println("Attack performed successfully, response length:", len(body))
 	return c.String(http.StatusOK, string(body))
 }
 

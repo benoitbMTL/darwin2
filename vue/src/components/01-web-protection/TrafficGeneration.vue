@@ -2,7 +2,7 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>Traffic Generation</h5>
-      <i class="bi bi-question-circle-fill bs-icon" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
+      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem;" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
       <p class="card-text">Generate random cyber attacks from various public IP addresses.</p>
@@ -36,7 +36,6 @@
         <li>Nikto is utilized by the Traffic Generator to generate random attacks.</li>
         <li>Launch the Traffic Generator before a demonstration to populate FortiWeb logs and FortiView dashboards.</li>
       </ul>
-
 
     </div>
   </div>
@@ -102,6 +101,5 @@ export default {
 };
 </script>
 
-<style>
+<style></style>
 
-</style>

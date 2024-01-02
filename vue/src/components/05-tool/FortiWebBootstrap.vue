@@ -2,7 +2,7 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>FortiWeb Bootstrap</h5>
-      <i class="bi bi-question-circle-fill bs-icon" @click="showHelp = !showHelp"></i>
+      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem;" @click="showHelp = !showHelp"></i>
     </div>
     <div class="card-body position-relative">
 
@@ -51,13 +51,4 @@ export default {
 };
 </script>
 
-<style>
-.position-relative {
-  position: relative;
-}
-
-.bs-icon {
-  cursor: pointer;
-  font-size: 1.5em;
-}
-</style>
+<style></style>

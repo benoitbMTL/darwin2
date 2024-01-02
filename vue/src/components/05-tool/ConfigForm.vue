@@ -23,12 +23,12 @@
                     </ul>
                 </div>
 
-                <!-- Alert Message -->
                 <div class="d-flex align-items-center">
 
-                    <div v-if="showAlert" class="alert alert-warning alert-dismissible fade show p-1 me-2 mb-0" role="alert"
+                    <!-- Alert Message -->
+                    <div v-if="showAlert" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0" role="alert"
                         style="font-size: 0.875rem;">
-                        <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ alertMessage }}
+                        <i class="bi bi-check-circle me-1"></i> {{ alertMessage }}
                     </div>
 
                     <!-- Buttons -->
@@ -37,6 +37,7 @@
                         <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">Reset to
                             Default</button>
                     </div>
+
                 </div>
             </div>
 

@@ -2,7 +2,7 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>Web Attacks</h5>
-      <i class="bi bi-question-circle-fill bs-icon" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
+      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem;" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
 
@@ -12,7 +12,7 @@
       </p>
 
       <div class="d-flex align-items-center mb-3 flex-wrap">
-        <select class="form-select form-select-sm me-2 mb-3" v-model="selectedUser" style="width: 250px">
+        <select class="form-select form-select-sm me-2" v-model="selectedUser" style="width: 250px">
           <option value="admin">admin</option>
           <option value="gordonb">gordonb</option>
           <option value="1337">1337</option>
@@ -20,7 +20,7 @@
           <option value="smithy">smithy</option>
         </select>
 
-        <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType" style="width: 250px">
+        <select class="form-select form-select-sm me-2" v-model="selectedAttackType" style="width: 250px">
           <option value="command_injection">Command Injection</option>
           <option value="sql_injection">SQL Injection</option>
           <option value="xss">Cross-site Scripting</option>
@@ -47,13 +47,13 @@
 
 
 
-        <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
+        <button class="btn btn-primary btn-sm me-2" @click="performAttack">
           Run
         </button>
 
 
 
-        <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
+        <button class="btn btn-secondary btn-sm me-2" @click="resetResult">
           Reset
         </button>
       </div>

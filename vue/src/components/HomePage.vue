@@ -74,8 +74,4 @@
     /* Removes the underline */
 }
 
-.list-group-item a:hover {
-    /* text-decoration: underline; */
-    /* Optional: add underline on hover for better user experience */
-}
 </style>

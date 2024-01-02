@@ -14,7 +14,7 @@ import (
 	"net/url"
 )
 
-// Struct to map the JSON data returned from api.name-fake.com/random/random
+// Struct to map the JSON data returned from api.namefake.com
 type FakeData struct {
 	Name      string `json:"name"`
 	Address   string `json:"address"`
@@ -86,7 +86,7 @@ func HandleMachineLearning(c echo.Context) error {
 
 func fetchRandomData() (*FakeData, error) {
 
-	resp, err := http.Get("https://api.namefake.com/random/random")
+	resp, err := http.Get("https://api.namefake.com")
 	if err != nil {
 		log.Printf("Error to Get Random Name: %v\n", err) // Log the error
 		return nil, err
