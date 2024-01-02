@@ -8,7 +8,7 @@
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h6 class="card-text mb-0">Swagger Petstore - OpenAPI 3.0</h6>
-        <button class="btn btn-secondary btn-sm" @click="resetResult">Reset</button>
+        <button class="btn btn-secondary btn-sm" @click="resetResultAndList">Reset</button>
       </div>
 
       <!-- API GET -->
@@ -83,10 +83,10 @@
         </select>
       </div>
 
-      <!-- Display CURL -->
       <div>
+        <!-- Display CURL -->
         <div v-if="curlCommand" class="mt-4">
-          <h6><i class="bi bi-terminal me-2"></i>Curl Command</h6>
+          <h6><i class="bi bi-terminal me-2"></i>Curl</h6>
           <pre style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ curlCommand }}</pre>
         </div>
 
@@ -98,16 +98,17 @@
 
         <!-- Display JSON RESPONSE BODY -->
         <div v-if="jsonResponseBody" class="mt-3">
-          <h6><i class="bi bi-filetype-json me-2"></i>JSON Response Body</h6>
+          <h6><i class="bi bi-filetype-json me-2"></i>Response Body</h6>
           <pre style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ jsonResponseBody }}</pre>
         </div>
 
         <!-- Display HTML RESPONSE BODY -->
         <div v-if="htmlResponseBody" class="mt-4">
-          <h6><i class="bi bi-filetype-html me-2"></i>API Request Result</h6>
+          <h6><i class="bi bi-filetype-html me-2"></i>Request Result</h6>
           <iframe ref="responseIframe" :srcdoc="htmlResponseBody" @load="adjustIframeHeight" style="width: 100%; border: 1px solid lightgray"></iframe>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -156,10 +157,12 @@ export default {
       selectedPostOption: "",
       selectedPutOption: "",
       selectedDeleteOption: "",
+
       curlCommand: "",
+      requestURL: "",
       jsonResponseBody: "",
       htmlResponseBody: "",
-      requestURL: "",
+
       showHelp: false,
       getList: [],
       postList: [],
@@ -227,7 +230,7 @@ export default {
           category: { id: 1, name: "Dogs" },
           photoUrls: ["fortipet.png"],
           tags: [{ id: 0, name: "Cute" }],
-          status: "<script>alert(123)<\\/ script > ",
+          status: "<script>alert(123)<\\/script>",
         },
         text: "New Pet with Cross-Site-Scripting",
       },
@@ -375,6 +378,7 @@ export default {
 
     // Method to send API request and handle response
     sendApiRequest(url, body) {
+      this.resetResult();
       console.log("fetch url", url);
       console.log("fetch body", body);
 
@@ -394,10 +398,10 @@ export default {
         })
 
         .then((data) => {
-          // Extracting the URL and CURL command from the response headers
           this.curlCommand = data.curlCommand;
           this.requestURL = data.url;
           this.responseBody = data.data;
+
           console.log("Curl Command:", this.curlCommand);
           console.log("Request URL Command:", this.requestURL);
 
@@ -438,11 +442,18 @@ export default {
       }
     },
 
-    resetResult() {
+    resetResultAndList() {
       this.selectedGetOption = this.getList.length > 0 ? this.getList[0].value : "";
       this.selectedPostOption = this.postList.length > 0 ? this.postList[0].value : "";
       this.selectedPutOption = this.putList.length > 0 ? this.putList[0].value : "";
       this.selectedDeleteOption = this.deleteList.length > 0 ? this.deleteList[0].value : "";
+      this.curlCommand = "";
+      this.requestURL = "";
+      this.jsonResponseBody = "";
+      this.htmlResponseBody = "";
+    },
+
+    resetResult() {
       this.curlCommand = "";
       this.requestURL = "";
       this.jsonResponseBody = "";
