@@ -2,34 +2,27 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>Running Web Applications with Docker</h5>
-      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem;" @click="showHelp = !showHelp"></i>
+      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
     </div>
     <div class="card-body position-relative">
-
       <pre><code ref="codeBlock">{{ fileContent }}</code></pre>
-
     </div>
   </div>
 
   <!-- Help Card -->
-  <div v-if="showHelp" class="card bg-light mb-3">
+  <div v-if="showHelp" class="card bg-light mb-5">
     <div class="card-header">
       <h5>About Web Applications</h5>
     </div>
     <div class="card-body">
-
-
-
       <div class="container">
         <!-- web-dvwa -->
         <div class="card mb-3">
           <div class="card-body">
             <h5 class="card-title">
               web-dvwa (Damn Vulnerable Web Application)
-              <a href="https://github.com/digininja/dvwa" class="card-link" target="_blank">
-                <font-awesome-icon :icon="['fab', 'github']" /></a>
-              <a href="https://hub.docker.com/r/vulnerables/web-dvwa" class="card-link" target="_blank">
-                <font-awesome-icon :icon="['fab', 'docker']" /></a>
+              <a href="https://github.com/digininja/dvwa" class="card-link" target="_blank"><font-awesome-icon :icon="['fab', 'github']" /></a>
+              <a href="https://hub.docker.com/r/vulnerables/web-dvwa" class="card-link" target="_blank"><font-awesome-icon :icon="['fab', 'docker']" /></a>
             </h5>
             <ul>
               <li><strong>Port:</strong> 1000</li>
@@ -39,123 +32,124 @@
             </ul>
           </div>
         </div>
-    <!-- demo-web-app -->
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title">
-          demo-web-app
-          <a href="https://github.com/benoitbMTL/web-app" class="card-link" target="_blank">
-            <font-awesome-icon :icon="['fab', 'github']" />
-          </a>
-          <a href="https://hub.docker.com/r/benoitbmtl/demo-web-app" class="card-link" target="_blank">
-            <font-awesome-icon :icon="['fab', 'docker']" />
-          </a>
-        </h5>
-        <ul>
-          <li><strong>Port:</strong> 2000</li>
-          <li><strong>Image:</strong> benoitbmtl/demo-web-app</li>
-          <li><strong>Purpose:</strong> Machine Learning Demo</li>
-          <li><strong>Description:</strong> This demo application offers several simple pages to geolocate the server, display server, client, or HTTP connection information. The web form simulates a banking application and is used to demonstrate machine learning.</li>
-        </ul>
+        <!-- demo-web-app -->
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">
+              demo-web-app
+              <a href="https://github.com/benoitbMTL/web-app" class="card-link" target="_blank">
+                <font-awesome-icon :icon="['fab', 'github']" />
+              </a>
+              <a href="https://hub.docker.com/r/benoitbmtl/demo-web-app" class="card-link" target="_blank">
+                <font-awesome-icon :icon="['fab', 'docker']" />
+              </a>
+            </h5>
+            <ul>
+              <li><strong>Port:</strong> 2000</li>
+              <li><strong>Image:</strong> benoitbmtl/demo-web-app</li>
+              <li><strong>Purpose:</strong> Machine Learning Demo</li>
+              <li>
+                <strong>Description:</strong> This demo application offers several simple pages to geolocate the server, display server, client, or HTTP
+                connection information. The web form simulates a banking application and is used to demonstrate machine learning.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- juice-shop -->
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">
+              juice-shop
+              <a href="https://github.com/juice-shop/juice-shop" class="card-link" target="_blank">
+                <font-awesome-icon :icon="['fab', 'github']" />
+              </a>
+              <a href="https://hub.docker.com/r/bkimminich/juice-shop" class="card-link" target="_blank">
+                <font-awesome-icon :icon="['fab', 'docker']" />
+              </a>
+            </h5>
+            <ul>
+              <li><strong>Port:</strong> 3000</li>
+              <li><strong>Image:</strong> bkimminich/juice-shop</li>
+              <li><strong>Purpose:</strong> Bot Mitigation Demo</li>
+              <li><strong>Description:</strong> OWASP Juice Shop is written in Node.js and represents an insecure webshop.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- petstore3 -->
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">
+              petstore3
+              <a href="https://github.com/swagger-api/swagger-petstore" class="card-link" target="_blank">
+                <font-awesome-icon :icon="['fab', 'github']" />
+              </a>
+              <a href="https://hub.docker.com/r/swaggerapi/petstore3" class="card-link" target="_blank">
+                <font-awesome-icon :icon="['fab', 'docker']" />
+              </a>
+            </h5>
+            <ul>
+              <li><strong>Port:</strong> 4000</li>
+              <li><strong>Image:</strong> swaggerapi/petstore3</li>
+              <li><strong>Purpose:</strong> ML based API Protection Demo</li>
+              <li><strong>Description:</strong> An example API server generated by Swagger/OpenAPI for a pet store.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- speedtest -->
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">
+              speedtest
+              <a href="https://github.com/librespeed/speedtest" class="card-link" target="_blank">
+                <font-awesome-icon :icon="['fab', 'github']" />
+              </a>
+              <a href="https://hub.docker.com/r/adolfintel/speedtest" class="card-link" target="_blank">
+                <font-awesome-icon :icon="['fab', 'docker']" />
+              </a>
+            </h5>
+            <ul>
+              <li><strong>Port:</strong> 5000</li>
+              <li><strong>Image:</strong> adolfintel/speedtest</li>
+              <li><strong>Purpose:</strong> Onboard the app with FortiWeb REST API</li>
+              <li><strong>Description:</strong> A web application that provides a self-hosted HTML5-based speed test for both download and upload speeds.</li>
+            </ul>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <!-- juice-shop -->
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title">
-          juice-shop
-          <a href="https://github.com/juice-shop/juice-shop" class="card-link" target="_blank">
-            <font-awesome-icon :icon="['fab', 'github']" />
-          </a>
-          <a href="https://hub.docker.com/r/bkimminich/juice-shop" class="card-link" target="_blank">
-            <font-awesome-icon :icon="['fab', 'docker']" />
-          </a>
-        </h5>
-        <ul>
-          <li><strong>Port:</strong> 3000</li>
-          <li><strong>Image:</strong> bkimminich/juice-shop</li>
-          <li><strong>Purpose:</strong> Bot Mitigation Demo</li>
-          <li><strong>Description:</strong> OWASP Juice Shop is written in Node.js and represents an insecure webshop.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- petstore3 -->
-      <div class="card mb-3">
-        <div class="card-body">
-        <h5 class="card-title">
-          petstore3
-          <a href="https://github.com/swagger-api/swagger-petstore" class="card-link" target="_blank">
-            <font-awesome-icon :icon="['fab', 'github']" />
-          </a>
-          <a href="https://hub.docker.com/r/swaggerapi/petstore3" class="card-link" target="_blank">
-            <font-awesome-icon :icon="['fab', 'docker']" />
-          </a>
-        </h5>
-        <ul>
-          <li><strong>Port:</strong> 4000</li>
-          <li><strong>Image:</strong> swaggerapi/petstore3</li>
-          <li><strong>Purpose:</strong> ML based API Protection Demo</li>
-          <li><strong>Description:</strong> An example API server generated by Swagger/OpenAPI for a pet store.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- speedtest -->
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title">
-          speedtest
-          <a href="https://github.com/librespeed/speedtest" class="card-link" target="_blank">
-            <font-awesome-icon :icon="['fab', 'github']" />
-          </a>
-          <a href="https://hub.docker.com/r/adolfintel/speedtest" class="card-link" target="_blank">
-            <font-awesome-icon :icon="['fab', 'docker']" />
-          </a>
-        </h5>
-        <ul>
-          <li><strong>Port:</strong> 5000</li>
-          <li><strong>Image:</strong> adolfintel/speedtest</li>
-          <li><strong>Purpose:</strong> Onboard the app with FortiWeb REST API</li>
-          <li><strong>Description:</strong> A web application that provides a self-hosted HTML5-based speed test for both download and upload speeds.</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-
     </div>
   </div>
 </template>
 
 <script>
-import hljs from 'highlight.js';
-import 'highlight.js/styles/monokai.css';
+import hljs from "highlight.js";
+import "highlight.js/styles/monokai.css";
 
 export default {
   data() {
     return {
       showHelp: false,
-      fileContent: '', // Variable pour stocker le contenu du fichier
+      fileContent: "", // Variable pour stocker le contenu du fichier
     };
   },
   mounted() {
     this.highlightCode();
-    fetch('/docker.txt') // Assurez-vous que le chemin est correct
-      .then(response => response.text())
-      .then(text => {
+    fetch("/docker.txt") // Assurez-vous que le chemin est correct
+      .then((response) => response.text())
+      .then((text) => {
         this.fileContent = text; // Stocke le contenu du fichier dans la variable
       })
-      .catch(error => console.error('Error loading the file:', error));
+      .catch((error) => console.error("Error loading the file:", error));
   },
   methods: {
     highlightCode() {
-      document.querySelectorAll('pre code').forEach((block) => {
+      document.querySelectorAll("pre code").forEach((block) => {
         hljs.highlightBlock(block);
       });
     },
-  }
+  },
 };
 </script>
 

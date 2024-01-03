@@ -13,7 +13,7 @@
   <!-- Help Card -->
   <div v-if="showHelp" class="card bg-light mb-3">
     <div class="card-header">
-      <h5>About Docker</h5>
+      <h5>About Bootstrap</h5>
     </div>
     <div class="card-body">
       <p>Help content goes here...</p>

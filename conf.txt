@@ -1,153 +1,78 @@
 ========================================================
-File content of vue/src/components/03-api-protection/ApiRequests.vue
+File content of vue/src/components/04-rest-api/RestAPIManagement.vue
 ========================================================
 <template>
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5>API Requests</h5>
+      <h5>REST API</h5>
       <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
       <!-- Bootstrap icon for help -->
     </div>
+
     <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h6 class="card-text mb-0">Swagger Petstore - OpenAPI 3.0</h6>
-        <button class="btn btn-secondary btn-sm" @click="resetResultAndList">Reset</button>
-      </div>
+      <p>
+        This tool provides two primary sets of API tasks for quick onboarding and decommissioning of the application.<br>After completing these tasks, you can
+        verify the application's accessibility at <a href="http://speedtest.corp.fabriclab.ca" target="_blank">http://speedtest.corp.fabriclab.ca</a>.
+      </p>
 
-      <!-- API GET -->
-      <div class="d-flex mb-3">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm me-3"
-          style="width: 80px; background-color: #64b0fc; border-color: #64b0fc; font-weight: bold"
-          @click="performGetRequest()">
-          GET
-        </button>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <button class="btn btn-primary btn-sm me-2" @click="createPolicy" :disabled="createLoading">
+                  <span v-if="createLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <span>{{ createLoading ? "Creating..." : "Create" }}</span>
+                </button>
+                <button class="btn btn-secondary btn-sm" @click="resetResult">Reset</button>
+              </div>
 
-        <!-- GET list -->
-        <select id="get-pet-list" class="form-select form-select-sm me-3" v-model="selectedGetOption" style="width: 300px">
-          <option v-for="(option, index) in getList" :value="option.value" :key="index">
-            {{ option.text }}
-          </option>
-        </select>
-      </div>
+              <ul class="list-group list-group-flush">
+                <li v-for="(task, index) in tasks" :key="index" class="list-group-item d-flex justify-content-between">
+                  <span>{{ task.description }}</span>
+                  <span :class="['badge', 'rounded-pill', task.colorClass]">{{ task.statusText }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <button class="btn btn-primary btn-sm me-2" @click="deletePolicy" :disabled="deleteLoading">
+                  <span v-if="deleteLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <span>{{ deleteLoading ? "Deleting..." : "Delete" }}</span>
+                </button>
+                <button class="btn btn-secondary btn-sm" @click="resetDeleteResult">Reset</button>
+              </div>
 
-      <!-- API POST -->
-      <div class="mb-3 d-flex align-items-center">
-        <button
-          type="button"
-          class="btn btn-success btn-sm me-3"
-          style="width: 80px; background-color: #4ecc91; border-color: #4ecc91; font-weight: bold"
-          @click="performPostRequest()">
-          POST
-        </button>
-
-        <!-- POST list -->
-        <select id="post-pet-list" class="form-select form-select-sm me-3" v-model="selectedPostOption" style="width: 300px">
-          <option v-for="(option, index) in postList" :value="option.value" :key="index">
-            {{ option.text }}
-          </option>
-        </select>
-      </div>
-
-      <!-- API PUT -->
-      <div class="mb-3 d-flex align-items-center">
-        <button
-          type="button"
-          class="btn btn-success btn-sm me-3"
-          style="width: 80px; background-color: #faa03c; border-color: #faa03c; font-weight: bold"
-          @click="performPutRequest()">
-          PUT
-        </button>
-
-        <!-- PUT list -->
-        <select id="put-pet-list" class="form-select form-select-sm me-3" v-model="selectedPutOption" style="width: 300px">
-          <option v-for="(option, index) in putList" :value="option.value" :key="index">
-            {{ option.text }}
-          </option>
-        </select>
-      </div>
-
-      <!-- API DELETE -->
-      <div class="mb-4 d-flex align-items-center">
-        <button
-          type="button"
-          class="btn btn-success btn-sm me-3"
-          style="width: 80px; background-color: #f73c43; border-color: #f73c43; font-weight: bold"
-          @click="performDeleteRequest()">
-          DELETE
-        </button>
-
-        <!-- DELETE list -->
-        <select id="delete-pet-list" class="form-select form-select-sm me-3" v-model="selectedDeleteOption" style="width: 300px">
-          <option v-for="(option, index) in deleteList" :value="option.value" :key="index">
-            {{ option.text }}
-          </option>
-        </select>
-      </div>
-
-      <div>
-        <!-- Display CURL -->
-        <div v-if="curlCommand" class="mt-4">
-          <h6><i class="bi bi-terminal me-2"></i>Curl</h6>
-          <pre style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ curlCommand }}</pre>
-        </div>
-
-        <!-- Display URL -->
-        <div v-if="requestURL" class="mt-4">
-          <h6><i class="bi bi-link-45deg me-2"></i>Request URL</h6>
-          <pre style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ requestURL }}</pre>
-        </div>
-
-        <!-- Display JSON RESPONSE BODY -->
-        <div v-if="jsonResponseBody" class="mt-3">
-          <h6><i class="bi bi-filetype-json me-2"></i>Response Body</h6>
-          <pre style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ jsonResponseBody }}</pre>
-        </div>
-
-        <!-- Display HTML RESPONSE BODY -->
-        <div v-if="htmlResponseBody" class="mt-4">
-          <h6><i class="bi bi-filetype-html me-2"></i>Request Result</h6>
-          <iframe ref="responseIframe" :srcdoc="htmlResponseBody" @load="adjustIframeHeight" style="width: 100%; border: 1px solid lightgray"></iframe>
+              <ul class="list-group list-group-flush">
+                <li v-for="(deleteTask, index) in deleteTasks" :key="index" class="list-group-item d-flex justify-content-between">
+                  <span>{{ deleteTask.description }}</span>
+                  <span :class="['badge', 'rounded-pill', deleteTask.colorClass]">{{ deleteTask.statusText }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
 
   <!-- Help Card -->
   <div v-if="showHelp" class="card bg-light mb-3">
     <div class="card-header">
-      <h5>About API Protection</h5>
+      <h5>About FortiWeb Rest API</h5>
     </div>
     <div class="card-body">
-      <ul>
-        <li><strong>FortiWeb Protection</strong>: Analyzes API calls and applies WAF policies to defend against malicious traffic and JSON code exploits.</li>
-        <li><strong>JSON Validation</strong>: Configures JSON protection to ensure request contents are free from potential attacks.</li>
-        <li>
-          <strong>Machine Learning-based API Protection</strong>: Learns REST API structures from traffic to create models that identify and block malicious
-          requests.
-        </li>
-        <li><strong>Attack Detection</strong>: Identifies attacks by comparing incoming API requests against the defined API data schema model.</li>
-      </ul>
-
-      <div class="card">
-        <div class="card-header">API Protection CLI settings</div>
-        <div class="card-body">
-          <pre class="font-monospace">
-config waf api-learning-policy
-    set action-mlapi alert_deny
-    set schema-property maxLength minLength
-    set data-format date-time date time email hostname ipv4 ipv6
-    set de-duplication-all disable
-    set sample-limit-by-ip 0
-    set svm-type extended
-    set action-anomaly alert_deny
-  next
-end</pre
-          >
-        </div>
-      </div>
+      <p>
+        FortiWeb provides an API that uses Representational State Transfer (RESTful API) design principles to access and modify the settings of FortiWeb
+        applications.
+      </p>
+      <p>
+        You can use the RESTful API to control FortiWeb and seamlessly integrate FortiWeb to other systems. With a secure and programmable management style by
+        HTTPS+ authentication, FortiWeb RESTful API provides enough convenience for those who hope to integrate FortiWeb with other configurations. Furthermore,
+        FortiWeb RESTful API can help realize comprehensive management on all FortiWeb features.
+      </p>
     </div>
   </div>
 </template>
@@ -156,312 +81,183 @@ end</pre
 export default {
   data() {
     return {
-      selectedGetOption: "",
-      selectedPostOption: "",
-      selectedPutOption: "",
-      selectedDeleteOption: "",
-
-      curlCommand: "",
-      requestURL: "",
-      jsonResponseBody: "",
-      htmlResponseBody: "",
-
+      jobResult: [], // Initialize as an empty array
+      createLoading: false,
+      deleteLoading: false,
       showHelp: false,
-      getList: [],
-      postList: [],
-      putList: [],
-      deleteList: [],
+
+      tasks: [
+        { id: "createNewVirtualIP", description: "Create new Virtual IP", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        { id: "createNewServerPool", description: "Create new Server Pool", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        { id: "createNewMemberPool", description: "Create new Member Pool", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        { id: "createNewVirtualServer", description: "Create new Virtual Server", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        {
+          id: "assignVIPToVirtualServer",
+          description: "Assign Virtual IP to Virtual Server",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        {
+          id: "cloneSignatureProtection",
+          description: "Clone Signature Protection",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        { id: "cloneInlineProtection", description: "Clone Inline Protection", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        {
+          id: "createNewXForwardedForRule",
+          description: "Create new X-Forwarded-For Rule",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        {
+          id: "configureProtectionProfile",
+          description: "Configure Protection Profile",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        { id: "createNewPolicy", description: "Create new Policy", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+      ],
+
+      deleteTasks: [
+        { id: "deletePolicy", description: "Delete Policy", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        {
+          id: "deleteInlineProtection",
+          description: "Delete Inline Protection Profile",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        {
+          id: "deleteXForwardedForRule",
+          description: "Delete X-Forwarded-For Rule",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        {
+          id: "deleteSignatureProtection",
+          description: "Delete Signature Protection",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        { id: "deleteVirtualServer", description: "Delete Virtual Server", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        { id: "deleteServerPool", description: "Delete Server Pool", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        { id: "deleteVirtualIP", description: "Delete Virtual IP", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+      ],
     };
   },
 
-  created() {
-    /* GET list */
-    this.getList = [
-      { value: "findByStatus?status=available", text: "Status Available" },
-      { value: "findByStatus?status=sold", text: "Status Sold" },
-      { value: "findByStatus?status=pending", text: "Status Pending" },
-      { value: "findByStatus?", text: "Empty Status" },
-      { value: "findByStatus?status=ABCDEFGHIJKL", text: "Very Long Status" },
-      { value: "findByStatus?status=A", text: "Very Short Status" },
-      {
-        value: "findByStatus?status=;cmd.exe",
-        text: "Status with Command Injection",
-      },
-      {
-        value: "findByStatus?status=xx& var1=l var2=s;$var1$var2",
-        text: "Status with Zero-Day",
-      },
-      {
-        value: "findByStatus?status=sold&status=pending",
-        text: "Duplicate Status",
-      },
-    ];
-
-    // Set the first item of the GET list as the default option
-    if (this.getList.length > 0) {
-      this.selectedGetOption = this.getList[0].value;
-    }
-
-    /* POST list */
-    this.postList = [
-      {
-        value: {
-          id: 999,
-          name: "FortiPet",
-          category: { id: 1, name: "Dogs" },
-          photoUrls: ["fortipet.png"],
-          tags: [{ id: 0, name: "Cute" }],
-          status: "available",
-        },
-        text: "Add new pet FortiPet [id:999]",
-      },
-      {
-        value: {
-          id: 999,
-          name: "FortiPet",
-          category: { id: 1, name: "Dogs" },
-          photoUrls: ["fortipet.png"],
-          tags: [{ id: 0, name: "Cute" }],
-          status: "/bin/ls",
-        },
-        text: "New Pet with Command Injection",
-      },
-      {
-        value: {
-          id: 999,
-          name: "FortiPet",
-          category: { id: 1, name: "Dogs" },
-          photoUrls: ["fortipet.png"],
-          tags: [{ id: 0, name: "Cute" }],
-          status: "<script>alert(123)<\\/script>",
-        },
-        text: "New Pet with Cross-Site-Scripting",
-      },
-      {
-        value: {
-          id: 999,
-          name: "FortiPet",
-          category: { id: 1, name: "Dogs" },
-          photoUrls: ["fortipet.png"],
-          tags: [{ id: 0, name: "Cute" }],
-          status: "xx& var1=l var2=s;$var1$var2",
-        },
-        text: "New Pet with Zero-Day",
-      },
-      {
-        value: {
-          id: 999,
-          name: "FortiPet",
-          category: { id: 1, name: "Dogs" },
-          photoUrls: ["fortipet.png"],
-          tags: [{ id: 0, name: "Cute" }],
-          status: "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*",
-        },
-        text: "New Pet with Malware",
-      },
-    ];
-
-    // Set the first item of the POST list as the default option
-    if (this.postList.length > 0) {
-      this.selectedPostOption = this.postList[0].value;
-    }
-
-    /* PUT list */
-    this.putList = [
-      {
-        value: {
-          id: 999,
-          name: "FortiPet",
-          category: { id: 1, name: "Dogs" },
-          photoUrls: ["fortipet.png"],
-          tags: [{ id: 0, name: "Cute" }],
-          status: "sold",
-        },
-        text: "Modify FortiPet [id:999]",
-      },
-      {
-        value: {
-          id: 999,
-          name: "FortiPet",
-          category: { id: 1, name: "Dogs" },
-          photoUrls: ["fortipet.png"],
-          tags: [{ id: 0, name: "Cute" }],
-          status: "ls;;cmd.exe",
-        },
-        text: "Modify FortiPet with Command Injection",
-      },
-      {
-        value: {
-          id: 999,
-          name: "FortiPet",
-          category: { id: 1, name: "Dogs" },
-          photoUrls: ["fortipet.png"],
-          tags: [{ id: 0, name: "Cute" }],
-          status: "<script>alert(123)<\\/script>",
-        },
-        text: "Modify FortiPet with Cross-Site-Scripting",
-      },
-      {
-        value: {
-          id: 999,
-          name: "FortiPet",
-          category: { id: 1, name: "Dogs" },
-          photoUrls: ["fortipet.png"],
-          tags: [{ id: 0, name: "Cute" }],
-          status: "xx& var1=l var2=s;$var1$var2",
-        },
-        text: "Modify FortiPet with Zero-Day",
-      },
-      {
-        value: {
-          id: 999,
-          name: "FortiPet",
-          category: { id: 1, name: "Dogs" },
-          photoUrls: ["fortipet.png"],
-          tags: [{ id: 0, name: "Cute" }],
-          status: "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*",
-        },
-        text: "Modify FortiPet with Malware",
-      },
-    ];
-
-    // Set the first item of the PUT list as the default option
-    if (this.putList.length > 0) {
-      this.selectedPutOption = this.putList[0].value;
-    }
-
-    /* DELETE list */
-    this.deleteList = [
-      { value: 999, text: "Delete FortiPet [id:999]" },
-      { value: "cmd.exe", text: "Delete FortiPet with Command Injection" },
-    ];
-
-    // Set the first item of the DELETE list as the default option
-    if (this.deleteList.length > 0) {
-      this.selectedDeleteOption = this.deleteList[0].value;
-    }
-  },
-
   methods: {
-    // Method to send a GET request
-    performGetRequest() {
-      const url = "http://localhost:8080/api-get";
-      const body = JSON.stringify({ option: this.selectedGetOption });
-
-      // Debug: Print the URL and body to the console
-      console.log("Sending GET request to:", url);
-      console.log("Request body:", body);
-
-      this.sendApiRequest(url, body);
-    },
-
-    // Method to send a POST request
-    performPostRequest() {
-      const url = "http://localhost:8080/api-post";
-      const body = JSON.stringify({ option: this.selectedPostOption });
-
-      this.sendApiRequest(url, body);
-    },
-
-    // Method to send a PUT request
-    performPutRequest() {
-      const url = "http://localhost:8080/api-put";
-      const body = JSON.stringify({ option: this.selectedPutOption });
-
-      this.sendApiRequest(url, body);
-    },
-
-    // Method to send a DELETE request
-    performDeleteRequest() {
-      const url = "http://localhost:8080/api-delete";
-      const body = JSON.stringify({ option: this.selectedDeleteOption });
-
-      this.sendApiRequest(url, body);
-    },
-
-    // Method to send API request and handle response
-    sendApiRequest(url, body) {
-      this.resetResult();
-      console.log("fetch url", url);
-      console.log("fetch body", body);
-
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: body,
-      })
-        .then((response) => {
-          // Checking if the response is ok
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-
-        .then((data) => {
-          this.curlCommand = data.curlCommand;
-          this.requestURL = data.url;
-          this.responseBody = data.data;
-
-          console.log("Curl Command:", this.curlCommand);
-          console.log("Request URL Command:", this.requestURL);
-          console.log("responseBody:", this.responseBody);
-
-          // Checking the type of the response this.responseBody
-          if (typeof this.responseBody === "string") {
-            // Check if the string is HTML
-            if (this.responseBody.startsWith("<") && this.responseBody.endsWith(">")) {
-              this.htmlResponseBody = this.responseBody;
-              this.jsonResponseBody = "";
-            } else {
-              // It's plain text
-              this.jsonResponseBody = this.responseBody;
-              this.htmlResponseBody = "";
-            }
-          } else if (typeof this.responseBody === "object") {
-            // It's a JSON object
-            this.jsonResponseBody = JSON.stringify(this.responseBody, null, 2);
-            this.htmlResponseBody = "";
-          } else {
-            console.log("Unexpected data type received:", typeof this.responseBody);
-          }
-        })
-        .catch((error) => {
-          console.error("Error in sendApiRequest:", error);
-          this.jsonResponseBody = "";
-          this.htmlResponseBody = "";
-        });
-    },
-
-    adjustIframeHeight() {
-      const iframe = this.$refs.responseIframe;
-      if (iframe && iframe.contentWindow && iframe.contentWindow.document.body) {
-        iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 30 + "px";
+    updateTaskStatus(taskId, status) {
+      let task = this.tasks.find((t) => t.id === taskId);
+      if (task) {
+        task.status = status;
+        if (status === "success") {
+          task.colorClass = "bg-success";
+          task.statusText = "Done";
+        } else if (status === "failure") {
+          task.colorClass = "bg-danger";
+          task.statusText = "Failed";
+        }
       }
     },
 
-    resetResultAndList() {
-      this.selectedGetOption = this.getList.length > 0 ? this.getList[0].value : "";
-      this.selectedPostOption = this.postList.length > 0 ? this.postList[0].value : "";
-      this.selectedPutOption = this.putList.length > 0 ? this.putList[0].value : "";
-      this.selectedDeleteOption = this.deleteList.length > 0 ? this.deleteList[0].value : "";
-      this.curlCommand = "";
-      this.requestURL = "";
-      this.jsonResponseBody = "";
-      this.htmlResponseBody = "";
+    updateDeleteTaskStatus(taskId, status) {
+      let task = this.deleteTasks.find((t) => t.id === taskId);
+      if (task) {
+        task.status = status;
+        if (status === "success") {
+          task.colorClass = "bg-success";
+          task.statusText = "Done";
+        } else if (status === "failure") {
+          task.colorClass = "bg-danger";
+          task.statusText = "Failed";
+        }
+      }
+    },
+
+    createPolicy() {
+      this.resetResult();
+      this.resetDeleteResult();
+      this.createLoading = true;
+      console.log("Creating policy...");
+
+      fetch("http://localhost:8080/create-policy", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Results", data);
+          this.createLoading = false;
+          this.jobResult = data;
+          data.forEach((status) => {
+            this.updateTaskStatus(status.taskId, status.status);
+          });
+        })
+        .catch((error) => {
+          console.error("Error creating policy:", error);
+          this.createLoading = false;
+        });
+    },
+
+    deletePolicy() {
+      this.resetResult();
+      this.resetDeleteResult();
+      this.deleteLoading = true;
+      console.log("Deleting policy...");
+
+      fetch("http://localhost:8080/delete-policy", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Policy deleted successfully:", data);
+          this.deleteLoading = false;
+          this.jobResult = data;
+          data.forEach((status) => {
+            this.updateDeleteTaskStatus(status.taskId, status.status);
+          });
+        })
+        .catch((error) => {
+          console.error("Error deleting policy:", error);
+          this.deleteLoading = false;
+        });
     },
 
     resetResult() {
-      this.curlCommand = "";
-      this.requestURL = "";
-      this.jsonResponseBody = "";
-      this.htmlResponseBody = "";
+      this.tasks = this.tasks.map((task) => ({
+        ...task,
+        status: "incomplete",
+        colorClass: "bg-secondary",
+        statusText: "Incomplete",
+      }));
+    },
+
+    resetDeleteResult() {
+      this.deleteTasks = this.deleteTasks.map((task) => ({
+        ...task,
+        status: "incomplete",
+        colorClass: "bg-secondary",
+        statusText: "Incomplete",
+      }));
     },
   },
 };
 </script>
+
+<style></style>
 
 ========================================================
 File content of vue/src/router/index.js
@@ -487,8 +283,7 @@ import ThresholdBasedDetection from '../components/02-bot-mitigation/ThresholdBa
 import ApiRequests from '../components/03-api-protection/ApiRequests.vue';
 import ApiTrafficGeneration from '../components/03-api-protection/ApiTrafficGeneration.vue';
 
-import CreateNewApplicationPolicy from '../components/04-rest-api/CreateNewApplicationPolicy.vue';
-import DeleteApplicationPolicy from '../components/04-rest-api/DeleteApplicationPolicy.vue';
+import RestAPIManagement from '../components/04-rest-api/RestAPIManagement.vue';
 
 import ConfigForm from '../components/05-tool/ConfigForm.vue';
 import HealthCheck from '../components/05-tool/HealthCheck.vue';
@@ -514,8 +309,7 @@ const routes = [
   { path: '/api-requests', component: ApiRequests },
   { path: '/api-traffic-generation', component: ApiTrafficGeneration },
 
-  { path: '/create-new-application-policy', component: CreateNewApplicationPolicy },
-  { path: '/delete-application-policy', component: DeleteApplicationPolicy },
+  { path: '/rest-api-management', component: RestAPIManagement },
 
   { path: '/configuration', component: ConfigForm },
   { path: '/health-check', component: HealthCheck },
@@ -532,598 +326,688 @@ const router = createRouter({
 export default router;
 
 ========================================================
-File content of go/handlers/apiRequestHandler.go
+File content of go/utils/restApiCommonUtils.go
 ========================================================
-package handlers
+package utils
 
 import (
 	"bytes"
 	"crypto/tls"
 	"darwin2/config"
-	"darwin2/utils"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
+	"net/http"
+	"time"
+)
+
+// /////////////////////////////////////////////////////////////////////////////
+func GenerateAPIToken() string {
+	tokenData := fmt.Sprintf(`{"username":"%s","password":"%s","vdom":"%s"}`, config.CurrentConfig.USERNAMEAPI, config.CurrentConfig.PASSWORDAPI, config.CurrentConfig.VDOMAPI)
+	return base64.StdEncoding.EncodeToString([]byte(tokenData))
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// /////////////////////////////////////////////////////////////////////////////
+func SendRequest(method, url, token string, data interface{}) ([]byte, error) {
+	// fmt.Println("Sending HTTP Request...")
+	var req *http.Request
+	var err error
+
+	reqData := config.Request{
+		Data: data,
+	}
+
+	jsonData, err := json.Marshal(reqData)
+	if err != nil {
+		fmt.Printf("Error marshaling JSON data: %v\n", err)
+		return nil, err
+	}
+
+	// Convert jsonData to string for comparison
+	jsonDataStr := string(jsonData)
+
+	if jsonDataStr != "" && jsonDataStr != `{"data":null}` {
+		// Create a new request with JSON data
+		req, err = http.NewRequest(method, url, bytes.NewBuffer(jsonData))
+		if err != nil {
+			fmt.Printf("Error creating HTTP request: %v\n", err)
+			return nil, err
+		}
+	} else {
+		// Create a new request without data
+		req, err = http.NewRequest(method, url, nil)
+		if err != nil {
+			fmt.Printf("Error creating HTTP request: %v\n", err)
+			return nil, err
+		}
+	}
+
+	req.Header.Set("Authorization", token)
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-type", "application/json")
+
+	// Create a custom HTTP client with SSL/TLS certificate verification disabled
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		},
+	}
+
+	// fmt.Println("Sending HTTP Request...")
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Printf("Error sending HTTP request: %v\n", err)
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	// fmt.Println("Waiting for response...")
+	time.Sleep(time.Duration(1000) * time.Millisecond)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("Error reading response body: %v\n", err)
+		return nil, err
+	}
+
+	// fmt.Println("Received HTTP Response")
+	return body, nil
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// /////////////////////////////////////////////////////////////////////////////
+func CheckOperationStatus(result []byte) bool {
+	var res map[string]interface{}
+	json.Unmarshal(result, &res)
+
+	// Check if the result map is empty
+	if len(res) == 0 {
+		return false
+	}
+
+	// Check if the "data" field is null
+	if data, ok := res["data"]; ok && data == nil {
+		return false
+	}
+
+	if _, ok := res["results"].(map[string]interface{})["errcode"]; ok {
+		// The result contains an error code, so the operation failed
+		return false
+	}
+	// The operation succeeded
+	return true
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func ValidateInput(input interface{}) error {
+	// Utilisez la réflexion pour inspecter l'input
+	val := reflect.ValueOf(input)
+
+	// Exemple de validation : vérifier si l'input est un struct et non nil
+	if val.Kind() != reflect.Struct || val.IsNil() {
+		return errors.New("invalid input: expect a struct")
+	}
+
+	// Parcourir les champs du struct pour des validations spécifiques
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+
+		// Exemple de validation : vérifier si les champs string ne sont pas vides
+		if field.Kind() == reflect.String && field.String() == "" {
+			return fmt.Errorf("invalid input: field %s is empty", val.Type().Field(i).Name)
+		}
+
+		// Ajoutez ici d'autres règles de validation selon vos besoins
+	}
+
+	// Si tout est valide
+	return nil
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// /////////////////////////////////////////////////////////////////////////////
+func FormatError(err error) map[string]string {
+	// Création d'une map pour structurer le message d'erreur
+	errorMap := make(map[string]string)
+
+	if err != nil {
+		// Formatage du message d'erreur
+		errorMap["error"] = err.Error()
+	} else {
+		// Gestion d'un cas où err est nil (aucune erreur)
+		errorMap["error"] = "unknown error"
+	}
+
+	// Renvoi de la map formatée
+	return errorMap
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+========================================================
+File content of go/handlers/restApiCreateHandlers.go
+========================================================
+package handlers
+
+import (
+	"darwin2/config"
+	"darwin2/utils"
+	"fmt"
 	"net/http"
 	"net/url"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 )
 
-///////////////////////////////////////////////////////////////////////////////////
-// STRUCTURE                                                                     //
-///////////////////////////////////////////////////////////////////////////////////
-
-type Category struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+type ApiResult struct {
+	TaskID      string
+	Description string
+	Status      string
+	Message     string
 }
 
-type Tag struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Step 1: Create new Virtual IP
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func HandleCreateNewVirtualIP(c echo.Context) error {
+	fwbmgtip := config.CurrentConfig.FWBMGTIP
+	token := utils.GenerateAPIToken()
 
-type PetstorePet struct {
-	ID        int      `json:"id"`
-	Category  Category `json:"category"`
-	Name      string   `json:"name"`
-	PhotoUrls []string `json:"photoUrls"`
-	Tags      []Tag    `json:"tags"`
-	Status    string   `json:"status"`
-}
-
-type PetstorePetArray []PetstorePet
-
-type PetstoreGetRequest struct {
-	Option string `json:"option"`
-}
-
-type PetstorePostRequest struct {
-	Option PetstorePet `json:"option"`
-}
-
-type PetstorePutRequest struct {
-	Option PetstorePet `json:"option"`
-}
-
-type PetstoreDeleteRequest struct {
-	PetID int `json:"option"`
-}
-
-///////////////////////////////////////////////////////////////////////////////////
-// MAIN                                                                          //
-///////////////////////////////////////////////////////////////////////////////////
-
-func HandleApiGet(c echo.Context) error {
-	// fmt.Printf("Start HandleApiGet")
-
-	var status PetstoreGetRequest
-	if err := c.Bind(&status); err != nil {
-		log.Printf("Error decoding request: %v", err)
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-	}
-	// Log the Status
-	// fmt.Printf("Status: %s", status.Option)
-
-	apiURL := fmt.Sprintf("%s/%s", config.CurrentConfig.PETSTOREURL, status.Option)
-	// fmt.Printf("API URL: %s", apiURL)
-
-	req, _ := http.NewRequest("GET", apiURL, nil)
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
-
-	// Generate curl command string
-	curlCommand := utils.GenerateCurlCommand(req, nil)
-
-	// Log the curl command
-	// fmt.Printf("Curl Command: %s", curlCommand)
-
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		},
+	vipData := config.VirtualIPData{
+		Name:      config.VipName,
+		Vip:       config.VipIp,
+		Interface: config.Interface,
 	}
 
-	resp, err := client.Do(req)
+	result := ApiResult{
+		TaskID:      "createNewVirtualIP",
+		Description: "Create new Virtual IP",
+	}
+
+	resultBody, err := createNewVirtualIP(fwbmgtip, token, vipData)
 	if err != nil {
-		log.Printf("Error executing request: %v", err)
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-	}
-	defer resp.Body.Close()
-
-	body, _ := io.ReadAll(resp.Body)
-
-	// Log the response body for debugging
-	// fmt.Printf("Response Body: %s", string(body))
-
-	contentType := resp.Header.Get("Content-Type")
-	// fmt.Printf("Content-Type: %s", contentType)
-
-	// Construct the response object with the curl command and the URL
-	response := map[string]interface{}{
-		"data":        nil,
-		"url":         req.URL.String(),
-		"curlCommand": curlCommand,
-	}
-
-	if strings.Contains(contentType, "application/json") {
-		var pets PetstorePetArray
-		if err := json.Unmarshal(body, &pets); err != nil {
-			log.Printf("Received non-JSON content despite 'application/json' content-type: %v", err)
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-		}
-		response["data"] = pets
-
+		result.Status = "failure"
+		result.Message = fmt.Sprintf("Error creating virtual IP: %v", err)
+	} else if !utils.CheckOperationStatus(resultBody) {
+		result.Status = "failure"
+		result.Message = "Failed to create virtual IP"
 	} else {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
+		result.Status = "success"
+		result.Message = "Successfully created virtual IP"
 	}
 
-	fmt.Printf("Response data: %v\n", response["data"])
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, result)
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-// POST                                                                          //
-///////////////////////////////////////////////////////////////////////////////////
+func createNewVirtualIP(host, token string, data config.VirtualIPData) ([]byte, error) {
+	url := fmt.Sprintf("https://%s/api/v2.0/cmdb/system/vip", host)
 
-func HandleApiPost(c echo.Context) error {
-	apiURL := config.CurrentConfig.PETSTOREURL
-	// fmt.Printf("API URL: %s", apiURL)
+	return utils.SendRequest("POST", url, token, data)
+}
 
-	// Read the request body
-	var request PetstorePostRequest
-	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
-		log.Printf("Error decoding request: %v", err)
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Step 2: Create new Server Pool
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func HandleCreateNewServerPool(c echo.Context) error {
+	fwbmgtip := config.CurrentConfig.FWBMGTIP
+	token := utils.GenerateAPIToken()
+
+	poolData := config.ServerPoolData{
+		Name:          config.PoolName,
+		ServerBalance: config.ServerBalance,
+		Health:        config.HealthCheck,
+    }
+
+	result := ApiResult{
+		TaskID:      "createNewServerPool",
+		Description: "Create new Server Pool",
 	}
-	// fmt.Printf("Decoded request: %+v", request)
 
-	// Prepare the payload for the POST request
-	payload, err := json.Marshal(request.Option)
+	resultBody, err := createNewVirtualIP(fwbmgtip, token, poolData)
 	if err != nil {
-		log.Printf("Error marshalling the payload: %v", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-	// fmt.Printf("Marshalled payload: %s", string(payload))
-
-	// Create a new POST request using the received body
-	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(payload))
-	if err != nil {
-		log.Printf("Error creating new request: %v", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	// Set headers for the request
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
-
-	// Generate curl command string
-	curlCommand := utils.GenerateCurlCommand(req, payload)
-	// fmt.Printf("Curl command: %s", curlCommand)
-
-	// Create a custom HTTP client
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		},
-	}
-
-	// Send the request
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Printf("Error sending request: %v", err)
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-	}
-	defer resp.Body.Close()
-	// fmt.Printf("Response status: %s", resp.Status)
-
-	// Read the response body
-	responseBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("Error reading response body: %v", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-	// log.Printf("Response body: %s", string(responseBody))
-
-	// Construct the response object with the curl command
-	response := map[string]interface{}{
-		"data":        nil,
-		"url":         req.URL.String(),
-		"curlCommand": curlCommand,
-	}
-
-	contentType := resp.Header.Get("Content-Type")
-	// fmt.Printf("Content-Type: %s", contentType)
-
-	if strings.Contains(contentType, "application/json") {
-		var pets PetstorePetArray
-		if err := json.Unmarshal(responseBody, &pets); err != nil {
-			log.Printf("Error unmarshalling response body: %v", err)
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-		}
-		response["data"] = pets
-	} else if strings.Contains(contentType, "text/plain") {
-		response["data"] = string(responseBody)
-	} else if strings.Contains(contentType, "text/html") {
-		response["data"] = string(responseBody)
+		result.Status = "failure"
+		result.Message = fmt.Sprintf("Error creating Server Pool: %v", err)
+	} else if !utils.CheckOperationStatus(resultBody) {
+		result.Status = "failure"
+		result.Message = "Failed to create Server Pool"
 	} else {
-		log.Printf("Unsupported content type")
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
+		result.Status = "success"
+		result.Message = "Successfully created Server Pool"
 	}
 
-	return c.JSON(http.StatusOK, response)
+    return c.JSON(http.StatusOK, result)
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-// PUT                                                                           //
-///////////////////////////////////////////////////////////////////////////////////
+func createNewServerPool(host, token string, data config.ServerPoolData) ([]byte, error) {
+	url := fmt.Sprintf("https://%s/api/v2.0/cmdb/server-policy/server-pool", host)
 
-func HandleApiPut(c echo.Context) error {
-	apiURL := config.CurrentConfig.PETSTOREURL
-	// fmt.Printf("API URL: %s", apiURL)
+	return utils.SendRequest("POST", url, token, data)
 
-	// Read the request body
-	var request PetstorePutRequest
-	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
-		log.Printf("Error decoding request: %v", err)
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Step 3: Create new Member Pool
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func HandleCreateNewMemberPool(c echo.Context) error {
+	fwbmgtip := config.CurrentConfig.FWBMGTIP
+	token := utils.GenerateAPIToken()
+   	poolName := config.PoolName
+
+    poolMembers := make([]config.MemberPoolData, len(config.PoolMemberIPs))
+	for i, ip := range config.PoolMemberIPs {
+		poolMembers[i] = config.MemberPoolData{IP: ip, SSL: config.PoolMemberSSL, Port: config.PoolMemberPort}
 	}
-	// fmt.Printf("Decoded request: %+v", request)
 
-	// Prepare the payload for the PUT request
-	payload, err := json.Marshal(request.Option)
+    result := ApiResult{
+        TaskID:      "createNewMemberPool",
+        Description: "Create new Member Pool",
+    }
+
+    for _, member := range poolMembers {
+        resultBody, err := createNewMemberPool(fwbmgtip, token, poolName, member)
+        if err != nil {
+            result.Status = "failure"
+            result.Message = fmt.Sprintf("Error creating Member Pool: %v", err)
+        } else if !checkOperationStatus(resultBody) {
+            result.Status = "failure"
+            result.Message = "Failed to create Member Pool"
+        } else {
+            result.Status = "success"
+            result.Message = "Successfully created Member Pool"
+        }
+    }
+
+    return c.JSON(http.StatusOK, result)
+}
+
+func createNewMemberPool(host, token, poolName string, data config.MemberPoolData) ([]byte, error) {
+	url := fmt.Sprintf("https://%s/api/v2.0/cmdb/server-policy/server-pool/pserver-list?mkey=%s", host, url.QueryEscape(poolName))
+
+	return utils.SendRequest("POST", url, token, data)
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Step 4: Create new Virtual Server
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func HandleCreateNewVirtualServer(c echo.Context) error {
+	fwbmgtip := config.CurrentConfig.FWBMGTIP
+	token := utils.GenerateAPIToken()
+	vsData := config.VirtualServerData{
+		Name: config.VirtualServerName,
+	}
+
+    result := ApiResult{
+		TaskID:      "createNewVirtualServer",
+		Description: "Create new Virtual Server",
+	}
+
+	resultBody, err := createNewVirtualServer(fwbmgtip, token, vsData)
 	if err != nil {
-		log.Printf("Error marshalling the payload: %v", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-	// fmt.Printf("Marshalled payload: %s", string(payload))
-
-	// Create a new PUT request using the received body
-	req, err := http.NewRequest("PUT", apiURL, bytes.NewBuffer(payload))
-	if err != nil {
-		log.Printf("Error creating new request: %v", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	// Set headers for the request
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
-
-	// Generate curl command string
-	curlCommand := utils.GenerateCurlCommand(req, payload)
-	// fmt.Printf("Curl command: %s", curlCommand)
-
-	// Create a custom HTTP client
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		},
-	}
-
-	// Send the request
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Printf("Error sending request: %v", err)
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-	}
-	defer resp.Body.Close()
-	// fmt.Printf("Response status: %s", resp.Status)
-
-	// Read the response body
-	responseBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("Error reading response body: %v", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	// Construct the response object with the curl command
-	response := map[string]interface{}{
-		"data":        nil,
-		"url":         req.URL.String(),
-		"curlCommand": curlCommand,
-	}
-
-	contentType := resp.Header.Get("Content-Type")
-	// fmt.Printf("Content-Type: %s", contentType)
-
-	if strings.Contains(contentType, "application/json") {
-		var pets PetstorePet
-		if err := json.Unmarshal(responseBody, &pets); err != nil {
-			log.Printf("Error unmarshalling response body: %v", err)
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-		}
-		response["data"] = pets
-	} else if strings.Contains(contentType, "text/plain") {
-		response["data"] = string(responseBody)
-	} else if strings.Contains(contentType, "text/html") {
-		response["data"] = string(responseBody)
+			result.Status =      "failure"
+			result.Message =     fmt.Sprintf("Error creating Virtual Server: %v", err)
+	} else if !checkOperationStatus(resultBody) {
+			result.Status =      "failure"
+			result.Message =     "Failed to create Virtual Server"
 	} else {
-		log.Printf("Unsupported content type")
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
+			result.Status =      "success"
+			result.Message =     "Successfully created Virtual Server"
 	}
 
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, result)
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-// DELETE                                                                        //
-///////////////////////////////////////////////////////////////////////////////////
+func createNewVirtualServer(host, token string, data config.VirtualServerData) ([]byte, error) {
+	url := fmt.Sprintf("https://%s/api/v2.0/cmdb/server-policy/vserver", host)
 
-func HandleApiDelete(c echo.Context) error {
-	// Read the request body into PetstoreDeleteRequest
-	var request PetstoreDeleteRequest
-	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
-		log.Printf("Error decoding request: %v", err)
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	return utils.SendRequest("POST", url, token, data)
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Step 5: Assign Virtual IP to Virtual Server
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func HandleAssignVIPToVirtualServer(c echo.Context) error {
+	fwbmgtip := config.CurrentConfig.FWBMGTIP
+	token := utils.GenerateAPIToken()
+    virtualServerName := config.VirtualServerName
+
+	assignVIPData := config.AssignVIPData{
+		Interface: config.Interface,
+		Status:    config.VipStatus,
+		VipName:   config.VipName,
 	}
-	// fmt.Printf("Decoded request: %+v", request)
 
-	// Construct the URL with the pet ID from the request
-	apiURL := fmt.Sprintf("%s/%d", config.CurrentConfig.PETSTOREURL, request.PetID)
-	// fmt.Printf("API URL: %s", apiURL)
+    result := ApiResult{
+        TaskID:      "assignVIPToVirtualServer",
+        Description: "Assign Virtual IP to Virtual Server",
+    }
 
-	// Create a new DELETE request
-	req, err := http.NewRequest("DELETE", apiURL, nil)
+	resultBody, err = assignVIPToVirtualServer(fwbmgtip, token, virtualServerName, assignVIPData)
 	if err != nil {
-		log.Printf("Error creating new request: %v", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	// Set headers for the request
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
-
-	// Generate curl command string
-	curlCommand := utils.GenerateCurlCommand(req, nil)
-	// fmt.Printf("Curl command: %s", curlCommand)
-
-	// Create a custom HTTP client
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		},
-	}
-
-	// Send the request
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Printf("Error sending request: %v", err)
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-	}
-	defer resp.Body.Close()
-	// fmt.Printf("Response status: %s", resp.Status)
-
-	// Read the response body
-	responseBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("Error reading response body: %v", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	// Construct the response object with the curl command
-	response := map[string]interface{}{
-		"data":        nil,
-		"url":         req.URL.String(),
-		"curlCommand": curlCommand,
-	}
-
-	contentType := resp.Header.Get("Content-Type")
-	// fmt.Printf("Content-Type: %s", contentType)
-
-	if strings.Contains(contentType, "application/json") {
-		var jsonResponse map[string]interface{}
-		if err := json.Unmarshal(responseBody, &jsonResponse); err != nil {
-			response["data"] = string(responseBody)
-		} else {
-			response["data"] = jsonResponse
-		}
-	} else if strings.Contains(contentType, "text/plain") || strings.Contains(contentType, "text/html") {
-		response["data"] = string(responseBody)
+			result.Status =      "failure"
+			result.Message =     fmt.Sprintf("Error assigning VIP to Virtual Server: %v", err)
+	} else if !checkOperationStatus(resultBody) {
+			result.Status =      "failure"
+			result.Message =     "Failed to assign VIP to Virtual Server"
 	} else {
-		log.Printf("Unsupported content type")
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
+			result.Status =      "success",
+			result.Message =     "Successfully assigned VIP to Virtual Server"
 	}
 
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, result)
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-// sendApiGetRequest                                                                //
-///////////////////////////////////////////////////////////////////////////////////
+func assignVIPToVirtualServer(host, token, virtualServerName string, data config.AssignVIPData) ([]byte, error) {
+	url := fmt.Sprintf("https://%s/api/v2.0/cmdb/server-policy/vserver/vip-list?mkey=%s", host, url.QueryEscape(virtualServerName))
 
-func sendApiGetRequest(petStoreURL, randomStatus, userAgent, xForwardedFor string) error {
-	// Construct the URL with query parameters
-	fullURL := fmt.Sprintf("%s/findByStatus?status=%s", petStoreURL, url.QueryEscape(randomStatus))
+	return utils.SendRequest("POST", url, token, data)
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	// Create the request
-	req, err := http.NewRequest("GET", fullURL, nil)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Step 6: Clone Signature Protection
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func HandleCloneSignatureProtection(c echo.Context) error {
+	fwbmgtip := config.CurrentConfig.FWBMGTIP
+	token := utils.GenerateAPIToken()
+	originalKey := config.OriginalSignatureProtectionName
+	cloneKey := config.CloneSignatureProtectionName
+    
+    result := ApiResult{
+        TaskID:      "cloneSignatureProtection",
+        Description: "Clone Signature Protection",
+    }
+
+	resultBody, err = cloneSignatureProtection(fwbmgtip, token, originalKey, cloneKey)
 	if err != nil {
-		return err
+			result.Status =      "failure"
+			result.Message =     fmt.Sprintf("Error cloning Signature Protection: %v", err)
+	} else if !checkOperationStatus(resultBody) {
+			result.Status =      "failure"
+			result.Message =     "Failed to clone Signature Protection"
+	} else {
+			result.Status =      "success"
+			result.Message =     "Successfully cloned Signature Protection"
 	}
 
-	// Set headers
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", userAgent)
-	req.Header.Set("X-Forwarded-For", xForwardedFor)
-
-	// Send the request
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		},
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	// Read and log the response body (optional)
-	// body, err := io.ReadAll(resp.Body)
-	// if err != nil {
-	// 	return err
-	// }
-	// log.Printf("Response Body: %s\n", body)
-
-	return nil
+	return c.JSON(http.StatusOK, result)
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-// sendApiPostRequest                                                               //
-///////////////////////////////////////////////////////////////////////////////////
+func cloneSignatureProtection(host, token, originalKey, cloneKey string) ([]byte, error) {
+	url := fmt.Sprintf("https://%s/api/v2.0/cmdb/waf/signature?mkey=%s&clone_mkey=%s", host, url.QueryEscape(originalKey), url.QueryEscape(cloneKey))
 
-func sendApiPostRequest(petStoreURL string, userAgent string, pet PetstorePet, xForwardedFor string) error {
-	jsonData, err := json.Marshal(pet)
+	return utils.SendRequest("POST", url, token, nil)
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Step 7: Clone Inline Protection
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func HandleCloneInlineProtection(c echo.Context) error {
+	fwbmgtip := config.CurrentConfig.FWBMGTIP
+	token := utils.GenerateAPIToken()
+	originalKey := config.OriginalInlineProtectionProfileName
+	cloneKey := config.CloneInlineProtectionProfileName
+
+    result := ApiResult{
+        TaskID:      "cloneInlineProtection",
+        Description: "Clone Inline Protection",
+    }
+
+	resultBody, err = cloneInlineProtection(fwbmgtip, token, originalKey, cloneKey)
 	if err != nil {
-		log.Printf("Error marshalling pet data: %v\n", err)
-		return err
+			result.Status =      "failure"
+			result.Message =     fmt.Sprintf("Error cloning Inline Protection: %v", err)
+	} else if !checkOperationStatus(resultBody) {
+			result.Status =      "failure"
+			result.Message =     "Failed to clone Inline Protection"
+	} else {
+			result.Status =      "success"
+			result.Message =     "Successfully cloned Inline Protection"
+		}
 	}
 
-	req, err := http.NewRequest("POST", petStoreURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		log.Printf("Error creating HTTP request: %v\n", err)
-		return err
-	}
-
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", userAgent)
-	req.Header.Set("X-Forwarded-For", xForwardedFor)
-
-	// Print equivalent curl command
-	// fmt.Printf("curl -X PUT %s -H \"Accept: application/json\" -H \"Content-Type: application/json\" -H \"User-Agent: %s\" -H \"X-Forwarded-For: %s\" -d '%s'\n", petStoreURL, userAgent, xForwardedFor, jsonData)
-
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		},
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Printf("Error sending request: %v\n", err)
-		return err
-	}
-	defer resp.Body.Close()
-
-	// Read and log the response body (optional)
-	// body, err := io.ReadAll(resp.Body)
-	// if err != nil {
-	// 	return err
-	// }
-	// log.Printf("Response Body: %s\n", body)
-
-	// Print various response fields
-	// fmt.Printf("Status: %s\n", resp.Status)
-	// fmt.Printf("StatusCode: %d\n", resp.StatusCode)
-	// fmt.Printf("Header: %v\n", resp.Header)
-	// fmt.Printf("Body: %s\n", body)
-	// fmt.Printf("ContentLength: %d\n", resp.ContentLength)
-	// fmt.Printf("TransferEncoding: %v\n", resp.TransferEncoding)
-	// fmt.Printf("Close: %v\n", resp.Close)
-	// fmt.Printf("Uncompressed: %v\n", resp.Uncompressed)
-
-	// Handle the response as needed
-	return nil
+	return c.JSON(http.StatusOK, result)
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-// sendApiPutRequest                                                                //
-///////////////////////////////////////////////////////////////////////////////////
+func cloneInlineProtection(host, token, originalKey, cloneKey string) ([]byte, error) {
+	url := fmt.Sprintf("https://%s/api/v2.0/cmdb/waf/web-protection-profile.inline-protection?mkey=%s&clone_mkey=%s", host, url.QueryEscape(originalKey), url.QueryEscape(cloneKey))
 
-func sendApiPutRequest(petStoreURL string, userAgent string, pet PetstorePet, xForwardedFor string) error {
-	jsonData, err := json.Marshal(pet)
-	if err != nil {
-		return err
-	}
-
-	req, err := http.NewRequest("PUT", petStoreURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		return err
-	}
-
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", userAgent)
-	req.Header.Set("X-Forwarded-For", xForwardedFor)
-
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		},
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	// Read and log the response body (optional)
-	// body, err := io.ReadAll(resp.Body)
-	// if err != nil {
-	// 	return err
-	// }
-	// log.Printf("Response Body: %s\n", body)
-
-	// Handle the response as needed
-	return nil
+	return utils.SendRequest("POST", url, token, nil)
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-// sendApiDeleteRequest                                                             //
-///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func sendApiDeleteRequest(petStoreURL string, randomID int, userAgent string, xForwardedFor string) error {
-	// Construct the URL
-	fullURL := fmt.Sprintf("%s/%d", petStoreURL, randomID)
 
-	// Create the request
-	req, err := http.NewRequest("DELETE", fullURL, nil)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Step 8: Create new X-Forwarded-For Rule
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func HandleCreateNewXForwardedForRule(c echo.Context) error {
+	fwbmgtip := config.CurrentConfig.FWBMGTIP
+	token := utils.GenerateAPIToken()
+	xffData := config.XForwardedForData{
+		Name:                 config.XForwardedForName,
+		XForwardedForSupport: config.XForwardedForSupport,
+	}
+
+    result := ApiResult{
+        TaskID:      "createNewXForwardedForRule",
+        Description: "Create new X-Forwarded-For Rule",
+    }
+
+	resultBody, err = createNewXForwardedForRule(fwbmgtip, token, xffData)
 	if err != nil {
-		return err
+			result.Status =      "failure"
+			result.Message =     fmt.Sprintf("Error creating new X-Forwarded-For Rule: %v", err)
+	} else if !checkOperationStatus(resultBody) {
+			result.Status =      "failure"
+			result.Message =     "Failed to create new X-Forwarded-For Rule"
+	} else {
+			result.Status =      "success"
+			result.Message =     "Successfully created new X-Forwarded-For Rule"
 	}
 
-	// Set headers
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", userAgent)
-	req.Header.Set("X-Forwarded-For", xForwardedFor)
+	return c.JSON(http.StatusOK, result)
+}
 
-	// Send the request
-	client := &http.Client{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		},
+func createNewXForwardedForRule(host, token string, data config.XForwardedForData) ([]byte, error) {
+	url := fmt.Sprintf("https://%s/api/v2.0/cmdb/waf/x-forwarded-for", host)
+
+	return utils.SendRequest("POST", url, token, data)
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Step 9: Configure Protection Profile
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func HandleConfigureProtectionProfile(c echo.Context) error {
+	fwbmgtip := config.CurrentConfig.FWBMGTIP
+	token := utils.GenerateAPIToken()
+	cloneKey := config.CloneInlineProtectionProfileName
+
+    protectionProfileData := config.ProtectionProfileData{
+		SignatureRule:     config.CloneSignatureProtectionName,
+		XForwardedForRule: config.XForwardedForName,
 	}
 
-	resp, err := client.Do(req)
+    result := ApiResult{
+        TaskID:      "configureProtectionProfile",
+        Description: "Configure Protection Profile",
+    }
+
+	resultBody, err = configureProtectionProfile(fwbmgtip, token, cloneKey, protectionProfileData)
 	if err != nil {
-		return err
+			result.Status =      "failure"
+			result.Message =     fmt.Sprintf("Error configuring Protection Profile: %v", err)
+	} else if !checkOperationStatus(resultBody) {
+			result.Status =      "failure"
+			result.Message =     "Failed to configure Protection Profile"
+	} else {
+			result.Status =      "success"
+			result.Message =     "Successfully configured Protection Profile"
 	}
-	defer resp.Body.Close()
 
-	// Read and log the response body (optional)
-	// body, err := io.ReadAll(resp.Body)
-	// if err != nil {
-	// 	return err
-	// }
-	// log.Printf("Response Body: %s\n", body)
+	return c.JSON(http.StatusOK, result)
+}
 
-	return nil
+func configureProtectionProfile(host, token, mkey string, data config.ProtectionProfileData) ([]byte, error) {
+	url := fmt.Sprintf("https://%s/api/v2.0/cmdb/waf/web-protection-profile.inline-protection?mkey=%s", host, url.QueryEscape(mkey))
+
+	return utils.SendRequest("PUT", url, token, data)
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Step 10: Create new Policy
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func HandleCreateNewPolicy(c echo.Context) error {
+	fwbmgtip := config.CurrentConfig.FWBMGTIP
+	token := utils.GenerateAPIToken()
+
+	policyData := config.PolicyData{
+		Name:                    config.PolicyName,
+		DeploymentMode:          config.PolicyDeploymentMode,
+		Protocol:                config.PolicyProtocol,
+		Ssl:                     config.PolicySSL,
+		ImplicitSsl:             config.PolicyImplicitSSL,
+		Vserver:                 config.PolicyVirtualServer,
+		Service:                 config.PolicyService,
+		InlineProtectionProfile: config.PolicyInlineProtectionProfile,
+		ServerPool:              config.PolicyServerPool,
+		TrafficLog:              config.PolicyTrafficLog,
+		HttpsService:            config.PolicyHTTPSService,
+	}
+
+    result := ApiResult{
+        TaskID:      "configureProtectionProfile",
+        Description: "Configure Protection Profile",
+    }
+
+	resultBody, err = createNewPolicy(fwbmgtip, token, policyData)
+	if err != nil {
+			result.Status =      "failure"
+			result.Message =     fmt.Sprintf("Error creating new Policy: %v", err)
+	} else if !checkOperationStatus(resultBody) {
+			result.Status =      "failure"
+			result.Message =     "Failed to create new Policy"
+	} else {
+			result.Status =      "success"
+			result.Message =     "Successfully created new Policy"
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func createNewPolicy(host, token string, data config.PolicyData) ([]byte, error) {
+	url := fmt.Sprintf("https://%s/api/v2.0/cmdb/server-policy/policy", host)
+
+	return utils.SendRequest("POST", url, token, data)
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+========================================================
+File content of go/config/restapi_config.go
+========================================================
+package config
+
+var (
+	VipName                             = "SPEEDTEST_VIP"
+	VipIp                               = "192.168.4.40/24"
+	Interface                           = "port1"
+	PoolName                            = "SPEEDTEST_POOL"
+	ServerBalance                       = "enable"
+	HealthCheck                         = "HLTHCK_HTTP"
+	PoolMemberIPs                       = []string{"10.0.0.10", "10.0.0.20", "10.0.0.30"}
+	PoolMemberSSL                       = "disable"
+	PoolMemberPort                      = 5000
+	VirtualServerName                   = "SPEEDTEST_VS"
+	VipStatus                           = "enable"
+	XForwardedForName                   = "SPEEDTEST_X_FORWARDED_FOR"
+	XForwardedForSupport                = "enable"
+	OriginalSignatureProtectionName     = "Standard Protection"
+	CloneSignatureProtectionName        = "SPEEDTEST_SIGNATURE_CLONE"
+	OriginalInlineProtectionProfileName = "Inline Standard Protection"
+	CloneInlineProtectionProfileName    = "SPEEDTEST_PROTECTION_CLONE"
+	PolicyName                          = "SPEEDTEST_POLICY"
+	PolicyDeploymentMode                = "server-pool"
+	PolicyProtocol                      = "HTTP"
+	PolicySSL                           = "enable"
+	PolicyImplicitSSL                   = "enable"
+	PolicyVirtualServer                 = VirtualServerName
+	PolicyService                       = "HTTP"
+	PolicyInlineProtectionProfile       = CloneInlineProtectionProfileName
+	PolicyServerPool                    = PoolName
+	PolicyTrafficLog                    = "enable"
+	PolicyHTTPSService                  = "HTTPS"
+	//PolicyCertificate                   = "speedtest.corp.fabriclab.ca"
+)
+
+// Data Types Struct
+
+type VirtualIPData struct {
+	Name      string `json:"name,omitempty"`
+	Vip       string `json:"vip,omitempty"`
+	Interface string `json:"interface,omitempty"`
+}
+
+type ServerPoolData struct {
+	Name          string `json:"name,omitempty"`
+	ServerBalance string `json:"server-balance,omitempty"`
+	Health        string `json:"health,omitempty"`
+}
+
+type MemberPoolData struct {
+	IP   string `json:"ip,omitempty"`
+	SSL  string `json:"ssl,omitempty"`
+	Port int    `json:"port,omitempty"`
+}
+
+type VirtualServerData struct {
+	Name string `json:"name,omitempty"`
+}
+
+type AssignVIPData struct {
+	Interface string `json:"interface,omitempty"`
+	Status    string `json:"status,omitempty"`
+	VipName   string `json:"vip,omitempty"`
+}
+
+type Request struct {
+	Data interface{} `json:"data"`
+}
+
+type XForwardedForData struct {
+	Name                 string `json:"name,omitempty"`
+	XForwardedForSupport string `json:"x-forwarded-for-support,omitempty"`
+}
+
+type ProtectionProfileData struct {
+	SignatureRule     string `json:"signature-rule,omitempty"`
+	XForwardedForRule string `json:"x-forwarded-for-rule,omitempty"`
+}
+
+type PolicyData struct {
+	Name                    string `json:"name,omitempty"`
+	DeploymentMode          string `json:"deployment-mode,omitempty"`
+	Protocol                string `json:"protocol,omitempty"`
+	Ssl                     string `json:"ssl,omitempty"`
+	ImplicitSsl             string `json:"implicit_ssl,omitempty"`
+	Vserver                 string `json:"vserver,omitempty"`
+	Service                 string `json:"service,omitempty"`
+	InlineProtectionProfile string `json:"web-protection-profile,omitempty"`
+	ServerPool              string `json:"server-pool,omitempty"`
+	TrafficLog              string `json:"tlog,omitempty"`
+	HttpsService            string `json:"https-service,omitempty"`
+	Certificate             string `json:"certificate,omitempty"`
 }
 
 ========================================================
@@ -1132,37 +1016,54 @@ File content of go/routes/routes.go
 package routes
 
 import (
-    "darwin2/handlers"
-    "darwin2/config"
-    "github.com/labstack/echo/v4"
+	"darwin2/config"
+	"darwin2/handlers"
+
+	"github.com/labstack/echo/v4"
 )
 
 func Configure(e *echo.Echo) {
 
-    // Web Protection
-    e.POST("/web-scan", handlers.HandleWebScan)
-    e.POST("/web-attacks", handlers.HandleWebAttacks)
-    e.POST("/traffic-generation", handlers.HandleTrafficGenerator)
-    e.POST("/machine-learning", handlers.HandleMachineLearning)
-    e.POST("/user-auth", handlers.HandleUserAuth)
-    e.POST("/cookie-security", handlers.HandleCookieSecurityAttack)
+	// Web Protection
+	e.POST("/web-scan", handlers.HandleWebScan)
+	e.POST("/web-attacks", handlers.HandleWebAttacks)
+	e.POST("/traffic-generation", handlers.HandleTrafficGenerator)
+	e.POST("/machine-learning", handlers.HandleMachineLearning)
+	e.POST("/user-auth", handlers.HandleUserAuth)
+	e.POST("/cookie-security", handlers.HandleCookieSecurityAttack)
 
-    // Bot Mitigation
-    // API Protection
-    e.POST("/api-get", handlers.HandleApiGet)
-    e.POST("/api-post", handlers.HandleApiPost)
-    e.POST("/api-put", handlers.HandleApiPut)
-    e.POST("/api-delete", handlers.HandleApiDelete)
-    e.POST("/api-traffic-generation", handlers.HandleApiMachineLearning)
+	// Bot Mitigation
+	// API Protection
+	e.POST("/api-get", handlers.HandleApiGet)
+	e.POST("/api-post", handlers.HandleApiPost)
+	e.POST("/api-put", handlers.HandleApiPut)
+	e.POST("/api-delete", handlers.HandleApiDelete)
+	e.POST("/api-traffic-generation", handlers.HandleApiMachineLearning)
 
-    // REST API
-    // Health Check
+	// REST API CREATE
+	e.POST("/create-virtual-ip", handlers.HandleCreateNewVirtualIP)
+	e.POST("/create-server-pool", handlers.HandleCreateNewServerPool)
+	e.POST("/create-member-pool", handlers.HandleCreateNewMemberPool)
+	e.POST("/create-virtual-server", handlers.HandleCreateNewVirtualServer)
+	e.POST("/assign-vip-to-virtual-server", handlers.HandleAssignVIPToVirtualServer)
+	e.POST("/clone-signature-protection", handlers.HandleCloneSignatureProtection)
+	e.POST("/clone-inline-protection", handlers.HandleCloneInlineProtection)
+	e.POST("/create-x-forwarded-for-rule", handlers.HandleCreateNewXForwardedForRule)
+	e.POST("/configure-protection-profile", handlers.HandleConfigureProtectionProfile)
+	e.POST("/create-policy", handlers.HandleCreateNewPolicy)
 
+	// REST API DELETE
+	e.DELETE("/delete-virtual-ip", handlers.HandleDeleteVirtualIP)
+	e.DELETE("/delete-server-pool", handlers.HandleDeleteServerPool)
+	e.DELETE("/delete-virtual-server", handlers.HandleDeleteVirtualServer)
+	e.DELETE("/delete-signature-protection", handlers.HandleDeleteSignatureProtection)
+	e.DELETE("/delete-x-forwarded-for-rule", handlers.HandleDeleteXForwardedForRule)
+	e.DELETE("/delete-policy", handlers.HandleDeletePolicy)
 
-    // Configuration
-    e.GET("/config", config.GetConfig)
-    e.POST("/config", config.UpdateConfig)
-    e.GET("/reset", config.ResetConfig)
+	// System
+	e.GET("/config", config.GetConfig)
+	e.POST("/config", config.UpdateConfig)
+	e.GET("/reset", config.ResetConfig)
 
 }
 

@@ -8,7 +8,7 @@
 
     <div class="card-body">
       <p>
-        This tool provides two primary sets of API tasks for quick onboarding and decommissioning of the application.<br>After completing these tasks, you can
+        This tool provides two primary sets of API tasks for quick onboarding and decommissioning of the application.<br />After completing these tasks, you can
         verify the application's accessibility at <a href="http://speedtest.corp.fabriclab.ca" target="_blank">http://speedtest.corp.fabriclab.ca</a>.
       </p>
 
@@ -179,58 +179,103 @@ export default {
       }
     },
 
-    createPolicy() {
+    async createPolicy() {
       this.resetResult();
       this.resetDeleteResult();
       this.createLoading = true;
-      console.log("Creating policy...");
 
-      fetch("http://localhost:8080/create-policy", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Results", data);
-          this.createLoading = false;
-          this.jobResult = data;
-          data.forEach((status) => {
-            this.updateTaskStatus(status.taskId, status.status);
+      const endpoints = [
+        { url: "/create-virtual-ip", taskId: "createNewVirtualIP" },
+        { url: "/create-server-pool", taskId: "createNewServerPool" },
+        { url: "/create-member-pool", taskId: "createNewMemberPool" },
+        { url: "/create-virtual-server", taskId: "createNewVirtualServer" },
+        { url: "/assign-vip-to-virtual-server", taskId: "assignVIPToVirtualServer" },
+        { url: "/clone-signature-protection", taskId: "cloneSignatureProtection" },
+        { url: "/clone-inline-protection", taskId: "cloneInlineProtection" },
+        { url: "/create-x-forwarded-for-rule", taskId: "createNewXForwardedForRule" },
+        { url: "/configure-protection-profile", taskId: "configureProtectionProfile" },
+        { url: "/create-policy", taskId: "createNewPolicy" },
+      ];
+
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(`http://localhost:8080${endpoint.url}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
           });
-        })
-        .catch((error) => {
-          console.error("Error creating policy:", error);
-          this.createLoading = false;
-        });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          // Print the response values
+          // console.log(`Response from ${endpoint.url}`);
+          // console.log("TaskID:", result.TaskID);
+          // console.log("Description:", result.Description);
+          // console.log("Status:", result.Status);
+          // console.log("Message:", result.Message);
+
+          this.jobResult.push(result);
+          this.updateTaskStatus(endpoint.taskId, result.Status);
+        } catch (error) {
+          console.error(`Error in ${endpoint.taskId}:`, error);
+          this.updateTaskStatus(endpoint.taskId, "failure");
+        }
+      }
+
+      this.createLoading = false;
     },
 
-    deletePolicy() {
+    async deletePolicy() {
       this.resetResult();
       this.resetDeleteResult();
       this.deleteLoading = true;
-      console.log("Deleting policy...");
 
-      fetch("http://localhost:8080/delete-policy", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Policy deleted successfully:", data);
-          this.deleteLoading = false;
-          this.jobResult = data;
-          data.forEach((status) => {
-            this.updateDeleteTaskStatus(status.taskId, status.status);
+      const endpoints = [
+        { url: "/delete-policy", taskId: "deletePolicy" },
+        { url: "/delete-inline-protection", taskId: "deleteInlineProtection" },
+        { url: "/delete-x-forwarded-for-rule", taskId: "deleteXForwardedForRule" },
+        { url: "/delete-signature-protection", taskId: "deleteSignatureProtection" },
+        { url: "/delete-virtual-server", taskId: "deleteVirtualServer" },
+        { url: "/delete-server-pool", taskId: "deleteServerPool" },
+        { url: "/delete-virtual-ip", taskId: "deleteVirtualIP" },
+      ];
+
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(`http://localhost:8080${endpoint.url}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
           });
-        })
-        .catch((error) => {
-          console.error("Error deleting policy:", error);
-          this.deleteLoading = false;
-        });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          // Print the response values
+          // console.log(`Response from ${endpoint.url}`);
+          // console.log("TaskID:", result.TaskID);
+          // console.log("Description:", result.Description);
+          // console.log("Status:", result.Status);
+          // console.log("Message:", result.Message);
+
+          this.jobResult.push(result);
+          this.updateDeleteTaskStatus(endpoint.taskId, result.Status);
+        } catch (error) {
+          console.error(`Error in ${endpoint.taskId}:`, error);
+          this.updateDeleteTaskStatus(endpoint.taskId, "failure");
+        }
+      }
+
+      this.deleteLoading = false;
     },
 
     resetResult() {

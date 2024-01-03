@@ -8,9 +8,11 @@ rm -f "$output_file"
 
 # List of files to process
 files=(
-vue/src/components/03-api-protection/ApiRequests.vue
+vue/src/components/04-rest-api/RestAPIManagement.vue
 vue/src/router/index.js
-go/handlers/apiRequestHandler.go
+go/utils/restApiCommonUtils.go
+go/handlers/restApiCreateHandlers.go
+go/config/restapi_config.go
 go/routes/routes.go
 )
 
