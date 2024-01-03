@@ -8,9 +8,10 @@ rm -f "$output_file"
 
 # List of files to process
 files=(
+vue/src/components/03-api-protection/ApiRequests.vue
+vue/src/router/index.js
 go/handlers/apiRequestHandler.go
 go/routes/routes.go
-vue/src/components/03-api-protection/ApiRequests.vue
 )
 
 # Loop through the files and append their content to conf.txt

@@ -55,7 +55,7 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="apiProtectionDropdown">
               <li><router-link class="dropdown-item" to="/api-requests">API Requests</router-link></li>
-              <li><router-link class="dropdown-item" to="/ml-based-api-protection">ML Based API Protection</router-link>
+              <li><router-link class="dropdown-item" to="/api-traffic-generation">API Traffic Generation</router-link>
               </li>
             </ul>
           </li>
@@ -67,10 +67,7 @@
               REST API
             </a>
             <ul class="dropdown-menu" aria-labelledby="restApiDropdown">
-              <li><router-link class="dropdown-item" to="/create-new-application-policy">Create New Application
-                  Policy</router-link></li>
-              <li><router-link class="dropdown-item" to="/delete-application-policy">Delete Application
-                  Policy</router-link></li>
+              <li><router-link class="dropdown-item" to="/rest-api-management">Policy Management</router-link></li>
             </ul>
           </li>
 

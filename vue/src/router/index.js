@@ -17,10 +17,9 @@ import MLBasedBotDetection from '../components/02-bot-mitigation/MLBasedBotDetec
 import ThresholdBasedDetection from '../components/02-bot-mitigation/ThresholdBasedDetection.vue';
 
 import ApiRequests from '../components/03-api-protection/ApiRequests.vue';
-import MLBasedAPIProtection from '../components/03-api-protection/MLBasedAPIProtection.vue';
+import ApiTrafficGeneration from '../components/03-api-protection/ApiTrafficGeneration.vue';
 
-import CreateNewApplicationPolicy from '../components/04-rest-api/CreateNewApplicationPolicy.vue';
-import DeleteApplicationPolicy from '../components/04-rest-api/DeleteApplicationPolicy.vue';
+import RestAPIManagement from '../components/04-rest-api/RestAPIManagement.vue';
 
 import ConfigForm from '../components/05-tool/ConfigForm.vue';
 import HealthCheck from '../components/05-tool/HealthCheck.vue';
@@ -44,10 +43,9 @@ const routes = [
   { path: '/threshold-based-detection', component: ThresholdBasedDetection },
 
   { path: '/api-requests', component: ApiRequests },
-  { path: '/ml-based-api-protection', component: MLBasedAPIProtection },
+  { path: '/api-traffic-generation', component: ApiTrafficGeneration },
 
-  { path: '/create-new-application-policy', component: CreateNewApplicationPolicy },
-  { path: '/delete-application-policy', component: DeleteApplicationPolicy },
+  { path: '/rest-api-management', component: RestAPIManagement },
 
   { path: '/configuration', component: ConfigForm },
   { path: '/health-check', component: HealthCheck },

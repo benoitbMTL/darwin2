@@ -1,0 +1,1169 @@
+========================================================
+File content of vue/src/components/03-api-protection/ApiRequests.vue
+========================================================
+<template>
+  <div class="card my-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5>API Requests</h5>
+      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
+      <!-- Bootstrap icon for help -->
+    </div>
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="card-text mb-0">Swagger Petstore - OpenAPI 3.0</h6>
+        <button class="btn btn-secondary btn-sm" @click="resetResultAndList">Reset</button>
+      </div>
+
+      <!-- API GET -->
+      <div class="d-flex mb-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm me-3"
+          style="width: 80px; background-color: #64b0fc; border-color: #64b0fc; font-weight: bold"
+          @click="performGetRequest()">
+          GET
+        </button>
+
+        <!-- GET list -->
+        <select id="get-pet-list" class="form-select form-select-sm me-3" v-model="selectedGetOption" style="width: 300px">
+          <option v-for="(option, index) in getList" :value="option.value" :key="index">
+            {{ option.text }}
+          </option>
+        </select>
+      </div>
+
+      <!-- API POST -->
+      <div class="mb-3 d-flex align-items-center">
+        <button
+          type="button"
+          class="btn btn-success btn-sm me-3"
+          style="width: 80px; background-color: #4ecc91; border-color: #4ecc91; font-weight: bold"
+          @click="performPostRequest()">
+          POST
+        </button>
+
+        <!-- POST list -->
+        <select id="post-pet-list" class="form-select form-select-sm me-3" v-model="selectedPostOption" style="width: 300px">
+          <option v-for="(option, index) in postList" :value="option.value" :key="index">
+            {{ option.text }}
+          </option>
+        </select>
+      </div>
+
+      <!-- API PUT -->
+      <div class="mb-3 d-flex align-items-center">
+        <button
+          type="button"
+          class="btn btn-success btn-sm me-3"
+          style="width: 80px; background-color: #faa03c; border-color: #faa03c; font-weight: bold"
+          @click="performPutRequest()">
+          PUT
+        </button>
+
+        <!-- PUT list -->
+        <select id="put-pet-list" class="form-select form-select-sm me-3" v-model="selectedPutOption" style="width: 300px">
+          <option v-for="(option, index) in putList" :value="option.value" :key="index">
+            {{ option.text }}
+          </option>
+        </select>
+      </div>
+
+      <!-- API DELETE -->
+      <div class="mb-4 d-flex align-items-center">
+        <button
+          type="button"
+          class="btn btn-success btn-sm me-3"
+          style="width: 80px; background-color: #f73c43; border-color: #f73c43; font-weight: bold"
+          @click="performDeleteRequest()">
+          DELETE
+        </button>
+
+        <!-- DELETE list -->
+        <select id="delete-pet-list" class="form-select form-select-sm me-3" v-model="selectedDeleteOption" style="width: 300px">
+          <option v-for="(option, index) in deleteList" :value="option.value" :key="index">
+            {{ option.text }}
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <!-- Display CURL -->
+        <div v-if="curlCommand" class="mt-4">
+          <h6><i class="bi bi-terminal me-2"></i>Curl</h6>
+          <pre style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ curlCommand }}</pre>
+        </div>
+
+        <!-- Display URL -->
+        <div v-if="requestURL" class="mt-4">
+          <h6><i class="bi bi-link-45deg me-2"></i>Request URL</h6>
+          <pre style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ requestURL }}</pre>
+        </div>
+
+        <!-- Display JSON RESPONSE BODY -->
+        <div v-if="jsonResponseBody" class="mt-3">
+          <h6><i class="bi bi-filetype-json me-2"></i>Response Body</h6>
+          <pre style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ jsonResponseBody }}</pre>
+        </div>
+
+        <!-- Display HTML RESPONSE BODY -->
+        <div v-if="htmlResponseBody" class="mt-4">
+          <h6><i class="bi bi-filetype-html me-2"></i>Request Result</h6>
+          <iframe ref="responseIframe" :srcdoc="htmlResponseBody" @load="adjustIframeHeight" style="width: 100%; border: 1px solid lightgray"></iframe>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Help Card -->
+  <div v-if="showHelp" class="card bg-light mb-3">
+    <div class="card-header">
+      <h5>About API Protection</h5>
+    </div>
+    <div class="card-body">
+      <ul>
+        <li><strong>FortiWeb Protection</strong>: Analyzes API calls and applies WAF policies to defend against malicious traffic and JSON code exploits.</li>
+        <li><strong>JSON Validation</strong>: Configures JSON protection to ensure request contents are free from potential attacks.</li>
+        <li>
+          <strong>Machine Learning-based API Protection</strong>: Learns REST API structures from traffic to create models that identify and block malicious
+          requests.
+        </li>
+        <li><strong>Attack Detection</strong>: Identifies attacks by comparing incoming API requests against the defined API data schema model.</li>
+      </ul>
+
+      <div class="card">
+        <div class="card-header">API Protection CLI settings</div>
+        <div class="card-body">
+          <pre class="font-monospace">
+config waf api-learning-policy
+    set action-mlapi alert_deny
+    set schema-property maxLength minLength
+    set data-format date-time date time email hostname ipv4 ipv6
+    set de-duplication-all disable
+    set sample-limit-by-ip 0
+    set svm-type extended
+    set action-anomaly alert_deny
+  next
+end</pre
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      selectedGetOption: "",
+      selectedPostOption: "",
+      selectedPutOption: "",
+      selectedDeleteOption: "",
+
+      curlCommand: "",
+      requestURL: "",
+      jsonResponseBody: "",
+      htmlResponseBody: "",
+
+      showHelp: false,
+      getList: [],
+      postList: [],
+      putList: [],
+      deleteList: [],
+    };
+  },
+
+  created() {
+    /* GET list */
+    this.getList = [
+      { value: "findByStatus?status=available", text: "Status Available" },
+      { value: "findByStatus?status=sold", text: "Status Sold" },
+      { value: "findByStatus?status=pending", text: "Status Pending" },
+      { value: "findByStatus?", text: "Empty Status" },
+      { value: "findByStatus?status=ABCDEFGHIJKL", text: "Very Long Status" },
+      { value: "findByStatus?status=A", text: "Very Short Status" },
+      {
+        value: "findByStatus?status=;cmd.exe",
+        text: "Status with Command Injection",
+      },
+      {
+        value: "findByStatus?status=xx& var1=l var2=s;$var1$var2",
+        text: "Status with Zero-Day",
+      },
+      {
+        value: "findByStatus?status=sold&status=pending",
+        text: "Duplicate Status",
+      },
+    ];
+
+    // Set the first item of the GET list as the default option
+    if (this.getList.length > 0) {
+      this.selectedGetOption = this.getList[0].value;
+    }
+
+    /* POST list */
+    this.postList = [
+      {
+        value: {
+          id: 999,
+          name: "FortiPet",
+          category: { id: 1, name: "Dogs" },
+          photoUrls: ["fortipet.png"],
+          tags: [{ id: 0, name: "Cute" }],
+          status: "available",
+        },
+        text: "Add new pet FortiPet [id:999]",
+      },
+      {
+        value: {
+          id: 999,
+          name: "FortiPet",
+          category: { id: 1, name: "Dogs" },
+          photoUrls: ["fortipet.png"],
+          tags: [{ id: 0, name: "Cute" }],
+          status: "/bin/ls",
+        },
+        text: "New Pet with Command Injection",
+      },
+      {
+        value: {
+          id: 999,
+          name: "FortiPet",
+          category: { id: 1, name: "Dogs" },
+          photoUrls: ["fortipet.png"],
+          tags: [{ id: 0, name: "Cute" }],
+          status: "<script>alert(123)<\\/script>",
+        },
+        text: "New Pet with Cross-Site-Scripting",
+      },
+      {
+        value: {
+          id: 999,
+          name: "FortiPet",
+          category: { id: 1, name: "Dogs" },
+          photoUrls: ["fortipet.png"],
+          tags: [{ id: 0, name: "Cute" }],
+          status: "xx& var1=l var2=s;$var1$var2",
+        },
+        text: "New Pet with Zero-Day",
+      },
+      {
+        value: {
+          id: 999,
+          name: "FortiPet",
+          category: { id: 1, name: "Dogs" },
+          photoUrls: ["fortipet.png"],
+          tags: [{ id: 0, name: "Cute" }],
+          status: "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*",
+        },
+        text: "New Pet with Malware",
+      },
+    ];
+
+    // Set the first item of the POST list as the default option
+    if (this.postList.length > 0) {
+      this.selectedPostOption = this.postList[0].value;
+    }
+
+    /* PUT list */
+    this.putList = [
+      {
+        value: {
+          id: 999,
+          name: "FortiPet",
+          category: { id: 1, name: "Dogs" },
+          photoUrls: ["fortipet.png"],
+          tags: [{ id: 0, name: "Cute" }],
+          status: "sold",
+        },
+        text: "Modify FortiPet [id:999]",
+      },
+      {
+        value: {
+          id: 999,
+          name: "FortiPet",
+          category: { id: 1, name: "Dogs" },
+          photoUrls: ["fortipet.png"],
+          tags: [{ id: 0, name: "Cute" }],
+          status: "ls;;cmd.exe",
+        },
+        text: "Modify FortiPet with Command Injection",
+      },
+      {
+        value: {
+          id: 999,
+          name: "FortiPet",
+          category: { id: 1, name: "Dogs" },
+          photoUrls: ["fortipet.png"],
+          tags: [{ id: 0, name: "Cute" }],
+          status: "<script>alert(123)<\\/script>",
+        },
+        text: "Modify FortiPet with Cross-Site-Scripting",
+      },
+      {
+        value: {
+          id: 999,
+          name: "FortiPet",
+          category: { id: 1, name: "Dogs" },
+          photoUrls: ["fortipet.png"],
+          tags: [{ id: 0, name: "Cute" }],
+          status: "xx& var1=l var2=s;$var1$var2",
+        },
+        text: "Modify FortiPet with Zero-Day",
+      },
+      {
+        value: {
+          id: 999,
+          name: "FortiPet",
+          category: { id: 1, name: "Dogs" },
+          photoUrls: ["fortipet.png"],
+          tags: [{ id: 0, name: "Cute" }],
+          status: "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*",
+        },
+        text: "Modify FortiPet with Malware",
+      },
+    ];
+
+    // Set the first item of the PUT list as the default option
+    if (this.putList.length > 0) {
+      this.selectedPutOption = this.putList[0].value;
+    }
+
+    /* DELETE list */
+    this.deleteList = [
+      { value: 999, text: "Delete FortiPet [id:999]" },
+      { value: "cmd.exe", text: "Delete FortiPet with Command Injection" },
+    ];
+
+    // Set the first item of the DELETE list as the default option
+    if (this.deleteList.length > 0) {
+      this.selectedDeleteOption = this.deleteList[0].value;
+    }
+  },
+
+  methods: {
+    // Method to send a GET request
+    performGetRequest() {
+      const url = "http://localhost:8080/api-get";
+      const body = JSON.stringify({ option: this.selectedGetOption });
+
+      // Debug: Print the URL and body to the console
+      console.log("Sending GET request to:", url);
+      console.log("Request body:", body);
+
+      this.sendApiRequest(url, body);
+    },
+
+    // Method to send a POST request
+    performPostRequest() {
+      const url = "http://localhost:8080/api-post";
+      const body = JSON.stringify({ option: this.selectedPostOption });
+
+      this.sendApiRequest(url, body);
+    },
+
+    // Method to send a PUT request
+    performPutRequest() {
+      const url = "http://localhost:8080/api-put";
+      const body = JSON.stringify({ option: this.selectedPutOption });
+
+      this.sendApiRequest(url, body);
+    },
+
+    // Method to send a DELETE request
+    performDeleteRequest() {
+      const url = "http://localhost:8080/api-delete";
+      const body = JSON.stringify({ option: this.selectedDeleteOption });
+
+      this.sendApiRequest(url, body);
+    },
+
+    // Method to send API request and handle response
+    sendApiRequest(url, body) {
+      this.resetResult();
+      console.log("fetch url", url);
+      console.log("fetch body", body);
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: body,
+      })
+        .then((response) => {
+          // Checking if the response is ok
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+
+        .then((data) => {
+          this.curlCommand = data.curlCommand;
+          this.requestURL = data.url;
+          this.responseBody = data.data;
+
+          console.log("Curl Command:", this.curlCommand);
+          console.log("Request URL Command:", this.requestURL);
+          console.log("responseBody:", this.responseBody);
+
+          // Checking the type of the response this.responseBody
+          if (typeof this.responseBody === "string") {
+            // Check if the string is HTML
+            if (this.responseBody.startsWith("<") && this.responseBody.endsWith(">")) {
+              this.htmlResponseBody = this.responseBody;
+              this.jsonResponseBody = "";
+            } else {
+              // It's plain text
+              this.jsonResponseBody = this.responseBody;
+              this.htmlResponseBody = "";
+            }
+          } else if (typeof this.responseBody === "object") {
+            // It's a JSON object
+            this.jsonResponseBody = JSON.stringify(this.responseBody, null, 2);
+            this.htmlResponseBody = "";
+          } else {
+            console.log("Unexpected data type received:", typeof this.responseBody);
+          }
+        })
+        .catch((error) => {
+          console.error("Error in sendApiRequest:", error);
+          this.jsonResponseBody = "";
+          this.htmlResponseBody = "";
+        });
+    },
+
+    adjustIframeHeight() {
+      const iframe = this.$refs.responseIframe;
+      if (iframe && iframe.contentWindow && iframe.contentWindow.document.body) {
+        iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 30 + "px";
+      }
+    },
+
+    resetResultAndList() {
+      this.selectedGetOption = this.getList.length > 0 ? this.getList[0].value : "";
+      this.selectedPostOption = this.postList.length > 0 ? this.postList[0].value : "";
+      this.selectedPutOption = this.putList.length > 0 ? this.putList[0].value : "";
+      this.selectedDeleteOption = this.deleteList.length > 0 ? this.deleteList[0].value : "";
+      this.curlCommand = "";
+      this.requestURL = "";
+      this.jsonResponseBody = "";
+      this.htmlResponseBody = "";
+    },
+
+    resetResult() {
+      this.curlCommand = "";
+      this.requestURL = "";
+      this.jsonResponseBody = "";
+      this.htmlResponseBody = "";
+    },
+  },
+};
+</script>
+
+========================================================
+File content of vue/src/router/index.js
+========================================================
+import { createRouter, createWebHistory } from 'vue-router';
+
+// Import components from each folder
+import HomePage from '../components/HomePage.vue';
+
+import WebScan from '../components/01-web-protection/WebScan.vue';
+import TrafficGeneration from '../components/01-web-protection/TrafficGeneration.vue';
+import WebAttacks from '../components/01-web-protection/WebAttacks.vue';
+import MachineLearning from '../components/01-web-protection/MachineLearning.vue';
+import CookieSecurity from '../components/01-web-protection/CookieSecurity.vue';
+import CredentialStuffingDefense from '../components/01-web-protection/CredentialStuffingDefense.vue';
+
+import BiometricsBasedDetection from '../components/02-bot-mitigation/BiometricsBasedDetection.vue';
+import BotDeception from '../components/02-bot-mitigation/BotDeception.vue';
+import KnownBots from '../components/02-bot-mitigation/KnownBots.vue';
+import MLBasedBotDetection from '../components/02-bot-mitigation/MLBasedBotDetection.vue';
+import ThresholdBasedDetection from '../components/02-bot-mitigation/ThresholdBasedDetection.vue';
+
+import ApiRequests from '../components/03-api-protection/ApiRequests.vue';
+import ApiTrafficGeneration from '../components/03-api-protection/ApiTrafficGeneration.vue';
+
+import CreateNewApplicationPolicy from '../components/04-rest-api/CreateNewApplicationPolicy.vue';
+import DeleteApplicationPolicy from '../components/04-rest-api/DeleteApplicationPolicy.vue';
+
+import ConfigForm from '../components/05-tool/ConfigForm.vue';
+import HealthCheck from '../components/05-tool/HealthCheck.vue';
+import AppDocker from '../components/05-tool/AppDocker.vue';
+import FortiWebBootstrap from '../components/05-tool/FortiWebBootstrap.vue';
+
+const routes = [
+  { path: '/', component: HomePage },
+
+  { path: '/web-scan', component: WebScan },
+  { path: '/traffic-generation', component: TrafficGeneration },
+  { path: '/web-attacks', component: WebAttacks },
+  { path: '/machine-learning', component: MachineLearning },
+  { path: '/cookie-security', component: CookieSecurity },
+  { path: '/credential-stuffing-defense', component: CredentialStuffingDefense },
+
+  { path: '/biometrics-based-detection', component: BiometricsBasedDetection },
+  { path: '/bot-deception', component: BotDeception },
+  { path: '/known-bots', component: KnownBots },
+  { path: '/ml-based-bot-detection', component: MLBasedBotDetection },
+  { path: '/threshold-based-detection', component: ThresholdBasedDetection },
+
+  { path: '/api-requests', component: ApiRequests },
+  { path: '/api-traffic-generation', component: ApiTrafficGeneration },
+
+  { path: '/create-new-application-policy', component: CreateNewApplicationPolicy },
+  { path: '/delete-application-policy', component: DeleteApplicationPolicy },
+
+  { path: '/configuration', component: ConfigForm },
+  { path: '/health-check', component: HealthCheck },
+  { path: '/app-docker', component: AppDocker },
+  { path: '/bootstrap', component: FortiWebBootstrap },
+
+];
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+export default router;
+
+========================================================
+File content of go/handlers/apiRequestHandler.go
+========================================================
+package handlers
+
+import (
+	"bytes"
+	"crypto/tls"
+	"darwin2/config"
+	"darwin2/utils"
+	"encoding/json"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"net/url"
+	"strings"
+
+	"github.com/labstack/echo/v4"
+)
+
+///////////////////////////////////////////////////////////////////////////////////
+// STRUCTURE                                                                     //
+///////////////////////////////////////////////////////////////////////////////////
+
+type Category struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type Tag struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type PetstorePet struct {
+	ID        int      `json:"id"`
+	Category  Category `json:"category"`
+	Name      string   `json:"name"`
+	PhotoUrls []string `json:"photoUrls"`
+	Tags      []Tag    `json:"tags"`
+	Status    string   `json:"status"`
+}
+
+type PetstorePetArray []PetstorePet
+
+type PetstoreGetRequest struct {
+	Option string `json:"option"`
+}
+
+type PetstorePostRequest struct {
+	Option PetstorePet `json:"option"`
+}
+
+type PetstorePutRequest struct {
+	Option PetstorePet `json:"option"`
+}
+
+type PetstoreDeleteRequest struct {
+	PetID int `json:"option"`
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+// MAIN                                                                          //
+///////////////////////////////////////////////////////////////////////////////////
+
+func HandleApiGet(c echo.Context) error {
+	// fmt.Printf("Start HandleApiGet")
+
+	var status PetstoreGetRequest
+	if err := c.Bind(&status); err != nil {
+		log.Printf("Error decoding request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	// Log the Status
+	// fmt.Printf("Status: %s", status.Option)
+
+	apiURL := fmt.Sprintf("%s/%s", config.CurrentConfig.PETSTOREURL, status.Option)
+	// fmt.Printf("API URL: %s", apiURL)
+
+	req, _ := http.NewRequest("GET", apiURL, nil)
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+
+	// Generate curl command string
+	curlCommand := utils.GenerateCurlCommand(req, nil)
+
+	// Log the curl command
+	// fmt.Printf("Curl Command: %s", curlCommand)
+
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Error executing request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+
+	// Log the response body for debugging
+	// fmt.Printf("Response Body: %s", string(body))
+
+	contentType := resp.Header.Get("Content-Type")
+	// fmt.Printf("Content-Type: %s", contentType)
+
+	// Construct the response object with the curl command and the URL
+	response := map[string]interface{}{
+		"data":        nil,
+		"url":         req.URL.String(),
+		"curlCommand": curlCommand,
+	}
+
+	if strings.Contains(contentType, "application/json") {
+		var pets PetstorePetArray
+		if err := json.Unmarshal(body, &pets); err != nil {
+			log.Printf("Received non-JSON content despite 'application/json' content-type: %v", err)
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+		}
+		response["data"] = pets
+
+	} else {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
+	}
+
+	fmt.Printf("Response data: %v\n", response["data"])
+	return c.JSON(http.StatusOK, response)
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+// POST                                                                          //
+///////////////////////////////////////////////////////////////////////////////////
+
+func HandleApiPost(c echo.Context) error {
+	apiURL := config.CurrentConfig.PETSTOREURL
+	// fmt.Printf("API URL: %s", apiURL)
+
+	// Read the request body
+	var request PetstorePostRequest
+	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
+		log.Printf("Error decoding request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	// fmt.Printf("Decoded request: %+v", request)
+
+	// Prepare the payload for the POST request
+	payload, err := json.Marshal(request.Option)
+	if err != nil {
+		log.Printf("Error marshalling the payload: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	// fmt.Printf("Marshalled payload: %s", string(payload))
+
+	// Create a new POST request using the received body
+	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(payload))
+	if err != nil {
+		log.Printf("Error creating new request: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	// Set headers for the request
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+
+	// Generate curl command string
+	curlCommand := utils.GenerateCurlCommand(req, payload)
+	// fmt.Printf("Curl command: %s", curlCommand)
+
+	// Create a custom HTTP client
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+
+	// Send the request
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Error sending request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	defer resp.Body.Close()
+	// fmt.Printf("Response status: %s", resp.Status)
+
+	// Read the response body
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	// log.Printf("Response body: %s", string(responseBody))
+
+	// Construct the response object with the curl command
+	response := map[string]interface{}{
+		"data":        nil,
+		"url":         req.URL.String(),
+		"curlCommand": curlCommand,
+	}
+
+	contentType := resp.Header.Get("Content-Type")
+	// fmt.Printf("Content-Type: %s", contentType)
+
+	if strings.Contains(contentType, "application/json") {
+		var pets PetstorePetArray
+		if err := json.Unmarshal(responseBody, &pets); err != nil {
+			log.Printf("Error unmarshalling response body: %v", err)
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+		}
+		response["data"] = pets
+	} else if strings.Contains(contentType, "text/plain") {
+		response["data"] = string(responseBody)
+	} else if strings.Contains(contentType, "text/html") {
+		response["data"] = string(responseBody)
+	} else {
+		log.Printf("Unsupported content type")
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+// PUT                                                                           //
+///////////////////////////////////////////////////////////////////////////////////
+
+func HandleApiPut(c echo.Context) error {
+	apiURL := config.CurrentConfig.PETSTOREURL
+	// fmt.Printf("API URL: %s", apiURL)
+
+	// Read the request body
+	var request PetstorePutRequest
+	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
+		log.Printf("Error decoding request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	// fmt.Printf("Decoded request: %+v", request)
+
+	// Prepare the payload for the PUT request
+	payload, err := json.Marshal(request.Option)
+	if err != nil {
+		log.Printf("Error marshalling the payload: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	// fmt.Printf("Marshalled payload: %s", string(payload))
+
+	// Create a new PUT request using the received body
+	req, err := http.NewRequest("PUT", apiURL, bytes.NewBuffer(payload))
+	if err != nil {
+		log.Printf("Error creating new request: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	// Set headers for the request
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+
+	// Generate curl command string
+	curlCommand := utils.GenerateCurlCommand(req, payload)
+	// fmt.Printf("Curl command: %s", curlCommand)
+
+	// Create a custom HTTP client
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+
+	// Send the request
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Error sending request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	defer resp.Body.Close()
+	// fmt.Printf("Response status: %s", resp.Status)
+
+	// Read the response body
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	// Construct the response object with the curl command
+	response := map[string]interface{}{
+		"data":        nil,
+		"url":         req.URL.String(),
+		"curlCommand": curlCommand,
+	}
+
+	contentType := resp.Header.Get("Content-Type")
+	// fmt.Printf("Content-Type: %s", contentType)
+
+	if strings.Contains(contentType, "application/json") {
+		var pets PetstorePet
+		if err := json.Unmarshal(responseBody, &pets); err != nil {
+			log.Printf("Error unmarshalling response body: %v", err)
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+		}
+		response["data"] = pets
+	} else if strings.Contains(contentType, "text/plain") {
+		response["data"] = string(responseBody)
+	} else if strings.Contains(contentType, "text/html") {
+		response["data"] = string(responseBody)
+	} else {
+		log.Printf("Unsupported content type")
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+// DELETE                                                                        //
+///////////////////////////////////////////////////////////////////////////////////
+
+func HandleApiDelete(c echo.Context) error {
+	// Read the request body into PetstoreDeleteRequest
+	var request PetstoreDeleteRequest
+	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
+		log.Printf("Error decoding request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	// fmt.Printf("Decoded request: %+v", request)
+
+	// Construct the URL with the pet ID from the request
+	apiURL := fmt.Sprintf("%s/%d", config.CurrentConfig.PETSTOREURL, request.PetID)
+	// fmt.Printf("API URL: %s", apiURL)
+
+	// Create a new DELETE request
+	req, err := http.NewRequest("DELETE", apiURL, nil)
+	if err != nil {
+		log.Printf("Error creating new request: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	// Set headers for the request
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+
+	// Generate curl command string
+	curlCommand := utils.GenerateCurlCommand(req, nil)
+	// fmt.Printf("Curl command: %s", curlCommand)
+
+	// Create a custom HTTP client
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+
+	// Send the request
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Error sending request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	defer resp.Body.Close()
+	// fmt.Printf("Response status: %s", resp.Status)
+
+	// Read the response body
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	// Construct the response object with the curl command
+	response := map[string]interface{}{
+		"data":        nil,
+		"url":         req.URL.String(),
+		"curlCommand": curlCommand,
+	}
+
+	contentType := resp.Header.Get("Content-Type")
+	// fmt.Printf("Content-Type: %s", contentType)
+
+	if strings.Contains(contentType, "application/json") {
+		var jsonResponse map[string]interface{}
+		if err := json.Unmarshal(responseBody, &jsonResponse); err != nil {
+			response["data"] = string(responseBody)
+		} else {
+			response["data"] = jsonResponse
+		}
+	} else if strings.Contains(contentType, "text/plain") || strings.Contains(contentType, "text/html") {
+		response["data"] = string(responseBody)
+	} else {
+		log.Printf("Unsupported content type")
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+// sendApiGetRequest                                                                //
+///////////////////////////////////////////////////////////////////////////////////
+
+func sendApiGetRequest(petStoreURL, randomStatus, userAgent, xForwardedFor string) error {
+	// Construct the URL with query parameters
+	fullURL := fmt.Sprintf("%s/findByStatus?status=%s", petStoreURL, url.QueryEscape(randomStatus))
+
+	// Create the request
+	req, err := http.NewRequest("GET", fullURL, nil)
+	if err != nil {
+		return err
+	}
+
+	// Set headers
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("X-Forwarded-For", xForwardedFor)
+
+	// Send the request
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		},
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Read and log the response body (optional)
+	// body, err := io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	return err
+	// }
+	// log.Printf("Response Body: %s\n", body)
+
+	return nil
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+// sendApiPostRequest                                                               //
+///////////////////////////////////////////////////////////////////////////////////
+
+func sendApiPostRequest(petStoreURL string, userAgent string, pet PetstorePet, xForwardedFor string) error {
+	jsonData, err := json.Marshal(pet)
+	if err != nil {
+		log.Printf("Error marshalling pet data: %v\n", err)
+		return err
+	}
+
+	req, err := http.NewRequest("POST", petStoreURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		log.Printf("Error creating HTTP request: %v\n", err)
+		return err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("X-Forwarded-For", xForwardedFor)
+
+	// Print equivalent curl command
+	// fmt.Printf("curl -X PUT %s -H \"Accept: application/json\" -H \"Content-Type: application/json\" -H \"User-Agent: %s\" -H \"X-Forwarded-For: %s\" -d '%s'\n", petStoreURL, userAgent, xForwardedFor, jsonData)
+
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		},
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Error sending request: %v\n", err)
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Read and log the response body (optional)
+	// body, err := io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	return err
+	// }
+	// log.Printf("Response Body: %s\n", body)
+
+	// Print various response fields
+	// fmt.Printf("Status: %s\n", resp.Status)
+	// fmt.Printf("StatusCode: %d\n", resp.StatusCode)
+	// fmt.Printf("Header: %v\n", resp.Header)
+	// fmt.Printf("Body: %s\n", body)
+	// fmt.Printf("ContentLength: %d\n", resp.ContentLength)
+	// fmt.Printf("TransferEncoding: %v\n", resp.TransferEncoding)
+	// fmt.Printf("Close: %v\n", resp.Close)
+	// fmt.Printf("Uncompressed: %v\n", resp.Uncompressed)
+
+	// Handle the response as needed
+	return nil
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+// sendApiPutRequest                                                                //
+///////////////////////////////////////////////////////////////////////////////////
+
+func sendApiPutRequest(petStoreURL string, userAgent string, pet PetstorePet, xForwardedFor string) error {
+	jsonData, err := json.Marshal(pet)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("PUT", petStoreURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("X-Forwarded-For", xForwardedFor)
+
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		},
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Read and log the response body (optional)
+	// body, err := io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	return err
+	// }
+	// log.Printf("Response Body: %s\n", body)
+
+	// Handle the response as needed
+	return nil
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+// sendApiDeleteRequest                                                             //
+///////////////////////////////////////////////////////////////////////////////////
+
+func sendApiDeleteRequest(petStoreURL string, randomID int, userAgent string, xForwardedFor string) error {
+	// Construct the URL
+	fullURL := fmt.Sprintf("%s/%d", petStoreURL, randomID)
+
+	// Create the request
+	req, err := http.NewRequest("DELETE", fullURL, nil)
+	if err != nil {
+		return err
+	}
+
+	// Set headers
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("X-Forwarded-For", xForwardedFor)
+
+	// Send the request
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		},
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Read and log the response body (optional)
+	// body, err := io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	return err
+	// }
+	// log.Printf("Response Body: %s\n", body)
+
+	return nil
+}
+
+========================================================
+File content of go/routes/routes.go
+========================================================
+package routes
+
+import (
+    "darwin2/handlers"
+    "darwin2/config"
+    "github.com/labstack/echo/v4"
+)
+
+func Configure(e *echo.Echo) {
+
+    // Web Protection
+    e.POST("/web-scan", handlers.HandleWebScan)
+    e.POST("/web-attacks", handlers.HandleWebAttacks)
+    e.POST("/traffic-generation", handlers.HandleTrafficGenerator)
+    e.POST("/machine-learning", handlers.HandleMachineLearning)
+    e.POST("/user-auth", handlers.HandleUserAuth)
+    e.POST("/cookie-security", handlers.HandleCookieSecurityAttack)
+
+    // Bot Mitigation
+    // API Protection
+    e.POST("/api-get", handlers.HandleApiGet)
+    e.POST("/api-post", handlers.HandleApiPost)
+    e.POST("/api-put", handlers.HandleApiPut)
+    e.POST("/api-delete", handlers.HandleApiDelete)
+    e.POST("/api-traffic-generation", handlers.HandleApiMachineLearning)
+
+    // REST API
+    // Health Check
+
+
+    // Configuration
+    e.GET("/config", config.GetConfig)
+    e.POST("/config", config.UpdateConfig)
+    e.GET("/reset", config.ResetConfig)
+
+}
+
+========================================================

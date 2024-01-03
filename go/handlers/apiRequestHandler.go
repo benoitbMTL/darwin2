@@ -9,11 +9,9 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -34,8 +32,8 @@ type Tag struct {
 
 type PetstorePet struct {
 	ID        int      `json:"id"`
-	Name      string   `json:"name"`
 	Category  Category `json:"category"`
+	Name      string   `json:"name"`
 	PhotoUrls []string `json:"photoUrls"`
 	Tags      []Tag    `json:"tags"`
 	Status    string   `json:"status"`
@@ -56,11 +54,15 @@ type PetstorePutRequest struct {
 }
 
 type PetstoreDeleteRequest struct {
-	PetID int `json:"option"`
+	PetID string `json:"option"`
 }
 
+///////////////////////////////////////////////////////////////////////////////////
+// MAIN                                                                          //
+///////////////////////////////////////////////////////////////////////////////////
+
 func HandleApiGet(c echo.Context) error {
-	log.Printf("Start HandleApiGet")
+	// fmt.Printf("Start HandleApiGet\n")
 
 	var status PetstoreGetRequest
 	if err := c.Bind(&status); err != nil {
@@ -68,10 +70,10 @@ func HandleApiGet(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 	// Log the Status
-	log.Printf("Status: %s", status.Option)
+	// fmt.Printf("Status: %s\n", status.Option)
 
 	apiURL := fmt.Sprintf("%s/%s", config.CurrentConfig.PETSTOREURL, status.Option)
-	log.Printf("API URL: %s", apiURL)
+	// fmt.Printf("API URL: %s\n", apiURL)
 
 	req, _ := http.NewRequest("GET", apiURL, nil)
 	req.Header.Add("Accept", "application/json")
@@ -81,7 +83,7 @@ func HandleApiGet(c echo.Context) error {
 	curlCommand := utils.GenerateCurlCommand(req, nil)
 
 	// Log the curl command
-	log.Printf("Curl Command: %s", curlCommand)
+	// fmt.Printf("Curl Command: %s\n", curlCommand)
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -99,10 +101,10 @@ func HandleApiGet(c echo.Context) error {
 	body, _ := io.ReadAll(resp.Body)
 
 	// Log the response body for debugging
-	log.Printf("Response Body: %s", string(body))
+	// fmt.Printf("Response Body: %s", string(body))
 
 	contentType := resp.Header.Get("Content-Type")
-	log.Printf("Content-Type: %s", contentType)
+	// fmt.Printf("Content-Type: %s\n", contentType)
 
 	// Construct the response object with the curl command and the URL
 	response := map[string]interface{}{
@@ -111,21 +113,20 @@ func HandleApiGet(c echo.Context) error {
 		"curlCommand": curlCommand,
 	}
 
-	if strings.Contains(contentType, "application/json") {
-		var jsonData interface{}
-		err := json.Unmarshal(body, &jsonData)
-		if err != nil {
-			log.Printf("Received non-JSON content despite 'application/json' content-type: %v", err)
-			response["data"] = string(body)
+	if strings.HasPrefix(contentType, "application/json") {
+		var jsonData PetstorePetArray
+		if err := json.Unmarshal(body, &jsonData); err != nil {
+			log.Printf("Error unmarshalling JSON: %v", err)
+			response["data"] = string(body) // return raw body as fallback
 		} else {
 			response["data"] = jsonData
 		}
-	} else if strings.Contains(contentType, "text/plain") || strings.Contains(contentType, "text/html") {
-		response["data"] = string(body)
 	} else {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
+		// If not JSON, return the raw body
+		response["data"] = string(body)
 	}
 
+	// fmt.Printf("Response data: %v\n", response["data"])
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -135,7 +136,7 @@ func HandleApiGet(c echo.Context) error {
 
 func HandleApiPost(c echo.Context) error {
 	apiURL := config.CurrentConfig.PETSTOREURL
-	log.Printf("API URL: %s", apiURL)
+	// fmt.Printf("API URL: %s", apiURL)
 
 	// Read the request body
 	var request PetstorePostRequest
@@ -143,7 +144,7 @@ func HandleApiPost(c echo.Context) error {
 		log.Printf("Error decoding request: %v", err)
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
-	log.Printf("Decoded request: %+v", request)
+	// fmt.Printf("Decoded request: %+v", request)
 
 	// Prepare the payload for the POST request
 	payload, err := json.Marshal(request.Option)
@@ -151,7 +152,7 @@ func HandleApiPost(c echo.Context) error {
 		log.Printf("Error marshalling the payload: %v", err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
-	log.Printf("Marshalled payload: %s", string(payload))
+	// fmt.Printf("Marshalled payload: %s", string(payload))
 
 	// Create a new POST request using the received body
 	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(payload))
@@ -166,7 +167,7 @@ func HandleApiPost(c echo.Context) error {
 
 	// Generate curl command string
 	curlCommand := utils.GenerateCurlCommand(req, payload)
-	log.Printf("Curl command: %s", curlCommand)
+	// fmt.Printf("Curl command: %s", curlCommand)
 
 	// Create a custom HTTP client
 	client := &http.Client{
@@ -182,7 +183,7 @@ func HandleApiPost(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 	defer resp.Body.Close()
-	log.Printf("Response status: %s", resp.Status)
+	// fmt.Printf("Response status: %s", resp.Status)
 
 	// Read the response body
 	responseBody, err := io.ReadAll(resp.Body)
@@ -200,22 +201,19 @@ func HandleApiPost(c echo.Context) error {
 	}
 
 	contentType := resp.Header.Get("Content-Type")
-	log.Printf("Content-Type: %s", contentType)
+	// fmt.Printf("Content-Type: %s", contentType)
 
-	if strings.Contains(contentType, "application/json") {
-		var pets PetstorePet
-		if err := json.Unmarshal(responseBody, &pets); err != nil {
-			log.Printf("Error unmarshalling response body: %v", err)
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	if strings.HasPrefix(contentType, "application/json") {
+		var jsonData PetstorePet
+		if err := json.Unmarshal(responseBody, &jsonData); err != nil {
+			log.Printf("Error unmarshalling JSON: %v", err)
+			response["data"] = string(responseBody) // return raw body as fallback
+		} else {
+			response["data"] = jsonData
 		}
-		response["data"] = pets
-	} else if strings.Contains(contentType, "text/plain") {
-		response["data"] = string(responseBody)
-	} else if strings.Contains(contentType, "text/html") {
-		response["data"] = string(responseBody)
 	} else {
-		log.Printf("Unsupported content type")
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
+		// If not JSON, return the raw body
+		response["data"] = string(responseBody)
 	}
 
 	return c.JSON(http.StatusOK, response)
@@ -225,95 +223,88 @@ func HandleApiPost(c echo.Context) error {
 // PUT                                                                           //
 ///////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////////
-// PUT                                                                           //
-///////////////////////////////////////////////////////////////////////////////////
-
 func HandleApiPut(c echo.Context) error {
-    apiURL := config.CurrentConfig.PETSTOREURL
-    log.Printf("API URL: %s", apiURL)
+	apiURL := config.CurrentConfig.PETSTOREURL
+	// fmt.Printf("API URL: %s", apiURL)
 
-    // Read the request body
-    var request PetstorePutRequest
-    if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
-        log.Printf("Error decoding request: %v", err)
-        return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-    }
-    log.Printf("Decoded request: %+v", request)
+	// Read the request body
+	var request PetstorePutRequest
+	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
+		log.Printf("Error decoding request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	// fmt.Printf("Decoded request: %+v", request)
 
-    // Prepare the payload for the PUT request
-    payload, err := json.Marshal(request.Option)
-    if err != nil {
-        log.Printf("Error marshalling the payload: %v", err)
-        return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-    }
-    log.Printf("Marshalled payload: %s", string(payload))
+	// Prepare the payload for the PUT request
+	payload, err := json.Marshal(request.Option)
+	if err != nil {
+		log.Printf("Error marshalling the payload: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	// fmt.Printf("Marshalled payload: %s", string(payload))
 
-    // Create a new PUT request using the received body
-    req, err := http.NewRequest("PUT", apiURL, bytes.NewBuffer(payload))
-    if err != nil {
-        log.Printf("Error creating new request: %v", err)
-        return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-    }
+	// Create a new PUT request using the received body
+	req, err := http.NewRequest("PUT", apiURL, bytes.NewBuffer(payload))
+	if err != nil {
+		log.Printf("Error creating new request: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
 
-    // Set headers for the request
-    req.Header.Add("Accept", "application/json")
-    req.Header.Add("Content-Type", "application/json")
+	// Set headers for the request
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
 
-    // Generate curl command string
-    curlCommand := utils.GenerateCurlCommand(req, payload)
-    log.Printf("Curl command: %s", curlCommand)
+	// Generate curl command string
+	curlCommand := utils.GenerateCurlCommand(req, payload)
+	// fmt.Printf("Curl command: %s", curlCommand)
 
-    // Create a custom HTTP client
-    client := &http.Client{
-        Transport: &http.Transport{
-            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-        },
-    }
+	// Create a custom HTTP client
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
 
-    // Send the request
-    resp, err := client.Do(req)
-    if err != nil {
-        log.Printf("Error sending request: %v", err)
-        return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-    }
-    defer resp.Body.Close()
-    log.Printf("Response status: %s", resp.Status)
+	// Send the request
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Error sending request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	defer resp.Body.Close()
+	// fmt.Printf("Response status: %s", resp.Status)
 
-    // Read the response body
-    responseBody, err := io.ReadAll(resp.Body)
-    if err != nil {
-        log.Printf("Error reading response body: %v", err)
-        return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-    }
+	// Read the response body
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
 
-    // Construct the response object with the curl command
-    response := map[string]interface{}{
-        "data":        nil,
-        "url":         req.URL.String(),
-        "curlCommand": curlCommand,
-    }
+	// Construct the response object with the curl command
+	response := map[string]interface{}{
+		"data":        nil,
+		"url":         req.URL.String(),
+		"curlCommand": curlCommand,
+	}
 
-    contentType := resp.Header.Get("Content-Type")
-    log.Printf("Content-Type: %s", contentType)
+	contentType := resp.Header.Get("Content-Type")
+	// fmt.Printf("Content-Type: %s", contentType)
 
-    if strings.Contains(contentType, "application/json") {
-        var pets PetstorePet
-        if err := json.Unmarshal(responseBody, &pets); err != nil {
-            log.Printf("Error unmarshalling response body: %v", err)
-            return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-        }
-        response["data"] = pets
-    } else if strings.Contains(contentType, "text/plain") {
-        response["data"] = string(responseBody)
-    } else if strings.Contains(contentType, "text/html") {
-        response["data"] = string(responseBody)
-    } else {
-        log.Printf("Unsupported content type")
-        return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
-    }
+	if strings.HasPrefix(contentType, "application/json") {
+		var jsonData PetstorePet
+		if err := json.Unmarshal(responseBody, &jsonData); err != nil {
+			log.Printf("Error unmarshalling JSON: %v", err)
+			response["data"] = string(responseBody) // return raw body as fallback
+		} else {
+			response["data"] = jsonData
+		}
+	} else {
+		// If not JSON, return the raw body
+		response["data"] = string(responseBody)
+	}
 
-    return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, response)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -321,81 +312,70 @@ func HandleApiPut(c echo.Context) error {
 ///////////////////////////////////////////////////////////////////////////////////
 
 func HandleApiDelete(c echo.Context) error {
-    // Read the request body into PetstoreDeleteRequest
-    var request PetstoreDeleteRequest
-    if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
-        log.Printf("Error decoding request: %v", err)
-        return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-    }
-    log.Printf("Decoded request: %+v", request)
+	// Read the request body into PetstoreDeleteRequest
+	var request PetstoreDeleteRequest
+	// fmt.Printf("Raw request: %+v\n", request)
 
-    // Construct the URL with the pet ID from the request
-    apiURL := fmt.Sprintf("%s/%d", config.CurrentConfig.PETSTOREURL, request.PetID)
-    log.Printf("API URL: %s", apiURL)
+	if err := json.NewDecoder(c.Request().Body).Decode(&request); err != nil {
+		log.Printf("Error decoding request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	// fmt.Printf("Decoded request: %+v\n", request)
 
-    // Create a new DELETE request
-    req, err := http.NewRequest("DELETE", apiURL, nil)
-    if err != nil {
-        log.Printf("Error creating new request: %v", err)
-        return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-    }
+	// Construct the URL with the pet ID from the request
+	apiURL := fmt.Sprintf("%s/%s", config.CurrentConfig.PETSTOREURL, request.PetID)
+	// fmt.Printf("API URL: %s\n", apiURL)
 
-    // Set headers for the request
-    req.Header.Add("Accept", "application/json")
-    req.Header.Add("Content-Type", "application/json")
+	// Create a new DELETE request
+	req, err := http.NewRequest("DELETE", apiURL, nil)
+	if err != nil {
+		log.Printf("Error creating new request: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
 
-    // Generate curl command string
-    curlCommand := utils.GenerateCurlCommand(req, nil)
-    log.Printf("Curl command: %s", curlCommand)
+	// Set headers for the request
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
 
-    // Create a custom HTTP client
-    client := &http.Client{
-        Transport: &http.Transport{
-            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-        },
-    }
+	// Generate curl command string
+	curlCommand := utils.GenerateCurlCommand(req, nil)
+	// fmt.Printf("Curl command: %s\n", curlCommand)
 
-    // Send the request
-    resp, err := client.Do(req)
-    if err != nil {
-        log.Printf("Error sending request: %v", err)
-        return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
-    }
-    defer resp.Body.Close()
-    log.Printf("Response status: %s", resp.Status)
+	// Create a custom HTTP client
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
 
-    // Read the response body
-    responseBody, err := io.ReadAll(resp.Body)
-    if err != nil {
-        log.Printf("Error reading response body: %v", err)
-        return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-    }
+	// Send the request
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Error sending request: %v", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	defer resp.Body.Close()
+	// fmt.Printf("Response status: %s\n", resp.Status)
 
-    // Construct the response object with the curl command
-    response := map[string]interface{}{
-        "data":        nil,
-        "url":         req.URL.String(),
-        "curlCommand": curlCommand,
-    }
+	// Read the response body
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
 
-    contentType := resp.Header.Get("Content-Type")
-    log.Printf("Content-Type: %s", contentType)
+	// fmt.Printf("Response Body: %s\n", responseBody)
 
-    if strings.Contains(contentType, "application/json") {
-        var jsonResponse map[string]interface{}
-        if err := json.Unmarshal(responseBody, &jsonResponse); err != nil {
-            response["data"] = string(responseBody)
-        } else {
-            response["data"] = jsonResponse
-        }
-    } else if strings.Contains(contentType, "text/plain") || strings.Contains(contentType, "text/html") {
-        response["data"] = string(responseBody)
-    } else {
-        log.Printf("Unsupported content type")
-        return c.JSON(http.StatusBadRequest, map[string]string{"error": "unsupported content type"})
-    }
+	// Construct the response object with the curl command
+	response := map[string]interface{}{
+		"data":        nil,
+		"url":         req.URL.String(),
+		"curlCommand": curlCommand,
+	}
 
-    return c.JSON(http.StatusOK, response)
+	response["data"] = string(responseBody)
+
+	return c.JSON(http.StatusOK, response)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -464,9 +444,6 @@ func sendApiPostRequest(petStoreURL string, userAgent string, pet PetstorePet, x
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("X-Forwarded-For", xForwardedFor)
-
-	// Print equivalent curl command
-	// fmt.Printf("curl -X PUT %s -H \"Accept: application/json\" -H \"Content-Type: application/json\" -H \"User-Agent: %s\" -H \"X-Forwarded-For: %s\" -d '%s'\n", petStoreURL, userAgent, xForwardedFor, jsonData)
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -592,121 +569,4 @@ func sendApiDeleteRequest(petStoreURL string, randomID int, userAgent string, xF
 	// log.Printf("Response Body: %s\n", body)
 
 	return nil
-}
-
-///////////////////////////////////////////////////////////////////////////////////
-// handleAPITrafficGenerator                                                     //
-///////////////////////////////////////////////////////////////////////////////////
-
-func handleAPITrafficGenerator(c echo.Context) error {
-	requestCount := 1800
-	petNames := []string{"FortiPuma", "FortiFish", "FortiSpider", "FortiTiger", "FortiLion", "FortiShark", "FortiSnake", "FortiMonkey", "FortiFox", "FortiRam", "FortiEagle", "FortiBee", "FortiCat", "FortiDog", "FortiAnt", "FortiWasp", "FortiPanter", "FortiGator", "FortiOwl", "FortiWildcats"}
-	petTypes := []string{"Puma", "Fish", "Spider", "Tiger", "Lion", "Shark", "Snake", "Monkey", "Fox", "Ram", "Eagle", "Bee", "Cat", "Dog", "Ant", "Wasp", "Panter", "Gator", "Owl", "Wildcats"}
-	petTags := []string{"Friendly", "Playful", "Loyal", "Energetic", "Calm", "Trained", "Rescue", "Fluffy", "Affectionate", "Smart", "Active", "Gentle", "Senior", "Cute", "Good"}
-	statuses := []string{"available", "pending", "sold"}
-
-	for i := 0; i < requestCount; i++ {
-		randomName := generateRandomValue(petNames)
-		randomPet := generateRandomValue(petTypes)
-		randomTag := generateRandomValue(petTags)
-		randomStatus := generateRandomValue(statuses)
-		randomStatusNew := generateRandomValue(statuses)
-		randomIP := utils.GenerateRandomPublicIP()
-		randomID := rand.Intn(1001)
-		randomPhotoUrl1 := randomString(2, 10)
-		randomPhotoUrl2 := randomString(2, 10)
-		userAgent := config.CurrentConfig.USERAGENT
-		petStoreURL := config.CurrentConfig.PETSTOREURL
-
-		petNew := PetstorePet{
-			ID: randomID,
-			Category: Category{
-				ID:   randomID,
-				Name: randomPet,
-			},
-			Name:      randomName,
-			PhotoUrls: []string{randomPhotoUrl1 + ".png", randomPhotoUrl2 + ".png"},
-			Tags: []Tag{
-				{
-					ID:   randomID,
-					Name: randomTag,
-				},
-			},
-			Status: randomStatus,
-		}
-
-		petModified := PetstorePet{
-			ID: randomID,
-			Category: Category{
-				ID:   randomID,
-				Name: randomPet,
-			},
-			Name:      randomName,
-			PhotoUrls: []string{randomPhotoUrl1 + ".png", randomPhotoUrl2 + ".png"},
-			Tags: []Tag{
-				{
-					ID:   randomID,
-					Name: randomTag,
-				},
-			},
-			Status: randomStatusNew,
-		}
-
-		// Send POST request
-		err := sendApiPostRequest(petStoreURL, userAgent, petNew, randomIP)
-		if err != nil {
-			log.Fatalf("Error sending POST request: %v", err)
-		}
-
-		// Send PUT request
-		err = sendApiPutRequest(petStoreURL, userAgent, petModified, randomIP)
-		if err != nil {
-			log.Fatalf("Error sending PUT request: %v", err)
-		}
-
-		// Send GET request
-		err = sendApiGetRequest(petStoreURL, randomStatus, userAgent, randomIP)
-		if err != nil {
-			log.Fatalf("Error sending PUT request: %v", err)
-		}
-
-		// Send DELETE request
-		err = sendApiDeleteRequest(petStoreURL, randomID, userAgent, randomIP)
-		if err != nil {
-			log.Fatalf("Error sending PUT request: %v", err)
-		}
-	}
-
-	// Return the completion message
-	message := fmt.Sprintf("API traffic generation is complete. We have sent %d random requests of types POST, PUT, GET, and DELETE.", requestCount)
-	return c.String(http.StatusOK, message)
-}
-
-///////////////////////////////////////////////////////////////////////////////////
-// GENERATE RANDOM API TRAFFIC                                                   //
-///////////////////////////////////////////////////////////////////////////////////
-
-func generateRandomValue(values []string) string {
-	seed := rand.NewSource(time.Now().UnixNano())
-	random := rand.New(seed)
-	return values[random.Intn(len(values))]
-}
-
-func randomString(minLength, maxLength int) string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@_-[]{}$!")
-	var startingLetters = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-	source := rand.NewSource(time.Now().UnixNano())
-	random := rand.New(source)
-
-	length := random.Intn(maxLength-minLength+1) + minLength
-
-	var sb strings.Builder
-	sb.WriteRune(startingLetters[random.Intn(len(startingLetters))]) // Start with A-Z
-
-	for i := 1; i < length; i++ {
-		sb.WriteRune(letters[random.Intn(len(letters))])
-	}
-
-	return sb.String()
 }

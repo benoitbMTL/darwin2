@@ -329,7 +329,7 @@ export default {
 
     /* DELETE list */
     this.deleteList = [
-      { value: 999, text: "Delete FortiPet [id:999]" },
+      { value: "999", text: "Delete FortiPet [id:999]" },
       { value: "cmd.exe", text: "Delete FortiPet with Command Injection" },
     ];
 
@@ -346,8 +346,8 @@ export default {
       const body = JSON.stringify({ option: this.selectedGetOption });
 
       // Debug: Print the URL and body to the console
-      console.log("Sending GET request to:", url);
-      console.log("Request body:", body);
+      // console.log("Sending GET request to:", url);
+      // console.log("Request body:", body);
 
       this.sendApiRequest(url, body);
     },
@@ -379,8 +379,8 @@ export default {
     // Method to send API request and handle response
     sendApiRequest(url, body) {
       this.resetResult();
-      console.log("fetch url", url);
-      console.log("fetch body", body);
+      // console.log("fetch url", url);
+      // console.log("fetch body", body);
 
       fetch(url, {
         method: "POST",
@@ -402,8 +402,9 @@ export default {
           this.requestURL = data.url;
           this.responseBody = data.data;
 
-          console.log("Curl Command:", this.curlCommand);
-          console.log("Request URL Command:", this.requestURL);
+          // console.log("Curl Command:", this.curlCommand);
+          // console.log("Request URL Command:", this.requestURL);
+          // console.log("responseBody:", this.responseBody);
 
           // Checking the type of the response this.responseBody
           if (typeof this.responseBody === "string") {
@@ -416,10 +417,6 @@ export default {
               this.jsonResponseBody = this.responseBody;
               this.htmlResponseBody = "";
             }
-          } else if (Array.isArray(this.responseBody)) {
-            // It's a JSON array - process each element and remove outer brackets
-            this.jsonResponseBody = this.responseBody.map((item) => JSON.stringify(item, null, 2)).join(",\n");
-            this.htmlResponseBody = "";
           } else if (typeof this.responseBody === "object") {
             // It's a JSON object
             this.jsonResponseBody = JSON.stringify(this.responseBody, null, 2);
