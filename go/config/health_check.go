@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -18,6 +19,7 @@ func HandleHealthCheck(c echo.Context) error {
 
 	// Define a custom HTTP client with a redirect policy that returns an error
 	client := &http.Client{
+		Timeout: time.Second * 5,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
@@ -49,14 +51,14 @@ func HandleHealthCheck(c echo.Context) error {
 			shortErr := strings.TrimPrefix(err.Error(), fmt.Sprintf(`Get "%s": `, url))
 			result += fmt.Sprintf(`<tr>
 				<td>%s</td>
-			<td class="down">Down</td>
+				<td class="down">Down</td>
 				<td>N/A</td>
 				<td>%s</td>
 			</tr>`, url, shortErr)
 		} else {
 			result += fmt.Sprintf(`<tr>
 				<td>%s</td>
-			<td class="up">Up</td>
+				<td class="up">Up</td>
 				<td>%d</td>
 				<td>N/A</td>
 			</tr>`, url, res.StatusCode)

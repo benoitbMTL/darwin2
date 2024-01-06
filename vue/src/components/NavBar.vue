@@ -6,16 +6,21 @@
         FortiWeb Demo Tool
       </router-link>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <!-- Web Protection Dropdown -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="webProtectionDropdown" role="button"
-              data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="webProtectionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Web Protection
             </a>
             <ul class="dropdown-menu" aria-labelledby="webProtectionDropdown">
@@ -24,48 +29,38 @@
               <li><router-link class="dropdown-item" to="/web-attacks">Web Attacks</router-link></li>
               <li><router-link class="dropdown-item" to="/machine-learning">Machine Learning</router-link></li>
               <li><router-link class="dropdown-item" to="/cookie-security">Cookie Security</router-link></li>
-              <li><router-link class="dropdown-item" to="/credential-stuffing-defense">Credential Stuffing
-                  Defense</router-link></li>
+              <li><router-link class="dropdown-item" to="/credential-stuffing-defense">Credential Stuffing Defense</router-link></li>
             </ul>
           </li>
 
           <!-- Bot Mitigation Dropdown -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="botMitigationDropdown" role="button"
-              data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="botMitigationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Bot Mitigation
             </a>
             <ul class="dropdown-menu" aria-labelledby="botMitigationDropdown">
               <li><router-link class="dropdown-item" to="/known-bots">Known Bots</router-link></li>
-              <li><router-link class="dropdown-item" to="/biometrics-based-detection">Biometrics Based
-                  Detection</router-link></li>
+              <li><router-link class="dropdown-item" to="/biometrics-based-detection">Biometrics Based Detection</router-link></li>
               <li><router-link class="dropdown-item" to="/bot-deception">Bot Deception</router-link></li>
-              <li><router-link class="dropdown-item" to="/threshold-based-detection">Threshold Based
-                  Detection</router-link></li>
-              <li><router-link class="dropdown-item" to="/ml-based-bot-detection">ML Based Bot Detection</router-link>
-              </li>
+              <li><router-link class="dropdown-item" to="/threshold-based-detection">Threshold Based Detection</router-link></li>
+              <li><router-link class="dropdown-item" to="/ml-based-bot-detection">ML Based Bot Detection</router-link></li>
             </ul>
           </li>
 
           <!-- API Protection Dropdown -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="apiProtectionDropdown" role="button"
-              data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="apiProtectionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               API Protection
             </a>
             <ul class="dropdown-menu" aria-labelledby="apiProtectionDropdown">
               <li><router-link class="dropdown-item" to="/api-requests">API Requests</router-link></li>
-              <li><router-link class="dropdown-item" to="/api-traffic-generation">API Traffic Generation</router-link>
-              </li>
+              <li><router-link class="dropdown-item" to="/api-traffic-generation">API Traffic Generation</router-link></li>
             </ul>
           </li>
 
           <!-- REST API Dropdown -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="restApiDropdown" role="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              REST API
-            </a>
+            <a class="nav-link dropdown-toggle" href="#" id="restApiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> REST API </a>
             <ul class="dropdown-menu" aria-labelledby="restApiDropdown">
               <li><router-link class="dropdown-item" to="/rest-api-management">Policy Management</router-link></li>
             </ul>
@@ -73,16 +68,21 @@
 
           <!-- System Dropdown -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="systemDropdown" role="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              System
-            </a>
+            <a class="nav-link dropdown-toggle" href="#" id="systemDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> System </a>
             <ul class="dropdown-menu" aria-labelledby="systemDropdown">
-              <li><router-link class="dropdown-item" to="/configuration">Configuration</router-link></li>
-                <li><router-link class="dropdown-item" to="/health-check">Health Check</router-link></li>
-                  <li><router-link class="dropdown-item" to="/app-docker">App Docker</router-link></li>
-                  <li><router-link class="dropdown-item" to="/bootstrap">FortiWeb Bootstrap</router-link></li>
-                </ul>
+              <li>
+                <router-link class="dropdown-item" to="/configuration"><font-awesome-icon :icon="['fas', 'pen-to-square']" class="me-3" />Configuration</router-link>
+              </li>
+              <li>
+                <router-link class="dropdown-item" to="/health-check"><font-awesome-icon :icon="['fas', 'heart-circle-check']" class="me-3" />Health Check</router-link>
+              </li>
+              <li>
+                <router-link class="dropdown-item" to="/app-docker"><font-awesome-icon :icon="['fab', 'docker']" class="me-3" />Docker Images</router-link>
+              </li>
+              <li>
+                <router-link class="dropdown-item" to="/bootstrap"><font-awesome-icon :icon="['fas', 'file-import']" class="me-3" />FortiWeb Bootstrap</router-link>
+              </li>
+            </ul>
           </li>
         </ul>
       </div>

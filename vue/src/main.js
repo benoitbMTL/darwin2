@@ -16,12 +16,12 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 // Add the imported icons to the library
 library.add(fas, far, fab);
 
-// Register the FontAwesomeIcon component globally
-app.component('font-awesome-icon', FontAwesomeIcon);
-
 import './assets/styles/global.css';
 
 const app = createApp(App); // Create the app using Vue 3 syntax
+
+// Register the FontAwesomeIcon component globally
+app.component('font-awesome-icon', FontAwesomeIcon);
 
 app.use(router); // Use the router
 

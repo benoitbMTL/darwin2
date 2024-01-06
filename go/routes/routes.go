@@ -18,6 +18,9 @@ func Configure(e *echo.Echo) {
 	e.POST("/cookie-security", handlers.HandleCookieSecurityAttack)
 
 	// Bot Mitigation
+	e.POST("/known-bots", handlers.HandleKnownBots)
+
+
 	// API Protection
 	e.POST("/api-get", handlers.HandleApiGet)
 	e.POST("/api-post", handlers.HandleApiPost)
