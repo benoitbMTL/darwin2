@@ -9,3 +9,5 @@ var BotUserAgents = map[string]string{
 	"SearchEngine": "Baiduspider+(+http://www.baidu.com/search/spider.htm)",
 	"Trojan":       "Python-urllib/2.7",
 }
+
+

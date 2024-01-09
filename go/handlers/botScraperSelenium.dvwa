@@ -1,0 +1,199 @@
+package handlers
+
+import (
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/labstack/echo/v4"
+	"github.com/tebeka/selenium"
+)
+
+const (
+	chromeDriverPath  = "./selenium/chromedriver" // Path to ChromeDriver
+	firefoxDriverPath = "./selenium/geckodriver"  // Path to GeckoDriver
+	port              = 4444                      // Port on which ChromeDriver will listen
+)
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+func HandleSelenium(c echo.Context) error {
+	browserName := c.FormValue("name")
+	fmt.Printf("Browser Name: %s\n", browserName)
+
+	var err error
+	switch browserName {
+	case "chrome":
+		err = chromeSelenium()
+	case "firefox":
+		err = firefoxSelenium()
+	default:
+		err = fmt.Errorf("unsupported browser: %s", browserName)
+	}
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.String(http.StatusOK, "Selenium Actions executed successfully")
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+func chromeSelenium() error {
+	// Start ChromeDriver service
+	fmt.Printf("Start ChromeDriver service\n")
+	opts := []selenium.ServiceOption{}
+	service, err := selenium.NewChromeDriverService(chromeDriverPath, port, opts...)
+	if err != nil {
+		fmt.Printf("Error starting the ChromeDriver server: %v\n", err)
+		return err
+	}
+	defer service.Stop()
+
+	// Set Chrome options for headless mode
+	fmt.Printf("Set Chrome options for headless mode\n")
+
+	caps := selenium.Capabilities{"browserName": "chrome"}
+
+	// Connect to the ChromeDriver instance
+	driver, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
+	if err != nil {
+		fmt.Printf("Error connecting to ChromeDriver: %v\n", err)
+		return err
+	}
+	defer driver.Quit()
+
+	if err := SeleniumActions(driver); err != nil {
+		return err
+	}
+
+	return nil // No error occurred
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+func firefoxSelenium() error {
+	fmt.Printf("Execute firefoxSelenium\n")
+
+	// Start GeckoDriver service
+	opts := []selenium.ServiceOption{}
+	service, err := selenium.NewGeckoDriverService(firefoxDriverPath, port, opts...)
+	if err != nil {
+		fmt.Printf("Error starting the GeckoDriver server: %v\n", err)
+		return err
+	}
+	defer service.Stop()
+
+	// Connect to the GeckoDriver instance
+	caps := selenium.Capabilities{"browserName": "firefox"}
+	driver, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
+	if err != nil {
+		fmt.Printf("Error connecting to GeckoDriver: %v\n", err)
+		return err
+	}
+	defer driver.Quit()
+
+	if err := SeleniumActions(driver); err != nil {
+		return err
+	}
+
+	return nil // No error occurred
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func SeleniumActions(driver selenium.WebDriver) error {
+
+	// Define your variable for the number of seconds
+	var waitDurationInSeconds time.Duration = 1
+
+	// Navigate to the URL
+	fmt.Printf("Navigate to the URL\n")
+	if err := driver.Get("http://dvwa.corp.fabriclab.ca/login.php"); err != nil {
+		fmt.Println("Failed to load page:", err)
+		return err
+	}
+
+	// Allow time for the page to load
+	time.Sleep(waitDurationInSeconds * time.Second)
+
+	fmt.Printf("Resize window")
+	if err := driver.ResizeWindow("", 1181, 1050); err != nil {
+		fmt.Println("Failed to resize window:", err)
+		return err
+	}
+
+	time.Sleep(waitDurationInSeconds * time.Second)
+	fmt.Printf("time.Sleep FindElement username\n")
+	username, err := driver.FindElement(selenium.ByName, "username")
+	if err != nil {
+		fmt.Println("Failed to find username element:", err)
+		return err
+	}
+	if err := username.SendKeys("admin"); err != nil {
+		fmt.Println("Failed to send keys to username element:", err)
+		return err
+	}
+
+	time.Sleep(waitDurationInSeconds * time.Second)
+	fmt.Printf("password\n")
+	password, err := driver.FindElement(selenium.ByName, "password")
+	if err != nil {
+		fmt.Println("Failed to find password element:", err)
+		return err
+	}
+	if err := password.SendKeys("password"); err != nil {
+		fmt.Println("Failed to send keys to password element:", err)
+		return err
+	}
+
+	time.Sleep(waitDurationInSeconds * time.Second)
+	fmt.Printf("Login\n")
+	loginBtn, err := driver.FindElement(selenium.ByName, "Login")
+	if err != nil {
+		fmt.Println("Failed to find login button:", err)
+		return err
+	}
+	if err := loginBtn.SendKeys(selenium.EnterKey); err != nil {
+		fmt.Println("Failed to send Enter key to login button:", err)
+		return err
+	}
+
+	time.Sleep(waitDurationInSeconds * time.Second)
+	fmt.Printf("Command Injection link\n")
+	commandInjection, err := driver.FindElement(selenium.ByLinkText, "Command Injection")
+	if err != nil {
+		fmt.Println("Failed to find Command Injection link:", err)
+		return err
+	}
+	if err := commandInjection.Click(); err != nil {
+		fmt.Println("Failed to click Command Injection link:", err)
+		return err
+	}
+
+	time.Sleep(waitDurationInSeconds * time.Second)
+	fmt.Printf("SendKeys 1.1.1.1\n")
+	ipField, err := driver.FindElement(selenium.ByName, "ip")
+	if err != nil {
+		fmt.Println("Failed to find IP field:", err)
+		return err
+	}
+	if err := ipField.SendKeys("1.1.1.1"); err != nil {
+		fmt.Println("Failed to send keys to IP field:", err)
+		return err
+	}
+
+	time.Sleep(waitDurationInSeconds * time.Second)
+	fmt.Printf("Submit\n")
+	submitBtn, err := driver.FindElement(selenium.ByName, "Submit")
+	if err != nil {
+		fmt.Println("Failed to find submit button:", err)
+		return err
+	}
+	if err := submitBtn.SendKeys(selenium.EnterKey); err != nil {
+		fmt.Println("Failed to send Enter key to submit button:", err)
+		return err
+	}
+
+	time.Sleep(10 * time.Second)
+
+	return nil
+}

@@ -20,7 +20,7 @@
       </div>
 
       <div v-if="jobResult" class="mt-4 mb-3">
-        <h6>{{ currentBotName }} Result:</h6>
+        <h6>{{ CurrentBotName }} Result:</h6>
         <iframe ref="botIframe" :srcdoc="jobResult" @load="adjustIframeHeight" style="width: 100%; border: 1px solid lightgray"></iframe>
       </div>
     </div>
@@ -50,11 +50,13 @@ export default {
     return {
       jobResult: "",
       showHelp: false,
+      CurrentBotName: "",
     };
   },
 
   methods: {
     sendBot(botName) {
+      this.CurrentBotName = botName; // Update CurrentBotName when a bot is sent
       const url = "http://localhost:8080/known-bots";
       const formData = new URLSearchParams();
       formData.append("name", botName);

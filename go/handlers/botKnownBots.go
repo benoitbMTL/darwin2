@@ -3,6 +3,7 @@ package handlers
 import (
 	"crypto/tls"
 	"darwin2/config"
+	"darwin2/utils"
 	"fmt"
 	"io"
 	"net/http"
@@ -15,6 +16,7 @@ func HandleKnownBots(c echo.Context) error {
 
 	// Retrieve the botName from the form data
 	botName := c.FormValue("name")
+	randomIP := utils.GenerateRandomPublicIP()
 
 	// Lookup the userAgent for the given botName
 	userAgent, exists := config.BotUserAgents[botName]
@@ -22,7 +24,7 @@ func HandleKnownBots(c echo.Context) error {
 		return c.String(http.StatusBadRequest, fmt.Sprintf("Bot '%s' not recognized", botName))
 	}
 
-	fmt.Printf("Received botName: %s with userAgent: %s\n", botName, userAgent)
+	fmt.Printf("BotName: %s | UserAgent: %s | XFF: %s\n", botName, userAgent, randomIP)
 
 	// Create a new request
 	req, err := http.NewRequest("GET", config.CurrentConfig.JUICESHOPURL, nil)
@@ -32,6 +34,7 @@ func HandleKnownBots(c echo.Context) error {
 
 	// Set the User Agent header
 	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("X-FORWARDED-FOR", randomIP)
 
 	// Create an HTTP client and send the request
 	client := &http.Client{

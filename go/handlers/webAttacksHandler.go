@@ -34,7 +34,6 @@ func performAttack(c echo.Context, attackType, username, password string) error 
 	needsAuthentication := username != ""
 	randomIP := utils.GenerateRandomPublicIP()
 
-
 	// Authenticate only if needed
 	if needsAuthentication {
 		cookieJar, err = authenticateUser(username, password)
@@ -61,10 +60,10 @@ func performAttack(c echo.Context, attackType, username, password string) error 
 	fmt.Println("Crafting request for attack")
 	var req *http.Request
 	if attackConfig.Method == "POST" {
-			fmt.Println("attackConfig.Method == POST")
+		fmt.Println("attackConfig.Method == POST")
 		req, err = http.NewRequest(attackConfig.Method, attackConfig.URL, strings.NewReader(attackConfig.PostData))
 	} else {
-					fmt.Println("attackConfig.Method == GET")
+		fmt.Println("attackConfig.Method == GET")
 		req, err = http.NewRequest(attackConfig.Method, attackConfig.URL, nil)
 	}
 	if err != nil {
