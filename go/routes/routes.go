@@ -20,7 +20,6 @@ func Configure(e *echo.Echo) {
 	// Bot Mitigation
 	e.POST("/known-bots", handlers.HandleKnownBots)
 	e.POST("/selenium", handlers.HandleSelenium)
-	e.POST("/colly", handlers.HandleColly)
 	e.POST("/bot-scraper-api", handlers.HandleScrapWithApi)
 
 	// API Protection

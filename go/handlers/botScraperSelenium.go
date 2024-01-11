@@ -3,7 +3,6 @@ package handlers
 import (
 	"darwin2/config"
 	"fmt"
-	"math/rand"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -79,6 +78,7 @@ func HandleSelenium(c echo.Context) error {
 	defer service.Stop()
 
 	// Set general capabilities for Selenium WebDriver
+	fmt.Printf("Set general capabilities for Selenium WebDriver\n")
 	caps := selenium.Capabilities{"browserName": "chrome"}
 
 	// Define Chrome-specific capabilities
@@ -128,7 +128,7 @@ func SeleniumActions(webDriver selenium.WebDriver) error {
 	}
 
 	// Allow time for the page to load
-	sleepForDuration()
+	sleepForShortDuration()
 
 	// Maximize the Browser Window
 	err := webDriver.MaximizeWindow("")
@@ -137,34 +137,31 @@ func SeleniumActions(webDriver selenium.WebDriver) error {
 	}
 
 	// Allow time for the next action
-	sleepForDuration()
+	sleepForShortDuration()
 
 	fmt.Printf("Dismiss Welcome Page & Cookie Message\n")
 	dismissWelcomePage(webDriver)
 
-	fmt.Printf("Clicking all products on the landing page\n")
-    for i := 0; i < 100; i++ {
-			fmt.Printf("clickAllProducts Iteration: %d\n", i)
-        clickAllProducts(webDriver)
-    }
+	// fmt.Printf("Clicking all products on the landing page\n")
+	// clickAllProducts(webDriver)
 
 	fmt.Printf("Creating a new account\n")
-	// createAccount(webDriver, credentials)
+	createAccount(webDriver, credentials)
 
 	fmt.Printf("Logging in\n")
-	// login(webDriver, juiceshopUrl, credentials)
+	login(webDriver, juiceshopUrl, credentials)
 
 	fmt.Printf("Adding a new address\n")
-	// addNewAddress(webDriver, juiceshopUrl, address)
+	addNewAddress(webDriver, juiceshopUrl, address)
 
 	fmt.Printf("Adding a new payment method\n")
-	// addNewPayment(webDriver, juiceshopUrl, payment)
+	addNewPayment(webDriver, juiceshopUrl, payment)
 
 	fmt.Printf("Adding items to the shopping cart\n")
-	// addItemsToShoppingCart(webDriver, juiceshopUrl)
+	addItemsToShoppingCart(webDriver, juiceshopUrl)
 
 	fmt.Printf("Checking out the shopping cart\n")
-	// checkoutShoppingCart(webDriver, juiceshopUrl)
+	checkoutShoppingCart(webDriver, juiceshopUrl)
 
 	time.Sleep(10 * time.Second)
 
@@ -173,64 +170,45 @@ func SeleniumActions(webDriver selenium.WebDriver) error {
 
 // DISMISS WELCOME PAGE & COOKIE WARNING ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func dismissWelcomePage(webDriver selenium.WebDriver) {
+	sleepForShortDuration()
 
-	sleepForDuration()
+	// Click the 'Dismiss' button to close the welcome banner
+	fmt.Println("Clicking the 'Dismiss' button to close the welcome banner")
+	clickButton(webDriver, `//button[@aria-label="Close Welcome Banner"]`)
 
-	// Find the 'Dismiss' button by its aria-label
-	dismissButton, err := webDriver.FindElement(selenium.ByXPATH, `//button[@aria-label="Close Welcome Banner"]`)
-	if err != nil {
-		fmt.Println("Error finding the 'Dismiss' button:", err)
-		return
-	}
-	dismissButton.Click()
+	// Click the 'Me want it!' link to dismiss any additional messages
+	fmt.Println("Clicking the 'Me want it!' link")
+	clickButton(webDriver, `//a[contains(text(), 'Me want it!')]`)
 
-	sleepForDuration()
+	fmt.Println("### Done Dismiss Welcome Page & Cookie Message")
 
-	// Find the link with the text 'Me want it!' and click on it
-	meWantItLink, err := webDriver.FindElement(selenium.ByXPATH, `//a[contains(text(), 'Me want it!')]`)
-	if err != nil {
-		fmt.Println("Error finding the 'Me want it!' link:", err)
-		return
-	}
-	meWantItLink.Click()
-
-	fmt.Println("[+] Done Dismiss Welcome Page & Cookie Message")
-
-	sleepForDuration()
+	sleepForShortDuration()
 }
 
 // CLICK ALL PRODUCTS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func clickAllProducts(webDriver selenium.WebDriver) {
+	sleepForShortDuration()
 
-	sleepForDuration()
-
-	// Find all product elements on the page by their XPath
+	// Find all product elements on the page
 	products, err := webDriver.FindElements(selenium.ByXPATH, `//div[@aria-label="Click for more information about the product"]`)
 	if err != nil {
 		fmt.Println("Error finding product elements:", err)
 		return
 	}
 
-	var productTexts []string
 	for index, product := range products {
-		fmt.Printf("Processing product %d\n", index+1) // Debug: print the index of the product being processed
-		sleepForDuration()
+		fmt.Printf("Processing product %d\n", index+1)
 
+		// Scroll the product into view
+		scrollIntoView(webDriver, product)
+
+		// Get product name (text)
 		text, err := product.Text()
 		if err != nil {
 			fmt.Println("Error getting product text:", err)
 			continue
 		}
-
-		fmt.Printf("Product name: %s\n", text) // Print the product name
-		productTexts = append(productTexts, text)
-
-		// Scroll the product into view using JavaScript
-		_, err = webDriver.ExecuteScript("arguments[0].scrollIntoView(true);", []interface{}{product})
-		if err != nil {
-			fmt.Println("Error scrolling to product:", err)
-			continue
-		}
+		fmt.Printf("Product name: %s\n", text)
 
 		// Click the product
 		err = product.Click()
@@ -239,182 +217,303 @@ func clickAllProducts(webDriver selenium.WebDriver) {
 			continue
 		}
 
-		closeButton, err := webDriver.FindElement(selenium.ByXPATH, `//button[@aria-label="Close Dialog"]`)
-		if err != nil {
-			fmt.Println("Error finding the 'Close Dialog' button:", err)
-			return
-		} else {
-			// Click the button to close the dialog
-			if err := closeButton.Click(); err != nil {
-				fmt.Println("Error clicking the 'Close Dialog' button:", err)
-				return
-			}
-		}
+		// Click the close dialog button
+		fmt.Println("Closing product dialog")
+		clickButton(webDriver, `//button[@aria-label="Close Dialog"]`)
 	}
 
-	// Find the 'All Products' title element
-	allProductsTitle, err := webDriver.FindElement(selenium.ByXPATH, `//div[contains(text(), 'All Products')]`)
-	if err != nil {
-		fmt.Println("Error finding the 'All Products' title element:", err)
-		return // or handle the error as needed
-	}
-
-	// Scroll to the 'All Products' title element
-	_, err = webDriver.ExecuteScript("arguments[0].scrollIntoView(true);", []interface{}{allProductsTitle})
-	if err != nil {
-		fmt.Println("Error scrolling to the 'All Products' title element:", err)
-		return // or handle the error as needed
-	}
-
-	fmt.Println("[+] Done clicking around on the Startpage")
-	sleepForDuration()
+	fmt.Println("### Done clicking around on the Startpage")
+	sleepForShortDuration()
 }
 
 // CREATE ACCOUNT ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func createAccount(webDriver selenium.WebDriver, credentials Credentials) {
-
 	// Click Account menu button
-	accountMenuButton, err := webDriver.FindElement(selenium.ByXPATH, `//button[@aria-label="Show/hide account menu"]`)
-	if err != nil {
-		fmt.Println("Error finding account menu button:", err)
-		return
-	}
-	accountMenuButton.Click()
-	sleepForDuration()
+	fmt.Println("Clicking Account menu button")
+	clickButton(webDriver, `//button[@aria-label="Show/hide account menu"]`)
 
-	// Find and click the navbar login button
-	loginButton, err := webDriver.FindElement(selenium.ByXPATH, `//button[@id="navbarLoginButton"]`)
-	if err != nil {
-		fmt.Println("Error finding the navbar login button:", err)
-		return
-	}
-	loginButton.Click()
-	sleepForDuration()
+	// Click the navbar login button
+	fmt.Println("Clicking the navbar login button")
+	clickButton(webDriver, `//button[@id="navbarLoginButton"]`)
 
-	// Find and click the 'Not yet a customer?' link
-	notCustomerLink, err := webDriver.FindElement(selenium.ByLinkText, "Not yet a customer?")
-	if err != nil {
-		fmt.Println("Error finding the 'Not yet a customer?' link:", err)
-		return
-	}
-	notCustomerLink.Click()
-	sleepForDuration()
+	// Click the 'Not yet a customer?' link
+	fmt.Println("Clicking the 'Not yet a customer?' link")
+	clickButton(webDriver, `//a[contains(text(), 'Not yet a customer?')]`)
 
-	// Find the email input field and send the email from credentials
-	emailInput, err := webDriver.FindElement(selenium.ByXPATH, `//input[@id="emailControl"]`)
-	if err != nil {
-		fmt.Println("Error finding the email input field:", err)
-		return
-	}
-	emailInput.SendKeys(credentials.Email)
-	sleepForDuration()
+	// Fill in the email, password, repeat password, and security answer fields
+	fmt.Printf("Filling in the email: %s\n", credentials.Email)
+	fillInputField(webDriver, `//input[@id="emailControl"]`, credentials.Email)
 
-	// Find the password input field and send the password from credentials
-	passwordInput, err := webDriver.FindElement(selenium.ByXPATH, `//input[@id="passwordControl"]`)
-	if err != nil {
-		fmt.Println("Error finding the password input field:", err)
-		return
-	}
-	passwordInput.SendKeys(credentials.Password)
-	sleepForDuration()
+	fmt.Printf("Filling in the password: %s\n", credentials.Password)
+	fillInputField(webDriver, `//input[@id="passwordControl"]`, credentials.Password)
 
-	// Find the repeat password input field and resend the password
-	repeatPasswordInput, err := webDriver.FindElement(selenium.ByXPATH, `//input[@id="repeatPasswordControl"]`)
-	if err != nil {
-		fmt.Println("Error finding the repeat password input field:", err)
-		return
-	}
-	repeatPasswordInput.SendKeys(credentials.Password)
-	sleepForDuration()
+	fmt.Printf("Filling in the repeat password: %s\n", credentials.Password)
+	fillInputField(webDriver, `//input[@id="repeatPasswordControl"]`, credentials.Password)
 
-	// Find and click the security question dropdown
-	securityQuestionDropdown, err := webDriver.FindElement(selenium.ByName, "securityQuestion")
-	if err != nil {
-		fmt.Println("Error finding the security question dropdown:", err)
-		return
-	}
-	securityQuestionDropdown.Click()
-	sleepForDuration()
+	// Click the security question dropdown and select an option
 
-	// Find and click the specified option in the security question dropdown
-	securityQuestionOption, err := webDriver.FindElement(selenium.ByID, "mat-option-3")
-	if err != nil {
-		fmt.Println("Error finding the security question option:", err)
-		return
-	}
-	securityQuestionOption.Click()
-	sleepForDuration()
+	fmt.Println("Clicking the security question dropdown and selecting an option")
+	selectDropdownOption(webDriver, selenium.ByName, "securityQuestion", selenium.ByID, "mat-option-3")
 
-	// Find the security answer input field and send the security answer from credentials
-	securityAnswerInput, err := webDriver.FindElement(selenium.ByXPATH, `//input[@id="securityAnswerControl"]`)
-	if err != nil {
-		fmt.Println("Error finding the security answer input field:", err)
-		return
-	}
-	securityAnswerInput.SendKeys(credentials.SecAnswer)
-	sleepForDuration()
+	fmt.Printf("Filling in the security answer: %s\n", credentials.SecAnswer)
+	fillInputField(webDriver, `//input[@id="securityAnswerControl"]`, credentials.SecAnswer)
 
-	// Find the 'Register' button by its ID and click on it
-	registerButton, err := webDriver.FindElement(selenium.ByID, "registerButton")
-	if err != nil {
-		fmt.Println("Error finding the 'Register' button:", err)
-		return // or handle the error appropriately
-	}
+	// Click the 'Register' button
+	fmt.Println("Clicking on 'Register' button")
+	clickButton(webDriver, `//button[@id="registerButton"]`)
 
-	err = registerButton.Click()
-	if err != nil {
-		fmt.Println("Error clicking on the 'Register' button:", err)
-		return // or handle the error appropriately
-	}
-
-	fmt.Println("[+] Done Registering a new account")
-	sleepForDuration()
+	fmt.Println("### Done Registering a new account")
 }
 
 // LOGIN ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func login(webDriver selenium.WebDriver, url string, credentials Credentials) {
 
 	// Navigate to the login page
+	fmt.Printf("Navigate to the login page.\n")
 	loginURL := url + "/#/login"
 	webDriver.Get(loginURL)
 
 	// Fill in the email and password
+	fmt.Printf("Fill in the email.\n")
 	emailInput, _ := webDriver.FindElement(selenium.ByXPATH, `//input[@id="email"]`)
 	emailInput.SendKeys(credentials.Email)
 
+	fmt.Printf("Fill in the password.\n")
 	passwordInput, _ := webDriver.FindElement(selenium.ByXPATH, `//input[@id="password"]`)
 	passwordInput.SendKeys(credentials.Password)
 
 	// Click the login button
+	fmt.Printf("Click the login button.\n")
 	loginButton, _ := webDriver.FindElement(selenium.ByXPATH, `//button[@aria-label="Login"]`)
 	loginButton.Click()
 
-	fmt.Println("[+] Done login to the Webshop")
-	sleepForDuration()
+	fmt.Printf("### Done login to the Webshop\n")
+	sleepForShortDuration()
 }
 
 // ADD NEW ADDRESS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func addNewAddress(webDriver selenium.WebDriver, url string, address Address) {
+	fmt.Printf("Navigating to %s\n", url+"/#/address/saved")
+	if err := webDriver.Get(url + "/#/address/saved"); err != nil {
+		fmt.Println("Error navigating to the address page:", err)
+		return
+	}
+	sleepForShortDuration()
+
+	fmt.Println("Clicking 'Add a new address'")
+	clickButton(webDriver, `//button[@aria-label="Add a new address"]`)
+
+	// Fill in the address details
+	fmt.Println("Filling in the address details")
+	fillInputField(webDriver, `//input[@data-placeholder="Please provide a country."]`, address.Country)
+	fillInputField(webDriver, `//input[@data-placeholder="Please provide a name."]`, address.Name)
+	fillInputField(webDriver, `//input[@data-placeholder="Please provide a mobile number."]`, address.Mobile)
+	fillInputField(webDriver, `//input[@data-placeholder="Please provide a ZIP code."]`, address.ZipCode)
+	fillInputField(webDriver, `//textarea[@id="address"]`, address.Address)
+	fillInputField(webDriver, `//input[@data-placeholder="Please provide a city."]`, address.City)
+
+	fmt.Println("Clicking 'Submit' to add the new address")
+	clickButton(webDriver, `//button[@id="submitButton"]`)
+
+	fmt.Println("### Done adding a new address to the Webshop")
 }
 
 // ADD NEW PAYMENT ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func addNewPayment(webDriver selenium.WebDriver, url string, payment Payment) {
+	// Navigating to the payment methods page
+	fmt.Println("Navigating to the payment methods page:", url+"/#/saved-payment-methods")
+	if err := webDriver.Get(url + "/#/saved-payment-methods"); err != nil {
+		fmt.Println("Error navigating to the payment methods page:", err)
+		return
+	}
+	sleepForShortDuration()
+
+	// Click the button to add a new Card
+	fmt.Println("Clicking the button to add a new Card")
+	clickButton(webDriver, `//mat-expansion-panel-header[.//mat-panel-title[contains(text(), 'Add new card')]]`)
+
+	// Fill in the payment method details
+	fmt.Println("Filling in the payment method details")
+
+/* 	fillInputField(webDriver, `//*[@id="mat-input-1"]`, payment.Name)
+	fillInputField(webDriver, `//*[@id="mat-input-2"]`, payment.CardNr)
+	selectDropdownOption(webDriver, selenium.ByID, "mat-input-3", selenium.ByXPATH, fmt.Sprintf(`//select[@id="mat-input-3"]/option[@value="%s"]`, payment.Month))
+	selectDropdownOption(webDriver, selenium.ByID, "mat-input-4", selenium.ByXPATH, fmt.Sprintf(`//select[@id="mat-input-4"]/option[@value="%s"]`, payment.Year)) */
+
+
+
+    // Fill in the Name field
+    fillInputField(webDriver, `//input[@id="mat-input-1"]`, payment.Name)
+
+    // Fill in the Card Number field
+    fillInputField(webDriver, `//input[@id="mat-input-2"]`, payment.CardNr)
+
+    // Select the Expiry Month
+    selectDropdownOption(webDriver, selenium.ByID, "mat-input-3", selenium.ByValue, payment.Month)
+
+    // Select the Expiry Year
+    selectDropdownOption(webDriver, selenium.ByID, "mat-input-4", selenium.ByValue, payment.Year)
+
+
+
+
+	// Submit the new payment method
+	fmt.Println("Clicking 'Submit' to add the new payment method")
+	clickButton(webDriver, `//button[@id="submitButton"]`)
+
+	fmt.Println("### Done adding a new payment method")
 }
 
-// ADD ITEMS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-func addItemsToShoppingCart(webDriver selenium.WebDriver, url string) {}
+// ADD ITEMS TO SHOPPING CART ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func addItemsToShoppingCart(webDriver selenium.WebDriver, url string) {
+	// Navigate to the URL
+	fmt.Println("Navigating to the URL:", url)
+	if err := webDriver.Get(url); err != nil {
+		fmt.Println("Error navigating to the URL:", err)
+		return
+	}
 
-// CHECK OUT ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-func checkoutShoppingCart(webDriver selenium.WebDriver, url string) {}
+	sleepForShortDuration()
 
-// SLEEP ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-func sleepForDuration() {
+	// Find all 'Add to Basket' buttons and click them
+	fmt.Println("Finding all 'Add to Basket' buttons")
+	addToBasketButtons, err := webDriver.FindElements(selenium.ByXPATH, `//button[@aria-label="Add to Basket"]`)
+	if err != nil {
+		fmt.Println("Error finding 'Add to Basket' buttons:", err)
+		return
+	}
 
-	// Seed the random number generator
+	for i, button := range addToBasketButtons {
+		fmt.Printf("Adding item %d to the shopping cart\n", i+1)
+		button.Click()
+		sleepForShortDuration()
+	}
 
-	// Generate a random duration between 2 to 4 seconds
-	randomDuration := time.Duration(rand.Intn(3)+2) * time.Second
-	fmt.Println("Sleeping for", randomDuration)
-	time.Sleep(randomDuration)
-	fmt.Println("Woke up after", randomDuration)
+	fmt.Println("### Done putting all available stuff into shopping cart")
+	sleepForShortDuration()
+}
+
+// CHECK OUT SHOPPING CART ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func checkoutShoppingCart(webDriver selenium.WebDriver, url string) {
+	// Click the button to show the shopping cart
+	fmt.Println("Clicking the button to show the shopping cart")
+	cartButton, err := webDriver.FindElement(selenium.ByXPATH, `//button[@aria-label="Show the shopping cart"]`)
+	if err != nil {
+		fmt.Println("Error finding the shopping cart button:", err)
+		return
+	}
+	cartButton.Click()
+
+	sleepForLongDuration() // longer sleep due to slow popup
+
+	// Click the checkout button
+	fmt.Println("Clicking the checkout button")
+	checkoutButton, err := webDriver.FindElement(selenium.ByXPATH, `//button[@id="checkoutButton"]`)
+	if err != nil {
+		fmt.Println("Error finding the checkout button:", err)
+		return
+	}
+	checkoutButton.Click()
+
+	sleepForShortDuration()
+
+	// Select the first address
+	fmt.Println("Selecting the first address")
+	selectFirstOption(webDriver, `//mat-radio-button[@class="mat-radio-button mat-accent"]`)
+
+	// Proceed to payment selection
+	clickButton(webDriver, `//button[@aria-label="Proceed to payment selection"]`)
+
+	// Select the first delivery speed
+	fmt.Println("Selecting the first delivery speed")
+	selectFirstOption(webDriver, `//mat-radio-button[@class="mat-radio-button mat-accent"]`)
+
+	// Proceed to delivery method selection
+	clickButton(webDriver, `//button[@aria-label="Proceed to delivery method selection"]`)
+
+	// Select the first payment method
+	fmt.Println("Selecting the first payment method")
+	selectFirstOption(webDriver, `//mat-radio-button[@class="mat-radio-button mat-accent"]`)
+
+	// Proceed to review
+	clickButton(webDriver, `//button[@aria-label="Proceed to review"]`)
+
+	// Complete the purchase
+	fmt.Println("Completing the purchase")
+	clickButton(webDriver, `//button[@aria-label="Complete your purchase"]`)
+
+	fmt.Println("### Done placing order; selecting address, delivery & payment")
+
+	// Navigate back to the main page
+	webDriver.Get(url)
+}
+
+// HELPER FUNCTIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func sleepForShortDuration() {
+	time.Sleep(1 * time.Second)
+}
+
+func sleepForLongDuration() {
+	time.Sleep(5 * time.Second)
+}
+
+func selectFirstOption(webDriver selenium.WebDriver, xpath string) {
+	options, err := webDriver.FindElements(selenium.ByXPATH, xpath)
+	if err != nil {
+		fmt.Println("Error finding options:", err)
+		return
+	}
+	options[0].Click()
+	sleepForShortDuration()
+}
+
+func clickButton(webDriver selenium.WebDriver, xpath string) {
+	button, err := webDriver.FindElement(selenium.ByXPATH, xpath)
+	if err != nil {
+		fmt.Println("Error finding button:", xpath, err)
+		return
+	}
+	button.Click()
+	sleepForShortDuration()
+}
+
+func scrollIntoView(webDriver selenium.WebDriver, element selenium.WebElement) {
+	_, err := webDriver.ExecuteScript("arguments[0].scrollIntoView(true);", []interface{}{element})
+	if err != nil {
+		fmt.Println("Error scrolling element into view:", err)
+	}
+}
+
+func fillInputField(webDriver selenium.WebDriver, xpath string, value string) {
+	field, err := webDriver.FindElement(selenium.ByXPATH, xpath)
+	if err != nil {
+		fmt.Println("Error finding input field:", err)
+		return
+	}
+	field.SendKeys(value)
+
+	sleepForShortDuration()
+}
+
+func selectDropdownOption(webDriver selenium.WebDriver, dropdownStrategy string, dropdownValue string, optionStrategy string, optionValue string) {
+	// Click the dropdown to open the list of options
+	fmt.Println("Clicking the dropdown to show options")
+	dropdown, err := webDriver.FindElement(dropdownStrategy, dropdownValue)
+	if err != nil {
+		fmt.Println("Error finding the dropdown:", err)
+		return
+	}
+	dropdown.Click()
+	sleepForShortDuration()
+
+	// Click the specified option within the dropdown
+	fmt.Println("Selecting an option from the dropdown")
+	option, err := webDriver.FindElement(optionStrategy, optionValue)
+	if err != nil {
+		fmt.Println("Error finding the dropdown option:", err)
+		return
+	}
+	option.Click()
+	sleepForShortDuration()
 }

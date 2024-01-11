@@ -6,13 +6,11 @@
       <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
-      <p class="card-text">Selenium.</p>
+      <p class="card-text">Choose a Bot action.</p>
 
       <div class="d-flex align-items-center mb-3 flex-wrap">
-        <button class="btn btn-primary btn-sm me-2" @click="runSelenimum('chrome')">Chrome/Selenium</button>
-        <button class="btn btn-primary btn-sm me-2" @click="runSelenimum('firefox')">Firefox/Selenium</button>
-        <button class="btn btn-primary btn-sm me-2" @click="runColly('foobar')">Colly</button>
-        <button class="btn btn-primary btn-sm me-2" @click="runScrapWithApi('foobar')">Scrap with API</button>
+        <button class="btn btn-primary btn-sm me-2" @click="runSelenimum('chrome')">Buy Products</button>
+        <button class="btn btn-primary btn-sm me-2" @click="runScrapWithApi('foobar')">Scrap Products</button>
         <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
       </div>
 
