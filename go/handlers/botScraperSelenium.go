@@ -20,6 +20,7 @@ import (
 const Loop = 100
 
 // Define chromeDriverPath
+// https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/120.0.6099.109/linux64/chromedriver-linux64.zip
 const (
 	chromeDriverPath = "./selenium/chromedriver" // Path to ChromeDriver
 	port             = 4444                      // Port on which ChromeDriver will listen
