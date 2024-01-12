@@ -185,7 +185,7 @@ export default {
         console.log("Received config values:", data); // Print the config values
       })
       .catch((error) => {
-        console.error("Error:", error);
+        console.error("Fetch error:", error);
       });
   },
 };
