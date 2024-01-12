@@ -17,7 +17,7 @@ import (
 	"github.com/tebeka/selenium/chrome"
 )
 
-const Loop = 100
+const Loop = 300
 
 // Define chromeDriverPath
 // https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/120.0.6099.109/linux64/chromedriver-linux64.zip
