@@ -41,7 +41,13 @@ func main() {
 	}
 
 	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
+	// e.Use(middleware.CORS())
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://40.86.223.128:8080"},    // Replace with the actual allowed origins
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"}, // Adjust as needed
+		AllowHeaders: []string{"*"},                            // Adjust as needed
+	}))
 
 	routes.Configure(e)
 
