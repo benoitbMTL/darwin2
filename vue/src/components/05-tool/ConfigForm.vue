@@ -4,31 +4,58 @@
   <form @submit.prevent="submitForm">
     <div class="card my-4">
       <!-- Menu -->
-      <div class="card-header d-flex justify-content-between align-items-center">
+      <div
+        class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
           <ul class="nav nav-tabs card-header-tabs" role="button">
             <li class="nav-conf-item">
-              <a class="nav-link" :class="{ active: activeTab === 'applications' }" @click="activeTab = 'applications'">Applications</a>
+              <a
+                class="nav-link"
+                :class="{ active: activeTab === 'applications' }"
+                @click="activeTab = 'applications'"
+                >Applications</a
+              >
             </li>
             <li class="nav-conf-item">
-              <a class="nav-link" :class="{ active: activeTab === 'restApi' }" @click="activeTab = 'restApi'">REST API</a>
+              <a
+                class="nav-link"
+                :class="{ active: activeTab === 'restApi' }"
+                @click="activeTab = 'restApi'"
+                >REST API</a
+              >
             </li>
             <li class="nav-conf-item">
-              <a class="nav-link" :class="{ active: activeTab === 'misc' }" @click="activeTab = 'misc'">Miscellaneous</a>
+              <a
+                class="nav-link"
+                :class="{ active: activeTab === 'misc' }"
+                @click="activeTab = 'misc'"
+                >Miscellaneous</a
+              >
             </li>
           </ul>
         </div>
 
         <div class="d-flex align-items-center">
           <!-- Alert Message -->
-          <div v-if="showAlert" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0" role="alert" style="font-size: 0.875rem">
+          <div
+            v-if="showAlert"
+            class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
+            role="alert"
+            style="font-size: 0.875rem">
             <i class="bi bi-check-circle me-1"></i> {{ alertMessage }}
           </div>
 
           <!-- Buttons -->
           <div>
-            <button type="submit" class="btn btn-primary btn-sm me-2">Save Configuration</button>
-            <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">Reset to Default</button>
+            <button type="submit" class="btn btn-primary btn-sm me-2">
+              Save Configuration
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              @click="resetConfig">
+              Reset to Default
+            </button>
           </div>
         </div>
       </div>
@@ -38,27 +65,51 @@
         <!-- Application Form Fields -->
         <div class="mb-3">
           <label for="dvwaUrl" class="form-label">DVWA URL</label>
-          <input type="text" class="form-control" id="dvwaUrl" v-model="config.DVWAURL" />
+          <input
+            type="text"
+            class="form-control"
+            id="dvwaUrl"
+            v-model="config.DVWAURL" />
         </div>
         <div class="mb-3">
           <label for="dvwaHost" class="form-label">DVWA Host</label>
-          <input type="text" class="form-control" id="dvwaHost" v-model="config.DVWAHOST" />
+          <input
+            type="text"
+            class="form-control"
+            id="dvwaHost"
+            v-model="config.DVWAHOST" />
         </div>
         <div class="mb-3">
           <label for="juiceShopUrl" class="form-label">Juice Shop URL</label>
-          <input type="text" class="form-control" id="juiceShopUrl" v-model="config.JUICESHOPURL" />
+          <input
+            type="text"
+            class="form-control"
+            id="juiceShopUrl"
+            v-model="config.JUICESHOPURL" />
         </div>
         <div class="mb-3">
           <label for="bankUrl" class="form-label">Bank URL</label>
-          <input type="text" class="form-control" id="bankUrl" v-model="config.BANKURL" />
+          <input
+            type="text"
+            class="form-control"
+            id="bankUrl"
+            v-model="config.BANKURL" />
         </div>
         <div class="mb-3">
           <label for="speedtestUrl" class="form-label">Speedtest URL</label>
-          <input type="text" class="form-control" id="speedtestUrl" v-model="config.SPEEDTESTURL" />
+          <input
+            type="text"
+            class="form-control"
+            id="speedtestUrl"
+            v-model="config.SPEEDTESTURL" />
         </div>
         <div class="mb-3">
           <label for="petstoreUrl" class="form-label">Petstore URL</label>
-          <input type="text" class="form-control" id="petstoreUrl" v-model="config.PETSTOREURL" />
+          <input
+            type="text"
+            class="form-control"
+            id="petstoreUrl"
+            v-model="config.PETSTOREURL" />
         </div>
       </div>
 
@@ -67,23 +118,47 @@
         <!-- REST API Form Fields -->
         <div class="mb-3">
           <label for="usernameApi" class="form-label">Username API</label>
-          <input type="text" class="form-control" id="usernameApi" v-model="config.USERNAMEAPI" />
+          <input
+            type="text"
+            class="form-control"
+            id="usernameApi"
+            v-model="config.USERNAMEAPI" />
         </div>
         <div class="mb-3">
           <label for="passwordApi" class="form-label">Password API</label>
-          <input type="text" class="form-control" id="passwordApi" v-model="config.PASSWORDAPI" />
+          <input
+            type="text"
+            class="form-control"
+            id="passwordApi"
+            v-model="config.PASSWORDAPI" />
         </div>
         <div class="mb-3">
           <label for="vdomApi" class="form-label">VDOM API</label>
-          <input type="text" class="form-control" id="vdomApi" v-model="config.VDOMAPI" />
+          <input
+            type="text"
+            class="form-control"
+            id="vdomApi"
+            v-model="config.VDOMAPI" />
         </div>
         <div class="mb-3">
-          <label for="fwbMgtIp" class="form-label">FortiWeb Management IP</label>
-          <input type="text" class="form-control" id="fwbMgtIp" v-model="config.FWBMGTIP" />
+          <label for="fwbMgtIp" class="form-label"
+            >FortiWeb Management IP</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            id="fwbMgtIp"
+            v-model="config.FWBMGTIP" />
         </div>
         <div class="mb-3">
-          <label for="mlPolicy" class="form-label">Machine Learning Policy</label>
-          <input type="text" class="form-control" id="mlPolicy" v-model="config.MLPOLICY" />
+          <label for="mlPolicy" class="form-label"
+            >Machine Learning Policy</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            id="mlPolicy"
+            v-model="config.MLPOLICY" />
         </div>
       </div>
 
@@ -92,7 +167,11 @@
         <!-- Misc Form Fields -->
         <div class="mb-3">
           <label for="userAgent" class="form-label">User Agent</label>
-          <input type="text" class="form-control" id="userAgent" v-model="config.USERAGENT" />
+          <input
+            type="text"
+            class="form-control"
+            id="userAgent"
+            v-model="config.USERAGENT" />
         </div>
       </div>
     </div>
@@ -124,9 +203,10 @@ export default {
   },
   methods: {
     submitForm() {
-      const baseURL = `${window.location.protocol}//${window.location.host}`;
-      const apiUrl = `${baseURL}/config`; // For your API endpoint
-      //const wsUrl = `ws://${window.location.host}/ws`; // For WebSocket connection
+      const protocol = window.location.protocol;
+      const host = window.location.host; // Includes hostname and port if applicable
+      const apiUrl = `${protocol}//${host}/config`; // Adjust the path as necessary
+      console.log(`API URL: ${apiUrl}`);
 
       // Implement API call to update configuration
       fetch(apiUrl, {
