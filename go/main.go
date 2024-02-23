@@ -34,9 +34,7 @@ func main() {
 		e.Use(middleware.Logger())
 	} else {
 		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-			Format: "time=${time_rfc3339}, method=${method}, uri=${uri}, status=${status}, " +
-				"latency=${latency_human}, latency_ns=${latency}, bytes_in=${bytes_in}, " +
-				"bytes_out=${bytes_out}, remote_ip=${remote_ip}, error=${error}\n",
+			Format: "method=${method}, uri=${uri}, status=${status}\n",
 		}))
 	}
 
