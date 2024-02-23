@@ -34,11 +34,11 @@ func main() {
 	routes.Configure(e)
 
 	// Vue Production Build
-	e.Static("/", "vue/dist") // Adjust the path to your Vue app's dist directory as necessary
+	e.Static("/", "../vue/dist") // Adjust the path to your Vue app's dist directory as necessary
 
 	// Catch-all Route to Serve index.html
 	e.GET("/*", func(c echo.Context) error {
-		indexPath := filepath.Join("vue/dist", "index.html") // Adjust the path as necessary
+		indexPath := filepath.Join("../vue/dist", "index.html") // Adjust the path as necessary
 		indexFile, err := ioutil.ReadFile(indexPath)
 		if err != nil {
 			return err // Or return an appropriate error in your context
@@ -46,6 +46,6 @@ func main() {
 		return c.HTMLBlob(http.StatusOK, indexFile)
 	})
 
-	// Start server on port 8080
-	e.Logger.Fatal(e.Start(":8080"))
+	// Start server on port 80
+	e.Logger.Fatal(e.Start(":80"))
 }
