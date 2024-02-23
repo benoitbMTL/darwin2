@@ -42,7 +42,7 @@ func main() {
 	// e.Use(middleware.CORS())
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
+		AllowOrigins: []string{"http://localhost:8080", "http://40.86.223.128:8080"},
 		AllowMethods: []string{"*"},
 		AllowHeaders: []string{"*"},
 	}))
