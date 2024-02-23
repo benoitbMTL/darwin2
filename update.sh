@@ -37,4 +37,4 @@ build_and_serve_app() {
 
 # Main script execution
 update_from_git
-#build_and_serve_app
+build_and_serve_app
