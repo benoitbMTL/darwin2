@@ -46,6 +46,6 @@ func main() {
 		return c.HTMLBlob(http.StatusOK, indexFile)
 	})
 
-	// Start server on port 80
-	e.Logger.Fatal(e.Start(":80"))
+	// Start server on port 8080
+	e.Logger.Fatal(e.Start(":8080"))
 }
