@@ -4,8 +4,7 @@ import (
 	"darwin2/config"
 	"darwin2/routes"
 	"flag"
-	"io/ioutil"
-	"net/http"
+	"os"
 	"path/filepath"
 
 	"github.com/labstack/echo/v4"
@@ -46,16 +45,20 @@ func main() {
 
 	routes.Configure(e)
 
-	e.Static("/", "../vue/dist")
+	distPath := "../vue/dist"
+	e.Static("/", distPath)
 
 	e.GET("/*", func(c echo.Context) error {
-		indexPath := filepath.Join("../vue/dist", "index.html")
-		indexFile, err := ioutil.ReadFile(indexPath)
-		if err != nil {
-			e.Logger.Errorf("Failed to serve index.html: %v", err)
-			return err
+		// Try to find the file in the dist folder.
+		reqPath := c.Request().URL.Path
+		filePath := filepath.Join(distPath, reqPath)
+		if _, err := os.Stat(filePath); os.IsNotExist(err) {
+			// If the file does not exist, serve index.html
+			indexFilePath := filepath.Join(distPath, "index.html")
+			return c.File(indexFilePath)
 		}
-		return c.HTMLBlob(http.StatusOK, indexFile)
+		// For existing files, let the Static middleware handle them.
+		return c.File(filePath)
 	})
 
 	e.Logger.Fatal(e.Start(":8080"))
