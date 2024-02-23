@@ -124,8 +124,12 @@ export default {
   },
   methods: {
     submitForm() {
+      const baseURL = `${window.location.protocol}//${window.location.host}`;
+      const apiUrl = `${baseURL}/config`; // For your API endpoint
+      //const wsUrl = `ws://${window.location.host}/ws`; // For WebSocket connection
+
       // Implement API call to update configuration
-      fetch("http://localhost:8080/config", {
+      fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
