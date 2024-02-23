@@ -203,13 +203,8 @@ export default {
   },
   methods: {
     submitForm() {
-      const protocol = window.location.protocol;
-      const host = window.location.host; // Includes hostname and port if applicable
-      const apiUrl = `${protocol}//${host}/config`; // Adjust the path as necessary
-      console.log(`API URL: ${apiUrl}`);
-
       // Implement API call to update configuration
-      fetch(apiUrl, {
+      fetch("http://localhost:8080/config", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
