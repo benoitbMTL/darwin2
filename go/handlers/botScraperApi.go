@@ -47,8 +47,8 @@ type ProductResponse struct {
 }
 
 func HandleScrapWithApi(c echo.Context) error {
-	productURL := "http://juiceshop.corp.fabriclab.ca/api/products"
-	quantityURL := "http://juiceshop.corp.fabriclab.ca/api/Quantitys"
+	productURL := "http://juiceshop.canadaeast.cloudapp.azure.com/api/products"
+	quantityURL := "http://juiceshop.canadaeast.cloudapp.azure.com/api/Quantitys"
 
 	// GET PRODUCTS
 	productResp, err := http.Get(productURL)
@@ -102,7 +102,7 @@ func buildHTMLTable(products []Product, quantities map[int]int) string {
 	var sb strings.Builder
 
 	// Base URL for images
-	baseURL := "http://juiceshop.corp.fabriclab.ca/assets/public/images/products/"
+	baseURL := "http://juiceshop.canadaeast.cloudapp.azure.com/assets/public/images/products/"
 
 	// Start the HTML table
 	sb.WriteString("<table style='border-collapse: collapse; width: 100%;'>")
