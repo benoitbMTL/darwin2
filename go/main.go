@@ -13,9 +13,11 @@ import (
 )
 
 var debugMode bool
+var useAutocert bool
 
 func init() {
 	flag.BoolVar(&debugMode, "debug", false, "Enable debug mode")
+	flag.BoolVar(&useAutocert, "autocert", false, "Use ACME autocert for TLS")
 }
 
 func main() {
@@ -39,12 +41,7 @@ func main() {
 	}
 
 	e.Use(middleware.Recover())
-
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"*"},
-		AllowHeaders: []string{"*"},
-	}))
+	e.Use(middleware.CORS())
 
 	routes.Configure(e)
 
@@ -61,11 +58,22 @@ func main() {
 		return c.File(filePath)
 	})
 
-	// Start HTTPS server
-	go func() {
+	if useAutocert {
 		e.AutoTLSManager.Cache = autocert.DirCache("/etc/letsencrypt/darwin2")
-		e.Logger.Fatal(e.StartAutoTLS(":443"))
-	}()
+		go func() {
+			e.Logger.Fatal(e.StartAutoTLS(":443"))
+		}()
+		e.Logger.Fatal(e.Start(":80"))
+	} else {
+		// Load self-signed certificates
+		certFile := "cert/demotool.crt"
+		keyFile := "cert/demotool.key"
+
+		e.Pre(middleware.HTTPSRedirect())
+		e.Pre(middleware.HTTPSWWWRedirect())
+
+		e.Logger.Fatal(e.StartTLS(":443", certFile, keyFile))
+	}
 
 	// Start HTTP server (which redirects to HTTPS)
 	e.Logger.Fatal(e.Start(":80"))
