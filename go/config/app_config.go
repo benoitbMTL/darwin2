@@ -38,16 +38,16 @@ func Initialize() {
 	defer configMutex.Unlock()
 
 	DefaultConfig = AppConfig{
-		DVWAURL:      "https://dvwa.corp.fabriclab.ca",
-		DVWAHOST:     "dvwa.corp.fabriclab.ca",
-		JUICESHOPURL: "https://juiceshop.corp.fabriclab.ca",
-		BANKURL:      "https://bank.corp.fabriclab.ca/bank.html",
-		SPEEDTESTURL: "https://speedtest.corp.fabriclab.ca",
-		PETSTOREURL:  "https://petstore.corp.fabriclab.ca/api/v3/pet",
+		DVWAURL:      "https://dvwa.canadaeast.cloudapp.azure.com",
+		DVWAHOST:     "dvwa.canadaeast.cloudapp.azure.com",
+		JUICESHOPURL: "https://juiceshop.canadaeast.cloudapp.azure.com",
+		BANKURL:      "https://dvwa.canadaeast.cloudapp.azure.com/bank.html",
+		SPEEDTESTURL: "https://speedtest.canadaeast.cloudapp.azure.com",
+		PETSTOREURL:  "https://petstore3.canadaeast.cloudapp.azure.com/api/v3/pet",
 		USERNAMEAPI:  "userapi",
-		PASSWORDAPI:  "userAPI123!",
+		PASSWORDAPI:  "fortinet123!",
 		VDOMAPI:      "root",
-		FWBMGTIP:     "192.168.4.2",
+		FWBMGTIP:     "dvwa.canadaeast.cloudapp.azure.com",
 		MLPOLICY:     "DVWA_POLICY",
 		USERAGENT:    "FortiWeb Demo Tool",
 	}

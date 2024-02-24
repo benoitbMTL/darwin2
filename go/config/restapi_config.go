@@ -2,12 +2,12 @@ package config
 
 var (
 	VipName                             = "SPEEDTEST_VIP"
-	VipIp                               = "192.168.4.40/24"
+	VipIp                               = "10.0.1.13/24"
 	Interface                           = "port1"
 	PoolName                            = "SPEEDTEST_POOL"
 	ServerBalance                       = "enable"
 	HealthCheck                         = "HLTHCK_HTTP"
-	PoolMemberIPs                       = []string{"10.0.0.10", "10.0.0.20", "10.0.0.30"}
+	PoolMemberIPs                       = []string{"10.0.2.4", "10.0.2.5", "10.0.2.6"}
 	PoolMemberSSL                       = "disable"
 	PoolMemberPort                      = 5000
 	VirtualServerName                   = "SPEEDTEST_VS"
@@ -29,7 +29,7 @@ var (
 	PolicyServerPool                    = PoolName
 	PolicyTrafficLog                    = "enable"
 	PolicyHTTPSService                  = "HTTPS"
-	//PolicyCertificate                   = "speedtest.corp.fabriclab.ca"
+	//PolicyCertificate                   = "speedtest.canadaeast.cloudapp.azure.com"
 )
 
 // Data Types Struct
