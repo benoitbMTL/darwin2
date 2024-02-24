@@ -24,7 +24,7 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 # Copy the Vue.js distribution from the Vue builder stage
 COPY --from=vue-builder /app/dist ./vue/dist
-# Copy the Go binary from the Go builder stage
+# Copy the Go binary and other necessary files from the Go builder stage
 COPY --from=go-builder /go/src/app/darwin2 .
 
 # Expose the port the app runs on
