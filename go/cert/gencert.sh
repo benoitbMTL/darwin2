@@ -1,0 +1,1 @@
+openssl req -x509 -newkey rsa:2048 -nodes -keyout demotool.key -out demotool.crt -days 3650 -subj "/C=CA/ST=Quebec/L=Montreal/O=Fortinet/OU=Canada CSE Team/CN=demotool.fabriclab.ca"

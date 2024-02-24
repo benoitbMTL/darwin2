@@ -9,15 +9,12 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"golang.org/x/crypto/acme/autocert"
 )
 
 var debugMode bool
-var useAutocert bool
 
 func init() {
 	flag.BoolVar(&debugMode, "debug", false, "Enable debug mode")
-	flag.BoolVar(&useAutocert, "autocert", false, "Use ACME autocert for TLS")
 }
 
 func main() {
@@ -58,23 +55,15 @@ func main() {
 		return c.File(filePath)
 	})
 
-	if useAutocert {
-		e.AutoTLSManager.Cache = autocert.DirCache("/etc/letsencrypt/darwin2")
-		go func() {
-			e.Logger.Fatal(e.StartAutoTLS(":443"))
-		}()
-		e.Logger.Fatal(e.Start(":80"))
-	} else {
-		// Load self-signed certificates
-		certFile := "cert/demotool.crt"
-		keyFile := "cert/demotool.key"
+// Load self-signed certificates
+    certFile := "cert/demotool.crt"
+    keyFile := "cert/demotool.key"
 
-		e.Pre(middleware.HTTPSRedirect())
-		e.Pre(middleware.HTTPSWWWRedirect())
+    // Starting HTTPS server on port 443
+    go func() {
+        e.Logger.Fatal(e.StartTLS(":443", certFile, keyFile))
+    }()
 
-		e.Logger.Fatal(e.StartTLS(":443", certFile, keyFile))
-	}
-
-	// Start HTTP server (which redirects to HTTPS)
-	e.Logger.Fatal(e.Start(":80"))
+    // Start HTTP server on port 8080 for internal calls
+    e.Logger.Fatal(e.Start(":8080"))
 }
