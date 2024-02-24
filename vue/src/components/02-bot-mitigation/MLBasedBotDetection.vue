@@ -64,7 +64,7 @@ export default {
 
   methods: {
     juiceShop() {
-      const url = "http://juiceshop.corp.fabriclab.ca/";
+      const url = "http://juiceshop.canadaeast.cloudapp.azure.com/";
 
       fetch(url, {
         method: "GET", // Assuming the juice shop allows GET requests to fetch content

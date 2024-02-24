@@ -9,7 +9,7 @@
     <div class="card-body">
       <p>
         This tool provides two primary sets of API tasks for quick onboarding and decommissioning of the application.<br />After completing these tasks, you can
-        verify the application's accessibility at <a href="http://speedtest.corp.fabriclab.ca" target="_blank">http://speedtest.corp.fabriclab.ca</a>.
+        verify the application's accessibility at <a href="http://speedtest.canadaeast.cloudapp.azure.com" target="_blank">http://speedtest.canadaeast.cloudapp.azure.com</a>.
       </p>
 
       <div class="container">
