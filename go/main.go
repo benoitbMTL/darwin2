@@ -9,6 +9,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 var debugMode bool
@@ -29,7 +30,6 @@ func main() {
 
 	// Adjust logging based on debug mode
 	if debugMode {
-		// When in debug mode, use the default logger for simplicity
 		e.Logger.Info("Debug mode enabled")
 		e.Use(middleware.Logger())
 	} else {
@@ -39,7 +39,6 @@ func main() {
 	}
 
 	e.Use(middleware.Recover())
-	// e.Use(middleware.CORS())
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
@@ -53,17 +52,21 @@ func main() {
 	e.Static("/", distPath)
 
 	e.GET("/*", func(c echo.Context) error {
-		// Try to find the file in the dist folder.
 		reqPath := c.Request().URL.Path
 		filePath := filepath.Join(distPath, reqPath)
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			// If the file does not exist, serve index.html
 			indexFilePath := filepath.Join(distPath, "index.html")
 			return c.File(indexFilePath)
 		}
-		// For existing files, let the Static middleware handle them.
 		return c.File(filePath)
 	})
 
-	e.Logger.Fatal(e.Start(":8080"))
+	// Start HTTPS server
+	go func() {
+		e.AutoTLSManager.Cache = autocert.DirCache("/etc/letsencrypt/darwin2")
+		e.Logger.Fatal(e.StartAutoTLS(":443"))
+	}()
+
+	// Start HTTP server (which redirects to HTTPS)
+	e.Logger.Fatal(e.Start(":80"))
 }
