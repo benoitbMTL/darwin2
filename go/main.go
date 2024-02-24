@@ -56,13 +56,13 @@ func main() {
 	})
 
 // Load self-signed certificates
-    certFile := "cert/demotool.crt"
-    keyFile := "cert/demotool.key"
+    // certFile := "cert/demotool.crt"
+    // keyFile := "cert/demotool.key"
 
     // Starting HTTPS server on port 443
-    go func() {
-        e.Logger.Fatal(e.StartTLS(":443", certFile, keyFile))
-    }()
+    // go func() {
+    //     e.Logger.Fatal(e.StartTLS(":443", certFile, keyFile))
+    // }()
 
     // Start HTTP server on port 8080 for internal calls
     e.Logger.Fatal(e.Start(":8080"))
