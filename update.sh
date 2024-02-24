@@ -49,7 +49,8 @@ build_and_serve_app() {
     # Running Go Server
     echo "Running Go server..."
     cd go
-    go run .
+    go run build
+    sudo ./darwin2
 }
 
 # Main script execution
