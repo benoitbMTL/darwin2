@@ -34,7 +34,7 @@ func main() {
 		e.Use(middleware.Logger())
 	} else {
 		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-			Format: "method=${method}, uri=${uri}, status=${status}\n",
+			Format: "${remote_ip}, ${host}, ${method}, ${uri}, ${status}\n",
 		}))
 	}
 
@@ -42,7 +42,7 @@ func main() {
 	// e.Use(middleware.CORS())
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:8080", "http://40.86.223.128:8080"},
+		AllowOrigins: []string{"*"},
 		AllowMethods: []string{"*"},
 		AllowHeaders: []string{"*"},
 	}))
