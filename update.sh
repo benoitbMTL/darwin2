@@ -73,6 +73,7 @@ case $1 in
         curl -X GET http://localhost:8080/reset
         ;;
     docker)
+        update_from_git
         manage_docker
         ;;
     *)
