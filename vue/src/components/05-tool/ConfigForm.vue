@@ -150,6 +150,21 @@
             id="fwbMgtIp"
             v-model="config.FWBMGTIP" />
         </div>
+
+
+        </div>
+        <div class="mb-3">
+          <label for="fwbMgtPort" class="form-label"
+            >FortiWeb Management PORT</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            id="fwbMgtPort"
+            v-model="config.FWBMGTPORT" />
+        </div>
+
+
         <div class="mb-3">
           <label for="mlPolicy" class="form-label"
             >Machine Learning Policy</label
@@ -196,6 +211,7 @@ export default {
         PASSWORDAPI: "",
         VDOMAPI: "",
         FWBMGTIP: "",
+        FWBMGTPORT: "",
         MLPOLICY: "",
         USERAGENT: "",
       },

@@ -19,6 +19,7 @@ type AppConfig struct {
 	PASSWORDAPI  string
 	VDOMAPI      string
 	FWBMGTIP     string
+	FWBMGTPORT   string
 	MLPOLICY     string
 	USERAGENT    string
 }
@@ -48,6 +49,7 @@ func Initialize() {
 		PASSWORDAPI:  "fortinet123!",
 		VDOMAPI:      "root",
 		FWBMGTIP:     "dvwa.canadaeast.cloudapp.azure.com",
+		FWBMGTPORT:   "8443",
 		MLPOLICY:     "DVWA_POLICY",
 		USERAGENT:    "FortiWeb Demo Tool",
 	}

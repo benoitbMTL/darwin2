@@ -8,12 +8,9 @@ rm -f "$output_file"
 
 # List of files to process
 files=(
-vue/src/components/04-rest-api/RestAPIManagement.vue
-vue/src/router/index.js
-go/utils/restApiCommonUtils.go
+go/config/app_config.go
 go/handlers/restApiCreateHandlers.go
-go/config/restapi_config.go
-go/routes/routes.go
+vue/src/components/05-tool/ConfigForm.vue
 )
 
 # Loop through the files and append their content to conf.txt
