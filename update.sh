@@ -58,10 +58,18 @@ manage_docker() {
     docker run -dp 8080:8080 --name "$container_name" "$container_name"
 }
 
+# Function to build Vue.js and serve Go app
+build_and_serve() {
+    if update_from_git; then
+        build_vue_app
+    fi
+    serve_go_app
+}
+
 # Main script execution
 case $1 in
     run)
-        build_and_serve_app
+        build_and_serve
         ;;
     docker)
         manage_docker
