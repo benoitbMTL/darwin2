@@ -71,7 +71,7 @@ build_and_serve() {
 case $1 in
     run)
         build_and_serve
-        curl -X GET http://localhost:8080/reset
+        curl -s -X GET http://localhost:8080/reset | jq
         ;;
     docker)
         update_from_git
