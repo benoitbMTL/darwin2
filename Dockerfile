@@ -1,19 +1,31 @@
-# Stage 1: Build Go binary
-FROM golang:1.19-alpine AS go
-
-WORKDIR /go/src/darwin2
-COPY go .
+# Define the Go build stage
+FROM golang:latest as go-builder
+WORKDIR /go
+COPY go/ .
+# Fetching the dependencies
 RUN go mod download
-RUN go build -o main
+# Building the Go application
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o darwin2
 
-# Stage 2: Serve frontend with Nginx
-FROM nginx:1.23-alpine
+# Define the Node build stage for Vue.js
+FROM node:latest as vue-builder
+WORKDIR /vue
+COPY vue/ .
+# Install Vue CLI and project dependencies
+RUN npm install -g @vue/cli && npm install
+RUN npm install bootstrap
+RUN npm install bootstrap-icons
+# Build the Vue.js distribution
+RUN npm run build
 
-WORKDIR /usr/share/nginx/html
-COPY ../vue/dist .
-RUN echo "server_names_hash_bucket_size 64;" >> /etc/nginx/conf.d/default.conf
+# Define the final image
+FROM alpine:latest  
+WORKDIR /darwin2/
+COPY --from=go-builder /go/darwin2 .
+COPY --from=vue-builder /vue/dist ./vue/dist
 
-# Copy Go binary from previous stage
-COPY --from=go /go/src/darwin2/main /usr/bin/main
+# Expose the port the app runs on
+EXPOSE 8080
 
-CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
+# Run the Go binary
+CMD ["./darwin2"]
