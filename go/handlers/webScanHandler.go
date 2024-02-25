@@ -1,13 +1,15 @@
 package handlers
 
 import (
+	"crypto/tls"
 	"darwin2/config"
 	"darwin2/utils"
 	"fmt"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"os/exec"
 	"time"
+
+	"github.com/labstack/echo/v4"
 )
 
 type RequestData struct {
@@ -18,12 +20,18 @@ func HandleWebScan(c echo.Context) error {
 
 	dvwaHost := config.CurrentConfig.DVWAHOST
 
-	// Test if dvwaHost is responding on HTTP port 80
-	client := &http.Client{Timeout: 5 * time.Second}
+	// Test if dvwaHost is responding on HTTP port 443
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
 
-	_, err := client.Get("http://" + dvwaHost)
+	// Test if dvwaHost is responding on HTTPS port 443
+	_, err := client.Get("https://" + dvwaHost)
 	if err != nil {
-		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("DVWA Host (%s) is not responding on HTTP port 80: %s", dvwaHost, err.Error()))
+		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("DVWA Host (%s) is not responding on HTTPS port 443: %s", dvwaHost, err.Error()))
 	}
 
 	_, err = exec.LookPath("nikto")
