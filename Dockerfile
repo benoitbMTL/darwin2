@@ -1,48 +1,19 @@
-# Syntaxe Dockerfile v1.4
-
-# Image de base Node
-FROM node:18-alpine as node
-
-WORKDIR /app
-
-# Installation de Vue CLI et des dépendances
-COPY package.json .
-RUN npm install --global @vue/cli
-RUN npm install
-
-# Construction du frontend VueJS
-RUN npm run build
-
-# Image de base Go
-FROM golang:1.19-alpine as go
+# Stage 1: Build Go binary
+FROM golang:1.19-alpine AS go
 
 WORKDIR /go/src/darwin2
-
-# Copie du code Go
 COPY go .
-
-# Téléchargement des modules Go
 RUN go mod download
-
-# Compilation du backend Go
 RUN go build -o main
 
-# Image de base Nginx
-FROM nginx:1.23-alpine as nginx
+# Stage 2: Serve frontend with Nginx
+FROM nginx:1.23-alpine
 
 WORKDIR /usr/share/nginx/html
-
-# Copie du frontend
 COPY ../vue/dist .
-
-# Configuration Nginx
 RUN echo "server_names_hash_bucket_size 64;" >> /etc/nginx/conf.d/default.conf
 
-# Installation d'Echo et des dépendances
-RUN apk add --no-cache ca-certificates curl
-RUN go install github.com/labstack/echo/v4@latest
-
-# Copie du binaire Echo
-COPY --from=go /go/bin/main /usr/bin/
+# Copy Go binary from previous stage
+COPY --from=go /go/src/darwin2/main /usr/bin/main
 
 CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
