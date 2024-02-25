@@ -1,6 +1,6 @@
 # Define the Go build stage
 FROM golang:latest as go-builder
-WORKDIR /build
+WORKDIR /go/src/app
 COPY go/ .
 # Fetching the dependencies
 RUN go mod download
@@ -20,16 +20,15 @@ RUN npm run build
 
 # Define the final image
 FROM alpine:latest  
-WORKDIR /go
-COPY --from=go-builder /build/darwin2 .
-WORKDIR /vue
-COPY --from=vue-builder /app/dist .
-
-# Change back to the go directory to run the application
-WORKDIR /go
+# Create the directories for Go and Vue.js applications
+RUN mkdir /go && mkdir /vue
+# Copy the Go binary to the /go directory
+COPY --from=go-builder /go/src/app/darwin2 /go/darwin2
+# Copy the built Vue.js application to the /vue/dist directory
+COPY --from=vue-builder /app/dist /vue/dist
 
 # Expose the port the app runs on
 EXPOSE 8080
 
 # Run the Go binary
-CMD ["./darwin2"]
+CMD ["/go/darwin2"]
