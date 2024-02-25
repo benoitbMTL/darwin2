@@ -9,7 +9,6 @@ update_from_git() {
     git branch -v
 
     echo "Checking for changes in the vue directory..."
-    # Check if there are updates to be merged from origin/main
     if git diff --name-only origin/main | grep -q "vue/"; then
         echo "Changes detected in the vue directory."
         vue_changes=1
@@ -38,7 +37,8 @@ serve_go_app() {
     echo "Building and running Go server..."
     cd go || exit
     go build . || { echo "Go build failed."; exit 1; }
-    sudo ./darwin2
+    sudo ./darwin2 &
+    sleep 2 # Wait for the server to start
 }
 
 # Function to manage Docker
@@ -70,6 +70,7 @@ build_and_serve() {
 case $1 in
     run)
         build_and_serve
+        curl -X GET http://localhost:8080/reset
         ;;
     docker)
         manage_docker
