@@ -38,7 +38,10 @@ func main() {
 	}
 
 	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},
+	}))
 
 	routes.Configure(e)
 
@@ -55,15 +58,15 @@ func main() {
 		return c.File(filePath)
 	})
 
-// Load self-signed certificates
-    // certFile := "cert/demotool.crt"
-    // keyFile := "cert/demotool.key"
+	// Load self-signed certificates
+	// certFile := "cert/demotool.crt"
+	// keyFile := "cert/demotool.key"
 
-    // Starting HTTPS server on port 443
-    // go func() {
-    //     e.Logger.Fatal(e.StartTLS(":443", certFile, keyFile))
-    // }()
+	// Starting HTTPS server on port 443
+	// go func() {
+	//     e.Logger.Fatal(e.StartTLS(":443", certFile, keyFile))
+	// }()
 
-    // Start HTTP server on port 8080 for internal calls
-    e.Logger.Fatal(e.Start(":8080"))
+	// Start HTTP server on port 8080 for internal calls
+	e.Logger.Fatal(e.Start(":8080"))
 }
