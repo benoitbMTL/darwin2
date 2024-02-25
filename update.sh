@@ -3,7 +3,7 @@
 # Function to update from Git
 update_from_git() {
     echo "Fetching updates from Git..."
-    git fetch || { echo "Failed to fetch updates from Git."; exit 1; }
+    git fetch || { echo "Failed to fetch updates."; exit 1; }
 
     echo "Displaying branch status..."
     git branch -v
@@ -18,16 +18,16 @@ update_from_git() {
     fi
 
     echo "Merging changes from origin/main..."
-    git merge origin/main || { echo "Failed to merge changes from origin/main."; exit 1; }
+    git merge origin/main || { echo "Failed to merge changes."; exit 1; }
 
     return $vue_changes
 }
 
 # Function to build Vue.js application
 build_vue_app() {
-    echo "Building Vue.js application due to changes..."
-    cd vue || exit
-    npm install
+    echo "Building Vue.js application..."
+    cd vue || exit 1
+    npm install || { echo "Vue.js installation failed."; exit 1; }
     npm run build || { echo "Vue.js build failed."; exit 1; }
     cd ..
 }
@@ -35,9 +35,9 @@ build_vue_app() {
 # Function to build and run Go application
 serve_go_app() {
     echo "Building and running Go server..."
-    cd go || exit
+    cd go || exit 1
     go build . || { echo "Go build failed."; exit 1; }
-    sudo ./darwin2 &
+    ./darwin2 &
     sleep 2 # Wait for the server to start
 }
 
@@ -45,9 +45,9 @@ serve_go_app() {
 manage_docker() {
     container_name="darwin2"
 
-    # Check if the Docker container is running
+    # Check if container is running
     running_container=$(docker ps -q -f name=^/${container_name}$)
-    if [ -n "$running_container" ]; then
+    if [[ -n "$running_container" ]]; then
         echo "Stopping and removing existing Docker container..."
         docker stop "$container_name"
         docker rm "$container_name"
@@ -58,7 +58,8 @@ manage_docker() {
     docker run -dp 8080:8080 --name "$container_name" "$container_name"
 }
 
-# Function to build Vue.js and serve Go app
+# Function to handle script options
+# Added additional option: build
 build_and_serve() {
     if update_from_git; then
         build_vue_app
@@ -76,8 +77,11 @@ case $1 in
         update_from_git
         manage_docker
         ;;
+    update)
+        update_from_git
+        ;;
     *)
-        echo "Usage: $0 {run|docker}"
+        echo "Usage: $0 {run|docker|update}"
         exit 1
         ;;
 esac
