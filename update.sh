@@ -37,8 +37,7 @@ serve_go_app() {
     echo "Building and running Go server..."
     cd go || exit 1
     go build . || { echo "Go build failed."; exit 1; }
-    ./darwin2 &
-    sleep 2 # Wait for the server to start
+    ./darwin2
 }
 
 # Function to manage Docker
@@ -71,7 +70,6 @@ build_and_serve() {
 case $1 in
     run)
         build_and_serve
-        curl -s -X GET http://localhost:8080/reset | jq
         ;;
     docker)
         update_from_git

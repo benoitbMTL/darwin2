@@ -49,6 +49,30 @@
         Tests indicate that the bot detection model excels in identifying crawlers and scrapers, evaluating traffic from multiple perspectives to improve
         accuracy and reduce false positives.
       </p>
+
+
+<p>The following Machine Learning configuration provides an optimized setup for demonstrations.</p>
+<pre>
+<code>
+config waf bot-detection-policy
+  edit 1
+    set sampling-count 10
+    set sampling-count-per-client 1
+    set sampling-time-per-vector 1
+    set training-accuracy 20.0
+    set cross-validation 20.0
+    set testing-accuracy 20.0
+    set anomaly-count 1
+    set bot-confirmation disable
+    set space-clustering disable
+    set clustering-normalization disable
+  next
+end
+
+</code>
+</pre>
+
+      
     </div>
   </div>
 </template>

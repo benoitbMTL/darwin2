@@ -114,6 +114,22 @@
           traffic generation enables the ML to continue learning and refining its model.
         </li>
       </ul>
+<p>The following Machine Learning configuration provides an optimized setup for demonstrations.</p>
+<pre>
+<code>
+config waf machine-learning-policy
+ edit 1
+   set sample-limit-by-ip 0
+   set ip-expire-cnts 1
+   set ip-expire-intval 1
+   set svm-type extended
+ next
+end
+</code>
+</pre>
+
+
+
     </div>
   </div>
 </template>

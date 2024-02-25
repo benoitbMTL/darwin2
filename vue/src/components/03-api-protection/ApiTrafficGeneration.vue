@@ -48,6 +48,24 @@
         </li>
         <li>API Protection supports JSON request body.</li>
       </ul>
+
+<p>The following Machine Learning configuration provides an optimized setup for demonstrations.</p>
+<pre>
+<code>
+config waf api-learning-policy
+  edit 1
+    set start-training-cnt 400
+    set url-replacer-policy PETSTORE_REPLACER
+    set action-mlapi alert_deny
+    set schema-property maxLength minLength 
+    set de-duplication-all disable
+    set sample-limit-by-ip 0
+  next
+end
+</code>
+</pre>
+
+
     </div>
   </div>
 </template>
