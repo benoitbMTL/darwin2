@@ -1,7 +1,6 @@
 #Tools
 conf.txt
 
-node_modules
 # Dependency directories
 node_modules/
 vendor/
@@ -10,7 +9,7 @@ vendor/
 vue/dist/
 
 # Go build output
-go/server
+go/darwin2
 
 # MacOS file system files
 .DS_Store
