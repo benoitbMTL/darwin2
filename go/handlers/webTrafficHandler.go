@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"strings"
 	"time"
+	"crypto/tls"
 )
 
 func HandleTrafficGenerator(c echo.Context) error {
