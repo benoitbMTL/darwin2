@@ -140,6 +140,7 @@
             id="vdomApi"
             v-model="config.VDOMAPI" />
         </div>
+
         <div class="mb-3">
           <label for="fwbMgtIp" class="form-label"
             >FortiWeb Management IP</label
@@ -151,8 +152,6 @@
             v-model="config.FWBMGTIP" />
         </div>
 
-
-        </div>
         <div class="mb-3">
           <label for="fwbMgtPort" class="form-label"
             >FortiWeb Management PORT</label
@@ -163,7 +162,6 @@
             id="fwbMgtPort"
             v-model="config.FWBMGTPORT" />
         </div>
-
 
         <div class="mb-3">
           <label for="mlPolicy" class="form-label"
