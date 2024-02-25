@@ -1,33 +1,48 @@
-# Define the Go build stage
-FROM golang:latest as go-builder
-WORKDIR /go/src/app
-COPY go/ .
-# Copying the Go modules manifests and fetching the dependencies
-COPY go/go.mod go/go.sum ./
-RUN go mod download
-# Building the Go application
-RUN CGO_ENABLED=0 GOOS=linux go build -v -o darwin2
+# Syntaxe Dockerfile v1.4
 
-# Define the Node build stage for Vue.js
-FROM node:latest as vue-builder
+# Image de base Node
+FROM node:18-alpine as node
+
 WORKDIR /app
-COPY vue/package.json vue/package-lock.json ./
-# Install Vue CLI and project dependencies
-RUN npm install -g @vue/cli && npm install
-COPY vue/ .
-# Build the Vue.js distribution
+
+# Installation de Vue CLI et des dépendances
+COPY package.json .
+RUN npm install --global @vue/cli
+RUN npm install
+
+# Construction du frontend VueJS
 RUN npm run build
 
-# Define the final image
-FROM alpine:latest  
-RUN apk --no-cache add ca-certificates
-WORKDIR /root/
-# Copy the Vue.js distribution from the Vue builder stage
-COPY --from=vue-builder /app/dist ./vue/dist
-# Copy the Go binary and other necessary files from the Go builder stage
-COPY --from=go-builder /go/src/app/darwin2 .
+# Image de base Go
+FROM golang:1.19-alpine as go
 
-# Expose the port the app runs on
-EXPOSE 8080
-# Run the Go binary
-CMD ["./darwin2"]
+WORKDIR /go/src/darwin2
+
+# Copie du code Go
+COPY go .
+
+# Téléchargement des modules Go
+RUN go mod download
+
+# Compilation du backend Go
+RUN go build -o main
+
+# Image de base Nginx
+FROM nginx:1.23-alpine as nginx
+
+WORKDIR /usr/share/nginx/html
+
+# Copie du frontend
+COPY ../vue/dist .
+
+# Configuration Nginx
+RUN echo "server_names_hash_bucket_size 64;" >> /etc/nginx/conf.d/default.conf
+
+# Installation d'Echo et des dépendances
+RUN apk add --no-cache ca-certificates curl
+RUN go install github.com/labstack/echo/v4@latest
+
+# Copie du binaire Echo
+COPY --from=go /go/bin/main /usr/bin/
+
+CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
