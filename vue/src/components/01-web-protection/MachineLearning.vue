@@ -9,10 +9,7 @@
       <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
-      <div class="row justify-content-center">
-        <!-- Card #1 (Column 1) -->
-        <div class="card col-md-5 me-3 align-items-center">
-          <!-- Card #1 content goes here... -->
+
 
           <p>
             This tool will help you protect a
@@ -21,7 +18,16 @@
             reducing the attack surface.
           </p>
 
+
+      <div class="row justify-content-center">
+        <!-- Card #1 (Column 1) -->
+        <div class="card col-md-5 me-3 align-items-center">
+          <!-- Card #1 content goes here... -->
+
+
+
           <p class="card-text mt-3">
+            <i class="bi bi-1-circle-fill"></i> 
             Simulate traffic with random samples to build machine learning
             model.
           </p>
@@ -73,6 +79,7 @@
         <div class="card col-md-6 align-items-center">
           <!-- Card #2 content goes here... -->
           <p class="card-text mt-3">
+            <i class="bi bi-2-circle-fill"></i> 
             Select a zero-day and "Run" to generate the attack scenario.
           </p>
 
