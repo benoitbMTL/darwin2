@@ -49,13 +49,8 @@
         <li>API Protection supports JSON request body.</li>
       </ul>
 
-<p>The following Machine Learning configuration provides an optimized setup for demonstrations.</p>
-
-
-
-        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-
-
+      <p>The following Machine Learning configuration provides an optimized setup for demonstrations.</p>
+      <pre class="code-block"><code v-html="highlightedCode"></code></pre>
 
     </div>
   </div>
@@ -76,8 +71,8 @@ export default {
       showHelp: false,
       sendSampleResult: "",
 
-      configSnippet: `
-config waf api-learning-policy
+      configSnippet: 
+`config waf api-learning-policy
   edit 1
     set start-training-cnt 400
     set url-replacer-policy PETSTORE_REPLACER
@@ -86,8 +81,7 @@ config waf api-learning-policy
     set de-duplication-all disable
     set sample-limit-by-ip 0
   next
-end
-          `,
+end`,
 
     };
   },

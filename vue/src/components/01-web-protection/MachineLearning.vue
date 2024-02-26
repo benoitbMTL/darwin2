@@ -9,25 +9,20 @@
       <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
-
-
-          <p>
-            This tool will help you protect a
-            <a :href="config.BANKURL" target="_blank">banking form</a>
-            with machine learning, thereby blocking zero-day attacks and
-            reducing the attack surface.
-          </p>
-
+      <p>
+        This tool will help you protect a
+        <a :href="config.BANKURL" target="_blank">banking form</a>
+        with machine learning, thereby blocking zero-day attacks and reducing
+        the attack surface.
+      </p>
 
       <div class="row justify-content-center">
         <!-- Card #1 (Column 1) -->
         <div class="card col-md-5 me-3 align-items-center">
           <!-- Card #1 content goes here... -->
 
-
-
           <p class="card-text mt-3">
-            <i class="bi bi-1-circle-fill" style="font-size: 1.5rem"></i> 
+            <i class="bi bi-1-circle-fill" style="font-size: 1.5rem"></i>
             Simulate traffic with random samples to build machine learning
             model.
           </p>
@@ -79,7 +74,7 @@
         <div class="card col-md-6 align-items-center">
           <!-- Card #2 content goes here... -->
           <p class="card-text mt-3">
-            <i class="bi bi-2-circle-fill" style="font-size: 1.5rem"></i> 
+            <i class="bi bi-2-circle-fill" style="font-size: 1.5rem"></i>
             Select a zero-day and "Run" to generate the attack scenario.
           </p>
 
@@ -176,11 +171,7 @@
         for demonstrations.
       </p>
 
-      
-        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-
-
-
+      <pre class="code-block"><code v-html="highlightedCode"></code></pre>
     </div>
   </div>
 </template>
@@ -204,9 +195,7 @@ export default {
         BANKURL: "",
       },
 
-
-      configSnippet: `
-config waf machine-learning-policy
+      configSnippet: `config waf machine-learning-policy
   edit 1
     set sample-limit-by-ip 0
     set ip-expire-cnts 1
@@ -215,14 +204,12 @@ config waf machine-learning-policy
   next
 end
 `,
-
-
     };
   },
 
   mounted() {
     this.fetchConfig(); // Fetch config on component mount
-        this.highlightCode();
+    this.highlightCode();
   },
 
   watch: {
@@ -234,13 +221,10 @@ end
   },
 
   methods: {
-
     highlightCode() {
       // Use Highlight.js to apply syntax highlighting to the config snippet
       this.highlightedCode = hljs.highlightAuto(this.configSnippet).value;
     },
-
-
 
     fetchConfig() {
       // Fetch config from server

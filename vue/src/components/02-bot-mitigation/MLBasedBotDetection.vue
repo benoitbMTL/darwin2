@@ -73,7 +73,7 @@ export default {
       highlightedCode: "",
       showHelp: false,
       jobResult: null,
-            configSnippet: `
+      configSnippet: `
 config waf bot-detection-policy
   edit 1
     set sampling-count 10
@@ -92,9 +92,11 @@ end
     };
   },
 
+  mounted() {
+    this.highlightCode(); // Call this method to apply syntax highlighting
+  },
+
   methods: {
-
-
     highlightCode() {
       // Use Highlight.js to apply syntax highlighting to the config snippet
       this.highlightedCode = hljs.highlightAuto(this.configSnippet).value;

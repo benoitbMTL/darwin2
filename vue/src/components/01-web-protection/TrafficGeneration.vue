@@ -54,6 +54,11 @@ export default {
       highlightedCode: "",
     };
   },
+
+  mounted() {
+    this.highlightCode(); // Call this method to apply syntax highlighting
+  },
+
   watch: {
     jobResult(newVal) {
       if (newVal) {
