@@ -195,15 +195,15 @@ export default {
         BANKURL: "",
       },
 
-      configSnippet: `config waf machine-learning-policy
+      configSnippet: 
+`config waf machine-learning-policy
   edit 1
     set sample-limit-by-ip 0
     set ip-expire-cnts 1
     set ip-expire-intval 1
     set svm-type extended
   next
-end
-`,
+end`,
     };
   },
 

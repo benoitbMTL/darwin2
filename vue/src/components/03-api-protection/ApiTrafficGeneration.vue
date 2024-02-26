@@ -85,6 +85,7 @@ end`,
 
     };
   },
+
   watch: {
     jobResult(newVal) {
       if (newVal) {
@@ -92,6 +93,11 @@ end`,
       }
     },
   },
+
+  mounted() {
+    this.highlightCode(); // Call this method to apply syntax highlighting
+  },
+
   methods: {
 
     highlightCode() {
