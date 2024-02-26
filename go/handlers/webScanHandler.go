@@ -56,7 +56,7 @@ func HandleWebScan(c echo.Context) error {
 		"-nointeractive",
 		"-no404",
 		"-timeout", "2",
-		"-useragent", "Nikto\r\nX-Forwarded-For: "+randomIP,
+		"-useragent", "Nikto Scan Demo\r\nX-Forwarded-For: "+randomIP,
 		"-T", requestData.SelectedOption)
 
 	// Execute the command and get its output

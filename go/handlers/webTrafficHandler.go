@@ -56,7 +56,7 @@ func HandleTrafficGenerator(c echo.Context) error {
 			"-nointeractive",
 			"-no404",
 			"-timeout", "2",
-			"-useragent", "Nikto\r\nX-Forwarded-For: "+randomIP,
+			"-useragent", "Nikto Traffic Gen\r\nX-Forwarded-For: "+randomIP,
 			"-T", randomTuning,
 		)
 
