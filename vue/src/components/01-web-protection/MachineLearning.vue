@@ -175,18 +175,12 @@
         The following Machine Learning configuration provides an optimized setup
         for demonstrations.
       </p>
-      <pre>
-<code>
-config waf machine-learning-policy
- edit 1
-   set sample-limit-by-ip 0
-   set ip-expire-cnts 1
-   set ip-expire-intval 1
-   set svm-type extended
- next
-end
-</code>
-</pre>
+
+      
+        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+
+
+
     </div>
   </div>
 </template>
@@ -209,11 +203,28 @@ export default {
       config: {
         BANKURL: "",
       },
+
+
+      configSnippet: `
+          config waf machine-learning-policy
+          edit 1
+            set sample-limit-by-ip 0
+            set ip-expire-cnts 1
+            set ip-expire-intval 1
+            set svm-type extended
+          next
+          end
+          `,
+      highlightedCode: "", // This will store the highlighted code snippet
+
+
+
     };
   },
 
   mounted() {
     this.fetchConfig(); // Fetch config on component mount
+        this.highlightCode();
   },
 
   watch: {
@@ -225,6 +236,14 @@ export default {
   },
 
   methods: {
+
+    highlightCode() {
+      // Use Highlight.js to apply syntax highlighting to the config snippet
+      this.highlightedCode = hljs.highlightAuto(this.configSnippet).value;
+    },
+
+
+
     fetchConfig() {
       // Fetch config from server
       fetch("/config")
