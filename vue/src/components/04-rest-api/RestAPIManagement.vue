@@ -199,7 +199,7 @@ export default {
 
       for (const endpoint of endpoints) {
         try {
-          const response = await fetch(`http://localhost:8080${endpoint.url}`, {
+          const response = await fetch(`${endpoint.url}`, {
             method: "POST",
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
@@ -247,7 +247,7 @@ export default {
 
       for (const endpoint of endpoints) {
         try {
-          const response = await fetch(`http://localhost:8080${endpoint.url}`, {
+          const response = await fetch(`${endpoint.url}`, {
             method: "POST",
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",

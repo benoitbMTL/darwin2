@@ -24,10 +24,10 @@
   <!-- Help Card -->
   <div v-if="showHelp" class="card bg-light mb-3">
     <div class="card-header">
-      <h5>About Selenium</h5>
+      <h5>About Biometrics-Based Detection</h5>
     </div>
     <div class="card-body">
-      <p>Help content goes here...</p>
+      <p>By checking the client events such as mouse movement, keyboard, screen touch, and scroll, etc in specified period, FortiWeb judges whether the request comes from a human or from a bot. You can configure the biometrics based detection rule to define the client event, collection period, and the request URL, etc.</p>
     </div>
   </div>
 </template>
@@ -43,7 +43,7 @@ export default {
 
   methods: {
     runSelenimum(browserName) {
-      const url = "http://localhost:8080/selenium";
+      const url = "/selenium";
       const formData = new URLSearchParams();
       formData.append("name", browserName);
 
@@ -66,7 +66,7 @@ export default {
 
 
         runColly(foobar) {
-      const url = "http://localhost:8080/colly";
+      const url = "/colly";
       const formData = new URLSearchParams();
       formData.append("name", foobar);
 
@@ -89,7 +89,7 @@ export default {
 
 
         runScrapWithApi(foobar) {
-      const url = "http://localhost:8080/bot-scraper-api";
+      const url = "/bot-scraper-api";
       const formData = new URLSearchParams();
       formData.append("name", foobar);
 

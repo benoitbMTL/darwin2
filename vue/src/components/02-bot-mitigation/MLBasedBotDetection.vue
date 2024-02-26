@@ -105,7 +105,7 @@ export default {
     },
 
     runScrapWithApi() {
-      const url = "http://localhost:8080/bot-scraper-api";
+      const url = "/bot-scraper-api";
 
       fetch(url, {
         method: "POST",
