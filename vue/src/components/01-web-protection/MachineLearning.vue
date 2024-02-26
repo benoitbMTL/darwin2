@@ -215,8 +215,6 @@ export default {
           next
           end
           `,
-      highlightedCode: "", // This will store the highlighted code snippet
-
 
 
     };
