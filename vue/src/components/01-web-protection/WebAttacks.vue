@@ -75,31 +75,58 @@
     <div class="card-body">
 
 
-      <table style="border-collapse: collapse; width: 100%;">
-        <tr>
-          <th style="border-bottom: 1px solid #ddd; padding: 8px;">Attack Name</th>
-          <th style="border-bottom: 1px solid #ddd; padding: 8px;">Description</th>
-          <th style="border-bottom: 1px solid #ddd; padding: 8px;">Example</th>
-        </tr>
-        <tr>
-          <td style="border-bottom: 1px solid #ddd; padding: 8px;">Command Injection</td>
-          <td style="border-bottom: 1px solid #ddd; padding: 8px;">Injects arbitrary commands into a vulnerable
-            application for execution by the server.</td>
-          <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">;more /etc/passwd</td>
-        </tr>
-        <tr>
-          <td style="border-bottom: 1px solid #ddd; padding: 8px;">SQL Injection</td>
-          <td style="border-bottom: 1px solid #ddd; padding: 8px;">Exploits vulnerabilities in SQL query execution.</td>
-          <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">'OR 1=1#</td>
-        </tr>
-        <tr>
-          <td style="border-bottom: 1px solid #ddd; padding: 8px;">Cross-site Scripting</td>
-          <td style="border-bottom: 1px solid #ddd; padding: 8px;">Injects malicious scripts into web pages viewed by
-            other users.</td>
-          <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">
-            &lt;script&gt;alert("XSS-hack-attempt")&lt;/script&gt;</td>
-        </tr>
-      </table>
+<table style="border-collapse: collapse; width: 100%;">
+  <tr>
+    <th style="border-bottom: 1px solid #ddd; padding: 8px;">Attack Name</th>
+    <th style="border-bottom: 1px solid #ddd; padding: 8px;">Description</th>
+    <th style="border-bottom: 1px solid #ddd; padding: 8px;">Example</th>
+  </tr>
+  <tr>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Command Injection</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Injects arbitrary commands into a vulnerable application for execution by the server.</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">;more /etc/passwd</td>
+  </tr>
+  <tr>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">SQL Injection</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Exploits vulnerabilities in SQL query execution.</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">'OR 1=1#</td>
+  </tr>
+  <tr>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Cross-site Scripting</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Injects malicious scripts into web pages viewed by other users.</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">&lt;script&gt;alert("XSS-hack-attempt")&lt;/script&gt;</td>
+  </tr>
+  <tr>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">OS Command Injection</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Execution of arbitrary commands via OS command injection.</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">;cc evil.c</td>
+  </tr>
+  <tr>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">ColdFusion Injection</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Manipulates ColdFusion data through unauthorized registry access.</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">&lt;CFNEWINTERNALREGISTRY ACTION="Set" BRANCH="HKEY_LOCAL_MACHINE\Software\Allaire\ColdFusion\CurrentVersion\Server" NAME="test" TYPE="String" VALUE="0"&gt;</td>
+  </tr>
+  <tr>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">LDAP Injection</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Exploits web applications that construct LDAP statements from user input.</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">*)(uid=*))(|(uid=*</td>
+  </tr>
+  <tr>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Session Fixation</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Manipulates session IDs to hijack a user session.</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">&lt;script&gt;document.cookie="sessionid=1234; Expires=Friday, 1-Jan-2010 00:00:00 GMT";&lt;/script&gt;</td>
+  </tr>
+  <tr>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">File Injection</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Injects malicious files into a server or application.</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">C:/boot.ini</td>
+  </tr>
+  <tr>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">PHP Injection</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px;">Injects PHP code into an application, leading to unauthorized command execution.</td>
+    <td style="border-bottom: 1px solid #ddd; padding: 8px; font-family:Courier;">abc;$_SESSION[authuser]=1</td>
+  </tr>
+</table>
 
 
 
