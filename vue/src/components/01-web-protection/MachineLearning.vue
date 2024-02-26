@@ -27,7 +27,7 @@
 
 
           <p class="card-text mt-3">
-            <i class="bi bi-1-circle-fill"></i> 
+            <i class="bi bi-1-circle-fill" style="font-size: 1.5rem"></i> 
             Simulate traffic with random samples to build machine learning
             model.
           </p>
@@ -79,7 +79,7 @@
         <div class="card col-md-6 align-items-center">
           <!-- Card #2 content goes here... -->
           <p class="card-text mt-3">
-            <i class="bi bi-2-circle-fill"></i> 
+            <i class="bi bi-2-circle-fill" style="font-size: 1.5rem"></i> 
             Select a zero-day and "Run" to generate the attack scenario.
           </p>
 
