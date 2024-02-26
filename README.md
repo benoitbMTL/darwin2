@@ -2,7 +2,7 @@
 
 ![FortiWeb Demo Tool](images/fortiweb-demo-tool.png)
 
-Darwin2 is a demonstration tool designed to showcase the capabilities of FortiWeb and FortiWeb Cloud through a user-friendly graphical interface. This tool facilitates demonstrations of web protection, bot mitigation, API protection, and the use of REST APIs for managing web applications.
+Darwin2 is a demonstration tool designed to showcase the capabilities of FortiWeb and FortiWeb Cloud through a user-friendly graphical interface. This tool facilitates demonstrations of web protection, bot mitigation, API protection, Machine Learning, and the use of REST APIs for managing web applications.
 
 ## Features
 
