@@ -2,43 +2,72 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>Machine Learning & Zero-Day Attacks</h5>
-      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem;" @click="showHelp = !showHelp"></i> <!-- Bootstrap icon for help -->
+      <i
+        class="bi bi-question-circle-fill bs-icon"
+        style="font-size: 1.5rem"
+        @click="showHelp = !showHelp"></i>
+      <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
-
       <div class="row justify-content-center">
-
         <!-- Card #1 (Column 1) -->
         <div class="card col-md-5 me-3 align-items-center">
           <!-- Card #1 content goes here... -->
 
+          <p>
+            This tool will help you protect a
+            <a :href="config.BANKURL" target="_blank">banking form</a>
+            with machine learning, thereby blocking zero-day attacks and
+            reducing the attack surface.
+          </p>
 
-          <p class="card-text mt-3">Simulate traffic with random samples to build machine learning model.</p>
+          <p class="card-text mt-3">
+            Simulate traffic with random samples to build machine learning
+            model.
+          </p>
           <div class="d-flex align-items-center mb-3">
-            <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isLoading1">
-              <span v-if="isLoading1" class="spinner-border spinner-border-sm me-2" role="status"
+            <button
+              class="btn btn-primary btn-sm"
+              @click="generateTraffic(1)"
+              :disabled="isLoading1">
+              <span
+                v-if="isLoading1"
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
                 aria-hidden="true"></span>
-              <span>{{ isLoading1 ? 'Simulating...' : 'Send 1 Sample' }}</span>
+              <span>{{ isLoading1 ? "Simulating..." : "Send 1 Sample" }}</span>
             </button>
-            <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isLoading10">
-              <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status"
+            <button
+              class="btn btn-primary btn-sm ms-2"
+              @click="generateTraffic(10)"
+              :disabled="isLoading10">
+              <span
+                v-if="isLoading10"
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
                 aria-hidden="true"></span>
-              <span>{{ isLoading10 ? 'Simulating...' : 'Send 10 Samples' }}</span>
+              <span>{{
+                isLoading10 ? "Simulating..." : "Send 10 Samples"
+              }}</span>
             </button>
-            <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isLoading500">
-              <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
+            <button
+              class="btn btn-primary btn-sm ms-2"
+              @click="generateTraffic(500)"
+              :disabled="isLoading500">
+              <span
+                v-if="isLoading500"
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
                 aria-hidden="true"></span>
-              <span>{{ isLoading500 ? 'Simulating...' : 'Send 500 Samples' }}</span>
+              <span>{{
+                isLoading500 ? "Simulating..." : "Send 500 Samples"
+              }}</span>
             </button>
             <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">
               Reset
             </button>
           </div>
         </div>
-
-
-
-
 
         <!-- Card #2 (Column 2) -->
         <div class="card col-md-6 align-items-center">
@@ -48,55 +77,71 @@
           </p>
 
           <div class="d-flex align-items-center mb-3 flex-wrap">
-
-
-            <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType" style="width: 350px">
-              <option value="zero_day_sqli_1">Zero Day SQL Injection: A 'DIV' B</option>
-              <option value="zero_day_sqli_2">Zero Day SQL Injection: A '^' B</option>
-              <option value="zero_day_sqli_3">Zero Day SQL Injection: 3)+1+(0</option>
-              <option value="zero_day_sqli_4">Zero Day SQL Injection: 3||1</option>
-              <option value="zero_day_remote_exploit_1">Zero Day Remote Exploits: %X%X%X%X%X</option>
-              <option value="zero_day_remote_exploit_2">Zero Day Remote Exploits: %p%p%p%p%p</option>
-              <option value="zero_day_command_injection_1">Zero Day Command Injection: /???/l?</option>
-              <option value="zero_day_command_injection_2">Zero Day Command Injection: var1=l var2=s</option>
-              <option value="zero_day_xss_1">Zero Day Cross Site Scripting: window['ale'+'rt'](1)</option>
-              <option value="zero_day_xss_2">Zero Day Cross Site Scripting: ___=1?'ert(123)</option>
+            <select
+              class="form-select form-select-sm me-2 mb-3"
+              v-model="selectedAttackType"
+              style="width: 350px">
+              <option value="zero_day_sqli_1">
+                Zero Day SQL Injection: A 'DIV' B
+              </option>
+              <option value="zero_day_sqli_2">
+                Zero Day SQL Injection: A '^' B
+              </option>
+              <option value="zero_day_sqli_3">
+                Zero Day SQL Injection: 3)+1+(0
+              </option>
+              <option value="zero_day_sqli_4">
+                Zero Day SQL Injection: 3||1
+              </option>
+              <option value="zero_day_remote_exploit_1">
+                Zero Day Remote Exploits: %X%X%X%X%X
+              </option>
+              <option value="zero_day_remote_exploit_2">
+                Zero Day Remote Exploits: %p%p%p%p%p
+              </option>
+              <option value="zero_day_command_injection_1">
+                Zero Day Command Injection: /???/l?
+              </option>
+              <option value="zero_day_command_injection_2">
+                Zero Day Command Injection: var1=l var2=s
+              </option>
+              <option value="zero_day_xss_1">
+                Zero Day Cross Site Scripting: window['ale'+'rt'](1)
+              </option>
+              <option value="zero_day_xss_2">
+                Zero Day Cross Site Scripting: ___=1?'ert(123)
+              </option>
             </select>
 
-            <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
+            <button
+              class="btn btn-primary btn-sm me-2 mb-3"
+              @click="performAttack">
               Run
             </button>
-            <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
+            <button
+              class="btn btn-secondary btn-sm me-2 mb-3"
+              @click="resetResult">
               Reset
             </button>
           </div>
-
-
         </div>
-
 
         <div v-if="sendSampleResult" class="mt-3">
           <h6>Simulation Result:</h6>
           <pre class="code-block"><code v-html="highlightedCode"></code></pre>
         </div>
 
-
-
         <div v-if="performAttackResult" class="mt-4 mb-3">
           <h6>{{ currentAttackName }} Result:</h6>
-          <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
-            style="width: 100%; border: 1px solid lightgray;"></iframe>
+          <iframe
+            ref="attackIframe"
+            :srcdoc="performAttackResult"
+            @load="adjustIframeHeight"
+            style="width: 100%; border: 1px solid lightgray"></iframe>
         </div>
-
-
-
       </div>
-
     </div>
   </div>
-
-
-
 
   <!-- Help Card -->
   <div v-if="showHelp" class="card bg-light mb-3">
@@ -105,17 +150,25 @@
     </div>
     <div class="card-body">
       <ul>
-        <li>The simulation tool generates random traffic using data from <a
-            href="https://api.namefake.com/">https://api.namefake.com/</a>.</li>
-        <li>The tool can send 3,000 samples to the server to simulate legitimate traffic, which is used to train
-          FortiWeb's Machine Learning (ML).</li>
-        <li>While only 400 requests are necessary for the Machine Learning (ML) system to build its initial model,
-          ongoing
-          traffic generation enables the ML to continue learning and refining its model.
+        <li>
+          The simulation tool generates random traffic using data from
+          <a href="https://api.namefake.com/">https://api.namefake.com/</a>.
+        </li>
+        <li>
+          The tool can send 3,000 samples to the server to simulate legitimate
+          traffic, which is used to train FortiWeb's Machine Learning (ML).
+        </li>
+        <li>
+          While only 400 requests are necessary for the Machine Learning (ML)
+          system to build its initial model, ongoing traffic generation enables
+          the ML to continue learning and refining its model.
         </li>
       </ul>
-<p>The following Machine Learning configuration provides an optimized setup for demonstrations.</p>
-<pre>
+      <p>
+        The following Machine Learning configuration provides an optimized setup
+        for demonstrations.
+      </p>
+      <pre>
 <code>
 config waf machine-learning-policy
  edit 1
@@ -127,15 +180,9 @@ config waf machine-learning-policy
 end
 </code>
 </pre>
-
-
-
     </div>
   </div>
 </template>
-
-
-
 
 <script>
 import hljs from "highlight.js";
@@ -147,12 +194,19 @@ export default {
       isLoading1: false,
       isLoading10: false,
       isLoading500: false,
-      sendSampleResult: '',
+      sendSampleResult: "",
       selectedAttackType: "zero_day_sqli_1",
-      performAttackResult: '',
+      performAttackResult: "",
       showHelp: false,
       highlightedCode: "",
+      config: {
+        BANKURL: "",
+      },
     };
+  },
+
+  mounted() {
+    this.fetchConfig(); // Fetch config on component mount
   },
 
   watch: {
@@ -164,137 +218,149 @@ export default {
   },
 
   methods: {
+    fetchConfig() {
+      // Fetch config from server
+      fetch("/config")
+        .then((response) => response.json())
+        .then((data) => {
+          this.config = data; // Update config with fetched data
+        })
+        .catch((error) => {
+          console.error("Error fetching config:", error);
+        });
+    },
+
     generateTraffic(sampleCount) {
       this.resetResult(); // Reset results before generating new traffic
-      console.log(`Starting ML traffic simulation with ${sampleCount} samples...`);
+      console.log(
+        `Starting ML traffic simulation with ${sampleCount} samples...`
+      );
       let isLoadingKey;
       switch (sampleCount) {
         case 1:
-          isLoadingKey = 'isLoading1';
+          isLoadingKey = "isLoading1";
           break;
         case 10:
-          isLoadingKey = 'isLoading10';
+          isLoadingKey = "isLoading10";
           break;
         case 500:
-          isLoadingKey = 'isLoading500';
+          isLoadingKey = "isLoading500";
           break;
       }
       this[isLoadingKey] = true;
-      this.sendSampleResult = ''; // Reset result
+      this.sendSampleResult = ""; // Reset result
 
       // Make HTTP POST request to the server
-      console.log('Making POST request to server');
+      console.log("Making POST request to server");
       fetch("/machine-learning", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ sampleCount: sampleCount })
+        body: JSON.stringify({ sampleCount: sampleCount }),
       })
-
-        .then(response => {
-          console.log('Received response from server:', response);
+        .then((response) => {
+          console.log("Received response from server:", response);
           if (!response.ok) {
-            console.error('Network response was not ok', response);
-            throw new Error('Network response was not ok');
+            console.error("Network response was not ok", response);
+            throw new Error("Network response was not ok");
           }
           return response.text();
         })
 
-        .then(data => {
-          console.log('ML traffic simulation successful:', data);
+        .then((data) => {
+          console.log("ML traffic simulation successful:", data);
           this.sendSampleResult = data;
           this[isLoadingKey] = false;
         })
 
-        .catch(error => {
-          console.error('Error during fetch operation:', error);
-          this.sendSampleResult = 'Error: Unable to simulate ML traffic.';
+        .catch((error) => {
+          console.error("Error during fetch operation:", error);
+          this.sendSampleResult = "Error: Unable to simulate ML traffic.";
           this[isLoadingKey] = false;
         });
     },
 
-
-
-
     performAttack() {
       this.resetResult(); // Reset results before generating new traffic
 
-      console.log('Performing attack, selected attack type:', this.selectedAttackType);
+      console.log(
+        "Performing attack, selected attack type:",
+        this.selectedAttackType
+      );
 
       switch (this.selectedAttackType) {
         case "zero_day_sqli_1":
         case "zero_day_sqli_2":
         case "zero_day_sqli_3":
         case "zero_day_sqli_4":
-          this.currentAttackName = 'Zero Day SQL Injection';
+          this.currentAttackName = "Zero Day SQL Injection";
           break;
         case "zero_day_remote_exploit_1":
         case "zero_day_remote_exploit_2":
-          this.currentAttackName = 'Zero Day Remote Exploits';
+          this.currentAttackName = "Zero Day Remote Exploits";
           break;
         case "zero_day_command_injection_1":
         case "zero_day_command_injection_2":
-          this.currentAttackName = 'Zero Day Command Injection';
+          this.currentAttackName = "Zero Day Command Injection";
           break;
         case "zero_day_xss_1":
         case "zero_day_xss_2":
-          this.currentAttackName = 'Zero Day Cross Site Scripting';
+          this.currentAttackName = "Zero Day Cross Site Scripting";
           break;
         default:
-          this.currentAttackName = '';
+          this.currentAttackName = "";
       }
 
-
-      console.log('Current attack name set to:', this.currentAttackName);
+      console.log("Current attack name set to:", this.currentAttackName);
       this.sendAttackRequest(this.selectedAttackType);
     },
 
     sendAttackRequest(attackType) {
-      console.log('Sending attack request with type:', attackType);
+      console.log("Sending attack request with type:", attackType);
 
-      const url = '/web-attacks';
+      const url = "/web-attacks";
       const formData = new URLSearchParams();
-      formData.append('type', attackType);
+      formData.append("type", attackType);
 
       fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: formData
+        body: formData,
       })
-        .then(response => {
-          console.log('Received response from server:', response);
+        .then((response) => {
+          console.log("Received response from server:", response);
           return response.text();
         })
-        .then(html => {
-          console.log('Attack simulation successful:', html);
+        .then((html) => {
+          console.log("Attack simulation successful:", html);
           this.performAttackResult = html;
         })
-        .catch(error => {
-          console.error('Error during attack simulation:', error);
-          this.performAttackResult = 'Failed to perform attack';
+        .catch((error) => {
+          console.error("Error during attack simulation:", error);
+          this.performAttackResult = "Failed to perform attack";
         });
     },
 
-
     adjustIframeHeight() {
       const iframe = this.$refs.attackIframe;
-      if (iframe && iframe.contentWindow && iframe.contentWindow.document.body) {
-        iframe.style.height = (iframe.contentWindow.document.body.scrollHeight + 30) + 'px';
+      if (
+        iframe &&
+        iframe.contentWindow &&
+        iframe.contentWindow.document.body
+      ) {
+        iframe.style.height =
+          iframe.contentWindow.document.body.scrollHeight + 30 + "px";
       }
     },
 
-
-
-
-
     resetResult() {
-      console.log('Resetting Result');
+      console.log("Resetting Result");
       this.selectedOption = "All"; // Reset selected option
-      this.sendSampleResult = '';
-      this.performAttackResult = '';
+      this.sendSampleResult = "";
+      this.performAttackResult = "";
     },
   },
 };
