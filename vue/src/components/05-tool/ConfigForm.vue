@@ -218,7 +218,7 @@ export default {
   methods: {
     submitForm() {
       // Implement API call to update configuration
-        fetch(`${process.env.VUE_APP_BACKEND_URL}/config`, {
+      fetch("http://localhost:8080/config", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -242,7 +242,7 @@ export default {
         });
     },
     resetConfig() {
-      fetch(`${process.env.VUE_APP_BACKEND_URL}/reset`)
+      fetch("http://localhost:8080/reset")
         .then((response) => response.json())
         .then((data) => {
           this.showAlert = true;
@@ -264,7 +264,7 @@ export default {
   mounted() {
     // Fetch current configuration from the Go backend
     console.log("Making a GET request to http://localhost:8080/config");
-    fetch(`${process.env.VUE_APP_BACKEND_URL}/config`)
+    fetch("http://localhost:8080/config")
       .then((response) => {
         console.log("HTTP return code:", response.status); // Print HTTP return code
 
