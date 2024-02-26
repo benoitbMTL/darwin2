@@ -52,8 +52,28 @@
 
 
 <p>The following Machine Learning configuration provides an optimized setup for demonstrations.</p>
-<pre>
-<code>
+
+
+
+        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+
+
+      
+    </div>
+  </div>
+</template>
+
+<script>
+import hljs from "highlight.js";
+import "highlight.js/styles/monokai.css"; // Monokai theme for Highlight.js
+
+export default {
+  data() {
+    return {
+      highlightedCode: "",
+      showHelp: false,
+      jobResult: null,
+            configSnippet: `
 config waf bot-detection-policy
   edit 1
     set sampling-count 10
@@ -66,27 +86,20 @@ config waf bot-detection-policy
     set bot-confirmation disable
     set space-clustering disable
     set clustering-normalization disable
-  next
+next
 end
-
-</code>
-</pre>
-
-      
-    </div>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      showHelp: false,
-      jobResult: null,
+          `,
     };
   },
 
   methods: {
+
+
+    highlightCode() {
+      // Use Highlight.js to apply syntax highlighting to the config snippet
+      this.highlightedCode = hljs.highlightAuto(this.configSnippet).value;
+    },
+
     juiceShop() {
       const url = "http://juiceshop.canadaeast.cloudapp.azure.com/";
 

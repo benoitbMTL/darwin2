@@ -50,20 +50,11 @@
       </ul>
 
 <p>The following Machine Learning configuration provides an optimized setup for demonstrations.</p>
-<pre>
-<code>
-config waf api-learning-policy
-  edit 1
-    set start-training-cnt 400
-    set url-replacer-policy PETSTORE_REPLACER
-    set action-mlapi alert_deny
-    set schema-property maxLength minLength 
-    set de-duplication-all disable
-    set sample-limit-by-ip 0
-  next
-end
-</code>
-</pre>
+
+
+
+        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+
 
 
     </div>
@@ -83,7 +74,21 @@ export default {
       isLoading10: false,
       isLoading500: false,
       showHelp: false,
-      sendSampleResult: "", // Added variable
+      sendSampleResult: "",
+
+      configSnippet: `
+config waf api-learning-policy
+  edit 1
+    set start-training-cnt 400
+    set url-replacer-policy PETSTORE_REPLACER
+    set action-mlapi alert_deny
+    set schema-property maxLength minLength 
+    set de-duplication-all disable
+    set sample-limit-by-ip 0
+  next
+end
+          `,
+
     };
   },
   watch: {
@@ -94,6 +99,12 @@ export default {
     },
   },
   methods: {
+
+    highlightCode() {
+      // Use Highlight.js to apply syntax highlighting to the config snippet
+      this.highlightedCode = hljs.highlightAuto(this.configSnippet).value;
+    },
+
     generateTraffic(sampleCount) {
       this.resetResult();
       console.log(`Starting ML traffic simulation with ${sampleCount} samples...`);

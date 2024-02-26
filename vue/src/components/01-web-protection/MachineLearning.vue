@@ -192,6 +192,7 @@ import "highlight.js/styles/monokai.css"; // Monokai theme for Highlight.js
 export default {
   data() {
     return {
+      highlightedCode: "",
       isLoading1: false,
       isLoading10: false,
       isLoading500: false,
@@ -199,22 +200,21 @@ export default {
       selectedAttackType: "zero_day_sqli_1",
       performAttackResult: "",
       showHelp: false,
-      highlightedCode: "",
       config: {
         BANKURL: "",
       },
 
 
       configSnippet: `
-          config waf machine-learning-policy
-          edit 1
-            set sample-limit-by-ip 0
-            set ip-expire-cnts 1
-            set ip-expire-intval 1
-            set svm-type extended
-          next
-          end
-          `,
+config waf machine-learning-policy
+  edit 1
+    set sample-limit-by-ip 0
+    set ip-expire-cnts 1
+    set ip-expire-intval 1
+    set svm-type extended
+  next
+end
+`,
 
 
     };
