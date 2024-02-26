@@ -184,7 +184,7 @@ export default {
 
       // Make HTTP POST request to the server
       console.log('Making POST request to server');
-      fetch("http://localhost:8080/machine-learning", {
+      fetch("/machine-learning", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -253,7 +253,7 @@ export default {
     sendAttackRequest(attackType) {
       console.log('Sending attack request with type:', attackType);
 
-      const url = 'http://localhost:8080/web-attacks';
+      const url = '/web-attacks';
       const formData = new URLSearchParams();
       formData.append('type', attackType);
 
