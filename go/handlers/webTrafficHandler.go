@@ -31,9 +31,15 @@ func HandleTrafficGenerator(c echo.Context) error {
 		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("DVWA Host (%s) is not responding on HTTPS port 443: %s", dvwaHost, err.Error()))
 	}
 
-	// Check if nikto is installed
-	_, err = exec.LookPath("nikto")
+	_, err = exec.LookPath("perl")
 	if err != nil {
+		return c.String(200, "Perl is not installed on your system")
+	}
+
+	niktoScriptPath := "nikto/program/nikto.pl"
+
+	// Check if the Nikto script exists
+	if _, err := os.Stat(niktoScriptPath); os.IsNotExist(err) {
 		return c.String(200, "Nikto is not installed on your system")
 	}
 
@@ -48,7 +54,7 @@ func HandleTrafficGenerator(c echo.Context) error {
 
 		// Construct the nikto command
 		cmd := exec.Command(
-			"nikto",
+			"perl", "nikto/program/nikto.pl",
 			"-host", dvwaHost,
 			"-ask", "no",
 			"-followredirects",
@@ -56,7 +62,7 @@ func HandleTrafficGenerator(c echo.Context) error {
 			"-nointeractive",
 			"-no404",
 			"-timeout", "2",
-			"-useragent", "Nikto Traffic Gen\r\nX-Forwarded-For: "+randomIP,
+			"-useragent", "Nikto Traffic Generator\r\nX-Forwarded-For: "+randomIP,
 			"-T", randomTuning,
 		)
 
