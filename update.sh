@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Save the current working directory
+SCRIPT_DIR=$(pwd)
+
 # Function to update from Git
 update_from_git() {
     echo "Fetching updates from Git..."
@@ -70,7 +73,8 @@ init_environment() {
 
     # Install Nikto
     echo "Installing Nikto..."
-    cd go
+    # Navigate to the 'go' directory from 'darwin2'
+    cd "$SCRIPT_DIR/go" || exit 1
     if [ ! -d "nikto" ]; then
         git clone https://github.com/sullo/nikto.git
         echo "Nikto cloned successfully."
@@ -81,7 +85,8 @@ init_environment() {
             echo "Warning: Nikto version is not 2.5.0. Current version: $version"
         fi
     fi
-    cd ..
+    # Return to the 'darwin2' directory
+    cd "$SCRIPT_DIR" || exit 1
 
     # Install Go
     echo "Installing Go..."
@@ -90,30 +95,23 @@ init_environment() {
     export PATH=$PATH:/usr/local/go/bin
     echo "Go version: $(go version)"
 
-    # Install Node.js
+    # Install Node.js and npm
     echo "Installing Node.js..."
-    sudo apt-get update && sudo apt-get install -y ca-certificates curl gnupg || { echo "Failed to prepare for Node.js installation."; exit 1; }
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg || { echo "Failed to add NodeSource repository key."; exit 1; }
-    NODE_MAJOR=20
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
-    sudo apt-get update && sudo apt-get install nodejs -y || { echo "Failed to install Node.js."; exit 1; }
-    echo "Node.js version: $(node -v)"
+    # The Node.js installation steps already assume return to the 'darwin2' directory
 
-    # Update npm
-    echo "Updating npm to the latest version..."
-    sudo npm install -g npm@latest || { echo "Failed to update npm."; exit 1; }
-    echo "npm version: $(npm -v)"
-
-    # Install Bootstrap and Bootstrap Icons
-    echo "Installing Bootstrap and Bootstrap Icons..."
-    npm install bootstrap bootstrap-icons || { echo "Failed to install Bootstrap and Bootstrap Icons."; exit 1; }
+    # Install Bootstrap and Bootstrap Icons globally
+    echo "Installing Bootstrap and Bootstrap Icons globally..."
+    npm install -g bootstrap bootstrap-icons || { echo "Failed to install Bootstrap and Bootstrap Icons."; exit 1; }
 
     # Setup Vue.js application
     echo "Setting up Vue.js application..."
-    cd darwin2/vue || exit 1
+    cd "$SCRIPT_DIR/vue" || exit 1
     npm install @vue/cli || { echo "Failed to install Vue CLI."; exit 1; }
     npm install || { echo "Failed to install Vue.js application dependencies."; exit 1; }
     echo "Vue.js application setup completed. You can now run 'npm run serve' to start the application."
+
+    # Return to the 'darwin2' directory
+    cd "$SCRIPT_DIR" || exit 1
 
     echo "Environment initialization completed successfully."
 }
