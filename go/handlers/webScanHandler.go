@@ -40,12 +40,11 @@ func HandleWebScan(c echo.Context) error {
 		return c.String(200, "Perl is not installed on your system")
 	}
 
-	niktoScriptPath := "nikto/program/nikto.pl"
+	// Debug: Print the current working directory
+	wd, _ := os.Getwd()
+	fmt.Println("Current working directory:", wd)
 
-	// Check if the Nikto script exists
-	//if _, err := os.Stat(niktoScriptPath); os.IsNotExist(err) {
-//		return c.String(200, "Nikto is not installed on your system")
-//	}
+niktoScriptPath := "nikto/program/nikto.pl"
 
 	// Check if the Nikto script exists
 	if _, err := os.Stat(niktoScriptPath); err != nil {
