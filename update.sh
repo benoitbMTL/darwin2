@@ -82,10 +82,10 @@ init_environment() {
         git clone https://github.com/sullo/nikto.git
         echo "Nikto cloned successfully."
     else
-        version=$(perl nikto/program/nikto.pl -Version | grep -o 'Nikto [0-9]*\.[0-9]*\.[0-9]*')
-        echo "Nikto version found: $version"
-        if [ "$version" != "Nikto 2.5.0" ]; then
-            echo "Warning: Nikto version is not 2.5.0. Current version: $version"
+        nikto_version=$(perl nikto/program/nikto.pl -Version | grep -o 'Nikto [0-9]*\.[0-9]*\.[0-9]*')
+        echo "Nikto version found: $nikto_version"
+        if [ "$nikto_version" != "Nikto 2.5.0" ]; then
+            echo "Warning: Nikto version is not 2.5.0. Current version: $nikto_version"
         fi
     fi
     cd "$SCRIPT_DIR"
@@ -104,11 +104,13 @@ init_environment() {
     echo -e "\n--------------------------------------------------"
     echo "Installing Node.js..."
     sudo apt-get update && sudo apt-get install -y ca-certificates curl gnupg
+    sudo rm -f /etc/apt/keyrings/nodesource.gpg
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
     NODE_MAJOR=20
     echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
     sudo apt-get update && sudo apt-get install nodejs -y
-    node -v
+    node_version=$(node -v)
+    echo "Node version: $node_version"
 
     # Install Bootstrap and Bootstrap Icons locally within the Vue project
     echo -e "\n--------------------------------------------------"
@@ -129,8 +131,7 @@ init_environment() {
     printf "Summary of installed packages and versions:\n"
     printf "Go:\t\t\t%s\n" "$go_version"
     # Add similar printf statements for other software versions installed in this script
-    printf "Nikto version:\t\t%s\n" "$version"
-    node_version=$(node -v)
+    printf "Nikto version:\t\t%s\n" "$nikto_version"
     printf "Node.js:\t\t%s\n" "$node_version"
     npm_version=$(npm -v)
     printf "npm:\t\t\t%s\n" "$npm_version"
