@@ -43,9 +43,21 @@ func HandleWebScan(c echo.Context) error {
 	niktoScriptPath := "nikto/program/nikto.pl"
 
 	// Check if the Nikto script exists
-	if _, err := os.Stat(niktoScriptPath); os.IsNotExist(err) {
-		return c.String(200, "Nikto is not installed on your system")
-	}
+	//if _, err := os.Stat(niktoScriptPath); os.IsNotExist(err) {
+//		return c.String(200, "Nikto is not installed on your system")
+//	}
+
+	// Check if the Nikto script exists
+	if _, err := os.Stat(niktoScriptPath); err != nil {
+		if os.IsNotExist(err) {
+			// Return the actual error message if the file does not exist
+			return c.String(200, fmt.Sprintf("Nikto is not installed on your system: %s", err.Error()))
+		} else {
+			// Handle other potential errors from os.Stat
+			return c.String(200, fmt.Sprintf("Error checking Nikto installation: %s", err.Error()))
+		}
+}
+
 
 	var requestData RequestData
 	if err := c.Bind(&requestData); err != nil {
