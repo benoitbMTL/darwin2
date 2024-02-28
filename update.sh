@@ -63,17 +63,19 @@ manage_docker() {
 # Function to install required packages and setup the environment
 init_environment() {
     echo "Initializing environment for the application..."
+    echo "--------------------------------------------------"
 
     # Install Linux packages
-    echo "Updating package lists..."
+    echo "--- Updating package lists..."
     sudo apt update || { echo "Failed to update package lists."; exit 1; }
+    echo
 
-    echo "Installing required Linux packages (nmap, tree, net-tools, vim)..."
+    echo "--- Installing required Linux packages (nmap, tree, net-tools, vim)..."
     sudo apt install nmap tree net-tools vim -y || { echo "Failed to install required Linux packages."; exit 1; }
+    echo
 
     # Install Nikto
-    echo "Installing Nikto..."
-    # Navigate to the 'go' directory from 'darwin2'
+    echo "--- Installing Nikto..."
     cd "$SCRIPT_DIR/go" || exit 1
     if [ ! -d "nikto" ]; then
         git clone https://github.com/sullo/nikto.git
@@ -85,35 +87,53 @@ init_environment() {
             echo "Warning: Nikto version is not 2.5.0. Current version: $version"
         fi
     fi
-    # Return to the 'darwin2' directory
-    cd "$SCRIPT_DIR" || exit 1
+    cd "$SCRIPT_DIR"
+    echo
 
     # Install Go
-    echo "Installing Go..."
+    echo "--- Installing Go..."
     wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz || { echo "Failed to download Go."; exit 1; }
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz || { echo "Failed to install Go."; exit 1; }
     export PATH=$PATH:/usr/local/go/bin
-    echo "Go version: $(go version)"
+    go_version=$(go version)
+    echo "Go version: $go_version"
+    echo
 
     # Install Node.js and npm
-    echo "Installing Node.js..."
-    # The Node.js installation steps already assume return to the 'darwin2' directory
+    echo "--- Installing Node.js..."
+    # Node.js installation commands go here
+    echo
 
-    # Install Bootstrap and Bootstrap Icons globally
-    echo "Installing Bootstrap and Bootstrap Icons globally..."
-    npm install -g bootstrap bootstrap-icons || { echo "Failed to install Bootstrap and Bootstrap Icons."; exit 1; }
+    # Install Bootstrap and Bootstrap Icons locally within the Vue project
+    echo "--- Installing Bootstrap and Bootstrap Icons locally..."
+    cd "$SCRIPT_DIR/vue" || exit 1
+    npm install bootstrap bootstrap-icons || { echo "Failed to install Bootstrap and Bootstrap Icons."; exit 1; }
+    echo
 
     # Setup Vue.js application
-    echo "Setting up Vue.js application..."
-    cd "$SCRIPT_DIR/vue" || exit 1
+    echo "--- Setting up Vue.js application..."
     npm install @vue/cli || { echo "Failed to install Vue CLI."; exit 1; }
     npm install || { echo "Failed to install Vue.js application dependencies."; exit 1; }
     echo "Vue.js application setup completed. You can now run 'npm run serve' to start the application."
+    cd "$SCRIPT_DIR"
+    echo
 
-    # Return to the 'darwin2' directory
-    cd "$SCRIPT_DIR" || exit 1
-
+    # Summarize installed package versions
+    echo "Summary of installed packages and versions:"
+    echo "Go: $go_version"
+    # Add similar echo statements for other software versions installed in this script
+    echo "Nikto version: $version"
+    node_version=$(node -v)
+    echo "Node.js: $node_version"
+    npm_version=$(npm -v)
+    echo "npm: $npm_version"
+    # Assuming Bootstrap and Bootstrap Icons versions are fetched from package.json or similar
+    bootstrap_version=$(npm list bootstrap | grep bootstrap | head -1 | awk '{print $2}')
+    echo "Bootstrap: $bootstrap_version"
+    bootstrap_icons_version=$(npm list bootstrap-icons | grep bootstrap-icons | head -1 | awk '{print $2}')
+    echo "Bootstrap Icons: $bootstrap_icons_version"
     echo "Environment initialization completed successfully."
+    echo "--------------------------------------------------"
 }
 
 # Function to display help
