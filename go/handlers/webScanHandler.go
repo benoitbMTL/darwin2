@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -55,7 +56,7 @@ func HandleWebScan(c echo.Context) error {
 
 	// Construct the command
 	cmd := exec.Command(
-		"perl nikto/program/nikto.pl",
+		"perl", "nikto/program/nikto.pl",
 		"-host", dvwaHost,
 		"-ask", "no",
 		"-followredirects",
@@ -64,7 +65,8 @@ func HandleWebScan(c echo.Context) error {
 		"-no404",
 		"-timeout", "2",
 		"-useragent", "Nikto Scan Demo\r\nX-Forwarded-For: "+randomIP,
-		"-T", requestData.SelectedOption)
+		"-T", requestData.SelectedOption,
+	)
 
 	// Execute the command and get its output
 	output, _ := cmd.CombinedOutput()
