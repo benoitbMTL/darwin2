@@ -140,18 +140,18 @@ init_environment() {
     bootstrap_icons_version=$(npm list bootstrap-icons | grep bootstrap-icons | head -1 | awk '{print $2}')
     printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
     printf "Environment initialization completed successfully.\n"
-    printf "--------------------------------------------------\n"
+    printf "--------------------------------------------------\n\n"
 
 }
 
 # Function to display help
 print_help() {
-    echo "Usage: $0 {run|docker|update|init|help}"
-    echo "  run: Build and serve the application."
-    echo "  docker: Manage Docker container for the application."
-    echo "  update: Update the application from Git."
-    echo "  init: Initialize environment to run the application."
-    echo "  help: Display this help message."
+    printf "Usage: %s {run|docker|update|init|help}\n" "$(basename "$0")"
+    printf "  %-20s%s\n" "run:" "Build and serve the application."
+    printf "  %-20s%s\n" "docker:" "Manage Docker container for the application."
+    printf "  %-20s%s\n" "update:" "Update the application from Git."
+    printf "  %-20s%s\n" "init:" "Initialize environment to run the application."
+    printf "  %-20s%s\n" "help:" "Display this help message."
 }
 
 # Main script execution
