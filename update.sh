@@ -5,6 +5,7 @@ SCRIPT_DIR=$(pwd)
 
 # Function to update from Git
 update_from_git() {
+    echo -e "\n--------------------------------------------------"
     echo "Fetching updates from Git..."
     git fetch || { echo "Failed to fetch updates."; exit 1; }
 
@@ -28,6 +29,7 @@ update_from_git() {
 
 # Function to build Vue.js application
 build_vue_app() {
+    echo -e "\n--------------------------------------------------"
     echo "Building Vue.js application..."
     cd vue || exit 1
     npm install || { echo "Vue.js installation failed."; exit 1; }
@@ -37,6 +39,7 @@ build_vue_app() {
 
 # Function to build and run Go application
 serve_go_app() {
+    echo -e "\n--------------------------------------------------"
     echo "Building and running Go server..."
     cd go || exit 1
     go build . || { echo "Go build failed."; exit 1; }
@@ -50,11 +53,14 @@ manage_docker() {
     # Check if container is running
     running_container=$(docker ps -q -f name=^/${container_name}$)
     if [[ -n "$running_container" ]]; then
-        echo "Stopping and removing existing Docker container..."
+        echo -e "\n--------------------------------------------------"
+        echo "Stopping existing Docker container..."
         docker stop "$container_name"
+        echo "Removing existing Docker container..."
         docker rm "$container_name"
     fi
 
+    echo -e "\n--------------------------------------------------"
     echo "Building Docker image and running container..."
     docker build -t "$container_name" .
     docker run -dp 8080:8080 --name "$container_name" "$container_name"
@@ -153,6 +159,13 @@ print_help() {
     printf "  %-20s%s\n" "update:" "Update the application from Git."
     printf "  %-20s%s\n" "init:" "Initialize environment to run the application."
     printf "  %-20s%s\n" "help:" "Display this help message."
+}
+
+build_and_serve() {
+    if update_from_git; then
+        build_vue_app
+    fi
+    serve_go_app
 }
 
 # Main script execution
