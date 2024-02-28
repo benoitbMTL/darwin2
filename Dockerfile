@@ -20,6 +20,12 @@ RUN npm run build
 
 # Define the final image
 FROM alpine:latest  
+# Install Perl and Git
+RUN apk --no-cache add perl git
+
+# Clone Nikto from GitHub
+RUN git clone https://github.com/sullo/nikto.git /go/nikto
+
 # Create the directories for Go and Vue.js applications
 RUN mkdir /go && mkdir /vue
 # Copy the Go binary to the /go directory

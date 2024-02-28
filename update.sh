@@ -77,8 +77,8 @@ init_environment() {
     sudo apt update || { echo "Failed to update package lists."; exit 1; }
 
     echo -e "\n--------------------------------------------------"
-    echo "Installing required Linux packages (nmap, tree, net-tools, vim)..."
-    sudo apt install nmap tree net-tools vim -y || { echo "Failed to install required Linux packages."; exit 1; }
+    echo "Installing required Linux packages..."
+    sudo apt install nmap tree net-tools vim perl -y || { echo "Failed to install required Linux packages."; exit 1; }
 
     # Install Nikto
     echo -e "\n--------------------------------------------------"
