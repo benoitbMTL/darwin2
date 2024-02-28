@@ -34,8 +34,15 @@ func HandleWebScan(c echo.Context) error {
 		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("DVWA Host (%s) is not responding on HTTPS port 443: %s", dvwaHost, err.Error()))
 	}
 
-	_, err = exec.LookPath("nikto")
+	_, err = exec.LookPath("perl")
 	if err != nil {
+		return c.String(200, "Perl is not installed on your system")
+	}
+
+	niktoScriptPath := "nikto/program/nikto.pl"
+
+	// Check if the Nikto script exists
+	if _, err := os.Stat(niktoScriptPath); os.IsNotExist(err) {
 		return c.String(200, "Nikto is not installed on your system")
 	}
 
@@ -48,7 +55,7 @@ func HandleWebScan(c echo.Context) error {
 
 	// Construct the command
 	cmd := exec.Command(
-		"nikto",
+		"perl nikto/program/nikto.pl",
 		"-host", dvwaHost,
 		"-ask", "no",
 		"-followredirects",
