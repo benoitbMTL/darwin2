@@ -23,15 +23,15 @@ FROM alpine:latest
 # Install Perl and Git
 RUN apk --no-cache add perl git
 
-# Clone Nikto from GitHub
-RUN git clone https://github.com/sullo/nikto.git /go/nikto
-
 # Create the directories for Go and Vue.js applications
 RUN mkdir /go && mkdir /vue
 # Copy the Go binary to the /go directory
 COPY --from=go-builder /go/src/app/darwin2 /go/darwin2
 # Copy the built Vue.js application to the /vue/dist directory
 COPY --from=vue-builder /app/dist /vue/dist
+
+# Clone Nikto from GitHub
+RUN git clone https://github.com/sullo/nikto.git /go/nikto
 
 # Expose the port the app runs on
 EXPOSE 8080
