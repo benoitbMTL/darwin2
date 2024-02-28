@@ -11,6 +11,7 @@ import (
 	"math/rand"
 	"net/http"
 	"time"
+	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/tebeka/selenium"
@@ -31,6 +32,21 @@ var waitDurationInSeconds time.Duration = 1 // seconds
 
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func HandleSelenium(c echo.Context) error {
+
+	// Debug: Check if chromedriver exists
+	fmt.Println("Checking if ChromeDriver exists at:", chromeDriverPath)
+	if _, err := os.Stat(chromeDriverPath); os.IsNotExist(err) {
+		fmt.Println("ChromeDriver not found at:", chromeDriverPath)
+		return echo.NewHTTPError(http.StatusNotFound, "ChromeDriver not found")
+	} else if err != nil {
+		fmt.Println("Error checking ChromeDriver:", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Error checking ChromeDriver")
+	} else {
+		fmt.Println("ChromeDriver found at:", chromeDriverPath)
+	}
+
+
+
 	// Start ChromeDriver service
 	fmt.Printf("\033[1m\033[34m\nStart ChromeDriver service\033[0m\n")
 	opts := []selenium.ServiceOption{}
@@ -39,6 +55,7 @@ func HandleSelenium(c echo.Context) error {
 		fmt.Printf("Error starting the ChromeDriver server: %v\n", err)
 		return err
 	}
+	
 	defer service.Stop()
 
 	// Set general capabilities for Selenium WebDriver

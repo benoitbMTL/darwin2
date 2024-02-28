@@ -41,10 +41,10 @@ func HandleWebScan(c echo.Context) error {
 	}
 
 	// Debug: Print the current working directory
-	wd, _ := os.Getwd()
-	fmt.Println("Current working directory:", wd)
+	//wd, _ := os.Getwd()
+	//fmt.Println("Current working directory:", wd)
 
-niktoScriptPath := "nikto/program/nikto.pl"
+	niktoScriptPath := "nikto/program/nikto.pl"
 
 	// Check if the Nikto script exists
 	if _, err := os.Stat(niktoScriptPath); err != nil {
