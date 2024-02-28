@@ -6,7 +6,7 @@ import (
 	"darwin2/utils"
 	"fmt"
 	"net/http"
-	"os/exec"
+	"os"
 	"time"
 
 	"github.com/labstack/echo/v4"
