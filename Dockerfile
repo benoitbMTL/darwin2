@@ -31,7 +31,7 @@ COPY --from=go-builder /go/src/app/darwin2 /go/darwin2
 COPY --from=vue-builder /app/dist /vue/dist
 
 # Clone Nikto from GitHub
-RUN git clone https://github.com/sullo/nikto.git /go/nikto
+RUN git clone https://github.com/sullo/nikto.git /nikto
 
 # Expose the port the app runs on
 EXPOSE 8080
