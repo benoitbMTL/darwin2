@@ -62,20 +62,21 @@ manage_docker() {
 
 # Function to install required packages and setup the environment
 init_environment() {
+    echo -e "\n--------------------------------------------------"
     echo "Initializing environment for the application..."
-    echo "--------------------------------------------------"
 
     # Install Linux packages
-    echo "--- Updating package lists..."
+    echo -e "\n--------------------------------------------------"
+    echo "Updating package lists..."
     sudo apt update || { echo "Failed to update package lists."; exit 1; }
-    echo
 
-    echo "--- Installing required Linux packages (nmap, tree, net-tools, vim)..."
+    echo -e "\n--------------------------------------------------"
+    echo "Installing required Linux packages (nmap, tree, net-tools, vim)..."
     sudo apt install nmap tree net-tools vim -y || { echo "Failed to install required Linux packages."; exit 1; }
-    echo
 
     # Install Nikto
-    echo "--- Installing Nikto..."
+    echo -e "\n--------------------------------------------------"
+    echo "Installing Nikto..."
     cd "$SCRIPT_DIR/go" || exit 1
     if [ ! -d "nikto" ]; then
         git clone https://github.com/sullo/nikto.git
@@ -88,50 +89,50 @@ init_environment() {
         fi
     fi
     cd "$SCRIPT_DIR"
-    echo
 
     # Install Go
-    echo "--- Installing Go..."
+    echo -e "\n--------------------------------------------------"
+    echo "Installing Go..."
     wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz || { echo "Failed to download Go."; exit 1; }
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz || { echo "Failed to install Go."; exit 1; }
     export PATH=$PATH:/usr/local/go/bin
     go_version=$(go version)
     echo "Go version: $go_version"
-    echo
 
     # Install Node.js and npm
-    echo "--- Installing Node.js..."
+    echo -e "\n--------------------------------------------------"
+    echo "Installing Node.js..."
     # Node.js installation commands go here
-    echo
 
     # Install Bootstrap and Bootstrap Icons locally within the Vue project
-    echo "--- Installing Bootstrap and Bootstrap Icons locally..."
+    echo -e "\n--------------------------------------------------"
+    echo "Installing Bootstrap and Bootstrap Icons locally..."
     cd "$SCRIPT_DIR/vue" || exit 1
     npm install bootstrap bootstrap-icons || { echo "Failed to install Bootstrap and Bootstrap Icons."; exit 1; }
-    echo
 
     # Setup Vue.js application
-    echo "--- Setting up Vue.js application..."
+    echo -e "\n--------------------------------------------------"
+    echo "Setting up Vue.js application..."
     npm install @vue/cli || { echo "Failed to install Vue CLI."; exit 1; }
     npm install || { echo "Failed to install Vue.js application dependencies."; exit 1; }
     echo "Vue.js application setup completed. You can now run 'npm run serve' to start the application."
     cd "$SCRIPT_DIR"
-    echo
 
     # Summarize installed package versions
+    echo -e "\n--------------------------------------------------"
     echo "Summary of installed packages and versions:"
-    echo "Go: $go_version"
+    echo -e "Go:\t\t$go_version"
     # Add similar echo statements for other software versions installed in this script
-    echo "Nikto version: $version"
+    echo -e "Nikto version:\t\t$version"
     node_version=$(node -v)
-    echo "Node.js: $node_version"
+    echo -e "Node.js:\t\t$node_version"
     npm_version=$(npm -v)
-    echo "npm: $npm_version"
+    echo -e "npm:\t\t$npm_version"
     # Assuming Bootstrap and Bootstrap Icons versions are fetched from package.json or similar
     bootstrap_version=$(npm list bootstrap | grep bootstrap | head -1 | awk '{print $2}')
-    echo "Bootstrap: $bootstrap_version"
+    echo -e "Bootstrap:\t\t$bootstrap_version"
     bootstrap_icons_version=$(npm list bootstrap-icons | grep bootstrap-icons | head -1 | awk '{print $2}')
-    echo "Bootstrap Icons: $bootstrap_icons_version"
+    echo -e "Bootstrap Icons:\t\t$bootstrap_icons_version"
     echo "Environment initialization completed successfully."
     echo "--------------------------------------------------"
 }
