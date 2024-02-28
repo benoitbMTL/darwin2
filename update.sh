@@ -100,9 +100,15 @@ init_environment() {
     echo "Go version: $go_version"
 
     # Install Node.js and npm
+    # https://deb.nodesource.com/
     echo -e "\n--------------------------------------------------"
     echo "Installing Node.js..."
-    # Node.js installation commands go here
+    sudo apt-get update && sudo apt-get install -y ca-certificates curl gnupg
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+    NODE_MAJOR=20
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+    sudo apt-get update && sudo apt-get install nodejs -y
+    node -v
 
     # Install Bootstrap and Bootstrap Icons locally within the Vue project
     echo -e "\n--------------------------------------------------"
@@ -119,22 +125,23 @@ init_environment() {
     cd "$SCRIPT_DIR"
 
     # Summarize installed package versions
-    echo -e "\n--------------------------------------------------"
-    echo "Summary of installed packages and versions:"
-    echo -e "Go:\t\t$go_version"
-    # Add similar echo statements for other software versions installed in this script
-    echo -e "Nikto version:\t\t$version"
+    printf "\n--------------------------------------------------\n"
+    printf "Summary of installed packages and versions:\n"
+    printf "Go:\t\t\t%s\n" "$go_version"
+    # Add similar printf statements for other software versions installed in this script
+    printf "Nikto version:\t\t%s\n" "$version"
     node_version=$(node -v)
-    echo -e "Node.js:\t\t$node_version"
+    printf "Node.js:\t\t%s\n" "$node_version"
     npm_version=$(npm -v)
-    echo -e "npm:\t\t$npm_version"
+    printf "npm:\t\t\t%s\n" "$npm_version"
     # Assuming Bootstrap and Bootstrap Icons versions are fetched from package.json or similar
     bootstrap_version=$(npm list bootstrap | grep bootstrap | head -1 | awk '{print $2}')
-    echo -e "Bootstrap:\t\t$bootstrap_version"
+    printf "Bootstrap:\t\t%s\n" "$bootstrap_version"
     bootstrap_icons_version=$(npm list bootstrap-icons | grep bootstrap-icons | head -1 | awk '{print $2}')
-    echo -e "Bootstrap Icons:\t\t$bootstrap_icons_version"
-    echo "Environment initialization completed successfully."
-    echo "--------------------------------------------------"
+    printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
+    printf "Environment initialization completed successfully.\n"
+    printf "--------------------------------------------------\n"
+
 }
 
 # Function to display help
