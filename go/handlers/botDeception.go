@@ -6,6 +6,7 @@ import (
 	"darwin2/utils"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
