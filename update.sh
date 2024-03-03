@@ -24,7 +24,7 @@ update_from_git() {
     echo "Merging changes from origin/main..."
     git merge origin/main || { echo "Failed to merge changes."; exit 1; }
 
-    return $vue_changes
+    echo $vue_changes
 }
 
 # Function to build Vue.js application
@@ -162,7 +162,8 @@ print_help() {
 }
 
 build_and_serve() {
-    if update_from_git; then
+    vue_changes=$(update_from_git)
+    if [ "$vue_changes" -eq 1 ]; then
         build_vue_app
     fi
     serve_go_app
