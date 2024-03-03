@@ -2,7 +2,10 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>Bot Deception</h5>
-      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
+      <i
+        class="bi bi-question-circle-fill bs-icon"
+        style="font-size: 1.5rem"
+        @click="showHelp = !showHelp"></i>
       <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
@@ -17,20 +20,27 @@
       <button class="btn btn-primary btn-sm me-2" @click="performBotDeception">
         Run Deception
       </button>
-      <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
+      <button class="btn btn-secondary btn-sm me-2" @click="resetResult">
+        Reset
+      </button>
     </div>
 
     <div v-if="jobResult" class="mt-4 mb-3">
       <h6>Bot Deception Result:</h6>
-      <iframe ref="attackIframe" :srcdoc="jobResult" @load="adjustIframeHeight"
+      <iframe
+        ref="attackIframe"
+        :srcdoc="jobResult"
+        @load="adjustIframeHeight"
         style="width: 100%; border: 1px solid lightgray"></iframe>
     </div>
 
     <div v-if="pageSource" class="mt-3">
-      <h6>There’s a hidden link. Malicious bots like web crawler may request the link:</h6>
+      <h6>
+        There’s a hidden link. Malicious bots like web crawler may request the
+        link:
+      </h6>
       <pre class="code-block"><code v-html="highlightedCode"></code></pre>
     </div>
-
   </div>
 
   <!-- Help Card -->
@@ -56,32 +66,33 @@ export default {
       pageSource: "",
       jobResult: "",
       showHelp: false,
+      highlightedCode: "",
     };
   },
 
   methods: {
     viewPageSource() {
-      fetch('/bot-page-source', {
+      fetch("/bot-page-source", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       })
-        .then(response => response.text())
-        .then(html => {
+        .then((response) => response.text())
+        .then((html) => {
           // Process and update pageSource and highlightedCode with last 10 lines
-          const lines = html.split('\n');
-          const lastTenLines = lines.slice(-10).join('\n');
+          const lines = html.split("\n");
+          const lastTenLines = lines.slice(-10).join("\n");
           this.highlightedCode = this.escapeHtml(lastTenLines);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error:", error);
         });
     },
 
-
-    botDeception() {
-      fetch('/bot-deception', {
+    performBotDeception() {
+      // Ensure this method matches the button's @click assignment
+      fetch("/bot-deception", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -110,7 +121,18 @@ export default {
     },
 
     resetResult() {
-      this.jobResult = ""; // Clear Result
+      this.jobResult = "";
+      this.pageSource = "";
+      this.highlightedCode = "";
+    },
+
+    escapeHtml(unsafe) {
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     },
   },
 };
