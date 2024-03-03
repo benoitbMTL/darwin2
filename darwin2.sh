@@ -123,7 +123,8 @@ install_environment() {
     echo -e "\n--------------------------------------------------"
     echo "Installing Go..."
     GOURL="https://go.dev/dl/${GOPACKAGE}"
-    curl -O ${GOURL} || { echo "Failed to download Go."; exit 1; }
+    echo "Downloading Go from ${GOURL}..."
+    curl -s -O ${GOURL} || { echo "Failed to download Go."; exit 1; }
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $GOPACKAGE || { echo "Failed to install Go."; exit 1; }
     rm -f ${GOPACKAGE}
     export PATH=$PATH:/usr/local/go/bin
