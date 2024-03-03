@@ -8,9 +8,13 @@ rm -f "$output_file"
 
 # List of files to process
 files=(
-go/config/app_config.go
-go/handlers/restApiCreateHandlers.go
-vue/src/components/05-tool/ConfigForm.vue
+vue/src/components/02-bot-mitigation/BotDeception.vue
+vue/src/components/02-bot-mitigation/KnownBots.vue
+vue/src/components/01-web-protection/CookieSecurity.vue
+go/routes/routes.go
+go/handlers/botDeception.go
+go/handlers/botKnownBots.go
+go/handlers/webCookieSecurity.go
 )
 
 # Loop through the files and append their content to conf.txt
