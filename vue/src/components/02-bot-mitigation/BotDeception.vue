@@ -8,6 +8,7 @@
         @click="showHelp = !showHelp"></i>
       <!-- Bootstrap icon for help -->
     </div>
+
     <div class="card-body">
       <p class="card-text">
         Bot Deception inserts invisible links in HTML responses to distinguish
@@ -15,7 +16,7 @@
       </p>
 
       <button class="btn btn-primary btn-sm me-2" @click="viewPageSource">
-        View Page Source AAAAA
+        View Page Source
       </button>
       <button class="btn btn-primary btn-sm me-2" @click="performBotDeception">
         Run Deception
@@ -25,15 +26,6 @@
       </button>
     </div>
 
-    <div v-if="jobResult" class="mt-4 mb-3">
-      <h6>Bot Deception Result:</h6>
-      <iframe
-        ref="attackIframe"
-        :srcdoc="jobResult"
-        @load="adjustIframeHeight"
-        style="width: 100%; border: 1px solid lightgray"></iframe>
-    </div>
-
     <div v-if="pageSource" class="mt-3">
       <h6>
         There’s a hidden link. Malicious bots like web crawler may request the
@@ -41,8 +33,18 @@
       </h6>
       <pre class="code-block"><code v-html="highlightedCode"></code></pre>
     </div>
-  </div>
 
+
+  <div v-if="jobResult" class="mt-4 mb-3">
+    <h6>Bot Deception Result:</h6>
+    <iframe
+      ref="attackIframe"
+      :srcdoc="jobResult"
+      @load="adjustIframeHeight"
+      style="width: 100%; border: 1px solid lightgray"></iframe>
+  </div>
+  </div>
+  
   <!-- Help Card -->
   <div v-if="showHelp" class="card bg-light mb-3">
     <div class="card-header">
@@ -84,6 +86,7 @@ export default {
           const lines = html.split("\n");
           const lastTenLines = lines.slice(-10).join("\n");
           this.highlightedCode = this.escapeHtml(lastTenLines);
+          this.pageSource = true;
         })
         .catch((error) => {
           console.error("Error:", error);
