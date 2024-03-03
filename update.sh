@@ -3,6 +3,9 @@
 # Save the current working directory
 SCRIPT_DIR=$(pwd)
 
+# Initialize vue_changes as a global variable
+vue_changes=0
+
 # Function to update from Git
 update_from_git() {
     echo -e "\n--------------------------------------------------"
@@ -162,7 +165,7 @@ print_help() {
 }
 
 build_and_serve() {
-    vue_changes=$(update_from_git)
+    update_from_git
     if [ "$vue_changes" -eq 1 ]; then
         build_vue_app
     fi
