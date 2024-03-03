@@ -15,6 +15,7 @@
         between regular clients and malicious bots like web crawlers.
       </p>
 
+      <div class="d-flex align-items-center mb-3 flex-wrap">
       <button class="btn btn-primary btn-sm me-2" @click="viewPageSource">
         View Page Source
       </button>
@@ -34,17 +35,16 @@
       <pre class="code-block"><code v-html="highlightedCode"></code></pre>
     </div>
 
+    <div v-if="jobResult" class="mt-4 mb-3">
+      <h6>Bot Deception Result:</h6>
+      <iframe
+        ref="attackIframe"
+        :srcdoc="jobResult"
+        @load="adjustIframeHeight"
+        style="width: 100%; border: 1px solid lightgray"></iframe>
+    </div>
+  </div>
 
-  <div v-if="jobResult" class="mt-4 mb-3">
-    <h6>Bot Deception Result:</h6>
-    <iframe
-      ref="attackIframe"
-      :srcdoc="jobResult"
-      @load="adjustIframeHeight"
-      style="width: 100%; border: 1px solid lightgray"></iframe>
-  </div>
-  </div>
-  
   <!-- Help Card -->
   <div v-if="showHelp" class="card bg-light mb-3">
     <div class="card-header">
