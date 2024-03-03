@@ -15,7 +15,7 @@
       </p>
 
       <button class="btn btn-primary btn-sm me-2" @click="viewPageSource">
-        View Source Page
+        View Page Source
       </button>
       <button class="btn btn-primary btn-sm me-2" @click="performBotDeception">
         Run Deception
