@@ -56,7 +56,13 @@ func HandleBotDeception(c echo.Context) error {
 
 
 func HandlePageSource(c echo.Context) error {
-	resp, err := http.Get(config.CurrentConfig.DVWAURL + "/login.php")
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+
+	resp, err := client.Get(config.CurrentConfig.DVWAURL + "/login.php")
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to get page source: %v", err))
 	}
@@ -69,4 +75,5 @@ func HandlePageSource(c echo.Context) error {
 
 	return c.String(http.StatusOK, string(body))
 }
+
 

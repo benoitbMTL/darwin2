@@ -6,9 +6,7 @@
       <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
-      <p class="card-text">Bot Deception</p>
-
-      <p>
+      <p class="card-text">
         Bot Deception inserts invisible links in HTML responses to distinguish
         between regular clients and malicious bots like web crawlers.
       </p>
