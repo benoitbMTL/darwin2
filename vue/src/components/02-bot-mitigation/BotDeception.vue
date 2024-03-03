@@ -35,7 +35,7 @@
       <div v-if="jobResult" class="mt-4 mb-3">
         <h6>Bot Deception Result:</h6>
         <iframe
-          ref="attackIframe"
+          ref="botIframe"
           :srcdoc="jobResult"
           @load="adjustIframeHeight"
           style="width: 100%; border: 1px solid lightgray"></iframe>
