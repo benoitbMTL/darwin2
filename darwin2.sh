@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# Save the current working directory
-SCRIPT_DIR=$(pwd)
 
-# Initialize vue_changes as a global variable
+# Initialize global variables
+SCRIPT_DIR=$(pwd)
+GOPACKAGE="go1.22.0.linux-amd64.tar.gz"
 vue_changes=0
+reboot=0
 
 # Function to update from Git
 update_from_git() {
@@ -66,6 +67,7 @@ manage_docker() {
         fi
         if [ "$(whoami)" != "root" ]; then
             sudo usermod -aG docker "$(whoami)"
+            reboot=1
         fi
         echo "Docker installation and setup completed."
     fi
@@ -120,11 +122,27 @@ install_environment() {
     # Install Go
     echo -e "\n--------------------------------------------------"
     echo "Installing Go..."
-    wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz || { echo "Failed to download Go."; exit 1; }
-    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz || { echo "Failed to install Go."; exit 1; }
+    GOURL="https://go.dev/dl/${GOPACKAGE}"
+    curl -O ${GOURL} || { echo "Failed to download Go."; exit 1; }
+    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $GOPACKAGE || { echo "Failed to install Go."; exit 1; }
+    rm -f ${GOPACKAGE}
     export PATH=$PATH:/usr/local/go/bin
     go_version=$(go version)
     echo "Go version: $go_version"
+
+    # Define GO PATH
+    GOPATH="export PATH=\$PATH:/usr/local/go/bin"
+
+    # Check if GOPATH already exists in .bashrc
+    if grep -Fxq "$GOPATH" ~/.bashrc; then
+        echo "GOPATH already exists in .bashrc."
+    else
+        # If GOPATH doesn't exist, add it to .bashrc
+        echo "$GOPATH" >> ~/.bashrc
+        echo "GOPATH has been added to .bashrc."
+        echo "Please log off and log back in for the changes to take effect."
+    fi
+
 
     # Install Node.js and npm
     # https://deb.nodesource.com/
@@ -169,7 +187,6 @@ install_environment() {
     printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
     printf "Environment initialization completed successfully.\n"
     printf "--------------------------------------------------\n"
-
 }
 
 # Build and serve function
