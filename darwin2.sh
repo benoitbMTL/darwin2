@@ -51,8 +51,26 @@ serve_go_app() {
 
 # Function to manage Docker
 manage_docker() {
-    container_name="darwin2"
+    if ! command -v docker &> /dev/null; then
+        echo -e "\n--------------------------------------------------"
+        echo "Docker is not installed. Installing Docker..."
+        sudo apt-get update -y
+        sudo apt-get upgrade -y
+        sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -y
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+        sudo apt-get update
+        sudo apt-get install docker-ce -y
+        if ! getent group docker > /dev/null; then
+            sudo groupadd docker
+        fi
+        if [ "$(whoami)" != "root" ]; then
+            sudo usermod -aG docker "$(whoami)"
+        fi
+        echo "Docker installation and setup completed."
+    fi
 
+    container_name="darwin2"
     # Check if container is running
     running_container=$(docker ps -q -f name=^/${container_name}$)
     if [[ -n "$running_container" ]]; then
@@ -70,7 +88,7 @@ manage_docker() {
 }
 
 # Function to install required packages and setup the environment
-init_environment() {
+install_environment() {
     echo -e "\n--------------------------------------------------"
     echo "Initializing environment for the application..."
 
@@ -154,22 +172,31 @@ init_environment() {
 
 }
 
-# Function to display help
-print_help() {
-    printf "Usage: %s {run|docker|update|init|help}\n" "$(basename "$0")"
-    printf "  %-20s%s\n" "run:" "Build and serve the application."
-    printf "  %-20s%s\n" "docker:" "Manage Docker container for the application."
-    printf "  %-20s%s\n" "update:" "Update the application from Git."
-    printf "  %-20s%s\n" "init:" "Initialize environment to run the application."
-    printf "  %-20s%s\n" "help:" "Display this help message."
-}
-
+# Build and serve function
 build_and_serve() {
     update_from_git
     if [ "$vue_changes" -eq 1 ]; then
         build_vue_app
     fi
     serve_go_app
+}
+
+# Force build and serve function
+force_build_and_serve() {
+    update_from_git
+    build_vue_app
+    serve_go_app
+}
+
+# Function to display help
+print_help() {
+    printf "Usage: %s {run|docker|update|force|install|help}\n" "$(basename "$0")"
+    printf "  %-20s%s\n" "run:" "Build and serve the application."
+    printf "  %-20s%s\n" "docker:" "Manage Docker container for the application."
+    printf "  %-20s%s\n" "update:" "Update the application from Git."
+    printf "  %-20s%s\n" "force:" "Force build and serve the application (ignores changes)."
+    printf "  %-20s%s\n" "install:" "Install and initialize environment to run the application."
+    printf "  %-20s%s\n" "help:" "Display this help message."
 }
 
 # Main script execution
@@ -184,8 +211,11 @@ case $1 in
     update)
         update_from_git
         ;;
-    init)
-        init_environment
+    force)
+        force_build_and_serve
+        ;;
+    install)
+        install_environment
         ;;
     help)
         print_help
