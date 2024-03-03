@@ -14,8 +14,6 @@
         Bot Deception inserts invisible links in HTML responses to distinguish
         between regular clients and malicious bots like web crawlers.
       </p>
-
-      <div class="d-flex align-items-center mb-3 flex-wrap">
       <button class="btn btn-primary btn-sm me-2" @click="viewPageSource">
         View Page Source
       </button>
@@ -25,23 +23,23 @@
       <button class="btn btn-secondary btn-sm me-2" @click="resetResult">
         Reset
       </button>
-    </div>
 
-    <div v-if="pageSource" class="mt-3">
-      <h6>
-        There’s a hidden link. Malicious bots like web crawler may request the
-        link:
-      </h6>
-      <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-    </div>
+      <div v-if="pageSource" class="mt-3">
+        <h6>
+          There’s a hidden link. Malicious bots like web crawler may request the
+          link:
+        </h6>
+        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+      </div>
 
-    <div v-if="jobResult" class="mt-4 mb-3">
-      <h6>Bot Deception Result:</h6>
-      <iframe
-        ref="attackIframe"
-        :srcdoc="jobResult"
-        @load="adjustIframeHeight"
-        style="width: 100%; border: 1px solid lightgray"></iframe>
+      <div v-if="jobResult" class="mt-4 mb-3">
+        <h6>Bot Deception Result:</h6>
+        <iframe
+          ref="attackIframe"
+          :srcdoc="jobResult"
+          @load="adjustIframeHeight"
+          style="width: 100%; border: 1px solid lightgray"></iframe>
+      </div>
     </div>
   </div>
 
