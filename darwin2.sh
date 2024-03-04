@@ -52,6 +52,8 @@ serve_go_app() {
 
 # Function to manage Docker
 manage_docker() {
+
+    # Install Docker if not present
     if ! command -v docker &> /dev/null; then
         echo -e "\n--------------------------------------------------"
         echo "Docker is not installed. Installing Docker..."
@@ -72,8 +74,8 @@ manage_docker() {
         echo "Docker installation and setup completed."
     fi
 
+    # Check if a container is already running
     container_name="darwin2"
-    # Check if container is running
     running_container=$(docker ps -q -f name=^/${container_name}$)
     if [[ -n "$running_container" ]]; then
         echo -e "\n--------------------------------------------------"
@@ -83,6 +85,7 @@ manage_docker() {
         docker rm "$container_name"
     fi
 
+    # Build a fresh Docker image
     echo -e "\n--------------------------------------------------"
     echo "Building Docker image and running container..."
     docker build -t "$container_name" .
