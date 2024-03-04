@@ -18,22 +18,36 @@ RUN npm install bootstrap-icons
 # Build the Vue.js distribution
 RUN npm run build
 
-# Define the final image using a Debian base image
-FROM debian:stable-slim
+# Use Ubuntu as the base image
+FROM ubuntu:latest
 
-# Install necessary packages for Google Chrome installation
-RUN apt-get update && apt-get install -y wget gnupg2 ca-certificates --no-install-recommends \
-    # Update CA certificates
-    && update-ca-certificates \
+# Avoid warnings by switching to noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install necessary packages for Google Chrome and Nikto, including Perl SSL support
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    perl \
+    git \
+    libnet-ssleay-perl \
+    libcrypt-ssleay-perl \
+    libio-socket-ssl-perl \
+    cpanminus \
+    --no-install-recommends \
+    && cpanm Net::SSLeay IO::Socket::SSL \
+    # Download and install Google Chrome
     && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && apt install -y ./google-chrome-stable_current_amd64.deb \
     && rm ./google-chrome-stable_current_amd64.deb \
-    && apt-get purge --auto-remove -y wget gnupg2 \
+    # Clean up
+    && apt-get purge --auto-remove -y wget gnupg cpanminus \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Perl, Git, and other dependencies
-RUN apt-get update && apt-get install -y perl git
+# Verify Google Chrome installation
+RUN google-chrome --version
 
 # Copy the Go binary to the /go directory
 COPY --from=go-builder /go/src/app/darwin2 /go/darwin2
@@ -52,9 +66,13 @@ ENV CHROMEDRIVER_PATH="/selenium/chromedriver"
 
 # Clone Nikto from GitHub
 RUN git clone https://github.com/sullo/nikto.git /nikto
+RUN perl /nikto/program/nikto.pl -Version
 
 # Expose the port the app runs on
 EXPOSE 8080
+
+# Switch back to dialog for any ad-hoc use of apt-get
+ENV DEBIAN_FRONTEND=dialog
 
 # Run the Go binary
 CMD ["/go/darwin2"]
