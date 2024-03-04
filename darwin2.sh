@@ -1,10 +1,10 @@
 #!/bin/bash
 
-
 # Initialize global variables
 SCRIPT_DIR=$(pwd)
 GOPACKAGE="go1.22.0.linux-amd64.tar.gz"
 GOURL="https://go.dev/dl/${GOPACKAGE}"
+NODE_MAJOR=20
 vue_changes=0
 
 # Function to update from Git
@@ -151,17 +151,19 @@ install_environment() {
     sudo apt-get update && sudo apt-get install -y ca-certificates curl gnupg
     sudo rm -f /etc/apt/keyrings/nodesource.gpg
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-    NODE_MAJOR=20
     echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
     sudo apt-get update && sudo apt-get install nodejs -y
     node_version=$(node -v)
     echo "Node version: $node_version"
+    npm_version=$(npm -v)
 
     # Install Bootstrap and Bootstrap Icons locally within the Vue project
     echo -e "\n--------------------------------------------------"
     echo "Installing Bootstrap and Bootstrap Icons locally..."
     cd "$SCRIPT_DIR/vue" || exit 1
     npm install bootstrap bootstrap-icons || { echo "Failed to install Bootstrap and Bootstrap Icons."; exit 1; }
+    bootstrap_version=$(npm list bootstrap | grep bootstrap | head -1 | awk '{print $2}')
+    bootstrap_icons_version=$(npm list bootstrap-icons | grep bootstrap-icons | head -1 | awk '{print $2}')
 
     # Setup Vue.js application
     echo -e "\n--------------------------------------------------"
@@ -178,12 +180,9 @@ install_environment() {
     # Add similar printf statements for other software versions installed in this script
     printf "Nikto version:\t\t%s\n" "$nikto_version"
     printf "Node.js:\t\t%s\n" "$node_version"
-    npm_version=$(npm -v)
     printf "npm:\t\t\t%s\n" "$npm_version"
     # Assuming Bootstrap and Bootstrap Icons versions are fetched from package.json or similar
-    bootstrap_version=$(npm list bootstrap | grep bootstrap | head -1 | awk '{print $2}')
     printf "Bootstrap:\t\t%s\n" "$bootstrap_version"
-    bootstrap_icons_version=$(npm list bootstrap-icons | grep bootstrap-icons | head -1 | awk '{print $2}')
     printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
     printf "Environment initialization completed successfully.\n"
     echo -e "--------------------------------------------------\n"
