@@ -20,8 +20,8 @@ RUN npm run build
 
 # Define the final image
 FROM alpine:latest  
-# Install Perl and Git
-RUN apk --no-cache add perl git
+# Install Perl, Git, wget, ca-certificates, and Chromium
+RUN apk --no-cache add perl git wget ca-certificates chromium
 
 # Create the directories for Go and Vue.js applications
 RUN mkdir /go && mkdir /vue
