@@ -18,19 +18,13 @@ RUN npm install bootstrap-icons
 # Build the Vue.js distribution
 RUN npm run build
 
-# Use Ubuntu as the base image
-FROM ubuntu:latest
-
+# Define the Perl build stage
+FROM ubuntu:latest as perl-builder
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
-
-# Install necessary packages for Google Chrome and Nikto, including Perl SSL support
+# Install Perl and the necessary modules for SSL support
 RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    ca-certificates \
     perl \
-    git \
     libnet-ssleay-perl \
     libcrypt-ssleay-perl \
     libio-socket-ssl-perl \
@@ -38,16 +32,36 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libssl-dev \
     --no-install-recommends \
+    && cpanm LWP::Protocol::https \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install Google Chrome
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+# Use Ubuntu as the base image
+FROM ubuntu:latest
+
+# Avoid warnings by switching to noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install necessary packages for Google Chrome, Nikto, excluding Perl specific ones as they are handled in the perl-builder stage
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    git \
+    --no-install-recommends \
+    && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && apt install -y ./google-chrome-stable_current_amd64.deb \
-    && rm ./google-chrome-stable_current_amd64.deb
+    && rm ./google-chrome-stable_current_amd64.deb \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Verify Google Chrome installation
 RUN google-chrome --version || { echo 'Failed to verify Google Chrome installation'; exit 1; }
+
+# Copy the necessary files from the perl-builder stage
+# This is an example; you might need to adjust it based on what exactly you need from Perl
+COPY --from=perl-builder /usr/local/bin/perl /usr/local/bin/
+COPY --from=perl-builder /usr/local/share/perl/ /usr/local/share/perl/
 
 # Copy the Go binary to the /go directory
 COPY --from=go-builder /go/src/app/darwin2 /go/darwin2
