@@ -176,20 +176,20 @@ install_environment() {
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
     sudo apt install ./google-chrome-stable_current_amd64.deb -y
     rm -f google-chrome-stable_current_amd64.deb
-    chrome_version=$(google-chrome --version)
+    chrome_version=$(google-chrome --version | awk '{print $3}')
 
     # Summarize installed package versions
     printf "\n--------------------------------------------------\n"
     printf "Summary of installed packages and versions:\n"
     printf "Go:\t\t\t%s\n" "$go_version"
     # Add similar printf statements for other software versions installed in this script
-    printf "Nikto:\t\t%s\n" "$nikto_version"
+    printf "Nikto:\t\t\t%s\n" "$nikto_version"
     printf "Node.js:\t\t%s\n" "$node_version"
     printf "npm:\t\t\t%s\n" "$npm_version"
     # Assuming Bootstrap and Bootstrap Icons versions are fetched from package.json or similar
     printf "Bootstrap:\t\t%s\n" "$bootstrap_version"
     printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
-    printf "Google Chrome:\t%s\n" "$chrome_version"
+    printf "Google Chrome:\t\t%s\n" "$chrome_version"
     printf "Environment initialization completed successfully.\n"
     echo -e "--------------------------------------------------\n"
 }
