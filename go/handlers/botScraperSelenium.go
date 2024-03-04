@@ -24,7 +24,7 @@ const Loop = 300
 // https://googlechromelabs.github.io/chrome-for-testing/
 // https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.94/linux64/chromedriver-linux64.zip
 const (
-	chromeDriverPath = "./selenium/chromedriver" // Path to ChromeDriver
+	chromeDriverPath = "selenium/chromedriver" // Path to ChromeDriver
 	port             = 4444                      // Port on which ChromeDriver will listen
 )
 
