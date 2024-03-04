@@ -18,19 +18,33 @@ RUN npm install bootstrap-icons
 # Build the Vue.js distribution
 RUN npm run build
 
-# Define the final image
-FROM alpine:latest  
-# Install Perl, Git, wget, ca-certificates, and Chromium
-RUN apk --no-cache add perl git wget ca-certificates chromium
+# Define the final image using a Debian base image
+FROM debian:stable-slim
+
+# Install necessary packages for Google Chrome installation
+RUN apt-get update && apt-get install -y wget gnupg2 --no-install-recommends \
+    && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt install -y ./google-chrome-stable_current_amd64.deb \
+    && rm ./google-chrome-stable_current_amd64.deb \
+    && apt-get purge --auto-remove -y wget gnupg2 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Perl, Git, and other dependencies
+RUN apt-get update && apt-get install -y perl git
 
 # Copy the Go binary to the /go directory
 COPY --from=go-builder /go/src/app/darwin2 /go/darwin2
+
 # Copy the built Vue.js application to the /vue/dist directory
 COPY --from=vue-builder /app/dist /vue/dist
+
 # Copy chromedriver from your repository to the expected directory in the Docker image
 COPY go/selenium/chromedriver /selenium/chromedriver
+
 # Make chromedriver executable
 RUN chmod +x /selenium/chromedriver
+
 # Set the environment variable for the container
 ENV CHROMEDRIVER_PATH="/selenium/chromedriver"
 
