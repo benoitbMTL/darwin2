@@ -34,6 +34,14 @@ var waitDurationInSeconds time.Duration = 1 // seconds
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func HandleSelenium(c echo.Context) error {
 
+	// Debug: print actual path
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("Current working directory:", dir)
+
 	// Debug: Check if chromedriver exists
 	fmt.Println("Checking if ChromeDriver exists at:", chromeDriverPath)
 	if _, err := os.Stat(chromeDriverPath); os.IsNotExist(err) {
@@ -45,8 +53,6 @@ func HandleSelenium(c echo.Context) error {
 	} else {
 		fmt.Println("ChromeDriver found at:", chromeDriverPath)
 	}
-
-
 
 	// Start ChromeDriver service
 	fmt.Printf("\033[1m\033[34m\nStart ChromeDriver service\033[0m\n")
