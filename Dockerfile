@@ -18,21 +18,21 @@ RUN npm install bootstrap-icons
 # Build the Vue.js distribution
 RUN npm run build
 
-perl libnet-ssleay-perl libio-socket-ssl-perl
-
 # Use Ubuntu as the base image
 FROM ubuntu:latest
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install necessary packages for Google Chrome, Nikto, excluding Perl specific ones as they are handled in the perl-builder stage
+# Install necessary packages for Google Chrome and Nikto
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
     ca-certificates \
     git \
-    perl libnet-ssleay-perl libio-socket-ssl-perl \
+    perl \
+    libnet-ssleay-perl \
+    libio-socket-ssl-perl \
     --no-install-recommends \
     && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && apt install -y ./google-chrome-stable_current_amd64.deb \
