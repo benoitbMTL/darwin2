@@ -23,12 +23,14 @@ FROM alpine:latest
 # Install Perl, Git, wget, ca-certificates, and Chromium
 RUN apk --no-cache add perl git wget ca-certificates chromium
 
-# Create the directories for Go and Vue.js applications
-RUN mkdir /go && mkdir /vue
 # Copy the Go binary to the /go directory
 COPY --from=go-builder /go/src/app/darwin2 /go/darwin2
 # Copy the built Vue.js application to the /vue/dist directory
 COPY --from=vue-builder /app/dist /vue/dist
+# Copy chromedriver from your repository to the expected directory in the Docker image
+COPY go/selenium/chromedriver /go/selenium/chromedriver
+# Make chromedriver executable
+RUN chmod +x /go/selenium/chromedriver
 
 # Clone Nikto from GitHub
 RUN git clone https://github.com/sullo/nikto.git /nikto
