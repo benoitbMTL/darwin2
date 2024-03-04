@@ -35,8 +35,8 @@ RUN apt-get update && apt-get install -y \
     libcrypt-ssleay-perl \
     libio-socket-ssl-perl \
     cpanminus \
-    build-essential \  # Includes 'make' and other compilation tools
-    libssl-dev \       # OpenSSL development packages required by Net::SSLeay
+    build-essential \
+    libssl-dev \
     --no-install-recommends \
     && cpanm Net::SSLeay IO::Socket::SSL \
     # Download and install Google Chrome
