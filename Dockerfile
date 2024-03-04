@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libssl-dev \
     --no-install-recommends \
-    && cpanm LWP::Protocol::https \
+    #&& cpanm LWP::Protocol::https \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
