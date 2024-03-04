@@ -101,7 +101,7 @@ install_environment() {
 
     echo -e "\n--------------------------------------------------"
     echo "Installing required Linux packages..."
-    sudo apt install nmap tree net-tools vim perl -y || { echo "Failed to install required Linux packages."; exit 1; }
+    sudo apt install nmap tree net-tools vim perl libnet-ssleay-perl libio-socket-ssl-perl -y || { echo "Failed to install required Linux packages."; exit 1; }
 
     # Install Nikto
     echo -e "\n--------------------------------------------------"
