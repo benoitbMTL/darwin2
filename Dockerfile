@@ -22,7 +22,9 @@ RUN npm run build
 FROM debian:stable-slim
 
 # Install necessary packages for Google Chrome installation
-RUN apt-get update && apt-get install -y wget gnupg2 --no-install-recommends \
+RUN apt-get update && apt-get install -y wget gnupg2 ca-certificates --no-install-recommends \
+    # Update CA certificates
+    && update-ca-certificates \
     && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && apt install -y ./google-chrome-stable_current_amd64.deb \
     && rm ./google-chrome-stable_current_amd64.deb \
