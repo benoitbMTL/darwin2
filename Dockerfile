@@ -31,6 +31,8 @@ COPY --from=vue-builder /app/dist /vue/dist
 COPY go/selenium/chromedriver /selenium/chromedriver
 # Make chromedriver executable
 RUN chmod +x /selenium/chromedriver
+# Set the environment variable for the container
+ENV CHROMEDRIVER_PATH="/selenium/chromedriver"
 
 # Clone Nikto from GitHub
 RUN git clone https://github.com/sullo/nikto.git /nikto

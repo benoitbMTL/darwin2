@@ -24,7 +24,7 @@ const Loop = 300
 // https://googlechromelabs.github.io/chrome-for-testing/
 // https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.94/linux64/chromedriver-linux64.zip
 const (
-	chromeDriverPath = "selenium/chromedriver" // Path to ChromeDriver
+	defaultChromeDriverPath = "./selenium/chromedriver" // Path to ChromeDriver
 	port             = 4444                      // Port on which ChromeDriver will listen
 )
 
@@ -34,12 +34,13 @@ var waitDurationInSeconds time.Duration = 1 // seconds
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func HandleSelenium(c echo.Context) error {
 
-	// Debug: print actual path
-	dir, err := os.Getwd()
-	if err != nil {
-		fmt.Println("Error:", err)
+	// Attempt to get the chromedriver path from environment variable
+	chromeDriverPath := os.Getenv("CHROMEDRIVER_PATH")
+	if chromeDriverPath == "" {
+		// Fallback to the default path if environment variable is not set
+		chromeDriverPath = defaultChromeDriverPath
 	}
-	fmt.Println("Current working directory:", dir)
+	fmt.Println("Using ChromeDriver path:", chromeDriverPath)
 
 	// Debug: Check if chromedriver exists
 	fmt.Println("Checking if ChromeDriver exists at:", chromeDriverPath)
