@@ -143,7 +143,6 @@ install_environment() {
         echo "Please log off and log back in for the changes to take effect."
     fi
 
-
     # Install Node.js and npm
     # https://deb.nodesource.com/
     echo -e "\n--------------------------------------------------"
@@ -173,6 +172,12 @@ install_environment() {
     echo "Vue.js application setup completed. You can now run 'npm run serve' to start the application."
     cd "$SCRIPT_DIR"
 
+    # Install Chrome
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    sudo apt install ./google-chrome-stable_current_amd64.deb -y
+    rm -f google-chrome-stable_current_amd64.deb
+    chrome_version=$(google-chrome --version)
+
     # Summarize installed package versions
     printf "\n--------------------------------------------------\n"
     printf "Summary of installed packages and versions:\n"
@@ -184,6 +189,7 @@ install_environment() {
     # Assuming Bootstrap and Bootstrap Icons versions are fetched from package.json or similar
     printf "Bootstrap:\t\t%s\n" "$bootstrap_version"
     printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
+    printf "Google Chrome:\t%s\n" "$chrome_version"
     printf "Environment initialization completed successfully.\n"
     echo -e "--------------------------------------------------\n"
 }
