@@ -18,23 +18,7 @@ RUN npm install bootstrap-icons
 # Build the Vue.js distribution
 RUN npm run build
 
-# Define the Perl build stage
-FROM ubuntu:latest as perl-builder
-# Avoid warnings by switching to noninteractive
-ENV DEBIAN_FRONTEND=noninteractive
-# Install Perl and the necessary modules for SSL support
-RUN apt-get update && apt-get install -y \
-    perl \
-    libnet-ssleay-perl \
-    libcrypt-ssleay-perl \
-    libio-socket-ssl-perl \
-    cpanminus \
-    build-essential \
-    libssl-dev \
-    --no-install-recommends \
-    #&& cpanm LWP::Protocol::https \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+perl libnet-ssleay-perl libio-socket-ssl-perl
 
 # Use Ubuntu as the base image
 FROM ubuntu:latest
@@ -48,6 +32,7 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     ca-certificates \
     git \
+    perl libnet-ssleay-perl libio-socket-ssl-perl \
     --no-install-recommends \
     && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && apt install -y ./google-chrome-stable_current_amd64.deb \
@@ -57,11 +42,6 @@ RUN apt-get update && apt-get install -y \
 
 # Verify Google Chrome installation
 RUN google-chrome --version || { echo 'Failed to verify Google Chrome installation'; exit 1; }
-
-# Copy the necessary files from the perl-builder stage
-# This is an example; you might need to adjust it based on what exactly you need from Perl
-COPY --from=perl-builder /usr/local/bin/perl /usr/local/bin/
-COPY --from=perl-builder /usr/local/share/perl/ /usr/local/share/perl/
 
 # Copy the Go binary to the /go directory
 COPY --from=go-builder /go/src/app/darwin2 /go/darwin2
