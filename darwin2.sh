@@ -4,8 +4,8 @@
 # Initialize global variables
 SCRIPT_DIR=$(pwd)
 GOPACKAGE="go1.22.0.linux-amd64.tar.gz"
+GOURL="https://go.dev/dl/${GOPACKAGE}"
 vue_changes=0
-reboot=0
 
 # Function to update from Git
 update_from_git() {
@@ -67,7 +67,7 @@ manage_docker() {
         fi
         if [ "$(whoami)" != "root" ]; then
             sudo usermod -aG docker "$(whoami)"
-            reboot=1
+            echo "Please log out and then log back in for the changes to take effect."
         fi
         echo "Docker installation and setup completed."
     fi
@@ -122,7 +122,6 @@ install_environment() {
     # Install Go
     echo -e "\n--------------------------------------------------"
     echo "Installing Go..."
-    GOURL="https://go.dev/dl/${GOPACKAGE}"
     echo "Downloading Go from ${GOURL}..."
     curl -L -s -O ${GOURL} || { echo "Failed to download Go."; exit 1; }
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $GOPACKAGE || { echo "Failed to install Go."; exit 1; }
