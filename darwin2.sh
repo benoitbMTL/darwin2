@@ -186,7 +186,7 @@ install_environment() {
     bootstrap_icons_version=$(npm list bootstrap-icons | grep bootstrap-icons | head -1 | awk '{print $2}')
     printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
     printf "Environment initialization completed successfully.\n"
-    printf "--------------------------------------------------\n"
+    echo -e "--------------------------------------------------\n"
 }
 
 # Build and serve function
