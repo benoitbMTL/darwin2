@@ -41,9 +41,6 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Perl modules
-RUN cpanm Net::SSLeay IO::Socket::SSL || { echo 'Failed to install Perl modules'; exit 1; }
-
 # Download and install Google Chrome
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && apt install -y ./google-chrome-stable_current_amd64.deb \
