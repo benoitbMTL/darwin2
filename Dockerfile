@@ -35,6 +35,8 @@ RUN apt-get update && apt-get install -y \
     libcrypt-ssleay-perl \
     libio-socket-ssl-perl \
     cpanminus \
+    build-essential \  # Includes 'make' and other compilation tools
+    libssl-dev \       # OpenSSL development packages required by Net::SSLeay
     --no-install-recommends \
     && cpanm Net::SSLeay IO::Socket::SSL \
     # Download and install Google Chrome
@@ -42,7 +44,7 @@ RUN apt-get update && apt-get install -y \
     && apt install -y ./google-chrome-stable_current_amd64.deb \
     && rm ./google-chrome-stable_current_amd64.deb \
     # Clean up
-    && apt-get purge --auto-remove -y wget gnupg cpanminus \
+    && apt-get purge --auto-remove -y wget gnupg cpanminus build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
