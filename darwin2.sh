@@ -178,7 +178,7 @@ install_environment() {
     printf "Summary of installed packages and versions:\n"
     printf "Go:\t\t\t%s\n" "$go_version"
     # Add similar printf statements for other software versions installed in this script
-    printf "Nikto version:\t\t%s\n" "$nikto_version"
+    printf "Nikto:\t\t%s\n" "$nikto_version"
     printf "Node.js:\t\t%s\n" "$node_version"
     printf "npm:\t\t\t%s\n" "$npm_version"
     # Assuming Bootstrap and Bootstrap Icons versions are fetched from package.json or similar
