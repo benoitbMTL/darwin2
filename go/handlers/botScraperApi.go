@@ -119,7 +119,7 @@ func buildHTMLTable(products []Product, quantities map[int]int) string {
 
 	// Base URL for images
     juiceshopUrl := config.CurrentConfig.JUICESHOPURL
-    baseURL := juiceshopUrl + "/assets/public/images/products"
+    baseURL := juiceshopUrl + "/assets/public/images/products/"
 
 	// Start the HTML table
 	sb.WriteString("<table style='border-collapse: collapse; width: 100%;'>")
