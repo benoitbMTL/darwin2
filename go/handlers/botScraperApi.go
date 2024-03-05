@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"crypto/tls"
+	"darwin2/config"
 
 	"github.com/labstack/echo/v4"
 )
@@ -47,11 +49,18 @@ type ProductResponse struct {
 }
 
 func HandleScrapWithApi(c echo.Context) error {
-	productURL := "http://juiceshop.canadaeast.cloudapp.azure.com/api/products"
-	quantityURL := "http://juiceshop.canadaeast.cloudapp.azure.com/api/Quantitys"
+    juiceshopUrl := config.CurrentConfig.JUICESHOPURL
+    productURL := juiceshopUrl + "/api/products"
+    quantityURL := juiceshopUrl + "/api/Quantitys"
+
+	// Create a custom HTTP client with disabled certificate checks
+	customTransport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: customTransport}
 
 	// GET PRODUCTS
-	productResp, err := http.Get(productURL)
+	productResp, err := client.Get(productURL)
 	if err != nil {
 		log.Fatal("Error fetching data:", err)
 	}
@@ -102,7 +111,8 @@ func buildHTMLTable(products []Product, quantities map[int]int) string {
 	var sb strings.Builder
 
 	// Base URL for images
-	baseURL := "http://juiceshop.canadaeast.cloudapp.azure.com/assets/public/images/products/"
+    juiceshopUrl := config.CurrentConfig.JUICESHOPURL
+    baseURL := juiceshopUrl + "/assets/public/images/products"
 
 	// Start the HTML table
 	sb.WriteString("<table style='border-collapse: collapse; width: 100%;'>")
