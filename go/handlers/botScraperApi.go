@@ -53,13 +53,12 @@ func HandleScrapWithApi(c echo.Context) error {
     productURL := juiceshopUrl + "/api/products"
     quantityURL := juiceshopUrl + "/api/Quantitys"
 
-	// Create a custom HTTP client with disabled certificate checks
+	// GET PRODUCTS
 	customTransport := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: customTransport}
 
-	// GET PRODUCTS
 	productResp, err := client.Get(productURL)
 	if err != nil {
 		log.Fatal("Error fetching data:", err)
@@ -80,17 +79,24 @@ func HandleScrapWithApi(c echo.Context) error {
 	}
 
 	// GET QUANTITIES
-	quantityResp, err := http.Get(quantityURL)
+	customTransport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: customTransport}
+
+	quantityResp, err := client.Get(quantityURL)
 	if err != nil {
-		log.Fatal("Error fetching quantity data:", err)
+		log.Fatal("Error fetching data:", err)
 	}
 	defer quantityResp.Body.Close()
 
+	// Read the response body
 	quantityBody, err := io.ReadAll(quantityResp.Body)
 	if err != nil {
 		log.Fatal("Error reading quantity response:", err)
 	}
 
+	// Unmarshal the JSON data into the QuantityResponse struct
 	var quantityResponse QuantityResponse
 	err = json.Unmarshal(quantityBody, &quantityResponse)
 	if err != nil {
@@ -103,6 +109,7 @@ func HandleScrapWithApi(c echo.Context) error {
 		productQuantityMap[quantity.ProductId] = quantity.Quantity
 	}
 
+	// Return HTML Table
 	return c.String(http.StatusOK, buildHTMLTable(productResponse.Data, productQuantityMap))
 
 }
