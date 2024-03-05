@@ -79,10 +79,10 @@ func HandleScrapWithApi(c echo.Context) error {
 	}
 
 	// GET QUANTITIES
-	customTransport := &http.Transport{
+	customTransport = &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-	client := &http.Client{Transport: customTransport}
+	client = &http.Client{Transport: customTransport}
 
 	quantityResp, err := client.Get(quantityURL)
 	if err != nil {
