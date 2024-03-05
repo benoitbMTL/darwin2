@@ -9,7 +9,7 @@ vue_changes=0
 
 # Function to update from Git
 update_from_git() {
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Fetching updates from Git..."
     git fetch || { echo "Failed to fetch updates."; exit 1; }
 
@@ -33,7 +33,7 @@ update_from_git() {
 
 # Function to build Vue.js application
 build_vue_app() {
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Building Vue.js application..."
     cd vue || exit 1
     npm install || { echo "Vue.js installation failed."; exit 1; }
@@ -43,7 +43,7 @@ build_vue_app() {
 
 # Function to build and run Go application
 serve_go_app() {
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Building and running Go server..."
     cd go || exit 1
     go build . || { echo "Go build failed."; exit 1; }
@@ -55,7 +55,7 @@ manage_docker() {
 
     # Install Docker if not present
     if ! command -v docker &> /dev/null; then
-        echo -e "\n--------------------------------------------------"
+        echo -e "\n---------------------------------------------------------------------------"
         echo "Docker is not installed. Installing Docker..."
         sudo apt-get update -y
         sudo apt-get upgrade -y
@@ -78,7 +78,7 @@ manage_docker() {
     container_name="darwin2"
     running_container=$(docker ps -q -f name=^/${container_name}$)
     if [[ -n "$running_container" ]]; then
-        echo -e "\n--------------------------------------------------"
+        echo -e "\n---------------------------------------------------------------------------"
         echo "Stopping existing Docker container..."
         docker stop "$container_name"
         echo "Removing existing Docker container..."
@@ -86,7 +86,7 @@ manage_docker() {
     fi
 
     # Build a fresh Docker image
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Building Docker image and running container..."
     docker build -t "$container_name" .
     docker run -dp 8080:8080 --name "$container_name" "$container_name"
@@ -94,20 +94,20 @@ manage_docker() {
 
 # Function to install required packages and setup the environment
 install_environment() {
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Initializing environment for the application..."
 
     # Install Linux packages
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Updating package lists..."
     sudo apt update || { echo "Failed to update package lists."; exit 1; }
 
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Installing required Linux packages..."
     sudo apt install nmap tree net-tools vim perl libnet-ssleay-perl libio-socket-ssl-perl -y || { echo "Failed to install required Linux packages."; exit 1; }
 
     # Install Nikto
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Installing Nikto..."
     cd "$SCRIPT_DIR/go" || exit 1
     if [ ! -d "nikto" ]; then
@@ -123,7 +123,7 @@ install_environment() {
     cd "$SCRIPT_DIR"
 
     # Install Go
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Installing Go..."
     echo "Downloading Go from ${GOURL}..."
     curl -L -s -O ${GOURL} || { echo "Failed to download Go."; exit 1; }
@@ -148,7 +148,7 @@ install_environment() {
 
     # Install Node.js and npm
     # https://deb.nodesource.com/
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Installing Node.js..."
     sudo apt-get update && sudo apt-get install -y ca-certificates curl gnupg
     sudo rm -f /etc/apt/keyrings/nodesource.gpg
@@ -160,7 +160,7 @@ install_environment() {
     npm_version=$(npm -v)
 
     # Install Bootstrap and Bootstrap Icons locally within the Vue project
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Installing Bootstrap and Bootstrap Icons locally..."
     cd "$SCRIPT_DIR/vue" || exit 1
     npm install bootstrap bootstrap-icons || { echo "Failed to install Bootstrap and Bootstrap Icons."; exit 1; }
@@ -168,7 +168,7 @@ install_environment() {
     bootstrap_icons_version=$(npm list bootstrap-icons | grep bootstrap-icons | head -1 | awk '{print $2}')
 
     # Setup Vue.js application
-    echo -e "\n--------------------------------------------------"
+    echo -e "\n---------------------------------------------------------------------------"
     echo "Setting up Vue.js application..."
     npm install @vue/cli || { echo "Failed to install Vue CLI."; exit 1; }
     npm install || { echo "Failed to install Vue.js application dependencies."; exit 1; }
@@ -182,7 +182,7 @@ install_environment() {
     chrome_version=$(google-chrome --version | awk '{print $3}')
 
     # Summarize installed package versions
-    printf "\n--------------------------------------------------\n"
+    printf "\n---------------------------------------------------------------------------\n"
     printf "Summary of installed packages and versions:\n"
     printf "Go:\t\t\t%s\n" "$go_version"
     # Add similar printf statements for other software versions installed in this script
@@ -194,7 +194,7 @@ install_environment() {
     printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
     printf "Google Chrome:\t\t%s\n" "$chrome_version"
     printf "Environment initialization completed successfully.\n"
-    echo -e "--------------------------------------------------\n"
+    echo -e "---------------------------------------------------------------------------\n"
 }
 
 # Build and serve function
@@ -241,6 +241,8 @@ case $1 in
         ;;
     install)
         install_environment
+        build_vue_app
+        serve_go_app
         ;;
     help)
         print_help
