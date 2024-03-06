@@ -251,8 +251,16 @@ export default {
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
+          this.showAlert = true;
+          this.alertMessage = "Configuration backed up successfully";
+          setTimeout(() => (this.showAlert = false), 5000);
         })
-        .catch((error) => console.error("Error:", error));
+        .catch((error) => {
+          console.error("Error:", error);
+          this.showAlert = true;
+          this.alertMessage = "Error during backup";
+          setTimeout(() => (this.showAlert = false), 5000);
+        });
     },
 
     onFileChange(e) {
