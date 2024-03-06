@@ -51,11 +51,11 @@
               Save
             </button>
 
-            <button @click="backupConfig" class="btn btn-warning btn-sm">Backup</button>
+            <button @click="backupConfig" class="btn btn-warning btn-sm me-2">Backup</button>
             <input type="file" @change="onFileChange" class="btn btn-info btn-sm" />
 
 
-          <button type="button" class="btn btn-info btn-sm" @click="triggerFileInput">Restore</button>
+          <button type="button" class="btn btn-info btn-sm me-2" @click="triggerFileInput">Restore</button>
           <input type="file" id="fileInput" style="display: none" @change="onFileChange" />
 
 

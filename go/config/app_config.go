@@ -92,15 +92,16 @@ func BackupConfig(c echo.Context) error {
 	defer configMutex.RUnlock()
   
 	// Serialize the CurrentConfig struct to JSON
-	jsonData, err := json.Marshal(CurrentConfig)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to serialize config")
-	}
+    formattedJSON, err := json.MarshalIndent(CurrentConfig, "", "  ")
+    if err != nil {
+        return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+    }
 
-	// Set the content disposition header for a file download
-	c.Response().Header().Set(echo.HeaderContentDisposition, `attachment; filename="config_backup.json"`)
-	return c.JSONBlob(http.StatusOK, jsonData)
+    c.Response().Header().Set(echo.HeaderContentDisposition, `attachment; filename="config_backup.json"`)
+    c.Response().Header().Set(echo.HeaderContentType, "application/json")
+    return c.Blob(http.StatusOK, "application/json", formattedJSON)
 }
+
 
 // Restore Config
 func RestoreConfig(c echo.Context) error {
