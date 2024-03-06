@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Darwin2&colon; A FortiWeb Demo Tool &#x1f680;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="darwin2-a-fortiweb-demo-tool-">Darwin2: A FortiWeb Demo Tool 🚀</h1>
+<p>Darwin2 is a demonstration tool designed to showcase the capabilities of FortiWeb and FortiWeb Cloud through a user-friendly graphical interface.</p>
+<p><img src="file:///c:\Users\bbuonassera\OneDrive - Fortinet\Documents\__Fortinet\MKDOCS\darwin2\images\fortiweb-demo-tool.png" alt="FortiWeb Demo Tool"></p>
+<ul>
+<li><a href="#features">Features</a></li>
+<li><a href="#installation-guide">Installation Guide</a>
+<ul>
+<li><a href="#option-1-installation-on-linux-">Option 1: Installation on Linux 🐧</a></li>
+<li><a href="#option-2-installation-with-docker-">Option 2: Installation with Docker 🐳</a></li>
+<li><a href="#script-options-">Script Options 🛠️</a></li>
+</ul>
+</li>
+<li><a href="#accessing-the-application">Accessing the Application</a></li>
+</ul>
+<h2 id="features">Features</h2>
+<h3 id="web-protection-">Web Protection 🛡</h3>
+<ul>
+<li><strong>Web Vulnerability Scanner</strong>: Simulate OWASP TOP 10 attacks and showcase FortiWeb's blocking techniques.</li>
+<li><strong>Traffic Generation</strong>: Generate cyber attacks from various IPs to populate FortiWeb logs and dashboards.</li>
+<li><strong>Web Attacks</strong>: Demonstrate &quot;user track&quot; by generating specific attacks with usernames in attack logs.</li>
+<li><strong>Machine Learning &amp; Zero-Day Attacks</strong>: Train FortiWeb's ML model with legitimate traffic and block zero-day attacks.</li>
+<li><strong>Cookie Security</strong>: Test cookie manipulation for privilege escalation and demonstrate blocking capabilities.</li>
+<li><strong>Credential Stuffing Defense</strong>: Utilize stolen account credentials to demonstrate blocking with our reputation database.</li>
+</ul>
+<h3 id="bot-mitigation-">Bot Mitigation 🤖</h3>
+<ul>
+<li><strong>Known Bots</strong>: Protect against malicious bots while ensuring critical traffic flow.</li>
+<li><strong>Biometrics-Based Detection</strong>: Identify request origins using client events like mouse movements and keyboard activity.</li>
+<li><strong>Bot Deception</strong>: Trap malicious bots with bot deception policies.</li>
+<li><strong>Threshold-Based Detection</strong>: Differentiate between human and bot requests based on behavior.</li>
+<li><strong>Machine Learning Based Bot Detection</strong>: Extract data via web scraping to train ML models for bot detection.</li>
+</ul>
+<h3 id="api-protection-">API Protection 🔐</h3>
+<ul>
+<li><strong>API Requests</strong>: Use Petstore3 for demonstrating FortiWeb's handling of legitimate or malicious API requests.</li>
+<li><strong>API Traffic Generation</strong>: Simulate API traffic to build ML models and demonstrate zero-day attack protection.</li>
+</ul>
+<h3 id="rest-api-️">REST API ⚙️</h3>
+<ul>
+<li><strong>Quickly manage a speedtest application</strong> using primary API tasks to verify application accessibility.</li>
+</ul>
+<h2 id="installation-guide">Installation Guide</h2>
+<p>Darwin2 uses GOLANG and VUEJS frameworks. The <code>darwin2.sh</code> utility script facilitates the installation of all necessary components.</p>
+<h3 id="option-1-installation-on-linux-">Option 1: Installation on Linux 🐧</h3>
+<p><strong>Prerequisites</strong></p>
+<p>The <code>darwin2.sh</code> script automatically installs all necessary components for the application to function correctly, including:</p>
+<ul>
+<li>✅ Git</li>
+<li>✅ Go</li>
+<li>✅ Nikto</li>
+<li>✅ Node.js</li>
+<li>✅ Npm</li>
+<li>✅ Bootstrap</li>
+<li>✅ Bootstrap Icons</li>
+</ul>
+<p>Clone the Darwin2 repository, navigate to the directory, run the installation script, and then run the application with the following commands:</p>
+<pre><code class="language-bash">git <span class="hljs-built_in">clone</span> https://github.com/benoitbMTL/darwin2.git
+<span class="hljs-built_in">cd</span> darwin2
+./darwin2.sh install
+./darwin2.sh run
+</code></pre>
+<h3 id="option-2-installation-with-docker-">Option 2: Installation with Docker 🐳</h3>
+<p><strong>Prerequisites</strong></p>
+<p>✅ Docker : the <code>darwin2.sh</code> script automatically installs Docker if it's not already installed.</p>
+<p>Clone the Darwin2 repository, navigate to the directory, and then run the Docker script with the following commands:</p>
+<pre><code class="language-bash">git <span class="hljs-built_in">clone</span> https://github.com/benoitbMTL/darwin2.git
+<span class="hljs-built_in">cd</span> darwin2
+./darwin2.sh docker
+</code></pre>
+<h3 id="script-options-️">Script Options 🛠️</h3>
+<p>The <code>darwin2.sh</code> script supports several options for managing the application:</p>
+<ul>
+<li><strong>run</strong>: Build and serve the application.</li>
+<li><strong>docker</strong>: Manage Docker container for the application.</li>
+<li><strong>update</strong>: Update the application from Git.</li>
+<li><strong>force</strong>: Force build and serve the application.</li>
+<li><strong>install</strong>: Install and initialize environment to run the application.</li>
+<li><strong>help</strong>: Display help message with usage instructions.</li>
+</ul>
+<h2 id="accessing-the-application">Accessing the Application</h2>
+<p>⚠️ After successfully installing the demo tool, you can access it by navigating to <code>http://&lt;Machine IP&gt;:8080</code> in your web browser. Before using the application, ensure that you have configured your applications by going to <code>System &gt; Configuration</code> in the menu. This step is crucial for the proper operation of the demo tool.</p>
+
+            
+            
+        </body>
+        </html>
