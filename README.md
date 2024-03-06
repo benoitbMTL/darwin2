@@ -1,152 +1,107 @@
-# Darwin2: A FortiWeb Demo Tool
+# Darwin2: A FortiWeb Demo Tool 🚀
+
+Darwin2 is a demonstration tool designed to showcase the capabilities of FortiWeb and FortiWeb Cloud through a user-friendly graphical interface.
 
 ![FortiWeb Demo Tool](images/fortiweb-demo-tool.png)
 
-Darwin2 is a demonstration tool designed to showcase the capabilities of FortiWeb and FortiWeb Cloud through a user-friendly graphical interface. This tool facilitates demonstrations of web protection, bot mitigation, API protection, Machine Learning, and the use of REST APIs for managing web applications.
+- [Darwin2: A FortiWeb Demo Tool 🚀](#darwin2-a-fortiweb-demo-tool-)
+  - [Features](#features)
+    - [Web Protection 🛡](#web-protection-)
+    - [Bot Mitigation 🤖](#bot-mitigation-)
+    - [API Protection 🔐](#api-protection-)
+    - [REST API ⚙️](#rest-api-️)
+  - [Installation Guide](#installation-guide)
+    - [Installation Options](#installation-options)
+      - [Option 1: Installation on Linux 🐧](#option-1-installation-on-linux-)
+      - [Option 2: Installation with Docker 🐳](#option-2-installation-with-docker-)
+  - [Script Options 🛠️](#script-options-️)
 
 ## Features
 
-### Web Protection
+### Web Protection 🛡
 
-- **Web Vulnerability Scanner**: Simulate OWASP TOP 10 attacks and demonstrate FortiWeb's blocking techniques.
-- **Traffic Generation**: Generate random cyber attacks from various IPs to populate FortiWeb logs and FortiView dashboards.
-- **Web Attacks**: Generate specific attacks to demonstrate "user track" with usernames in attack logs.
-- **Machine Learning & Zero-Day Attacks**: Simulate legitimate traffic to train FortiWeb's ML model and block zero-day attacks, showcasing ML logs.
-- **Cookie Security**: Manipulate cookies to attempt privilege escalation on an application and demonstrate blocking.
-- **Credential Stuffing Defense**: Use stolen account credentials to demonstrate blocking capabilities with our reputation database.
+- **Web Vulnerability Scanner**: Simulate OWASP TOP 10 attacks and showcase FortiWeb's blocking techniques.
+- **Traffic Generation**: Generate cyber attacks from various IPs to populate FortiWeb logs and dashboards.
+- **Web Attacks**: Demonstrate "user track" by generating specific attacks with usernames in attack logs.
+- **Machine Learning & Zero-Day Attacks**: Train FortiWeb's ML model with legitimate traffic and block zero-day attacks.
+- **Cookie Security**: Test cookie manipulation for privilege escalation and demonstrate blocking capabilities.
+- **Credential Stuffing Defense**: Utilize stolen account credentials to demonstrate blocking with our reputation database.
 
-### Bot Mitigation
+### Bot Mitigation 🤖
 
-- **Known Bots**: Protect against malicious bots without affecting critical traffic flow.
-- **Biometrics-Based Detection**: Determine human or bot origin of requests through client events like mouse movement and keyboard activity.
-- **Bot Deception**: Configure bot deception policies to trap malicious bots.
-- **Threshold-Based Detection**: Judge requests as human or bot based on suspicious behaviors.
-- **Machine Learning Based Bot Detection**: Use web scraping to extract data and train ML models for bot detection.
+- **Known Bots**: Protect against malicious bots while ensuring critical traffic flow.
+- **Biometrics-Based Detection**: Identify request origins using client events like mouse movements and keyboard activity.
+- **Bot Deception**: Trap malicious bots with bot deception policies.
+- **Threshold-Based Detection**: Differentiate between human and bot requests based on behavior.
+- **Machine Learning Based Bot Detection**: Extract data via web scraping to train ML models for bot detection.
 
-### API Protection
+### API Protection 🔐
 
-- **API Requests**: Leverage Petstore3 for legitimate or malicious API requests to demonstrate FortiWeb capabilities.
-- **API Traffic Generation**: Simulate traffic to build ML models and demonstrate zero-day attack protection.
+- **API Requests**: Use Petstore3 for demonstrating FortiWeb's handling of legitimate or malicious API requests.
+- **API Traffic Generation**: Simulate API traffic to build ML models and demonstrate zero-day attack protection.
 
-### REST API
+### REST API ⚙️
 
-Quickly onboard and decommission applications with primary API tasks, verifying application accessibility.
+- **Quickly manage a speedtest application** using primary API tasks to verify application accessibility.
 
 ## Installation Guide
 
-Darwin2 leverages the GOLANG and VUEJS frameworks. To facilitate its implementation, the `update.sh` utility script can be used.
+Darwin2 utilizes the GOLANG and VUEJS frameworks, with the `darwin2.sh` utility script facilitating installation and management.
 
-### Usage of `update.sh`
+### Installation Options
 
-```plaintext
-Usage: update.sh {run|docker|update}
-```
+#### Option 1: Installation on Linux 🐧
 
-### Option 1: Installation on Linux
+**Prerequisites**
 
-#### Prerequisites
+The `darwin2.sh` script automatically installs all necessary components for the application to function correctly, including:
 
-Before proceeding with the installation, ensure the following prerequisites are met:
+✅ Docker (for Docker installation option)
+✅ Git
+✅ Go
+✅ Nikto
+✅ Node.js
+✅ Npm
+✅ Bootstrap
+✅ Bootstrap Icons
 
-```bash
-# Update your package lists
-sudo apt update
+1. Clone the Darwin2 repository and navigate to the directory:
+   ```bash
+   git clone https://github.com/benoitbMTL/darwin2.git
+   cd darwin2
+   ```
+2. Run the installation script:
+   ```bash
+   ./darwin2.sh install
+   ```
+3. To build and serve the application:
+   ```bash
+   ./darwin2.sh run
+   ```
 
-# Install Nikto
-sudo apt install nikto -y
+#### Option 2: Installation with Docker 🐳
 
-# Install Go
-wget https://go.dev/dl/go1.22.0.linux-amd64.tar.gz
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz
-export PATH=$PATH:/usr/local/go/bin
-go version
+**Prerequisites**
 
-# Install Nodejs
-curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
-sudo apt-get update && sudo apt-get install nodejs -y
-node -v
+✅ Docker : the `darwin2.sh` script automatically installs Docker if it's not already installed.
 
-# Install npm
-sudo npm install -g npm@latest
+1. Clone the Darwin2 repository and navigate to the directory:
+   ```bash
+   git clone https://github.com/benoitbMTL/darwin2.git
+   cd darwin2
+   ```
+2. Run the Docker script:
+   ```bash
+   ./darwin2.sh docker
+   ```
 
-# Install Bootstrap and Bootstrap Icons
-npm install bootstrap
-npm install bootstrap-icons
+## Script Options 🛠️
 
-# Download & Prepare the Darwin2 environment
-git clone https://github.com/benoitbMTL/darwin2.git
-cd darwin2
-npm install @vue/cli
-npm install
-```
+The `darwin2.sh` script supports several options for managing the application:
 
-#### Running Darwin2 on Linux
-
-Follow these steps run Darwin2:
-
-```bash
-./update.sh run
-```
-
-![Update Run](images/update-run.png)
-
-### Option 2: Installation with Docker
-
-#### Prerequisites for Docker
-
-Ensure Docker is installed on your system. Follow a quick installation guide for Docker and verify its installation:
-
-Below is a code block detailing the steps to install Docker on Ubuntu. This guide assumes you're using a recent version of Ubuntu. 
-
-```bash
-# Update existing list of packages
-sudo apt update
-
-# Install prerequisite packages which let apt use packages over HTTPS
-sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
-
-# Add the GPG key for the official Docker repository to your system
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-
-# Add the Docker repository to APT sources
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-# Update the package database with Docker packages from the newly added repo
-sudo apt update
-
-# Make sure you are about to install from the Docker repo instead of the default Ubuntu repo
-apt-cache policy docker-ce
-
-# Finally, install Docker
-sudo apt install docker-ce -y
-
-# Docker should now be installed, the daemon started, and the process enabled to start on boot
-# Check that it's running
-sudo systemctl status docker
-
-# Executing the Docker command without sudo (Optional)
-# Add your username to the docker group
-sudo usermod -aG docker ${USER}
-
-# Apply the new group membership (You may need to logout & login again to apply the changes properly)
-su - ${USER}
-
-# Confirm that your user is added to the docker group
-id -nG
-```
-
-This script includes the installation of Docker on Ubuntu, setting up the Docker repository, installing Docker CE (Community Edition), and ensuring Docker starts on boot. The optional step at the end allows you to run Docker commands without prefixing them with `sudo`.
-
-#### Running Darwin2 with Docker
-
-To install and run Darwin2 using Docker, execute the following:
-
-```bash
-git clone https://github.com/benoitbMTL/darwin2.git
-cd darwin2
-./update.sh docker
-```
-
-![Update Docker](images/update-docker.png)
-```
+- **run**: Build and serve the application.
+- **docker**: Manage Docker container for the application.
+- **update**: Update the application from Git.
+- **force**: Force build and serve the application.
+- **install**: Install and initialize environment to run the application.
+- **help**: Display help message with usage instructions.
