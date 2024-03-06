@@ -60,19 +60,14 @@ The `darwin2.sh` script automatically installs all necessary components for the 
 - ✅ Bootstrap
 - ✅ Bootstrap Icons
 
-1. Clone the Darwin2 repository and navigate to the directory:
-   ```bash
-   git clone https://github.com/benoitbMTL/darwin2.git
-   cd darwin2
-   ```
-2. Run the installation script:
-   ```bash
-   ./darwin2.sh install
-   ```
-3. To build and serve the application:
-   ```bash
-   ./darwin2.sh run
-   ```
+Clone the Darwin2 repository, navigate to the directory, run the installation script, and then run the application with the following commands:
+
+```bash
+git clone https://github.com/benoitbMTL/darwin2.git
+cd darwin2
+./darwin2.sh install
+./darwin2.sh run
+```
 
 #### Option 2: Installation with Docker 🐳
 
@@ -80,15 +75,13 @@ The `darwin2.sh` script automatically installs all necessary components for the 
 
 ✅ Docker : the `darwin2.sh` script automatically installs Docker if it's not already installed.
 
-1. Clone the Darwin2 repository and navigate to the directory:
-   ```bash
-   git clone https://github.com/benoitbMTL/darwin2.git
-   cd darwin2
-   ```
-2. Run the Docker script:
-   ```bash
-   ./darwin2.sh docker
-   ```
+Clone the Darwin2 repository, navigate to the directory, and then run the Docker script with the following commands:
+
+```bash
+git clone https://github.com/benoitbMTL/darwin2.git
+cd darwin2
+./darwin2.sh docker
+```
 
 ## Script Options 🛠️
 
@@ -103,4 +96,4 @@ The `darwin2.sh` script supports several options for managing the application:
 
 ## Accessing the Application
 
-After successfully installing the demo tool, you can access it by navigating to `http://<Machine IP>:8080` in your web browser. Before using the application, ensure that you have configured your applications by going to `System > Configuration` in the menu. This step is crucial for the proper operation of the demo tool.
+⚠️ After successfully installing the demo tool, you can access it by navigating to `http://<Machine IP>:8080` in your web browser. Before using the application, ensure that you have configured your applications by going to `System > Configuration` in the menu. This step is crucial for the proper operation of the demo tool.
