@@ -47,16 +47,32 @@
 
           <!-- Buttons -->
           <div>
+            <button type="submit" class="btn btn-primary btn-sm me-2">
+              Save
+            </button>
 
-            <button type="submit" class="btn btn-primary btn-sm me-2">Save</button>
+            <button @click="backupConfig" class="btn btn-primary btn-sm me-2">
+              Backup
+            </button>
 
-            <button @click="backupConfig" class="btn btn-primary btn-sm me-2">Backup</button>
-            
-            <button type="button" class="btn btn-primary btn-sm me-2" @click="triggerFileInput">Restore</button>
-            <input type="file" ref="fileInput" style="display: none" @change="onFileChange" />
+            <button
+              type="button"
+              class="btn btn-primary btn-sm me-2"
+              @click="triggerFileInput">
+              Restore
+            </button>
+            <input
+              type="file"
+              ref="fileInput"
+              style="display: none"
+              @change="onFileChange" />
 
-            <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">Reset to Default</button>
-
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              @click="resetConfig">
+              Reset to Default
+            </button>
           </div>
         </div>
       </div>
@@ -217,10 +233,9 @@ export default {
     };
   },
   methods: {
-
-      triggerFileInput() {
-    this.$refs.fileInput.click();
-  },
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
 
     backupConfig() {
       fetch("/backup", {
@@ -254,25 +269,25 @@ export default {
               },
               body: JSON.stringify(config),
             })
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-              return response.json();
-            })
-            .then(data => {
-              console.log("Success:", data);
-              // Mise à jour de l'interface utilisateur ou autre action post-restauration
-              this.showAlert = true;
-              this.alertMessage = "Configuration restored successfully.";
-              setTimeout(() => (this.showAlert = false), 5000);
-            })
-            .catch(error => {
-              console.error("Error during restore:", error);
-              this.showAlert = true;
-              this.alertMessage = "Error restoring configuration.";
-              setTimeout(() => (this.showAlert = false), 5000);
-            });
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Network response was not ok");
+                }
+                return response.json();
+              })
+              .then((data) => {
+                console.log("Success:", data);
+                this.showAlert = true;
+                this.alertMessage = "Configuration restored successfully.";
+                setTimeout(() => (this.showAlert = false), 5000);
+                this.fetchConfig();
+              })
+              .catch((error) => {
+                console.error("Error during restore:", error);
+                this.showAlert = true;
+                this.alertMessage = "Error restoring configuration.";
+                setTimeout(() => (this.showAlert = false), 5000);
+              });
           } catch (error) {
             console.error("Error parsing file:", error);
             this.showAlert = true;
@@ -282,6 +297,23 @@ export default {
         };
         reader.readAsText(file);
       }
+    },
+
+    fetchConfig() {
+      fetch("/config")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          this.config = data;
+          console.log("Configuration updated:", data);
+        })
+        .catch((error) => {
+          console.error("Error fetching updated configuration:", error);
+        });
     },
 
     submitForm() {
@@ -310,6 +342,7 @@ export default {
           console.error("Error:", error);
         });
     },
+
     resetConfig() {
       //fetch(`${process.env.VUE_APP_BACKEND_URL}/reset`)
       fetch("/reset")
@@ -331,6 +364,7 @@ export default {
         });
     },
   },
+
   mounted() {
     // Fetch current configuration from the Go backend
     console.log(
@@ -355,8 +389,6 @@ export default {
       });
   },
 };
-
-
 </script>
 <style>
 .nav-conf-item a {
