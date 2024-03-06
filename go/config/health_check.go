@@ -66,7 +66,7 @@ func HandleHealthCheck(c echo.Context) error {
 	}
 
 	// Handle FortiWeb Management IP/FQDN separately to add scheme and port
-	fwbManagementURL := "https://" + CurrentConfig.FWBMGTIP + ":" CurrentConfig.FWBMGTPORT
+	fwbManagementURL := "https://" + CurrentConfig.FWBMGTIP + ":" + CurrentConfig.FWBMGTPORT
 	res, err := client.Get(fwbManagementURL)
 	if err != nil {
 		shortErr := strings.TrimPrefix(err.Error(), fmt.Sprintf(`Get "%s": `, fwbManagementURL))
