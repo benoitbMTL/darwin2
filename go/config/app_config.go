@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"net/http"
 	"sync"
 
@@ -87,10 +88,18 @@ func ResetConfig(c echo.Context) error {
 
 // Backup Config
 func BackupConfig(c echo.Context) error {
-  configMutex.RLock()
-  defer configMutex.RUnlock()
-  c.Response().Header().Set(echo.HeaderContentDisposition, `attachment; filename="config_backup.json"`)
-  return c.JSONBlob(http.StatusOK, []byte(CurrentConfig))
+	configMutex.RLock()
+	defer configMutex.RUnlock()
+  
+	// Serialize the CurrentConfig struct to JSON
+	jsonData, err := json.Marshal(CurrentConfig)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to serialize config")
+	}
+
+	// Set the content disposition header for a file download
+	c.Response().Header().Set(echo.HeaderContentDisposition, `attachment; filename="config_backup.json"`)
+	return c.JSONBlob(http.StatusOK, jsonData)
 }
 
 // Restore Config
