@@ -47,24 +47,17 @@
 
           <!-- Buttons -->
           <div>
-            <button type="submit" class="btn btn-primary btn-sm me-2">
-              Save
-            </button>
+            
+            <button type="submit" class="btn btn-primary btn-sm me-2">Save</button>
 
-            <button @click="backupConfig" class="btn btn-warning btn-sm me-2">Backup</button>
+            <button @click="backupConfig" class="btn btn-primary btn-sm me-2">Backup</button>
             <input type="file" @change="onFileChange" class="btn btn-info btn-sm" />
 
+            <button type="button" class="btn btn-primary btn-sm btn-restore me-2" @click="triggerFileInput">Restore</button>
+            <input type="file" ref="fileInput" style="display: none" @change="onFileChange" />
 
-          <button type="button" class="btn btn-info btn-sm me-2" @click="triggerFileInput">Restore</button>
-          <input type="file" id="fileInput" style="display: none" @change="onFileChange" />
+            <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">Reset to Default</button>
 
-
-            <button
-              type="button"
-              class="btn btn-secondary btn-sm"
-              @click="resetConfig">
-              Reset to Default
-            </button>
           </div>
         </div>
       </div>
@@ -352,4 +345,13 @@ export default {
   text-decoration: none;
   /* Removes the underline */
 }
+
+<style>
+  .btn-restore {
+    background-color: transparent; /* Mettez la couleur de fond souhaitée ou transparent */
+    border: none; /* Enlève la bordure si nécessaire */
+    /* Ajoutez d'autres styles selon vos préférences */
+  }
+</style>
+
 </style>
