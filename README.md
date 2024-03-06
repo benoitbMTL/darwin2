@@ -4,17 +4,13 @@ Darwin2 is a demonstration tool designed to showcase the capabilities of FortiWe
 
 ![FortiWeb Demo Tool](images/fortiweb-demo-tool.png)
 
-- [Darwin2: A FortiWeb Demo Tool 🚀](#darwin2-a-fortiweb-demo-tool-)
   - [Features](#features)
-    - [Web Protection 🛡](#web-protection-)
-    - [Bot Mitigation 🤖](#bot-mitigation-)
-    - [API Protection 🔐](#api-protection-)
-    - [REST API ⚙️](#rest-api-️)
   - [Installation Guide](#installation-guide)
     - [Installation Options](#installation-options)
-      - [Option 1: Installation on Linux 🐧](#option-1-installation-on-linux-)
-      - [Option 2: Installation with Docker 🐳](#option-2-installation-with-docker-)
-  - [Script Options 🛠️](#script-options-️)
+      - [Option 1: Installation on Linux 🐧](#option-1-installation-on-linux)
+      - [Option 2: Installation with Docker 🐳](#option-2-installation-with-docker)
+  - [Script Options 🛠️](#script-options)
+  - [Accessing the Application](#accessing-the-application)
 
 ## Features
 
@@ -56,21 +52,13 @@ Darwin2 uses GOLANG and VUEJS frameworks. The `darwin2.sh` utility script facili
 
 The `darwin2.sh` script automatically installs all necessary components for the application to function correctly, including:
 
-✅ Docker (for Docker installation option)
-
-✅ Git
-
-✅ Go
-
-✅ Nikto
-
-✅ Node.js
-
-✅ Npm
-
-✅ Bootstrap
-
-✅ Bootstrap Icons
+- ✅ Git
+- ✅ Go
+- ✅ Nikto
+- ✅ Node.js
+- ✅ Npm
+- ✅ Bootstrap
+- ✅ Bootstrap Icons
 
 1. Clone the Darwin2 repository and navigate to the directory:
    ```bash
@@ -112,3 +100,7 @@ The `darwin2.sh` script supports several options for managing the application:
 - **force**: Force build and serve the application.
 - **install**: Install and initialize environment to run the application.
 - **help**: Display help message with usage instructions.
+
+## Accessing the Application
+
+After successfully installing the demo tool, you can access it by navigating to `http://<Machine IP>:8080` in your web browser. Before using the application, ensure that you have configured your applications by going to `System > Configuration` in the menu. This step is crucial for the proper operation of the demo tool.
