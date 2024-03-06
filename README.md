@@ -6,10 +6,9 @@ Darwin2 is a demonstration tool designed to showcase the capabilities of FortiWe
 
   - [Features](#features)
   - [Installation Guide](#installation-guide)
-    - [Installation Options](#installation-options)
-      - [Option 1: Installation on Linux 🐧](#option-1-installation-on-linux)
-      - [Option 2: Installation with Docker 🐳](#option-2-installation-with-docker)
-  - [Script Options 🛠️](#script-options)
+    - [Option 1: Installation on Linux 🐧](#option-1-installation-on-linux-)
+    - [Option 2: Installation with Docker 🐳](#option-2-installation-with-docker-)
+  - [Script Options 🛠️](#script-options-)
   - [Accessing the Application](#accessing-the-application)
 
 ## Features
@@ -44,9 +43,7 @@ Darwin2 is a demonstration tool designed to showcase the capabilities of FortiWe
 
 Darwin2 uses GOLANG and VUEJS frameworks. The `darwin2.sh` utility script facilitates the installation of all necessary components.
 
-### Installation Options
-
-#### Option 1: Installation on Linux 🐧
+### Option 1: Installation on Linux 🐧
 
 **Prerequisites**
 
@@ -69,7 +66,7 @@ cd darwin2
 ./darwin2.sh run
 ```
 
-#### Option 2: Installation with Docker 🐳
+### Option 2: Installation with Docker 🐳
 
 **Prerequisites**
 
