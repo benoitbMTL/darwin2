@@ -16,20 +16,19 @@ import (
 
 func HandleTrafficGenerator(c echo.Context) error {
 
-	dvwaHost := config.CurrentConfig.DVWAHOST
+	dvwaURL := config.CurrentConfig.DVWAURL
 
-	// Test if dvwaHost is responding on HTTP port 443
+	// Test if DVWA is responding
 	client := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 3 * time.Second,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
 	}
 
-	// Test if dvwaHost is responding on HTTPS port 443
-	_, err := client.Get("https://" + dvwaHost)
+	_, err := client.Get(dvwaURL)
 	if err != nil {
-		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("DVWA Host (%s) is not responding on HTTPS port 443: %s", dvwaHost, err.Error()))
+		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("DVWA (%s) is not responding: %s", dvwaURL, err.Error()))
 	}
 
 	_, err = exec.LookPath("perl")
@@ -56,7 +55,7 @@ func HandleTrafficGenerator(c echo.Context) error {
 		// Construct the nikto command
 		cmd := exec.Command(
 			"perl", "nikto/program/nikto.pl",
-			"-host", dvwaHost,
+			"-host", dvwaURL,
 			"-ask", "no",
 			"-followredirects",
 			"-maxtime", "60s",

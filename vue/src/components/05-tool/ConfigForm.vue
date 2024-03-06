@@ -89,12 +89,12 @@
             v-model="config.DVWAURL" />
         </div>
         <div class="mb-3">
-          <label for="dvwaHost" class="form-label">DVWA Host</label>
+          <label for="bankUrl" class="form-label">Bank URL</label>
           <input
             type="text"
             class="form-control"
-            id="dvwaHost"
-            v-model="config.DVWAHOST" />
+            id="bankUrl"
+            v-model="config.BANKURL" />
         </div>
         <div class="mb-3">
           <label for="juiceShopUrl" class="form-label">Juice Shop URL</label>
@@ -105,12 +105,12 @@
             v-model="config.JUICESHOPURL" />
         </div>
         <div class="mb-3">
-          <label for="bankUrl" class="form-label">Bank URL</label>
+          <label for="petstoreUrl" class="form-label">Petstore URL</label>
           <input
             type="text"
             class="form-control"
-            id="bankUrl"
-            v-model="config.BANKURL" />
+            id="petstoreUrl"
+            v-model="config.PETSTOREURL" />
         </div>
         <div class="mb-3">
           <label for="speedtestUrl" class="form-label">Speedtest URL</label>
@@ -120,35 +120,30 @@
             id="speedtestUrl"
             v-model="config.SPEEDTESTURL" />
         </div>
-        <div class="mb-3">
-          <label for="petstoreUrl" class="form-label">Petstore URL</label>
-          <input
-            type="text"
-            class="form-control"
-            id="petstoreUrl"
-            v-model="config.PETSTOREURL" />
-        </div>
       </div>
 
       <!-- REST API Section -->
       <div class="card-body" v-if="activeTab === 'restApi'">
         <!-- REST API Form Fields -->
+
         <div class="mb-3">
-          <label for="usernameApi" class="form-label">Username API</label>
+          <label for="usernameApi" class="form-label">API Username</label>
           <input
             type="text"
             class="form-control"
             id="usernameApi"
             v-model="config.USERNAMEAPI" />
         </div>
+
         <div class="mb-3">
-          <label for="passwordApi" class="form-label">Password API</label>
+          <label for="passwordApi" class="form-label">API Password</label>
           <input
             type="text"
             class="form-control"
             id="passwordApi"
             v-model="config.PASSWORDAPI" />
         </div>
+
         <div class="mb-3">
           <label for="vdomApi" class="form-label">VDOM API</label>
           <input
@@ -160,7 +155,7 @@
 
         <div class="mb-3">
           <label for="fwbMgtIp" class="form-label"
-            >FortiWeb Management IP</label
+            >FortiWeb Management IP/FQDN</label
           >
           <input
             type="text"
@@ -171,7 +166,7 @@
 
         <div class="mb-3">
           <label for="fwbMgtPort" class="form-label"
-            >FortiWeb Management PORT</label
+            >FortiWeb Management Port</label
           >
           <input
             type="text"
@@ -217,11 +212,10 @@ export default {
       alertMessage: "",
       config: {
         DVWAURL: "",
-        DVWAHOST: "",
-        JUICESHOPURL: "",
         BANKURL: "",
-        SPEEDTESTURL: "",
+        JUICESHOPURL: "",
         PETSTOREURL: "",
+        SPEEDTESTURL: "",
         USERNAMEAPI: "",
         PASSWORDAPI: "",
         VDOMAPI: "",

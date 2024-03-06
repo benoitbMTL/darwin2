@@ -11,11 +11,10 @@ import (
 // AppConfig defines the structure for your application configuration
 type AppConfig struct {
 	DVWAURL      string
-	DVWAHOST     string
-	JUICESHOPURL string
 	BANKURL      string
-	SPEEDTESTURL string
+	JUICESHOPURL string
 	PETSTOREURL  string
+	SPEEDTESTURL string
 	USERNAMEAPI  string
 	PASSWORDAPI  string
 	VDOMAPI      string
@@ -41,11 +40,10 @@ func Initialize() {
 
 	DefaultConfig = AppConfig{
 		DVWAURL:      "https://dvwa.canadaeast.cloudapp.azure.com",
-		DVWAHOST:     "dvwa.canadaeast.cloudapp.azure.com",
-		JUICESHOPURL: "https://juiceshop.canadaeast.cloudapp.azure.com",
 		BANKURL:      "https://dvwa.canadaeast.cloudapp.azure.com/bank.html",
-		SPEEDTESTURL: "https://speedtest.canadaeast.cloudapp.azure.com",
+		JUICESHOPURL: "https://juiceshop.canadaeast.cloudapp.azure.com",
 		PETSTOREURL:  "https://petstore3.canadaeast.cloudapp.azure.com/api/v3/pet",
+		SPEEDTESTURL: "https://speedtest.canadaeast.cloudapp.azure.com",
 		USERNAMEAPI:  "userapi",
 		PASSWORDAPI:  "fortinet123!",
 		VDOMAPI:      "root",
