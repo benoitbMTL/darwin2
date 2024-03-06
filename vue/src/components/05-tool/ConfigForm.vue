@@ -245,20 +245,40 @@ export default {
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          const config = JSON.parse(e.target.result);
-          fetch("/restore", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(config),
-          })
-            .then((response) => response.json())
-            .then((data) => {
+          try {
+            const config = JSON.parse(e.target.result);
+            fetch("/restore", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(config),
+            })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then(data => {
               console.log("Success:", data);
               // Mise à jour de l'interface utilisateur ou autre action post-restauration
+              this.showAlert = true;
+              this.alertMessage = "Configuration restored successfully.";
+              setTimeout(() => (this.showAlert = false), 5000);
             })
-            .catch((error) => console.error("Error:", error));
+            .catch(error => {
+              console.error("Error during restore:", error);
+              this.showAlert = true;
+              this.alertMessage = "Error restoring configuration.";
+              setTimeout(() => (this.showAlert = false), 5000);
+            });
+          } catch (error) {
+            console.error("Error parsing file:", error);
+            this.showAlert = true;
+            this.alertMessage = "Error parsing configuration file.";
+            setTimeout(() => (this.showAlert = false), 5000);
+          }
         };
         reader.readAsText(file);
       }
