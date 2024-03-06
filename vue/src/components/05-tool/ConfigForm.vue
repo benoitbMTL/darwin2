@@ -47,7 +47,7 @@
 
           <!-- Buttons -->
           <div>
-            
+
             <button type="submit" class="btn btn-primary btn-sm me-2">Save</button>
 
             <button @click="backupConfig" class="btn btn-primary btn-sm me-2">Backup</button>
@@ -346,12 +346,10 @@ export default {
   /* Removes the underline */
 }
 
-<style>
   .btn-restore {
     background-color: transparent; /* Mettez la couleur de fond souhaitée ou transparent */
     border: none; /* Enlève la bordure si nécessaire */
     /* Ajoutez d'autres styles selon vos préférences */
   }
-</style>
 
 </style>
