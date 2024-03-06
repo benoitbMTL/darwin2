@@ -84,3 +84,24 @@ func ResetConfig(c echo.Context) error {
 	CurrentConfig = DefaultConfig
 	return c.JSON(http.StatusOK, CurrentConfig)
 }
+
+// Backup Config
+func BackupConfig(c echo.Context) error {
+  configMutex.RLock()
+  defer configMutex.RUnlock()
+  c.Response().Header().Set(echo.HeaderContentDisposition, `attachment; filename="config_backup.json"`)
+  return c.JSONBlob(http.StatusOK, []byte(CurrentConfig))
+}
+
+// Restore Config
+func RestoreConfig(c echo.Context) error {
+  var newConfig AppConfig
+  if err := c.Bind(&newConfig); err != nil {
+    return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+  }
+
+  configMutex.Lock()
+  defer configMutex.Unlock()
+  CurrentConfig = newConfig
+  return c.JSON(http.StatusOK, newConfig)
+}

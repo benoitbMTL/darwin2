@@ -48,8 +48,17 @@
           <!-- Buttons -->
           <div>
             <button type="submit" class="btn btn-primary btn-sm me-2">
-              Save Configuration
+              Save
             </button>
+
+            <button @click="backupConfig" class="btn btn-warning btn-sm">Backup</button>
+            <input type="file" @change="onFileChange" class="btn btn-info btn-sm" />
+
+
+          <button type="button" class="btn btn-info btn-sm" @click="triggerFileInput">Restore</button>
+          <input type="file" id="fileInput" style="display: none" @change="onFileChange" />
+
+
             <button
               type="button"
               class="btn btn-secondary btn-sm"
@@ -216,10 +225,57 @@ export default {
     };
   },
   methods: {
+
+      triggerFileInput() {
+    this.$refs.fileInput.click();
+  },
+
+    backupConfig() {
+      fetch("/backup", {
+        method: "GET",
+      })
+        .then((response) => response.blob())
+        .then((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.style.display = "none";
+          a.href = url;
+          a.download = "config_backup.json";
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => console.error("Error:", error));
+    },
+
+    onFileChange(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const config = JSON.parse(e.target.result);
+          fetch("/restore", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(config),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Success:", data);
+              // Mise à jour de l'interface utilisateur ou autre action post-restauration
+            })
+            .catch((error) => console.error("Error:", error));
+        };
+        reader.readAsText(file);
+      }
+    },
+
     submitForm() {
       // Implement API call to update configuration
-      //fetch(`${process.env.VUE_APP_BACKEND_URL}/config`, { 
-      fetch("/config", { 
+      //fetch(`${process.env.VUE_APP_BACKEND_URL}/config`, {
+      fetch("/config", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -265,9 +321,11 @@ export default {
   },
   mounted() {
     // Fetch current configuration from the Go backend
-console.log(`Making a GET request to ${process.env.VUE_APP_BACKEND_URL}/config`);
-    //fetch(`${process.env.VUE_APP_BACKEND_URL}/config`) 
-    fetch("/config") 
+    console.log(
+      `Making a GET request to ${process.env.VUE_APP_BACKEND_URL}/config`
+    );
+    //fetch(`${process.env.VUE_APP_BACKEND_URL}/config`)
+    fetch("/config")
       .then((response) => {
         console.log("HTTP return code:", response.status); // Print HTTP return code
 

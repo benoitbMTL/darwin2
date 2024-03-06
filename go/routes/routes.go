@@ -55,6 +55,8 @@ func Configure(e *echo.Echo) {
 	// System
 	e.GET("/config", config.GetConfig)
 	e.POST("/config", config.UpdateConfig)
+	e.GET("/backup", config.BackupConfig)
+	e.POST("/restore", config.RestoreConfig)
 	e.GET("/reset", config.ResetConfig)
 	e.GET("/health-check", config.HandleHealthCheck)
 
