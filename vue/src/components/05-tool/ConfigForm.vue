@@ -51,9 +51,8 @@
             <button type="submit" class="btn btn-primary btn-sm me-2">Save</button>
 
             <button @click="backupConfig" class="btn btn-primary btn-sm me-2">Backup</button>
-            <input type="file" @change="onFileChange" class="btn btn-info btn-sm" />
-
-            <button type="button" class="btn btn-primary btn-sm btn-restore me-2" @click="triggerFileInput">Restore</button>
+            
+            <button type="button" class="btn btn-primary btn-sm me-2" @click="triggerFileInput">Restore</button>
             <input type="file" ref="fileInput" style="display: none" @change="onFileChange" />
 
             <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">Reset to Default</button>
@@ -336,8 +335,9 @@ export default {
       });
   },
 };
-</script>
 
+
+</script>
 <style>
 .nav-conf-item a {
   color: #000;
@@ -345,11 +345,4 @@ export default {
   text-decoration: none;
   /* Removes the underline */
 }
-
-  .btn-restore {
-    background-color: transparent; /* Mettez la couleur de fond souhaitée ou transparent */
-    border: none; /* Enlève la bordure si nécessaire */
-    /* Ajoutez d'autres styles selon vos préférences */
-  }
-
 </style>
