@@ -8,7 +8,7 @@ Darwin2 is a demonstration tool designed to showcase the capabilities of FortiWe
   - [Installation Guide](#installation-guide)
     - [Option 1: Installation on Linux 🐧](#option-1-installation-on-linux-)
     - [Option 2: Installation with Docker 🐳](#option-2-installation-with-docker-)
-  - [Script Options 🛠️](#script-options-)
+  - [Script Options](#script-options)
   - [Accessing the Application](#accessing-the-application)
 
 ## Features
@@ -80,7 +80,7 @@ cd darwin2
 ./darwin2.sh docker
 ```
 
-## Script Options 🛠️
+### Script Options
 
 The `darwin2.sh` script supports several options for managing the application:
 
