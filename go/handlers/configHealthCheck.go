@@ -100,7 +100,7 @@ func HandleHealthCheck(c echo.Context) error {
 	} else {
 		result += fmt.Sprintf(`<tr>
 			<td>%s</td>
-			<td class="%s">%s</td>
+			<td class="up">%s</td>
 			<td>%d</td>
 			<td>%s</td>
 		</tr>`, fwbManagementURL+"/api/v2.0/cmdb/system/global", resultStatus, resultStatus, resultCode, resultMessage)
@@ -145,11 +145,11 @@ func TestAPI(host, port, token string) (string, int, string, error) {
 
 	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
-		return "Up", resp.StatusCode, "", fmt.Errorf("The API configuration is incorrect") // The API is not working correctly
+		return "Down", resp.StatusCode, "", fmt.Errorf("The API configuration is incorrect") // The API is not working correctly
 	}
 
 	if response.Results.Hostname == "" {
-		return "Up", resp.StatusCode, "", fmt.Errorf("The API configuration is incorrect") // No Hostname returned
+		return "Down", resp.StatusCode, "", fmt.Errorf("The API configuration is incorrect") // No Hostname returned
 	}
 
 	return "Up", resp.StatusCode, response.Results.Hostname, nil // All Good
