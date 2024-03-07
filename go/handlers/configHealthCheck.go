@@ -119,7 +119,7 @@ func TestAPI(host, port, token string) (string, int, string, error) {
 	if err != nil {
 		return "", 0, "", err
 	}
-	req.Header.Add("Authorization", "Bearer "+token)
+	req.Header.Add("Authorization", token)
 	req.Header.Add("Accept", "application/json")
 
     client := &http.Client{
