@@ -44,7 +44,7 @@ func HandleHealthCheck(c echo.Context) error {
 			<th><h3>URL</h3></th>
 			<th><h3>Result</h3></th>
 			<th><h3>Code</h3></th>
-			<th><h3>Error</h3></th>
+			<th><h3>Message</h3></th>
 		</tr>`
 
 	// Loop over the URLs
@@ -122,7 +122,15 @@ func TestAPI(host, port, token string) (string, int, string, error) {
 	req.Header.Add("Authorization", "Bearer "+token)
 	req.Header.Add("Accept", "application/json")
 
-	client := &http.Client{}
+    client := &http.Client{
+        Transport: &http.Transport{
+            TLSClientConfig: &tls.Config{
+                InsecureSkipVerify: true,
+            },
+        },
+        Timeout: time.Second * 2, 
+    }
+	
 	resp, err := client.Do(req)
 	if err != nil {
 		return "Down", 0, "", err // Port is Down
