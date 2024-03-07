@@ -88,7 +88,7 @@ export default {
     runHealthCheck() {
       this.isLoading = true; // Set loading state to true
       this.jobResult = ""; // Reset Result
-      fetch("/health-check", {
+      fetch("/run-health-check", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
