@@ -1,4 +1,4 @@
-package config
+package darwin2
 
 import (
 	"crypto/tls"
@@ -8,6 +8,7 @@ import (
 	"time"
 	"encoding/json"
 	"darwin2/utils"
+	"darwin2/config"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,7 +18,7 @@ import (
 ///////////////////////////////////////////////////////////////////////////////////
 
 func HandleHealthCheck(c echo.Context) error {
-	urls := []string{CurrentConfig.DVWAURL, CurrentConfig.BANKURL, CurrentConfig.JUICESHOPURL, CurrentConfig.PETSTOREURL, CurrentConfig.SPEEDTESTURL, "https://www.google.com"}
+	urls := []string{config.CurrentConfig.DVWAURL, config.CurrentConfig.BANKURL, config.CurrentConfig.JUICESHOPURL, config.CurrentConfig.PETSTOREURL, config.CurrentConfig.SPEEDTESTURL, "https://www.google.com"}
 
 	// Define a custom HTTP client with a redirect policy that returns an error
 	client := &http.Client{
@@ -68,7 +69,7 @@ func HandleHealthCheck(c echo.Context) error {
 	}
 
 	// Handle FortiWeb Management IP/FQDN separately to add scheme and port
-	fwbManagementURL := "https://" + CurrentConfig.FWBMGTIP + ":" + CurrentConfig.FWBMGTPORT
+	fwbManagementURL := "https://" + config.CurrentConfig.FWBMGTIP + ":" + config.CurrentConfig.FWBMGTPORT
 	res, err := client.Get(fwbManagementURL)
 	if err != nil {
 		shortErr := strings.TrimPrefix(err.Error(), fmt.Sprintf(`Get "%s": `, fwbManagementURL))
@@ -88,7 +89,7 @@ func HandleHealthCheck(c echo.Context) error {
 	}
 
 	// API Test
-	resultStatus, resultCode, resultMessage, err := TestAPI(CurrentConfig.FWBMGTIP, CurrentConfig.FWBMGTPORT, utils.GenerateAPIToken())
+	resultStatus, resultCode, resultMessage, err := TestAPI(config.CurrentConfig.FWBMGTIP, config.CurrentConfig.FWBMGTPORT, utils.GenerateAPIToken())
 	if err != nil {
 		result += fmt.Sprintf(`<tr>
 			<td>%s</td>
@@ -140,7 +141,7 @@ func TestAPI(host, port, token string) (string, int, string, error) {
 	}
 
 	if response.Results.Hostname == "" {
-		return "Up", resp.StatusCode, "", fmt.Errorf("The API configuration is incorrect") // No Hostname
+		return "Up", resp.StatusCode, "", fmt.Errorf("The API configuration is incorrect") // No Hostname returned
 	}
 
 	return "Up", resp.StatusCode, response.Results.Hostname, nil // All Good
