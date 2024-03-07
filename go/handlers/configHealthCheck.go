@@ -100,10 +100,10 @@ func HandleHealthCheck(c echo.Context) error {
 	} else {
 		result += fmt.Sprintf(`<tr>
 			<td>%s</td>
-			<td class="up">%s</td>
+			<td class="%s">%s</td>
 			<td>%d</td>
 			<td>%s</td>
-		</tr>`, fwbManagementURL+"/api/v2.0/cmdb/system/global", resultStatus, resultStatus, resultCode, resultMessage)
+		</tr>`, fwbManagementURL+"/api/v2.0/cmdb/system/global", strings.ToLower(resultStatus), resultStatus, resultCode, resultMessage)
 	}
 
 	// End HTML Table
