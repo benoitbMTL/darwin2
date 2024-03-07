@@ -10,12 +10,13 @@
     </div>
 
     <div class="card-body">
-      <p>
-        This tool provides two sets of API tasks for quick onboarding
-        and decommissioning of the <strong>Speedtest</strong> application.<br /><br />When completing these
-        tasks, you can verify the application's accessibility at
-        <a :href="config.SPEEDTESTURL" target="_blank">Speedtest</a>.
-      </p>
+    <p>
+      This tool provides two sets of API tasks for quick onboarding
+      and decommissioning of the <strong>Speedtest</strong> application.<br /><br />When completing these
+      tasks, you can verify the application's accessibility at
+      <a :href="config.SPEEDTESTURL" target="_blank">Speedtest</a>.
+    </p>
+
 
       <div class="container">
         <div class="row">
@@ -253,13 +254,20 @@ export default {
     };
   },
 
+  mounted() {
+    this.fetchConfig(); // Ensure this is correctly fetching and setting config
+  },
+
+
+
   methods: {
     fetchConfig() {
-      // Fetch config from server including SPEEDTESTURL
+      // Fetch config from server
       fetch("/config")
         .then((response) => response.json())
         .then((data) => {
-          this.config = data; // Update config with fetched data, including SPEEDTESTURL
+          this.config = data; // Update config with fetched data
+          console.log("Config fetched and set: ", this.config);
         })
         .catch((error) => {
           console.error("Error fetching config:", error);
