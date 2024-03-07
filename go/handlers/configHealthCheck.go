@@ -18,7 +18,7 @@ import (
 ///////////////////////////////////////////////////////////////////////////////////
 
 func HandleHealthCheck(c echo.Context) error {
-	urls := []string{config.CurrentConfig.DVWAURL, config.CurrentConfig.BANKURL, config.CurrentConfig.JUICESHOPURL, config.CurrentConfig.PETSTOREURL, config.CurrentConfig.SPEEDTESTURL, "https://www.google.com"}
+	urls := []string{config.CurrentConfig.DVWAURL, config.CurrentConfig.BANKURL, config.CurrentConfig.JUICESHOPURL, config.CurrentConfig.PETSTOREURL, config.CurrentConfig.SPEEDTESTURL, "https://www.fortiguard.com"}
 
 	// Define a custom HTTP client with a redirect policy that returns an error
 	client := &http.Client{

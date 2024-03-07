@@ -7,7 +7,7 @@
     </div>
 
     <div class="card-body">
-      <p class="card-text">Run an HTTP test for every resource in the lab.</p>
+      <p class="card-text">Perform health checks on lab resources.</p>
 
       <button class="btn btn-primary btn-sm me-2" @click="runHealthCheck" :disabled="isLoading">
         <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
