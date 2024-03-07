@@ -58,6 +58,6 @@ func Configure(e *echo.Echo) {
 	e.GET("/backup", config.BackupConfig)
 	e.POST("/restore", config.RestoreConfig)
 	e.GET("/reset", config.ResetConfig)
-	e.GET("/health-check", config.HandleHealthCheck)
+	e.GET("/health-check", handlers.HandleHealthCheck)
 
 }
