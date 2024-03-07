@@ -2,14 +2,19 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>REST API</h5>
-      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
+      <i
+        class="bi bi-question-circle-fill bs-icon"
+        style="font-size: 1.5rem"
+        @click="showHelp = !showHelp"></i>
       <!-- Bootstrap icon for help -->
     </div>
 
     <div class="card-body">
       <p>
-        This tool provides two primary sets of API tasks for quick onboarding and decommissioning of the application.<br />After completing these tasks, you can
-        verify the application's accessibility at <a href="http://speedtest.canadaeast.cloudapp.azure.com" target="_blank">http://speedtest.canadaeast.cloudapp.azure.com</a>.
+        This tool provides two sets of API tasks for quick onboarding
+        and decommissioning of the Speedtest application.<br />When completing these
+        tasks, you can verify the application's accessibility at
+        <a :href="config.SPEEDTESTURL" target="_blank">Speed Test</a>.
       </p>
 
       <div class="container">
@@ -17,17 +22,31 @@
           <div class="col-md-6">
             <div class="card">
               <div class="card-header">
-                <button class="btn btn-primary btn-sm me-2" @click="createPolicy" :disabled="createLoading">
-                  <span v-if="createLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <button
+                  class="btn btn-primary btn-sm me-2"
+                  @click="createPolicy"
+                  :disabled="createLoading">
+                  <span
+                    v-if="createLoading"
+                    class="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"></span>
                   <span>{{ createLoading ? "Creating..." : "Create" }}</span>
                 </button>
-                <button class="btn btn-secondary btn-sm" @click="resetResult">Reset</button>
+                <button class="btn btn-secondary btn-sm" @click="resetResult">
+                  Reset
+                </button>
               </div>
 
               <ul class="list-group list-group-flush">
-                <li v-for="(task, index) in tasks" :key="index" class="list-group-item d-flex justify-content-between">
+                <li
+                  v-for="(task, index) in tasks"
+                  :key="index"
+                  class="list-group-item d-flex justify-content-between">
                   <span>{{ task.description }}</span>
-                  <span :class="['badge', 'rounded-pill', task.colorClass]">{{ task.statusText }}</span>
+                  <span :class="['badge', 'rounded-pill', task.colorClass]">{{
+                    task.statusText
+                  }}</span>
                 </li>
               </ul>
             </div>
@@ -35,17 +54,34 @@
           <div class="col-md-6">
             <div class="card">
               <div class="card-header">
-                <button class="btn btn-primary btn-sm me-2" @click="deletePolicy" :disabled="deleteLoading">
-                  <span v-if="deleteLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <button
+                  class="btn btn-primary btn-sm me-2"
+                  @click="deletePolicy"
+                  :disabled="deleteLoading">
+                  <span
+                    v-if="deleteLoading"
+                    class="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"></span>
                   <span>{{ deleteLoading ? "Deleting..." : "Delete" }}</span>
                 </button>
-                <button class="btn btn-secondary btn-sm" @click="resetDeleteResult">Reset</button>
+                <button
+                  class="btn btn-secondary btn-sm"
+                  @click="resetDeleteResult">
+                  Reset
+                </button>
               </div>
 
               <ul class="list-group list-group-flush">
-                <li v-for="(deleteTask, index) in deleteTasks" :key="index" class="list-group-item d-flex justify-content-between">
+                <li
+                  v-for="(deleteTask, index) in deleteTasks"
+                  :key="index"
+                  class="list-group-item d-flex justify-content-between">
                   <span>{{ deleteTask.description }}</span>
-                  <span :class="['badge', 'rounded-pill', deleteTask.colorClass]">{{ deleteTask.statusText }}</span>
+                  <span
+                    :class="['badge', 'rounded-pill', deleteTask.colorClass]"
+                    >{{ deleteTask.statusText }}</span
+                  >
                 </li>
               </ul>
             </div>
@@ -62,13 +98,17 @@
     </div>
     <div class="card-body">
       <p>
-        FortiWeb provides an API that uses Representational State Transfer (RESTful API) design principles to access and modify the settings of FortiWeb
-        applications.
+        FortiWeb provides an API that uses Representational State Transfer
+        (RESTful API) design principles to access and modify the settings of
+        FortiWeb applications.
       </p>
       <p>
-        You can use the RESTful API to control FortiWeb and seamlessly integrate FortiWeb to other systems. With a secure and programmable management style by
-        HTTPS+ authentication, FortiWeb RESTful API provides enough convenience for those who hope to integrate FortiWeb with other configurations. Furthermore,
-        FortiWeb RESTful API can help realize comprehensive management on all FortiWeb features.
+        You can use the RESTful API to control FortiWeb and seamlessly integrate
+        FortiWeb to other systems. With a secure and programmable management
+        style by HTTPS+ authentication, FortiWeb RESTful API provides enough
+        convenience for those who hope to integrate FortiWeb with other
+        configurations. Furthermore, FortiWeb RESTful API can help realize
+        comprehensive management on all FortiWeb features.
       </p>
     </div>
   </div>
@@ -82,12 +122,39 @@ export default {
       createLoading: false,
       deleteLoading: false,
       showHelp: false,
+      config: {
+        SPEEDTESTURL: "",
+      },
 
       tasks: [
-        { id: "createNewVirtualIP", description: "Create new Virtual IP", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
-        { id: "createNewServerPool", description: "Create new Server Pool", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
-        { id: "createNewMemberPool", description: "Create new Member Pool", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
-        { id: "createNewVirtualServer", description: "Create new Virtual Server", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        {
+          id: "createNewVirtualIP",
+          description: "Create new Virtual IP",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        {
+          id: "createNewServerPool",
+          description: "Create new Server Pool",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        {
+          id: "createNewMemberPool",
+          description: "Create new Member Pool",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        {
+          id: "createNewVirtualServer",
+          description: "Create new Virtual Server",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
         {
           id: "assignVIPToVirtualServer",
           description: "Assign Virtual IP to Virtual Server",
@@ -102,7 +169,13 @@ export default {
           colorClass: "bg-secondary",
           statusText: "Incomplete",
         },
-        { id: "cloneInlineProtection", description: "Clone Inline Protection", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        {
+          id: "cloneInlineProtection",
+          description: "Clone Inline Protection",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
         {
           id: "createNewXForwardedForRule",
           description: "Create new X-Forwarded-For Rule",
@@ -117,11 +190,23 @@ export default {
           colorClass: "bg-secondary",
           statusText: "Incomplete",
         },
-        { id: "createNewPolicy", description: "Create new Policy", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        {
+          id: "createNewPolicy",
+          description: "Create new Policy",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
       ],
 
       deleteTasks: [
-        { id: "deletePolicy", description: "Delete Policy", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        {
+          id: "deletePolicy",
+          description: "Delete Policy",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
         {
           id: "deleteInlineProtection",
           description: "Delete Inline Protection Profile",
@@ -143,14 +228,44 @@ export default {
           colorClass: "bg-secondary",
           statusText: "Incomplete",
         },
-        { id: "deleteVirtualServer", description: "Delete Virtual Server", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
-        { id: "deleteServerPool", description: "Delete Server Pool", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
-        { id: "deleteVirtualIP", description: "Delete Virtual IP", status: "incomplete", colorClass: "bg-secondary", statusText: "Incomplete" },
+        {
+          id: "deleteVirtualServer",
+          description: "Delete Virtual Server",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        {
+          id: "deleteServerPool",
+          description: "Delete Server Pool",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
+        {
+          id: "deleteVirtualIP",
+          description: "Delete Virtual IP",
+          status: "incomplete",
+          colorClass: "bg-secondary",
+          statusText: "Incomplete",
+        },
       ],
     };
   },
 
   methods: {
+    fetchConfig() {
+      // Fetch config from server including SPEEDTESTURL
+      fetch("/config")
+        .then((response) => response.json())
+        .then((data) => {
+          this.config = data; // Update config with fetched data, including SPEEDTESTURL
+        })
+        .catch((error) => {
+          console.error("Error fetching config:", error);
+        });
+    },
+
     updateTaskStatus(taskId, status) {
       let task = this.tasks.find((t) => t.id === taskId);
       if (task) {
@@ -189,11 +304,23 @@ export default {
         { url: "/create-server-pool", taskId: "createNewServerPool" },
         { url: "/create-member-pool", taskId: "createNewMemberPool" },
         { url: "/create-virtual-server", taskId: "createNewVirtualServer" },
-        { url: "/assign-vip-to-virtual-server", taskId: "assignVIPToVirtualServer" },
-        { url: "/clone-signature-protection", taskId: "cloneSignatureProtection" },
+        {
+          url: "/assign-vip-to-virtual-server",
+          taskId: "assignVIPToVirtualServer",
+        },
+        {
+          url: "/clone-signature-protection",
+          taskId: "cloneSignatureProtection",
+        },
         { url: "/clone-inline-protection", taskId: "cloneInlineProtection" },
-        { url: "/create-x-forwarded-for-rule", taskId: "createNewXForwardedForRule" },
-        { url: "/configure-protection-profile", taskId: "configureProtectionProfile" },
+        {
+          url: "/create-x-forwarded-for-rule",
+          taskId: "createNewXForwardedForRule",
+        },
+        {
+          url: "/configure-protection-profile",
+          taskId: "configureProtectionProfile",
+        },
         { url: "/create-policy", taskId: "createNewPolicy" },
       ];
 
@@ -238,8 +365,14 @@ export default {
       const endpoints = [
         { url: "/delete-policy", taskId: "deletePolicy" },
         { url: "/delete-inline-protection", taskId: "deleteInlineProtection" },
-        { url: "/delete-x-forwarded-for-rule", taskId: "deleteXForwardedForRule" },
-        { url: "/delete-signature-protection", taskId: "deleteSignatureProtection" },
+        {
+          url: "/delete-x-forwarded-for-rule",
+          taskId: "deleteXForwardedForRule",
+        },
+        {
+          url: "/delete-signature-protection",
+          taskId: "deleteSignatureProtection",
+        },
         { url: "/delete-virtual-server", taskId: "deleteVirtualServer" },
         { url: "/delete-server-pool", taskId: "deleteServerPool" },
         { url: "/delete-virtual-ip", taskId: "deleteVirtualIP" },
