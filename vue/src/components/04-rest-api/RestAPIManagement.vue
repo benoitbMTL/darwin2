@@ -12,9 +12,9 @@
     <div class="card-body">
       <p>
         This tool provides two sets of API tasks for quick onboarding
-        and decommissioning of the Speedtest application.<br />When completing these
+        and decommissioning of the <strong>Speedtest</strong> application.<br /><br />When completing these
         tasks, you can verify the application's accessibility at
-        <a :href="config.SPEEDTESTURL" target="_blank">Speed Test</a>.
+        <a :href="config.SPEEDTESTURL" target="_blank">Speedtest</a>.
       </p>
 
       <div class="container">
