@@ -10,18 +10,19 @@ import (
 
 // AppConfig defines the structure for your application configuration
 type AppConfig struct {
-	DVWAURL      string
-	BANKURL      string
-	JUICESHOPURL string
-	PETSTOREURL  string
-	SPEEDTESTURL string
-	USERNAMEAPI  string
-	PASSWORDAPI  string
-	VDOMAPI      string
-	FWBMGTIP     string
-	FWBMGTPORT   string
-	MLPOLICY     string
-	USERAGENT    string
+	DVWAURL      		string
+	BANKURL      		string
+	JUICESHOPURL 		string
+	PETSTOREURL  		string
+	SPEEDTESTURL 		string
+	USERNAMEAPI  		string
+	PASSWORDAPI  		string
+	VDOMAPI      		string
+	FWBMGTIP     		string
+	FWBMGTPORT   		string
+	MLPOLICY     		string
+	USERAGENT			string
+	FABRICLABSTORY		string
 }
 
 var (
@@ -39,18 +40,19 @@ func Initialize() {
 	defer configMutex.Unlock()
 
 	DefaultConfig = AppConfig{
-		DVWAURL:      "https://dvwa.corp.fabriclab.ca",
-		BANKURL:      "https://bank.corp.fabriclab.ca/bank.html",
-		JUICESHOPURL: "https://juiceshop.corp.fabriclab.ca",
-		PETSTOREURL:  "https://petstore3.corp.fabriclab.ca/api/v3/pet",
-		SPEEDTESTURL: "https://speedtest.corp.fabriclab.ca",
-		USERNAMEAPI:  "userapi",
-		PASSWORDAPI:  "fortinet123!",
-		VDOMAPI:      "root",
-		FWBMGTIP:     "fortiweb.corp.fabriclab.ca",
-		FWBMGTPORT:   "443",
-		MLPOLICY:     "DVWA_POLICY",
-		USERAGENT:    "FortiWeb Demo Tool",
+		DVWAURL:			"https://dvwa.corp.fabriclab.ca",
+		BANKURL:			"https://bank.corp.fabriclab.ca/bank.html",
+		JUICESHOPURL:		"https://juiceshop.corp.fabriclab.ca",
+		PETSTOREURL:		"https://petstore3.corp.fabriclab.ca/api/v3/pet",
+		SPEEDTESTURL:		"https://speedtest.corp.fabriclab.ca",
+		USERNAMEAPI:		"userapi",
+		PASSWORDAPI:		"fortinet123!",
+		VDOMAPI:			"root",
+		FWBMGTIP:			"fortiweb.corp.fabriclab.ca",
+		FWBMGTPORT:  		"443",
+		MLPOLICY:     		"DVWA_POLICY",
+		USERAGENT:    		"FortiWeb Demo Tool",
+		FABRICLABSTORY:		"fortiweb2",
 	}
 
 	CurrentConfig = DefaultConfig

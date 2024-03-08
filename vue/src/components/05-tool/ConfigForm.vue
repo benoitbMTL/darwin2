@@ -198,6 +198,17 @@
             id="userAgent"
             v-model="config.USERAGENT" />
         </div>
+
+
+        <div class="mb-3">
+          <label for="fabricLabStory" class="form-label">Fabric Lab Story (Leave Empty if the demo tool is not running inside the Fabric Lab)</label>
+          <input
+            type="text"
+            class="form-control"
+            id="fabricLabStory"
+            v-model="config.FABRICLABSTORY" />
+        </div>
+
       </div>
     </div>
   </form>
@@ -223,6 +234,7 @@ export default {
         FWBMGTPORT: "",
         MLPOLICY: "",
         USERAGENT: "",
+        FABRICLABSTORY: "",
       },
     };
   },

@@ -6,17 +6,26 @@
       </div>
       <div class="d-flex align-items-center">
         <div v-if="showResetMLMessage" class="me-2">
-          <span class="alert alert-success alert-dismissible fade show p-1 mb-0" role="alert" style="font-size: 0.875rem;">
+          <span
+            class="alert alert-success alert-dismissible fade show p-1 mb-0"
+            role="alert"
+            style="font-size: 0.875rem">
             <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
           </span>
         </div>
         <div class="me-2">
-          <button type="button" class="btn btn-warning btn-sm" @click="resetMachineLearning">
+          <button
+            type="button"
+            class="btn btn-warning btn-sm"
+            @click="resetMachineLearning">
             Reset Machine Learning
           </button>
         </div>
         <div>
-          <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
+          <i
+            class="bi bi-question-circle-fill bs-icon"
+            style="font-size: 1.5rem"
+            @click="showHelp = !showHelp"></i>
           <!-- Bootstrap icon for help -->
         </div>
       </div>
@@ -25,7 +34,7 @@
     <div class="card-body">
       <p>
         This tool will help you protect a
-        <a :href="config.BANKURL" target="_blank">banking form</a>
+        <a :href="bankingFormUrl" target="_blank">banking form</a>
         with machine learning, thereby blocking zero-day attacks and reducing
         the attack surface.
       </p>
@@ -169,13 +178,17 @@
           <a href="https://api.namefake.com/">https://api.namefake.com/</a>.
         </li>
         <li>
-          The tool can send 3,000 samples to the server to simulate legitimate
+          The tool sends random samples to the server to simulate legitimate
           traffic, which is used to train FortiWeb's Machine Learning (ML).
         </li>
         <li>
           While only 400 requests are necessary for the Machine Learning (ML)
           system to build its initial model, ongoing traffic generation enables
           the ML to continue learning and refining its model.
+        </li>
+        <li>
+          Press the "Reset Machine Learning" button to delete all existing
+          learning results and start the demo from scratch.
         </li>
       </ul>
       <p>
@@ -219,6 +232,17 @@ export default {
 end`,
     };
   },
+
+  computed: {
+    bankingFormUrl() {
+      if (this.config.FABRICLABSTORY) {
+        return `https://bank.${this.config.FABRICLABSTORY}.fabriclab.ca`;
+      } else {
+        return this.config.BANKURL;
+      }
+    }
+  },
+
 
   mounted() {
     this.fetchConfig(); // Fetch config on component mount
