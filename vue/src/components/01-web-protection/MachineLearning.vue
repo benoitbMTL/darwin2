@@ -3,7 +3,7 @@
     <div
       class="card-header d-flex justify-content-between align-items-center"
       style="border: 2px solid red">
-      <div>
+      <div class="d-flex align-items-center">
         <h5 style="border: 2px solid blue">
           Machine Learning & Zero-Day Attacks
         </h5>
