@@ -32,10 +32,10 @@
 
       <div class="row justify-content-center">
         <!-- Card #1 (Column 1) -->
-        <div class="card col-md-5">
+        <div class="card col-md-5 me-3">
           <!-- Card #1 content goes here... -->
 
-          <p class="card-text mt-3 mb-3">
+          <p class="card-text mt-3">
             Simulate traffic with random samples to build machine learning
             model.
           </p>
