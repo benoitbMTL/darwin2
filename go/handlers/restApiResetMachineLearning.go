@@ -27,7 +27,7 @@ func HandleResetMachineLearning(c echo.Context) error {
 	host := config.CurrentConfig.FWBMGTIP
 	port := config.CurrentConfig.FWBMGTPORT
 	token := utils.GenerateAPIToken()
-	policyName := config.CurrentConfig.DVWA_POLICY
+	policyName := config.CurrentConfig.MLPOLICY
 
 	fmt.Printf("Host: %s\n", host)
 	fmt.Printf("Port: %s\n", port)
