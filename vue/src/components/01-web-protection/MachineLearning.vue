@@ -32,7 +32,7 @@
 
       <div class="row justify-content-center">
         <!-- Card #1 (Column 1) -->
-        <div class="card col-md-6 align-items-center">
+        <div class="card col-md-6">
           <!-- Card #1 content goes here... -->
 
           <p class="card-text mt-3">
@@ -40,7 +40,7 @@
             Simulate traffic with random samples to build machine learning
             model.
           </p>
-          <div class="d-flex align-items-center mb-3">
+          <div class="d-flex mb-3">
             <button
               class="btn btn-primary btn-sm"
               @click="generateTraffic(1)"
@@ -85,14 +85,14 @@
         </div>
 
         <!-- Card #2 (Column 2) -->
-        <div class="card col-md-6 align-items-center">
+        <div class="card col-md-6">
           <!-- Card #2 content goes here... -->
           <p class="card-text mt-3">
             <i class="bi bi-2-circle-fill" style="font-size: 1.5rem"></i>
             Select a zero-day and "Run" to generate the attack scenario.
           </p>
 
-          <div class="d-flex align-items-center mb-3 flex-wrap">
+          <div class="d-flex mb-3">
             <select
               class="form-select form-select-sm me-2 mb-3"
               v-model="selectedAttackType"
