@@ -1,28 +1,34 @@
 <template>
   <div class="card my-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5>Machine Learning & Zero-Day Attacks</h5>
-      <div>
+    <div
+      class="card-header d-flex justify-content-between align-items-center"
+      style="border: 2px solid red">
+      <h5 style="border: 2px solid blue">
+        Machine Learning & Zero-Day Attacks
+      </h5>
+      <div style="border: 2px solid green">
         <span
           v-if="showResetMLMessage"
           class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
           role="alert"
-          style="font-size: 0.875rem">
+          style="font-size: 0.875rem; border: 2px solid yellow">
           <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
-      </span>
+        </span>
         <button
           type="button"
           class="btn btn-warning btn-sm me-2"
+          style="border: 2px solid orange"
           @click="resetMachineLearning">
           Reset Machine Learning
         </button>
         <i
           class="bi bi-question-circle-fill bs-icon"
-          style="font-size: 1.5rem"
+          style="font-size: 1.5rem; border: 2px solid purple"
           @click="showHelp = !showHelp"></i>
         <!-- Bootstrap icon for help -->
       </div>
     </div>
+
     <div class="card-body">
       <p>
         This tool will help you protect a
@@ -33,7 +39,7 @@
 
       <div class="row justify-content-center">
         <!-- Card #1 (Column 1) -->
-        <div class="card col-md-5 me-3 align-items-center">
+        <div class="card col-md-6 align-items-center">
           <!-- Card #1 content goes here... -->
 
           <p class="card-text mt-3">
@@ -275,8 +281,8 @@ end`,
           this.showResetMLMessage = true; // Show message
 
           setTimeout(() => {
-            this.showResetMLMessage = false; // Hide message after 5 seconds
-          }, 5000);
+            this.showResetMLMessage = false; // Hide message after 15 seconds
+          }, 15000);
         })
         .catch((error) => console.error("Error:", error));
     },
