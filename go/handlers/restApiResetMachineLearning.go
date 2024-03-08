@@ -29,6 +29,11 @@ func HandleResetMachineLearning(c echo.Context) error {
 	token := utils.GenerateAPIToken()
 	policyName := config.PolicyName
 
+	fmt.Printf("Host: %s\n", host)
+	fmt.Printf("Port: %s\n", port)
+	fmt.Printf("Token: %s\n", token)
+	fmt.Printf("Policy Name: %s\n", policyName)
+
 	// Create a custom HTTP client with disabled SSL verification
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
