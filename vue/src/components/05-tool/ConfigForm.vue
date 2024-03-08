@@ -229,9 +229,18 @@
               ref="fileInput"
               style="display: none"
               @change="onFileChange" />
+
+            <!-- Alert Message -->
+            <div
+              v-if="showAlertFileBackup"
+              class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
+              role="alert"
+              style="font-size: 0.875rem">
+              <i class="bi bi-check-circle me-1"></i>
+              {{ alertMessageFileBackup }}
+            </div>
           </div>
         </div>
-
 
         <div class="card my-4">
           <div class="card-header">
@@ -239,7 +248,9 @@
           </div>
 
           <div class="card-body">
-            <button @click="backupConfigLocal" class="btn btn-primary btn-sm me-2">
+            <button
+              @click="backupConfigLocal"
+              class="btn btn-primary btn-sm me-2">
               Backup
             </button>
 
@@ -249,15 +260,19 @@
               @click="restoreConfigLocal">
               Restore
             </button>
+
+            <!-- Alert Message -->
+            <div
+              v-if="showAlertLocalBackup"
+              class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
+              role="alert"
+              style="font-size: 0.875rem">
+              <i class="bi bi-check-circle me-1"></i>
+              {{ alertMessageLocalBackup }}
+            </div>
           </div>
         </div>
-
-
-
-
       </div>
-
-
     </div>
   </form>
 </template>
@@ -268,6 +283,8 @@ export default {
     return {
       activeTab: "applications", // Default active tab
       showAlert: false,
+      showAlertLocalBackup: false,
+      showAlertFileBackup: false,
       alertMessage: "",
       config: {
         DVWAURL: "",
@@ -305,15 +322,15 @@ export default {
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
-          this.showAlert = true;
+          this.showAlertFileBackup = true;
           this.alertMessage = "Configuration backed up successfully";
-          setTimeout(() => (this.showAlert = false), 5000);
+          setTimeout(() => (this.showAlertFileBackup = false), 15000);
         })
         .catch((error) => {
           console.error("Error:", error);
-          this.showAlert = true;
+          this.showAlertFileBackup = true;
           this.alertMessage = "Error during backup";
-          setTimeout(() => (this.showAlert = false), 5000);
+          setTimeout(() => (this.showAlertFileBackup = false), 15000);
         });
     },
 
@@ -339,22 +356,22 @@ export default {
               })
               .then((data) => {
                 console.log("Success:", data);
-                this.showAlert = true;
+                this.showAlertFileBackup = true;
                 this.alertMessage = "Configuration restored successfully.";
-                setTimeout(() => (this.showAlert = false), 5000);
+                setTimeout(() => (this.showAlertFileBackup = false), 15000);
                 this.fetchConfig();
               })
               .catch((error) => {
                 console.error("Error during restore:", error);
-                this.showAlert = true;
+                this.showAlertFileBackup = true;
                 this.alertMessage = "Error restoring configuration.";
-                setTimeout(() => (this.showAlert = false), 5000);
+                setTimeout(() => (this.showAlertFileBackup = false), 15000);
               });
           } catch (error) {
             console.error("Error parsing file:", error);
-            this.showAlert = true;
+            this.showAlertFileBackup = true;
             this.alertMessage = "Error parsing configuration file.";
-            setTimeout(() => (this.showAlert = false), 5000);
+            setTimeout(() => (this.showAlertFileBackup = false), 15000);
           }
         };
         reader.readAsText(file);
@@ -393,14 +410,14 @@ export default {
           this.showAlert = true;
           this.alertMessage = "Configuration saved successfully.";
           // Reset showAlert after some time if needed
-          setTimeout(() => (this.showAlert = false), 5000);
+          setTimeout(() => (this.showAlert = false), 15000);
           console.log("Success:", data);
         })
         .catch((error) => {
           this.showAlert = true;
           this.alertMessage = "Error saving configuration.";
           // Reset showAlert after some time if needed
-          setTimeout(() => (this.showAlert = false), 5000);
+          setTimeout(() => (this.showAlert = false), 15000);
           console.error("Error:", error);
         });
     },
@@ -413,7 +430,7 @@ export default {
           this.showAlert = true;
           this.alertMessage = "Configuration reset to default.";
           // Reset showAlert after some time if needed
-          setTimeout(() => (this.showAlert = false), 5000);
+          setTimeout(() => (this.showAlert = false), 15000);
           this.config = data;
           console.log("Success:", data);
         })
@@ -421,7 +438,7 @@ export default {
           this.showAlert = true;
           this.alertMessage = "Error resetting configuration.";
           // Reset showAlert after some time if needed
-          setTimeout(() => (this.showAlert = false), 5000);
+          setTimeout(() => (this.showAlert = false), 15000);
           console.error("Error:", error);
         });
     },
