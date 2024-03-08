@@ -3,29 +3,36 @@
     <div
       class="card-header d-flex justify-content-between align-items-center"
       style="border: 2px solid red">
-      <h5 style="border: 2px solid blue">
-        Machine Learning & Zero-Day Attacks
-      </h5>
-      <div style="border: 2px solid green">
-        <span
-          v-if="showResetMLMessage"
-          class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
-          role="alert"
-          style="font-size: 0.875rem; border: 2px solid yellow">
-          <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
-        </span>
-        <button
-          type="button"
-          class="btn btn-warning btn-sm me-2"
-          style="border: 2px solid orange"
-          @click="resetMachineLearning">
-          Reset Machine Learning
-        </button>
-        <i
-          class="bi bi-question-circle-fill bs-icon"
-          style="font-size: 1.5rem; border: 2px solid purple"
-          @click="showHelp = !showHelp"></i>
-        <!-- Bootstrap icon for help -->
+      <div>
+        <h5 style="border: 2px solid blue">
+          Machine Learning & Zero-Day Attacks
+        </h5>
+      </div>
+      <div class="d-flex align-items-center" style="border: 2px solid green">
+        <div v-if="showResetMLMessage" class="me-2">
+          <span
+            class="alert alert-success alert-dismissible fade show p-1 mb-0"
+            role="alert"
+            style="font-size: 0.875rem; border: 2px solid yellow">
+            <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
+          </span>
+        </div>
+        <div class="me-2">
+          <button
+            type="button"
+            class="btn btn-warning btn-sm"
+            style="border: 2px solid orange"
+            @click="resetMachineLearning">
+            Reset Machine Learning
+          </button>
+        </div>
+        <div>
+          <i
+            class="bi bi-question-circle-fill bs-icon"
+            style="font-size: 1.5rem; border: 2px solid purple"
+            @click="showHelp = !showHelp"></i>
+          <!-- Bootstrap icon for help -->
+        </div>
       </div>
     </div>
 
