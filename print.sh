@@ -8,8 +8,8 @@ rm -f "$output_file"
 
 # List of files to process
 files=(
-go/config/health_check.go
-go/utils/restApiCommonUtils.go
+go/config/app_config.go
+vue/src/components/05-tool/ConfigForm.vue
 )
 
 # Loop through the files and append their content to conf.txt

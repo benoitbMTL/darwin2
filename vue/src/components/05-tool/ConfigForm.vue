@@ -32,6 +32,14 @@
                 >Miscellaneous</a
               >
             </li>
+            <li class="nav-conf-item">
+              <a
+                class="nav-link"
+                :class="{ active: activeTab === 'backupRestore' }"
+                @click="activeTab = 'backupRestore'"
+                >Backup & Restore</a
+              >
+            </li>
           </ul>
         </div>
 
@@ -50,22 +58,6 @@
             <button type="submit" class="btn btn-primary btn-sm me-2">
               Save
             </button>
-
-            <button @click="backupConfig" class="btn btn-primary btn-sm me-2">
-              Backup
-            </button>
-
-            <button
-              type="button"
-              class="btn btn-primary btn-sm me-2"
-              @click="triggerFileInput">
-              Restore
-            </button>
-            <input
-              type="file"
-              ref="fileInput"
-              style="display: none"
-              @change="onFileChange" />
 
             <button
               type="button"
@@ -199,9 +191,11 @@
             v-model="config.USERAGENT" />
         </div>
 
-
         <div class="mb-3">
-          <label for="fabricLabStory" class="form-label">Fabric Lab Story (Leave Empty if the demo tool is not running inside the Fabric Lab)</label>
+          <label for="fabricLabStory" class="form-label"
+            >Fabric Lab Story (Leave empty if the Demo Tool is not running
+            inside the Fabric Lab)</label
+          >
           <input
             type="text"
             class="form-control"
@@ -209,6 +203,34 @@
             v-model="config.FABRICLABSTORY" />
         </div>
 
+        <!-- Backup & Restore Section -->
+        <div class="card-body" v-if="activeTab === 'backupRestore'">
+          <!-- Backup & Restore Buttons -->
+
+          <div class="card my-4">
+            <div class="card-header">
+              <h5>Backup & Restore</h5>
+            </div>
+
+            <div class="card-body">
+              <button @click="backupConfig" class="btn btn-primary btn-sm me-2">
+                Backup
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-primary btn-sm me-2"
+                @click="triggerFileInput">
+                Restore
+              </button>
+              <input
+                type="file"
+                ref="fileInput"
+                style="display: none"
+                @change="onFileChange" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </form>
