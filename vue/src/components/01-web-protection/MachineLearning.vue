@@ -4,7 +4,7 @@
       <h5>Machine Learning & Zero-Day Attacks</h5>
       <div>
         <span v-if="showResetMLMessage">{{ resetMLMessage }}</span>
-        <button type="button" class="btn btn-warning me-2" @click="resetMachineLearning">Reset Machine Learning</button>
+        <button type="button" class="btn btn-warning btn-sm me-2" @click="resetMachineLearning">Reset Machine Learning</button>
         <i
           class="bi bi-question-circle-fill bs-icon"
           style="font-size: 1.5rem"
