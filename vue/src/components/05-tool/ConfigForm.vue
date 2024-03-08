@@ -202,36 +202,62 @@
             id="fabricLabStory"
             v-model="config.FABRICLABSTORY" />
         </div>
+      </div>
 
-        <!-- Backup & Restore Section -->
-        <div class="card-body" v-if="activeTab === 'backupRestore'">
-          <!-- Backup & Restore Buttons -->
+      <!-- Backup & Restore Section -->
+      <div class="card-body" v-if="activeTab === 'backupRestore'">
+        <!-- Backup & Restore Buttons -->
 
-          <div class="card my-4">
-            <div class="card-header">
-              <h5>Backup & Restore</h5>
-            </div>
+        <div class="card my-4">
+          <div class="card-header">
+            <h5>Backup & Restore</h5>
+          </div>
 
-            <div class="card-body">
-              <button @click="backupConfig" class="btn btn-primary btn-sm me-2">
-                Backup
-              </button>
+          <div class="card-body">
+            <button @click="backupConfig" class="btn btn-primary btn-sm me-2">
+              Backup
+            </button>
 
-              <button
-                type="button"
-                class="btn btn-primary btn-sm me-2"
-                @click="triggerFileInput">
-                Restore
-              </button>
-              <input
-                type="file"
-                ref="fileInput"
-                style="display: none"
-                @change="onFileChange" />
-            </div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm me-2"
+              @click="triggerFileInput">
+              Restore
+            </button>
+            <input
+              type="file"
+              ref="fileInput"
+              style="display: none"
+              @change="onFileChange" />
           </div>
         </div>
+
+
+        <div class="card my-4">
+          <div class="card-header">
+            <h5>Local Backup & Restore</h5>
+          </div>
+
+          <div class="card-body">
+            <button @click="backupConfigLocal" class="btn btn-primary btn-sm me-2">
+              Backup
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-primary btn-sm me-2"
+              @click="restoreConfigLocal">
+              Restore
+            </button>
+          </div>
+        </div>
+
+
+
+
       </div>
+
+
     </div>
   </form>
 </template>
