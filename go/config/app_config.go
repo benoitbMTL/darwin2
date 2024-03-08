@@ -47,7 +47,7 @@ func Initialize() {
 		USERNAMEAPI:  "userapi",
 		PASSWORDAPI:  "fortinet123!",
 		VDOMAPI:      "root",
-		FWBMGTIP:     "dvwa.corp.fabriclab.ca",
+		FWBMGTIP:     "fortiweb.corp.fabriclab.ca",
 		FWBMGTPORT:   "443",
 		MLPOLICY:     "DVWA_POLICY",
 		USERAGENT:    "FortiWeb Demo Tool",
