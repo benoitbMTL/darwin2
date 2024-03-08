@@ -6,12 +6,12 @@
       </div>
       <div class="d-flex align-items-center">
         <div v-if="showResetMLMessage" class="me-2">
-          <span
+          <div
             class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
             role="alert"
             style="font-size: 0.875rem">
             <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
-          </span>
+        </div>
         </div>
         <div class="me-2">
           <button
