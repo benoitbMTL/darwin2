@@ -79,14 +79,14 @@ func HandleResetMachineLearning(c echo.Context) error {
 
 	dbId := domainInfo.Results[0].DbId
 	domainName := domainInfo.Results[0].DomainName
-	fmt.Printf("Domain %s has db_id %s. Proceeding to reset Machine Learning.\n", domainName, dbId)
+	fmt.Printf("Domain %s has db_id %d. Proceeding to reset Machine Learning.\n", domainName, dbId)
 
 	// Constructing and logging the URL for resetting ML
 	resetMLURL := fmt.Sprintf("https://%s:%s/api/v2.0/machine_learning/policy.refreshdomain", host, port)
 	fmt.Printf("Sending request to reset Machine Learning at URL: %s\n", resetMLURL)
 
 	// Preparing the payload and sending the request to reset ML
-	payload := fmt.Sprintf("{\"domain_id\": \"%s\", \"policy_name\": \"%s\"}", dbId, policyName)
+	payload := fmt.Sprintf("{\"domain_id\": \"%d\", \"policy_name\": \"%s\"}", dbId, policyName)
 	req, err = http.NewRequest("POST", resetMLURL, bytes.NewBufferString(payload))
 	if err != nil {
 		fmt.Printf("Error creating request to reset ML: %v\n", err)
