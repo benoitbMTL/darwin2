@@ -1,36 +1,22 @@
 <template>
   <div class="card my-4">
-    <div
-      class="card-header d-flex justify-content-between align-items-center"
-      style="border: 2px solid red">
-      <div class="d-flex align-items-center">
-        <h5 style="border: 2px solid blue">
-          Machine Learning & Zero-Day Attacks
-        </h5>
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div>
+        <h5>Machine Learning & Zero-Day Attacks</h5>
       </div>
-      <div class="d-flex align-items-center" style="border: 2px solid green">
+      <div class="d-flex align-items-center">
         <div v-if="showResetMLMessage" class="me-2">
-          <span
-            class="alert alert-success alert-dismissible fade show p-1 mb-0"
-            role="alert"
-            style="font-size: 0.875rem; border: 2px solid yellow">
+          <span class="alert alert-success alert-dismissible fade show p-1 mb-0" role="alert" style="font-size: 0.875rem;">
             <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
           </span>
         </div>
         <div class="me-2">
-          <button
-            type="button"
-            class="btn btn-warning btn-sm"
-            style="border: 2px solid orange"
-            @click="resetMachineLearning">
+          <button type="button" class="btn btn-warning btn-sm" @click="resetMachineLearning">
             Reset Machine Learning
           </button>
         </div>
         <div>
-          <i
-            class="bi bi-question-circle-fill bs-icon"
-            style="font-size: 1.5rem; border: 2px solid purple"
-            @click="showHelp = !showHelp"></i>
+          <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
           <!-- Bootstrap icon for help -->
         </div>
       </div>
