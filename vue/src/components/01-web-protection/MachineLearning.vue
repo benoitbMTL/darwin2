@@ -7,7 +7,7 @@
       <div class="d-flex align-items-center">
         <div v-if="showResetMLMessage" class="me-2">
           <span
-            class="alert alert-success alert-dismissible fade show p-1 mb-0"
+            class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
             role="alert"
             style="font-size: 0.875rem">
             <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
