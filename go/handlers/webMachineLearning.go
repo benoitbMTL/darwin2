@@ -37,8 +37,6 @@ func HandleMachineLearning(c echo.Context) error {
 	var err error
 
 	for i := 0; i < requestCount; i++ {
-		log.Printf("Machine Learning: %d\n", i)
-
 		// Fetch random data
 		fakeData, err = utils.FetchRandomData()
 		if err != nil {

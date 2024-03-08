@@ -2,12 +2,12 @@ package config
 
 var (
 	VipName                             = "SPEEDTEST_VIP"
-	VipIp                               = "10.0.1.13/24"
+	VipIp                               = "10.163.7.34/32"
 	Interface                           = "port1"
 	PoolName                            = "SPEEDTEST_POOL"
 	ServerBalance                       = "enable"
 	HealthCheck                         = "HLTHCK_HTTP"
-	PoolMemberIPs                       = []string{"10.0.2.4", "10.0.2.5", "10.0.2.6"}
+	PoolMemberIPs                       = []string{"10.163.3.78", "10.163.3.79", "10.163.3.80"}
 	PoolMemberSSL                       = "disable"
 	PoolMemberPort                      = 5000
 	VirtualServerName                   = "SPEEDTEST_VS"

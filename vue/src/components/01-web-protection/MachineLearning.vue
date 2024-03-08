@@ -2,11 +2,15 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>Machine Learning & Zero-Day Attacks</h5>
-      <i
-        class="bi bi-question-circle-fill bs-icon"
-        style="font-size: 1.5rem"
-        @click="showHelp = !showHelp"></i>
-      <!-- Bootstrap icon for help -->
+      <div>
+        <span v-if="showResetMLMessage">{{ resetMLMessage }}</span>
+        <button type="button" class="btn btn-warning me-2">Reset Machine Learning</button>
+        <i
+          class="bi bi-question-circle-fill bs-icon"
+          style="font-size: 1.5rem"
+          @click="showHelp = !showHelp"></i>
+        <!-- Bootstrap icon for help -->
+      </div>
     </div>
     <div class="card-body">
       <p>
@@ -194,9 +198,10 @@ export default {
       config: {
         BANKURL: "",
       },
+      resetMLMessage: '', // To store the response message
+      showResetMLMessage: false, // To control the visibility of the response message
 
-      configSnippet: 
-`config waf machine-learning-policy
+      configSnippet: `config waf machine-learning-policy
   edit 1
     set sample-limit-by-ip 0
     set ip-expire-cnts 1
@@ -237,6 +242,35 @@ end`,
           console.error("Error fetching config:", error);
         });
     },
+
+
+    resetMachineLearning() {
+      this.resetMLMessage = ''; // Reset message
+      this.showResetMLMessage = false; // Hide message initially
+      
+      fetch("/reset-machine-learning", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .then(text => {
+        this.resetMLMessage = text; // Set the response message
+        this.showResetMLMessage = true; // Show message
+
+        setTimeout(() => {
+          this.showResetMLMessage = false; // Hide message after 5 seconds
+        }, 5000);
+      })
+      .catch(error => console.error('Error:', error));
+    },
+
 
     generateTraffic(sampleCount) {
       this.resetResult(); // Reset results before generating new traffic

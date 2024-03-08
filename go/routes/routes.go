@@ -14,6 +14,7 @@ func Configure(e *echo.Echo) {
 	e.POST("/web-attacks", handlers.HandleWebAttacks)
 	e.POST("/traffic-generation", handlers.HandleTrafficGenerator)
 	e.POST("/machine-learning", handlers.HandleMachineLearning)
+	e.POST("/reset-machine-learning", handlers.HandleResetMachineLearning)
 	e.POST("/user-auth", handlers.HandleUserAuth)
 	e.POST("/cookie-security", handlers.HandleCookieSecurityAttack)
 
