@@ -17,7 +17,7 @@ import (
 // Structs to parse JSON responses
 type DomainInfoResponse struct {
 	Results []struct {
-		DbId       string `json:"db_id"`
+		DbId       int64 `json:"db_id"`
 		DomainName string `json:"domain_name"`
 	} `json:"results"`
 }
