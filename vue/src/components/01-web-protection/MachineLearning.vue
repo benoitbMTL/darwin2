@@ -35,7 +35,7 @@
         <div class="card col-md-5">
           <!-- Card #1 content goes here... -->
 
-          <p class="card-text mt-3">
+          <p class="card-text mt-3 mb-3">
             Simulate traffic with random samples to build machine learning
             model.
           </p>
@@ -90,7 +90,7 @@
             Select a zero-day and "Run" to generate the attack scenario.
           </p>
 
-          <div class="d-flex mb-3">
+          <div class="d-flex">
             <select
               class="form-select form-select-sm me-2 mb-3"
               v-model="selectedAttackType"
