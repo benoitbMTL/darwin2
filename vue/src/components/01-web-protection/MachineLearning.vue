@@ -1,7 +1,10 @@
 <template>
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5>Machine Learning & Zero-Day Attacks</h5>
+      <div>
+        <h5>Machine Learning & Zero-Day Attacks</h5>
+        <button type="button" class="btn btn-warning btn-sm me-2" @click="resetMachineLearning">Reset Machine Learning</button>
+      </div>
       <div>
         <div v-if="showResetMLMessage" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0" role="alert" style="font-size: 0.875rem">
           <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
