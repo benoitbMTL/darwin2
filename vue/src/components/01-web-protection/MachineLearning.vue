@@ -32,7 +32,7 @@
 
       <div class="row justify-content-center">
         <!-- Card #1 (Column 1) -->
-        <div class="card col-md-6">
+        <div class="card border-0 col-md-6">
           <!-- Card #1 content goes here... -->
 
           <p class="card-text mt-3">
@@ -85,7 +85,7 @@
         </div>
 
         <!-- Card #2 (Column 2) -->
-        <div class="card col-md-6">
+        <div class="card border-0 col-md-6">
           <!-- Card #2 content goes here... -->
           <p class="card-text mt-3">
             <i class="bi bi-2-circle-fill" style="font-size: 1.5rem"></i>
