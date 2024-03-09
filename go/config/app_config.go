@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"sync"
 	"fmt"
+	"log"
 
 	"github.com/labstack/echo/v4"
 )
