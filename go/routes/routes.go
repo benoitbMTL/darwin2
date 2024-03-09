@@ -60,5 +60,8 @@ func Configure(e *echo.Echo) {
 	e.POST("/restore", config.RestoreConfig)
 	e.GET("/reset", config.ResetConfig)
 	e.GET("/run-health-check", handlers.HandleHealthCheck)
+	e.POST("/backup-local", config.BackupConfigLocal)
+	e.POST("/restore-local", config.RestoreConfigLocal)
+	e.POST("/delete-local", config.DeleteConfigLocal)
 
 }

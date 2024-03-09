@@ -210,19 +210,19 @@
 
         <div class="card my-4">
           <div class="card-header">
-            <h5>Backup & Restore</h5>
+            <h5>Export & Import Configuration</h5>
           </div>
 
-          <div class="card-body">
+          <div class="card-body d-flex align-items-center">
             <button @click="backupConfig" class="btn btn-primary btn-sm me-2">
-              Backup
+              Export
             </button>
 
             <button
               type="button"
               class="btn btn-primary btn-sm me-2"
               @click="triggerFileInput">
-              Restore
+              Import
             </button>
             <input
               type="file"
@@ -232,12 +232,12 @@
 
             <!-- Alert Message -->
             <div
-              v-if="showAlertFileBackup"
+              v-if="showAlertFileExport"
               class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
               role="alert"
               style="font-size: 0.875rem">
               <i class="bi bi-check-circle me-1"></i>
-              {{ alertMessageFileBackup }}
+              {{ alertMessageFileExport }}
             </div>
           </div>
         </div>
@@ -247,18 +247,67 @@
             <h5>Local Backup & Restore</h5>
           </div>
 
-          <div class="card-body">
+          <div class="card-body d-flex align-items-center">
+            <!-- Backup Modal -->
+            <div
+              class="modal fade"
+              id="backupModal"
+              tabindex="-1"
+              aria-labelledby="backupModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="backupModalLabel">
+                      Backup Configuration
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Backup Name"
+                      v-model="backupName" />
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal">
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      @click="performBackup">
+                      Save Backup
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <button
               @click="backupConfigLocal"
               class="btn btn-primary btn-sm me-2">
               Backup
             </button>
-
             <button
               type="button"
-              class="btn btn-primary btn-sm me-2"
+              class="btn btn-success btn-sm me-2"
               @click="restoreConfigLocal">
               Restore
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger btn-sm me-2"
+              @click="deleteConfigLocal">
+              Delete
             </button>
 
             <!-- Alert Message -->
@@ -270,6 +319,16 @@
               <i class="bi bi-check-circle me-1"></i>
               {{ alertMessageLocalBackup }}
             </div>
+
+            <div>
+              <select class="form-select" v-model="selectedConfig">
+                <option v-for="config in configs" :key="config" :value="config">
+                  {{ config }}
+                </option>
+              </select>
+            </div>
+
+
           </div>
         </div>
       </div>
@@ -281,11 +340,15 @@
 export default {
   data() {
     return {
-      activeTab: "applications", // Default active tab
+      configs: [], // Liste des noms de configuration sauvegardés
+      selectedConfig: null, // Configuration actuellement sélectionnée
+      backupName: '', // Nom pour la nouvelle sauvegarde      activeTab: "applications", // Default active tab
       showAlert: false,
       showAlertLocalBackup: false,
-      showAlertFileBackup: false,
+      showAlertFileExport: false,
       alertMessage: "",
+      alertMessageLocalBackup: "",
+      alertMessageFileExport: "",
       config: {
         DVWAURL: "",
         BANKURL: "",
@@ -304,6 +367,151 @@ export default {
     };
   },
   methods: {
+
+performBackup() {
+  // Check if the backup name is provided
+  if (!this.backupName) {
+    alert('Please provide a name for the backup.');
+    return;
+  }
+
+  // Prepare the data to be sent to the server. The structure of this data
+  // might vary depending on your backend requirements. Here, we're assuming
+  // the backend needs the name of the backup.
+  const data = {
+    name: this.backupName,
+  };
+
+  // Send a POST request to the "/backup-local" endpoint with the backup data.
+  // Use the Fetch API for this purpose.
+  fetch("/backup-local", {
+    method: "POST", // Use POST method for sending data to the server
+    headers: {
+      "Content-Type": "application/json", // Indicate that we're sending JSON data
+    },
+    body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+  })
+    .then((response) => {
+      if (!response.ok) {
+        // If the server responds with a status code that indicates an error,
+        // throw an error to be caught in the catch block.
+        throw new Error('Failed to backup configuration.');
+      }
+      return response.json(); // Parse the JSON response body
+    })
+    .then((data) => {
+      // Handle the successful backup operation
+      console.log('Backup successful:', data);
+      this.configs.push(this.backupName); // Add the new backup name to the list of configs
+      this.selectedConfig = this.backupName; // Optionally, select the new backup
+      this.backupName = ''; // Reset the backup name input for future backups
+      this.showAlertLocalBackup = true; // Show success alert message
+      this.alertMessageLocalBackup = 'Configuration backed up successfully.';
+    })
+    .catch((error) => {
+      // Handle any errors that occurred during the fetch operation
+      console.error('Backup error:', error);
+      this.showAlertLocalBackup = true; // Show error alert message
+      this.alertMessageLocalBackup = 'Error during backup.';
+    });
+},
+
+
+restoreConfigLocal() {
+  // Check if a configuration has been selected
+  if (!this.selectedConfig) {
+    alert('Please select a configuration to restore.');
+    return;
+  }
+
+  // Prepare the data to be sent to the server. The structure of this data
+  // might vary depending on your backend requirements. Here, we're assuming
+  // the backend needs the name of the configuration to be restored.
+  const data = {
+    name: this.selectedConfig,
+  };
+
+  // Send a POST request to the "/restore-local" endpoint with the data of the configuration to be restored.
+  fetch("/restore-local", {
+    method: "POST", // Use POST method for sending data to the server
+    headers: {
+      "Content-Type": "application/json", // Indicate that we're sending JSON data
+    },
+    body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+  })
+    .then((response) => {
+      if (!response.ok) {
+        // If the server responds with a status code that indicates an error,
+        // throw an error to be caught in the catch block.
+        throw new Error('Failed to restore configuration.');
+      }
+      return response.json(); // Parse the JSON response body
+    })
+    .then((data) => {
+      // Handle the successful configuration restoration
+      console.log('Configuration restored successfully:', data);
+      this.showAlertLocalBackup = true; // Show success alert message
+      this.alertMessageLocalBackup = 'Configuration restored successfully.';
+      // Optionally, update the frontend to reflect the restored configuration
+    })
+    .catch((error) => {
+      // Handle any errors that occurred during the fetch operation
+      console.error('Restore error:', error);
+      this.showAlertLocalBackup = true; // Show error alert message
+      this.alertMessageLocalBackup = 'Error during restoration.';
+    });
+},
+
+
+deleteConfigLocal() {
+  // Check if a configuration has been selected for deletion
+  if (!this.selectedConfig) {
+    alert('Please select a configuration to delete.');
+    return;
+  }
+
+  // Prepare the data to be sent to the server. The structure of this data
+  // might vary depending on your backend requirements. Here, we're assuming
+  // the backend needs the name of the configuration to be deleted.
+  const data = {
+    name: this.selectedConfig,
+  };
+
+  // Send a POST request to the "/delete-local" endpoint with the data of the configuration to be deleted.
+  fetch("/delete-local", {
+    method: "POST", // Use POST method for sending data to the server
+    headers: {
+      "Content-Type": "application/json", // Indicate that we're sending JSON data
+    },
+    body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+  })
+    .then((response) => {
+      if (!response.ok) {
+        // If the server responds with a status code that indicates an error,
+        // throw an error to be caught in the catch block.
+        throw new Error('Failed to delete configuration.');
+      }
+      return response.json(); // Parse the JSON response body
+    })
+    .then(() => {
+      // Handle the successful deletion of the configuration
+      console.log('Configuration deleted successfully:', this.selectedConfig);
+      this.showAlertLocalBackup = true; // Show success alert message
+      this.alertMessageLocalBackup = 'Configuration deleted successfully.';
+
+      // Remove the deleted configuration from the 'configs' array
+      this.configs = this.configs.filter(config => config !== this.selectedConfig);
+      this.selectedConfig = null; // Reset the selected configuration
+    })
+    .catch((error) => {
+      // Handle any errors that occurred during the fetch operation
+      console.error('Delete error:', error);
+      this.showAlertLocalBackup = true; // Show error alert message
+      this.alertMessageLocalBackup = 'Error during deletion.';
+    });
+},
+
+
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
@@ -322,15 +530,15 @@ export default {
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
-          this.showAlertFileBackup = true;
+          this.showAlertFileExport = true;
           this.alertMessage = "Configuration backed up successfully";
-          setTimeout(() => (this.showAlertFileBackup = false), 15000);
+          setTimeout(() => (this.showAlertFileExport = false), 15000);
         })
         .catch((error) => {
           console.error("Error:", error);
-          this.showAlertFileBackup = true;
+          this.showAlertFileExport = true;
           this.alertMessage = "Error during backup";
-          setTimeout(() => (this.showAlertFileBackup = false), 15000);
+          setTimeout(() => (this.showAlertFileExport = false), 15000);
         });
     },
 
@@ -356,22 +564,22 @@ export default {
               })
               .then((data) => {
                 console.log("Success:", data);
-                this.showAlertFileBackup = true;
+                this.showAlertFileExport = true;
                 this.alertMessage = "Configuration restored successfully.";
-                setTimeout(() => (this.showAlertFileBackup = false), 15000);
+                setTimeout(() => (this.showAlertFileExport = false), 15000);
                 this.fetchConfig();
               })
               .catch((error) => {
                 console.error("Error during restore:", error);
-                this.showAlertFileBackup = true;
+                this.showAlertFileExport = true;
                 this.alertMessage = "Error restoring configuration.";
-                setTimeout(() => (this.showAlertFileBackup = false), 15000);
+                setTimeout(() => (this.showAlertFileExport = false), 15000);
               });
           } catch (error) {
             console.error("Error parsing file:", error);
-            this.showAlertFileBackup = true;
+            this.showAlertFileExport = true;
             this.alertMessage = "Error parsing configuration file.";
-            setTimeout(() => (this.showAlertFileBackup = false), 15000);
+            setTimeout(() => (this.showAlertFileExport = false), 15000);
           }
         };
         reader.readAsText(file);
