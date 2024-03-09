@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"sync"
+	"fmt"
 
 	"github.com/labstack/echo/v4"
 )
@@ -27,7 +28,7 @@ type AppConfig struct {
 
 var (
 	// CurrentConfig holds the current application configuration.
-	CurrentConfig AppConfig
+	CurrentConfig string
 	// DefaultConfig holds the default application configuration.
 	DefaultConfig AppConfig
 	// configMutex is used to handle concurrent access to the configuration.
@@ -40,8 +41,9 @@ var (
 func Initialize() {
 	configMutex.Lock()
 	defer configMutex.Unlock()
+	
 
-    configsMap["Default"] = AppConfig{
+	defaultConfig := AppConfig{
 		DVWAURL:			"https://dvwa.corp.fabriclab.ca",
 		BANKURL:			"https://bank.corp.fabriclab.ca/bank.html",
 		JUICESHOPURL:		"https://juiceshop.corp.fabriclab.ca",
@@ -102,33 +104,35 @@ func Initialize() {
 		USERAGENT:    		"FortiWeb Demo Tool",
 		FABRICLABSTORY:		"",    }
     
-    // Set the current configuration to Default
-    CurrentConfig = "Default"
+		configsMap["Default"] = defaultConfig
+    	CurrentConfig = "Default"
 }
 
-// GetCurrentConfig returns the currently active AppConfig
+// GetCurrentConfig function to retrieve the AppConfig object of the current config
 func GetCurrentConfig() AppConfig {
-    configMutex.RLock()
-    defer configMutex.RUnlock()
-    
-    return configsMap[CurrentConfig]
+	configMutex.RLock()
+	defer configMutex.RUnlock()
+
+	currentConfig, exists := configsMap[CurrentConfig]
+	if !exists {
+		// Handle case where current config does not exist
+		return AppConfig{} // Return an empty AppConfig or handle this scenario appropriately
+	}
+	return currentConfig
 }
 
-// SetCurrentConfig changes the current configuration to the one specified by name
+// SetCurrentConfig now correctly sets a string indicating the current configuration key
 func SetCurrentConfig(name string) error {
-    configMutex.Lock()
-    defer configMutex.Unlock()
-    
-    if _, exists := configsMap[name]; !exists {
-        return fmt.Errorf("configuration %s does not exist", name)
-    }
-    
-    CurrentConfig = name
-    return nil
+	configMutex.Lock()
+	defer configMutex.Unlock()
+
+	if _, exists := configsMap[name]; !exists {
+		return fmt.Errorf("configuration %s does not exist", name)
+	}
+
+	CurrentConfig = name
+	return nil
 }
-
-
-
 
 // GetConfig handles the GET request for the current configuration
 func GetConfig(c echo.Context) error {
