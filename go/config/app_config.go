@@ -110,7 +110,8 @@ func Initialize() {
 		// Add your defaultConfig to the configsMap
 		configsMap[defaultConfig.Name] = defaultConfig
 
-    	CurrentConfig = "Default"
+		currentName = "Default"
+		currentConfig := configsMap[currentName]
 }
 
 func GetCurrentConfig() AppConfig {
@@ -124,19 +125,6 @@ func GetCurrentConfig() AppConfig {
         // This could happen if the configuration is deleted or not initialized properly
         // You may return a default configuration or handle this case as needed
         return AppConfig{}
-    }
-    return currentConfig
-}
-
-func GetCurrentConfig() AppConfig {
-    configMutex.RLock()
-    defer configMutex.RUnlock()
-
-    // Use currentName to access the current configuration
-    currentConfig, exists := configsMap[currentName]
-    if !exists {
-        log.Printf("Warning: Configuration '%s' does not exist.", currentName)
-        return AppConfig{} // Return an empty AppConfig as a fallback
     }
     return currentConfig
 }
