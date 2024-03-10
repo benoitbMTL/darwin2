@@ -30,14 +30,10 @@ type AppConfig struct {
 
 
 var (
-	// CurrentConfig holds the current application configuration.
-	CurrentConfig string
-	// DefaultConfig holds the default application configuration.
-	DefaultConfig AppConfig
-	// configMutex is used to handle concurrent access to the configuration.
-	configMutex sync.RWMutex
-	// configsMap stores configurations by name.
-	configsMap = make(map[string]AppConfig)
+	CurrentConfig AppConfig                       // Holds the current application configuration
+	DefaultConfig AppConfig                       // Holds the default application configuration
+	configsMap    = make(map[string]AppConfig)    // Stores configurations by name
+	currentName   string                          // Holds the name of the current configuration
 )
 
 // Initialize sets up the default values for the application configuration
@@ -45,8 +41,8 @@ func Initialize() {
 	configMutex.Lock()
 	defer configMutex.Unlock()
 	
-
 	defaultConfig := AppConfig{
+		Name:               "Default",
 		DVWAURL:			"https://dvwa.corp.fabriclab.ca",
 		BANKURL:			"https://bank.corp.fabriclab.ca/bank.html",
 		JUICESHOPURL:		"https://juiceshop.corp.fabriclab.ca",
@@ -63,6 +59,7 @@ func Initialize() {
 	}
 
     configsMap["AzureConfig"] = AppConfig{
+		Name:               "AzureConfig",
 		DVWAURL:			"https://dvwa.canadaeast.cloudapp.azure.com/",
 		BANKURL:			"https://bank.canadaeast.cloudapp.azure.com/bank.html",
 		JUICESHOPURL:		"https://juiceshop.canadaeast.cloudapp.azure.com",
@@ -78,6 +75,7 @@ func Initialize() {
 		FABRICLABSTORY:		"",    }
 
     configsMap["FabricLabConfig"] = AppConfig{
+		Name:               "FabricLabConfig",
 		DVWAURL:			"https://dvwa.corp.fabriclab.ca",
 		BANKURL:			"https://bank.corp.fabriclab.ca/bank.html",
 		JUICESHOPURL:		"https://juiceshop.corp.fabriclab.ca",
@@ -93,6 +91,7 @@ func Initialize() {
 		FABRICLABSTORY:		"fortiweb",    }
 
     configsMap["FortiWebCloudConfig"] = AppConfig{
+		Name:               "FortiWebCloudConfig",
 		DVWAURL:			"https://dvwa.96859.fortiwebcloud.net",
 		BANKURL:			"https://bank.96859.fortiwebcloud.net/bank.html",
 		JUICESHOPURL:		"https://juiceshop.96859.fortiwebcloud.net",
@@ -125,21 +124,21 @@ func GetCurrentConfig() AppConfig {
     return currentConfig
 }
 
-// SetCurrentConfig now correctly sets a string indicating the current configuration key
+// SetCurrentConfig changes the current configuration to the one specified by name
 func SetCurrentConfig(name string) error {
 	configMutex.Lock()
 	defer configMutex.Unlock()
 
-	if _, exists := configsMap[name]; !exists {
-		log.Printf("Attempted to set non-existent configuration: %s", name)
+	config, exists := configsMap[name]
+	if !exists {
 		return fmt.Errorf("configuration %s does not exist", name)
 	}
 
-	CurrentConfig = name
-	log.Printf("Current configuration set to: %s", name)
+	CurrentConfig = config
+	currentName = name // Update the currentName variable to reflect the new current configuration
+
 	return nil
 }
-
 
 // GetConfig handles the GET request for the current configuration
 func GetConfig(c echo.Context) error {
