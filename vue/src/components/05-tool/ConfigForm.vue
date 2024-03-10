@@ -247,9 +247,11 @@
             <h5>Local Backup & Restore</h5>
           </div>
 
-          <!-- Line 1 -->
-          <div class="d-flex align-items-center">
-            <div>
+          <!-- Card Body -->
+          <div class="card-body">
+            <!-- Line 1: Buttons et Alert -->
+            <div class="d-flex align-items-center mb-3">
+              <!-- Ajouté mb-3 pour un peu d'espace entre les lignes -->
               <button
                 @click="backupConfigLocal"
                 class="btn btn-primary btn-sm me-2">
@@ -269,18 +271,16 @@
               </button>
               <div
                 v-if="showAlertLocalBackup"
-                class="alert alert-success alert-dismissible fade show ms-2"
-                role="alert">
+                class="alert alert-success alert-dismissible fade show ms-auto">
                 <i class="bi bi-check-circle me-1"></i>
                 {{ alertMessageLocalBackup }}
               </div>
             </div>
-          </div>
 
-          <!-- Line 2 -->
-          <div class="card-body">
+            <!-- Line 2: List -->
             <div class="row">
-              <div class="col-12 col-md-3">
+              <div class="col-12 col-md-6">
+                <!-- Ajusté pour utiliser plus d'espace si nécessaire -->
                 <ul class="list-group">
                   <li
                     v-for="(configName, index) in configs"
