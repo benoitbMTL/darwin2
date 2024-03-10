@@ -30,10 +30,11 @@ type AppConfig struct {
 
 
 var (
-	CurrentConfig AppConfig                       // Holds the current application configuration
-	DefaultConfig AppConfig                       // Holds the default application configuration
-	configsMap    = make(map[string]AppConfig)    // Stores configurations by name
-	currentName   string                          // Holds the name of the current configuration
+	CurrentConfig 	AppConfig                       // Holds the current application configuration
+	DefaultConfig 	AppConfig                       // Holds the default application configuration
+	configsMap    	= make(map[string]AppConfig)    // Stores configurations by name
+	currentName   	string                          // Holds the name of the current configuration
+	configMutex		sync.RWMutex
 )
 
 // Initialize sets up the default values for the application configuration
@@ -106,38 +107,38 @@ func Initialize() {
 		USERAGENT:    		"FortiWeb Demo Tool",
 		FABRICLABSTORY:		"",    }
     
-		configsMap["Default"] = defaultConfig
+		// Add your defaultConfig to the configsMap
+		configsMap[defaultConfig.Name] = defaultConfig
+
     	CurrentConfig = "Default"
 }
 
-// GetCurrentConfig function to retrieve the AppConfig object of the current config
 func GetCurrentConfig() AppConfig {
     configMutex.RLock()
     defer configMutex.RUnlock()
 
-    currentConfig, exists := configsMap[CurrentConfig]
+    // Use currentName to access the current configuration from configsMap
+    currentConfig, exists := configsMap[currentName]
     if !exists {
-        // Log the error or handle the case where current config does not exist more robustly
-        log.Printf("Warning: Configuration '%s' does not exist.", CurrentConfig)
-        return AppConfig{} // Return an empty AppConfig as a fallback
+        log.Printf("Warning: Configuration '%s' does not exist.", currentName)
+        // This could happen if the configuration is deleted or not initialized properly
+        // You may return a default configuration or handle this case as needed
+        return AppConfig{}
     }
     return currentConfig
 }
 
-// SetCurrentConfig changes the current configuration to the one specified by name
-func SetCurrentConfig(name string) error {
-	configMutex.Lock()
-	defer configMutex.Unlock()
+func GetCurrentConfig() AppConfig {
+    configMutex.RLock()
+    defer configMutex.RUnlock()
 
-	config, exists := configsMap[name]
-	if !exists {
-		return fmt.Errorf("configuration %s does not exist", name)
-	}
-
-	CurrentConfig = config
-	currentName = name // Update the currentName variable to reflect the new current configuration
-
-	return nil
+    // Use currentName to access the current configuration
+    currentConfig, exists := configsMap[currentName]
+    if !exists {
+        log.Printf("Warning: Configuration '%s' does not exist.", currentName)
+        return AppConfig{} // Return an empty AppConfig as a fallback
+    }
+    return currentConfig
 }
 
 // GetConfig handles the GET request for the current configuration
@@ -145,88 +146,87 @@ func GetConfig(c echo.Context) error {
 	configMutex.RLock()
 	defer configMutex.RUnlock()
 
-	currentConfig, exists := configsMap[CurrentConfig]
+	// Use currentName to fetch the current configuration from configsMap
+	currentConfig, exists := configsMap[currentName]
 	if !exists {
-		log.Printf("Requested current configuration '%s' does not exist.", CurrentConfig)
-		// Depending on your error handling strategy, you might want to return an error or a default config
-		return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration %s does not exist", CurrentConfig))
+		log.Printf("Requested current configuration '%s' does not exist.", currentName)
+		// Return an HTTP error with a message indicating the configuration does not exist
+		return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' does not exist", currentName))
 	}
 
-	log.Printf("Returning current configuration: %s", CurrentConfig)
+	log.Printf("Returning current configuration: %s", currentName)
+	// Return the current configuration as a JSON response
 	return c.JSON(http.StatusOK, currentConfig)
 }
 
+
 // UpdateConfig handles the POST request to update the configuration
 func UpdateConfig(c echo.Context) error {
-	var newConfig AppConfig
-	if err := c.Bind(&newConfig); err != nil {
-		log.Printf("Error binding new configuration: %v", err)
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
+    var newConfig AppConfig
+    if err := c.Bind(&newConfig); err != nil {
+        log.Printf("Error binding new configuration: %v", err)
+        return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+    }
 
-	configMutex.Lock()
-	defer configMutex.Unlock()
+    configMutex.Lock()
+    defer configMutex.Unlock()
 
-	// Validate newConfig has a Name
-	if newConfig.Name == "" {
-		log.Println("New configuration does not have a name")
-		return echo.NewHTTPError(http.StatusBadRequest, "Configuration must have a name")
-	}
+    // Assuming newConfig includes a 'Name' field to identify the configuration
+    if newConfig.Name == "" {
+        log.Println("Error: Configuration must have a name.")
+        return echo.NewHTTPError(http.StatusBadRequest, "Configuration must have a name.")
+    }
 
-	configsMap[newConfig.Name] = newConfig // Store/Update the configuration by its name
-	CurrentConfig = newConfig.Name // Set this as the current active configuration
+    // Update or add the new configuration in the map
+    configsMap[newConfig.Name] = newConfig
 
-	log.Printf("Configuration '%s' updated and set as current.", newConfig.Name)
-	return c.JSON(http.StatusOK, newConfig)
+    // Optionally, set this new configuration as the current one
+    currentName = newConfig.Name
+
+    log.Printf("Configuration '%s' updated and set as current.", newConfig.Name)
+    return c.JSON(http.StatusOK, newConfig)
 }
 
 
-// ResetConfig handles the GET request to reset the configuration
 func ResetConfig(c echo.Context) error {
     configMutex.Lock()
     defer configMutex.Unlock()
 
-    // Assuming "Default" is the key for the default configuration in configsMap
-    // Ensure that the "Default" configuration exists in configsMap
-    if _, exists := configsMap["Default"]; !exists {
-        // Handle the case where the default configuration is missing
-        log.Printf("Default configuration is missing.")
+    // Check if the default configuration exists
+    defaultConfig, exists := configsMap["Default"]
+    if !exists {
+        log.Println("Default configuration is missing.")
         return echo.NewHTTPError(http.StatusInternalServerError, "Default configuration is missing.")
     }
     
-    // Set CurrentConfig to the key/name of the default configuration
-    CurrentConfig = "Default"
-
-    // Optionally, if you want to reset the content of the current configuration to the default values
-    configsMap[CurrentConfig] = configsMap["Default"]
-    
-    log.Printf("Configuration reset to default.")
-    return c.JSON(http.StatusOK, configsMap[CurrentConfig])
+    // Reset the current configuration to the default configuration
+    currentName = "Default"
+    log.Println("Configuration reset to default.")
+    return c.JSON(http.StatusOK, defaultConfig)
 }
 
-// BackupConfig serializes and sends the current AppConfig struct to JSON
+
 func BackupConfig(c echo.Context) error {
-	configMutex.RLock()
-	defer configMutex.RUnlock()
+    configMutex.RLock()
+    defer configMutex.RUnlock()
 
-	currentConfig, exists := configsMap[CurrentConfig]
-	if !exists {
-		return echo.NewHTTPError(http.StatusNotFound, "Current configuration not found")
-	}
+    currentConfig, exists := configsMap[currentName]
+    if !exists {
+        return echo.NewHTTPError(http.StatusNotFound, "Current configuration not found.")
+    }
 
-	formattedJSON, err := json.MarshalIndent(currentConfig, "", "  ")
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
+    formattedJSON, err := json.MarshalIndent(currentConfig, "", "  ")
+    if err != nil {
+        return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+    }
 
-	c.Response().Header().Set(echo.HeaderContentDisposition, `attachment; filename="config_backup.json"`)
-	c.Response().Header().Set(echo.HeaderContentType, "application/json")
-	return c.Blob(http.StatusOK, "application/json", formattedJSON)
+    c.Response().Header().Set(echo.HeaderContentDisposition, `attachment; filename="config_backup.json"`)
+    c.Response().Header().Set(echo.HeaderContentType, "application/json")
+    return c.Blob(http.StatusOK, "application/json", formattedJSON)
 }
 
 
 
-// RestoreConfig handles the POST request to replace the current configuration
 func RestoreConfig(c echo.Context) error {
     var newConfig AppConfig
     if err := c.Bind(&newConfig); err != nil {
@@ -236,14 +236,13 @@ func RestoreConfig(c echo.Context) error {
     configMutex.Lock()
     defer configMutex.Unlock()
 
-    // Validate or generate a name for newConfig if it doesn't exist
     if newConfig.Name == "" {
-        return echo.NewHTTPError(http.StatusBadRequest, "Configuration name is required")
+        return echo.NewHTTPError(http.StatusBadRequest, "Configuration name is required.")
     }
 
-    configsMap[newConfig.Name] = newConfig // Update the configuration map with the new configuration
-    CurrentConfig = newConfig.Name // Optionally set this new configuration as the current one
-
+    configsMap[newConfig.Name] = newConfig
+    currentName = newConfig.Name
+    log.Printf("Configuration '%s' restored and set as current.", newConfig.Name)
     return c.JSON(http.StatusOK, newConfig)
 }
 
@@ -255,12 +254,18 @@ func BackupConfigLocal(c echo.Context) error {
         return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
     }
 
-    name := request.Name
     configMutex.Lock()
-    configsMap[name] = GetCurrentConfig() // Retrieve the current AppConfig using a correct helper function
-    configMutex.Unlock()
+    defer configMutex.Unlock()
 
-    return c.JSON(http.StatusOK, echo.Map{"message": "Configuration '" + name + "' backed up successfully"})
+    // Ensure not to overwrite an existing configuration unless intended
+    if _, exists := configsMap[request.Name]; exists {
+        return echo.NewHTTPError(http.StatusConflict, fmt.Sprintf("Configuration '%s' already exists", request.Name))
+    }
+
+    configsMap[request.Name] = GetCurrentConfig() // Use GetCurrentConfig to ensure consistency
+    log.Printf("Configuration '%s' backed up successfully.", request.Name)
+
+    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' backed up successfully", request.Name)})
 }
 
 func RestoreConfigLocal(c echo.Context) error {
@@ -271,23 +276,18 @@ func RestoreConfigLocal(c echo.Context) error {
         return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
     }
 
-    name := request.Name
-
     configMutex.Lock()
     defer configMutex.Unlock()
 
-    // Check if the requested config exists
-    config, exists := configsMap[name]
+    config, exists := configsMap[request.Name]
     if !exists {
-        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", name))
+        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.Name))
     }
 
-    // Set the requested config as the current configuration
-    CurrentConfig = name // Now `CurrentConfig` should be a string that holds the key/name of the current configuration
+    currentName = request.Name // Correctly update the currentName
+    log.Printf("Configuration '%s' restored successfully.", request.Name)
 
-    // Log and inform the client about the successful operation
-    log.Printf("Configuration '%s' restored successfully.", name)
-    return c.JSON(http.StatusOK, config) // Return the restored configuration
+    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' restored successfully", request.Name)})
 }
 
 func DeleteConfigLocal(c echo.Context) error {
@@ -302,10 +302,17 @@ func DeleteConfigLocal(c echo.Context) error {
     defer configMutex.Unlock()
 
     if _, exists := configsMap[request.Name]; !exists {
-        return echo.NewHTTPError(http.StatusNotFound, "Configuration '" + request.Name + "' not found")
+        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.Name))
     }
 
-    delete(configsMap, request.Name) // Delete the configuration by its name/key
+    // Prevent deletion of the currently active configuration
+    if request.Name == currentName {
+        return echo.NewHTTPError(http.StatusBadRequest, "Cannot delete the currently active configuration")
+    }
 
-    return c.JSON(http.StatusOK, echo.Map{"message": "Configuration '" + request.Name + "' deleted successfully"})
+    delete(configsMap, request.Name)
+    log.Printf("Configuration '%s' deleted successfully.", request.Name)
+
+    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' deleted successfully", request.Name)})
 }
+
