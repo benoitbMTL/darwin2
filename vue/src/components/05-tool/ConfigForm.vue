@@ -327,11 +327,10 @@
                 </option>
               </select>
             </div>
-
-
           </div>
         </div>
       </div>
+      
     </div>
   </form>
 </template>
@@ -342,7 +341,7 @@ export default {
     return {
       configs: [], // Liste des noms de configuration sauvegardés
       selectedConfig: null, // Configuration actuellement sélectionnée
-      backupName: '', // Nom pour la nouvelle sauvegarde      activeTab: "applications", // Default active tab
+      backupName: "", // Nom pour la nouvelle sauvegarde      activeTab: "applications", // Default active tab
       showAlert: false,
       showAlertLocalBackup: false,
       showAlertFileExport: false,
@@ -350,6 +349,7 @@ export default {
       alertMessageLocalBackup: "",
       alertMessageFileExport: "",
       config: {
+        Name: "",
         DVWAURL: "",
         BANKURL: "",
         JUICESHOPURL: "",
@@ -367,150 +367,152 @@ export default {
     };
   },
   methods: {
-
-performBackup() {
-  // Check if the backup name is provided
-  if (!this.backupName) {
-    alert('Please provide a name for the backup.');
-    return;
-  }
-
-  // Prepare the data to be sent to the server. The structure of this data
-  // might vary depending on your backend requirements. Here, we're assuming
-  // the backend needs the name of the backup.
-  const data = {
-    name: this.backupName,
-  };
-
-  // Send a POST request to the "/backup-local" endpoint with the backup data.
-  // Use the Fetch API for this purpose.
-  fetch("/backup-local", {
-    method: "POST", // Use POST method for sending data to the server
-    headers: {
-      "Content-Type": "application/json", // Indicate that we're sending JSON data
-    },
-    body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
-  })
-    .then((response) => {
-      if (!response.ok) {
-        // If the server responds with a status code that indicates an error,
-        // throw an error to be caught in the catch block.
-        throw new Error('Failed to backup configuration.');
+    performBackup() {
+      // Check if the backup name is provided
+      if (!this.backupName) {
+        alert("Please provide a name for the backup.");
+        return;
       }
-      return response.json(); // Parse the JSON response body
-    })
-    .then((data) => {
-      // Handle the successful backup operation
-      console.log('Backup successful:', data);
-      this.configs.push(this.backupName); // Add the new backup name to the list of configs
-      this.selectedConfig = this.backupName; // Optionally, select the new backup
-      this.backupName = ''; // Reset the backup name input for future backups
-      this.showAlertLocalBackup = true; // Show success alert message
-      this.alertMessageLocalBackup = 'Configuration backed up successfully.';
-    })
-    .catch((error) => {
-      // Handle any errors that occurred during the fetch operation
-      console.error('Backup error:', error);
-      this.showAlertLocalBackup = true; // Show error alert message
-      this.alertMessageLocalBackup = 'Error during backup.';
-    });
-},
 
+      // Prepare the data to be sent to the server. The structure of this data
+      // might vary depending on your backend requirements. Here, we're assuming
+      // the backend needs the name of the backup.
+      const data = {
+        name: this.backupName,
+      };
 
-restoreConfigLocal() {
-  // Check if a configuration has been selected
-  if (!this.selectedConfig) {
-    alert('Please select a configuration to restore.');
-    return;
-  }
-
-  // Prepare the data to be sent to the server. The structure of this data
-  // might vary depending on your backend requirements. Here, we're assuming
-  // the backend needs the name of the configuration to be restored.
-  const data = {
-    name: this.selectedConfig,
-  };
-
-  // Send a POST request to the "/restore-local" endpoint with the data of the configuration to be restored.
-  fetch("/restore-local", {
-    method: "POST", // Use POST method for sending data to the server
-    headers: {
-      "Content-Type": "application/json", // Indicate that we're sending JSON data
+      // Send a POST request to the "/backup-local" endpoint with the backup data.
+      // Use the Fetch API for this purpose.
+      fetch("/backup-local", {
+        method: "POST", // Use POST method for sending data to the server
+        headers: {
+          "Content-Type": "application/json", // Indicate that we're sending JSON data
+        },
+        body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+      })
+        .then((response) => {
+          if (!response.ok) {
+            // If the server responds with a status code that indicates an error,
+            // throw an error to be caught in the catch block.
+            throw new Error("Failed to backup configuration.");
+          }
+          return response.json(); // Parse the JSON response body
+        })
+        .then((data) => {
+          // Handle the successful backup operation
+          console.log("Backup successful:", data);
+          this.configs.push(this.backupName); // Add the new backup name to the list of configs
+          this.selectedConfig = this.backupName; // Optionally, select the new backup
+          this.backupName = ""; // Reset the backup name input for future backups
+          this.showAlertLocalBackup = true; // Show success alert message
+          this.alertMessageLocalBackup =
+            "Configuration backed up successfully.";
+        })
+        .catch((error) => {
+          // Handle any errors that occurred during the fetch operation
+          console.error("Backup error:", error);
+          this.showAlertLocalBackup = true; // Show error alert message
+          this.alertMessageLocalBackup = "Error during backup.";
+        });
     },
-    body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
-  })
-    .then((response) => {
-      if (!response.ok) {
-        // If the server responds with a status code that indicates an error,
-        // throw an error to be caught in the catch block.
-        throw new Error('Failed to restore configuration.');
+
+    restoreConfigLocal() {
+      // Check if a configuration has been selected
+      if (!this.selectedConfig) {
+        alert("Please select a configuration to restore.");
+        return;
       }
-      return response.json(); // Parse the JSON response body
-    })
-    .then((data) => {
-      // Handle the successful configuration restoration
-      console.log('Configuration restored successfully:', data);
-      this.showAlertLocalBackup = true; // Show success alert message
-      this.alertMessageLocalBackup = 'Configuration restored successfully.';
-      // Optionally, update the frontend to reflect the restored configuration
-    })
-    .catch((error) => {
-      // Handle any errors that occurred during the fetch operation
-      console.error('Restore error:', error);
-      this.showAlertLocalBackup = true; // Show error alert message
-      this.alertMessageLocalBackup = 'Error during restoration.';
-    });
-},
 
+      // Prepare the data to be sent to the server. The structure of this data
+      // might vary depending on your backend requirements. Here, we're assuming
+      // the backend needs the name of the configuration to be restored.
+      const data = {
+        name: this.selectedConfig,
+      };
 
-deleteConfigLocal() {
-  // Check if a configuration has been selected for deletion
-  if (!this.selectedConfig) {
-    alert('Please select a configuration to delete.');
-    return;
-  }
-
-  // Prepare the data to be sent to the server. The structure of this data
-  // might vary depending on your backend requirements. Here, we're assuming
-  // the backend needs the name of the configuration to be deleted.
-  const data = {
-    name: this.selectedConfig,
-  };
-
-  // Send a POST request to the "/delete-local" endpoint with the data of the configuration to be deleted.
-  fetch("/delete-local", {
-    method: "POST", // Use POST method for sending data to the server
-    headers: {
-      "Content-Type": "application/json", // Indicate that we're sending JSON data
+      // Send a POST request to the "/restore-local" endpoint with the data of the configuration to be restored.
+      fetch("/restore-local", {
+        method: "POST", // Use POST method for sending data to the server
+        headers: {
+          "Content-Type": "application/json", // Indicate that we're sending JSON data
+        },
+        body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+      })
+        .then((response) => {
+          if (!response.ok) {
+            // If the server responds with a status code that indicates an error,
+            // throw an error to be caught in the catch block.
+            throw new Error("Failed to restore configuration.");
+          }
+          return response.json(); // Parse the JSON response body
+        })
+        .then((data) => {
+          // Handle the successful configuration restoration
+          console.log("Configuration restored successfully:", data);
+          this.showAlertLocalBackup = true; // Show success alert message
+          this.alertMessageLocalBackup = "Configuration restored successfully.";
+          // Optionally, update the frontend to reflect the restored configuration
+        })
+        .catch((error) => {
+          // Handle any errors that occurred during the fetch operation
+          console.error("Restore error:", error);
+          this.showAlertLocalBackup = true; // Show error alert message
+          this.alertMessageLocalBackup = "Error during restoration.";
+        });
     },
-    body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
-  })
-    .then((response) => {
-      if (!response.ok) {
-        // If the server responds with a status code that indicates an error,
-        // throw an error to be caught in the catch block.
-        throw new Error('Failed to delete configuration.');
+
+    deleteConfigLocal() {
+      // Check if a configuration has been selected for deletion
+      if (!this.selectedConfig) {
+        alert("Please select a configuration to delete.");
+        return;
       }
-      return response.json(); // Parse the JSON response body
-    })
-    .then(() => {
-      // Handle the successful deletion of the configuration
-      console.log('Configuration deleted successfully:', this.selectedConfig);
-      this.showAlertLocalBackup = true; // Show success alert message
-      this.alertMessageLocalBackup = 'Configuration deleted successfully.';
 
-      // Remove the deleted configuration from the 'configs' array
-      this.configs = this.configs.filter(config => config !== this.selectedConfig);
-      this.selectedConfig = null; // Reset the selected configuration
-    })
-    .catch((error) => {
-      // Handle any errors that occurred during the fetch operation
-      console.error('Delete error:', error);
-      this.showAlertLocalBackup = true; // Show error alert message
-      this.alertMessageLocalBackup = 'Error during deletion.';
-    });
-},
+      // Prepare the data to be sent to the server. The structure of this data
+      // might vary depending on your backend requirements. Here, we're assuming
+      // the backend needs the name of the configuration to be deleted.
+      const data = {
+        name: this.selectedConfig,
+      };
 
+      // Send a POST request to the "/delete-local" endpoint with the data of the configuration to be deleted.
+      fetch("/delete-local", {
+        method: "POST", // Use POST method for sending data to the server
+        headers: {
+          "Content-Type": "application/json", // Indicate that we're sending JSON data
+        },
+        body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+      })
+        .then((response) => {
+          if (!response.ok) {
+            // If the server responds with a status code that indicates an error,
+            // throw an error to be caught in the catch block.
+            throw new Error("Failed to delete configuration.");
+          }
+          return response.json(); // Parse the JSON response body
+        })
+        .then(() => {
+          // Handle the successful deletion of the configuration
+          console.log(
+            "Configuration deleted successfully:",
+            this.selectedConfig
+          );
+          this.showAlertLocalBackup = true; // Show success alert message
+          this.alertMessageLocalBackup = "Configuration deleted successfully.";
+
+          // Remove the deleted configuration from the 'configs' array
+          this.configs = this.configs.filter(
+            (config) => config !== this.selectedConfig
+          );
+          this.selectedConfig = null; // Reset the selected configuration
+        })
+        .catch((error) => {
+          // Handle any errors that occurred during the fetch operation
+          console.error("Delete error:", error);
+          this.showAlertLocalBackup = true; // Show error alert message
+          this.alertMessageLocalBackup = "Error during deletion.";
+        });
+    },
 
     triggerFileInput() {
       this.$refs.fileInput.click();
