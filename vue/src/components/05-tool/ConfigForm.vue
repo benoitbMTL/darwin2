@@ -319,28 +319,17 @@
               <i class="bi bi-check-circle me-1"></i>
               {{ alertMessageLocalBackup }}
             </div>
-
-
-
-            </div>
-            <ul class="list-group">
-              <li
-                v-for="(configName, index) in configs"
-                :key="index"
-                class="list-group-item"
-                :class="{ active: selectedConfig === configName }"
-                @click="selectConfig(configName)"
-              >
-                {{ configName }}
-              </li>
-            </ul>
           </div>
-
-
-
-
-
-          </div>
+          <ul class="list-group">
+            <li
+              v-for="(configName, index) in configs"
+              :key="index"
+              class="list-group-item"
+              :class="{ active: selectedConfig === configName }"
+              @click="selectConfig(configName)">
+              {{ configName }}
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -380,26 +369,23 @@ export default {
     };
   },
   methods: {
-
-
-        selectConfig(configName) {
+    selectConfig(configName) {
       this.selectedConfig = configName;
       // Vous pouvez également ajouter ici une logique pour charger les détails
       // de la configuration sélectionnée si nécessaire
       // Par exemple, charger la configuration du serveur et mettre à jour `this.config`
     },
 
-
-  fetchConfigsList() {
-    fetch("/list-configs")
-      .then(response => response.json())
-      .then(data => {
-        this.configs = data; // Supposons que `data` soit un tableau de noms de configuration
-      })
-      .catch(error => {
-        console.error("Error fetching configurations list:", error);
-      });
-  },
+    fetchConfigsList() {
+      fetch("/list-configs")
+        .then((response) => response.json())
+        .then((data) => {
+          this.configs = data; // Supposons que `data` soit un tableau de noms de configuration
+        })
+        .catch((error) => {
+          console.error("Error fetching configurations list:", error);
+        });
+    },
 
     performBackup() {
       // Check if the backup name is provided
@@ -687,11 +673,10 @@ export default {
     },
   },
 
-mounted() {
-  this.fetchConfig(); // Pour charger la configuration actuelle
-  this.fetchConfigsList(); // Pour charger la liste des noms de configurations
-},
-
+  mounted() {
+    this.fetchConfig(); // Pour charger la configuration actuelle
+    this.fetchConfigsList(); // Pour charger la liste des noms de configurations
+  },
 };
 </script>
 <style>
