@@ -10,6 +10,7 @@ rm -f "$output_file"
 files=(
 go/config/app_config.go
 vue/src/components/05-tool/ConfigForm.vue
+go/routes/routes.go
 )
 
 # Loop through the files and append their content to conf.txt

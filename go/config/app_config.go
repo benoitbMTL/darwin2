@@ -12,20 +12,22 @@ import (
 
 // AppConfig defines the structure for your application configuration
 type AppConfig struct {
-	DVWAURL      		string
-	BANKURL      		string
-	JUICESHOPURL 		string
-	PETSTOREURL  		string
-	SPEEDTESTURL 		string
-	USERNAMEAPI  		string
-	PASSWORDAPI  		string
-	VDOMAPI      		string
-	FWBMGTIP     		string
-	FWBMGTPORT   		string
-	MLPOLICY     		string
-	USERAGENT			string
-	FABRICLABSTORY		string
+	Name            string `json:"name"`
+	DVWAURL         string `json:"dvwaUrl"`
+	BANKURL         string `json:"bankUrl"`
+	JUICESHOPURL    string `json:"juiceShopUrl"`
+	PETSTOREURL     string `json:"petStoreUrl"`
+	SPEEDTESTURL    string `json:"speedTestUrl"`
+	USERNAMEAPI     string `json:"userNameApi"`
+	PASSWORDAPI     string `json:"passwordApi"`
+	VDOMAPI         string `json:"vdomApi"`
+	FWBMGTIP        string `json:"fwbMgtIp"`
+	FWBMGTPORT      string `json:"fwbMgtPort"`
+	MLPOLICY        string `json:"mlPolicy"`
+	USERAGENT       string `json:"userAgent"`
+	FABRICLABSTORY  string `json:"fabricLabStory"`
 }
+
 
 var (
 	// CurrentConfig holds the current application configuration.
@@ -197,7 +199,7 @@ func ResetConfig(c echo.Context) error {
     CurrentConfig = "Default"
 
     // Optionally, if you want to reset the content of the current configuration to the default values
-    // configsMap[CurrentConfig] = configsMap["Default"]
+    configsMap[CurrentConfig] = configsMap["Default"]
     
     log.Printf("Configuration reset to default.")
     return c.JSON(http.StatusOK, configsMap[CurrentConfig])
@@ -273,16 +275,20 @@ func RestoreConfigLocal(c echo.Context) error {
     name := request.Name
 
     configMutex.Lock()
+    defer configMutex.Unlock()
+
+    // Check if the requested config exists
     config, exists := configsMap[name]
     if !exists {
-        configMutex.Unlock()
-        return echo.NewHTTPError(http.StatusNotFound, "Configuration '" + name + "' not found")
+        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", name))
     }
 
-    CurrentConfig = name // Correctly set CurrentConfig to the name/key of the configuration
-    configMutex.Unlock()
+    // Set the requested config as the current configuration
+    CurrentConfig = name // Now `CurrentConfig` should be a string that holds the key/name of the current configuration
 
-    return c.JSON(http.StatusOK, echo.Map{"message": "Configuration '" + name + "' restored successfully"})
+    // Log and inform the client about the successful operation
+    log.Printf("Configuration '%s' restored successfully.", name)
+    return c.JSON(http.StatusOK, config) // Return the restored configuration
 }
 
 func DeleteConfigLocal(c echo.Context) error {
