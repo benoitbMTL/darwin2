@@ -55,9 +55,9 @@
 
           <!-- Buttons -->
           <div>
-            <button type="submit" class="btn btn-primary btn-sm me-2">
-              Save
-            </button>
+            <button
+              @click="saveConfig"
+              class="btn btn-primary btn-sm me-2"></button>
 
             <button
               type="button"
@@ -249,29 +249,31 @@
 
           <!-- Line 1 -->
           <div class="d-flex align-items-center">
-            <button
-              @click="backupConfigLocal"
-              class="btn btn-primary btn-sm me-2">
-              Backup
-            </button>
-            <button
-              type="button"
-              class="btn btn-success btn-sm me-2"
-              @click="restoreConfigLocal">
-              Restore
-            </button>
-            <button
-              type="button"
-              class="btn btn-danger btn-sm me-2"
-              @click="deleteConfigLocal">
-              Delete
-            </button>
-            <div
-              v-if="showAlertLocalBackup"
-              class="alert alert-success alert-dismissible fade show ms-2"
-              role="alert">
-              <i class="bi bi-check-circle me-1"></i>
-              {{ alertMessageLocalBackup }}
+            <div>
+              <button
+                @click="backupConfigLocal"
+                class="btn btn-primary btn-sm me-2">
+                Backup
+              </button>
+              <button
+                type="button"
+                class="btn btn-success btn-sm me-2"
+                @click="restoreConfigLocal">
+                Restore
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger btn-sm me-2"
+                @click="deleteConfigLocal">
+                Delete
+              </button>
+              <div
+                v-if="showAlertLocalBackup"
+                class="alert alert-success alert-dismissible fade show ms-2"
+                role="alert">
+                <i class="bi bi-check-circle me-1"></i>
+                {{ alertMessageLocalBackup }}
+              </div>
             </div>
           </div>
 
@@ -590,7 +592,7 @@ export default {
         });
     },
 
-    saveConfiguration() {
+    saveConfig() {
       // Appel API pour mettre à jour la configuration
       fetch("/config", {
         method: "POST",
