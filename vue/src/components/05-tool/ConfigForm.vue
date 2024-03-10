@@ -623,38 +623,43 @@ export default {
         });
     },
 
-resetConfig() {
-  fetch("/reset")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      this.showAlertSaveReset = true; 
-      this.alertMessageSaveReset = "Configuration reset to default.";
-      setTimeout(() => {
-        this.showAlertSaveReset = false;
-      }, 15000);
-      this.config = data; 
-      console.log("Reset success:", data);
-    })
-    .catch((error) => {
-      this.showAlertSaveReset = true; 
-      this.alertMessageSaveReset = "Error resetting configuration.";
-      setTimeout(() => {
-        this.showAlertSaveReset = false;
-      }, 15000);
-      console.error("Reset error:", error);
-    });
-},
+    resetConfig() {
+      fetch("/reset")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          this.showAlertSaveReset = true;
+          this.alertMessageSaveReset = "Configuration reset to default.";
+          setTimeout(() => {
+            this.showAlertSaveReset = false;
+          }, 15000);
+          this.config = data;
+          console.log("Reset success:", data);
+        })
+        .catch((error) => {
+          this.showAlertSaveReset = true;
+          this.alertMessageSaveReset = "Error resetting configuration.";
+          setTimeout(() => {
+            this.showAlertSaveReset = false;
+          }, 15000);
+          console.error("Reset error:", error);
+        });
+    },
 
-  mounted() {
-    this.fetchConfig(); // Load config to the form
-    this.fetchConfigsList(); // Load config list
-  },
-};
+
+    mounted() {
+      this.fetchConfig(); // Load config to the form
+      this.fetchConfigsList(); // Load config list
+    },
+  }
+}
+
+
+
 </script>
 <style>
 .nav-conf-item a {
