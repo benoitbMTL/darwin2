@@ -1,7 +1,7 @@
 <template>
   <h5 class="my-4">Demo Tool Configuration</h5>
 
-  <form @submit.prevent="submitForm">
+  <form @submit.prevent="saveConfig">
     <div class="card my-4">
       <!-- Menu -->
       <div
@@ -55,10 +55,7 @@
 
           <!-- Buttons -->
           <div>
-            <button
-              @click="saveConfig"
-              class="btn btn-primary btn-sm me-2"></button>
-
+            <button type="submit" class="btn btn-primary btn-sm me-2">Save</button>
             <button
               type="button"
               class="btn btn-secondary btn-sm"
@@ -249,9 +246,8 @@
 
           <!-- Card Body -->
           <div class="card-body">
-            <!-- Line 1: Buttons et Alert -->
+            <!-- Line 1: Buttons and Alert -->
             <div class="d-flex align-items-center mb-3">
-              <!-- Ajouté mb-3 pour un peu d'espace entre les lignes -->
               <button
                 @click="backupConfigLocal"
                 class="btn btn-primary btn-sm me-2">
@@ -279,8 +275,7 @@
 
             <!-- Line 2: List -->
             <div class="row">
-              <div class="col-12 col-md-6">
-                <!-- Ajusté pour utiliser plus d'espace si nécessaire -->
+              <div class="col-12 col-md-3">
                 <ul class="list-group">
                   <li
                     v-for="(configName, index) in configs"
