@@ -591,14 +591,15 @@ export default {
     fetchConfig() {
       fetch("/config")
         .then((response) => {
+          console.log("HTTP return code:", response.status); // Debug: Afficher le code de retour HTTP
           if (!response.ok) {
             throw new Error("Network response was not ok");
           }
           return response.json();
         })
         .then((data) => {
-          this.config = data;
           console.log("Configuration updated:", data);
+          this.config = data;
         })
         .catch((error) => {
           console.error("Error fetching updated configuration:", error);
@@ -607,7 +608,6 @@ export default {
 
     submitForm() {
       // Implement API call to update configuration
-      //fetch(`${process.env.VUE_APP_BACKEND_URL}/config`, {
       fetch("/config", {
         method: "POST",
         headers: {
@@ -633,7 +633,6 @@ export default {
     },
 
     resetConfig() {
-      //fetch(`${process.env.VUE_APP_BACKEND_URL}/reset`)
       fetch("/reset")
         .then((response) => response.json())
         .then((data) => {
@@ -666,8 +665,8 @@ export default {
         return response.json();
       })
       .then((data) => {
-        this.config = data; // Update config with fetched data
         console.log("Received config values:", data); // Print the config values
+        this.config = data; // Update config with fetched data
       })
       .catch((error) => {
         console.error("Fetch error:", error);
