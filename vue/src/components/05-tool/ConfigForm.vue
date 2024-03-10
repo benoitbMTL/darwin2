@@ -247,89 +247,59 @@
             <h5>Local Backup & Restore</h5>
           </div>
 
-          <div class="card-body d-flex align-items-center">
-            <!-- Backup Modal -->
-            <div
-              class="modal fade"
-              id="backupModal"
-              tabindex="-1"
-              aria-labelledby="backupModalLabel"
-              aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="backupModalLabel">
-                      Backup Configuration
-                    </h5>
-                    <button
-                      type="button"
-                      class="btn-close"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Backup Name"
-                      v-model="backupName" />
-                  </div>
-                  <div class="modal-footer">
-                    <button
-                      type="button"
-                      class="btn btn-secondary"
-                      data-bs-dismiss="modal">
-                      Close
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      @click="performBackup">
-                      Save Backup
-                    </button>
-                  </div>
+          <!-- Première ligne : boutons et alerte -->
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col">
+                <button
+                  @click="backupConfigLocal"
+                  class="btn btn-primary btn-sm me-2">
+                  Backup
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-success btn-sm me-2"
+                  @click="restoreConfigLocal">
+                  Restore
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm me-2"
+                  @click="deleteConfigLocal">
+                  Delete
+                </button>
+              </div>
+              <div class="col-auto">
+                <div
+                  v-if="showAlertLocalBackup"
+                  class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
+                  role="alert"
+                  style="font-size: 0.875rem">
+                  <i class="bi bi-check-circle me-1"></i>
+                  {{ alertMessageLocalBackup }}
                 </div>
               </div>
             </div>
+          </div>
 
-            <button
-              @click="backupConfigLocal"
-              class="btn btn-primary btn-sm me-2">
-              Backup
-            </button>
-            <button
-              type="button"
-              class="btn btn-success btn-sm me-2"
-              @click="restoreConfigLocal">
-              Restore
-            </button>
-            <button
-              type="button"
-              class="btn btn-danger btn-sm me-2"
-              @click="deleteConfigLocal">
-              Delete
-            </button>
-
-            <!-- Alert Message -->
-            <div
-              v-if="showAlertLocalBackup"
-              class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
-              role="alert"
-              style="font-size: 0.875rem">
-              <i class="bi bi-check-circle me-1"></i>
-              {{ alertMessageLocalBackup }}
+          <!-- Deuxième ligne : liste des configurations -->
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <!-- Ajuster les classes col-md-* selon la largeur désirée -->
+                <ul class="list-group">
+                  <li
+                    v-for="(configName, index) in configs"
+                    :key="index"
+                    class="list-group-item"
+                    :class="{ active: selectedConfig === configName }"
+                    @click="selectConfig(configName)">
+                    {{ configName }}
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
-          <ul class="list-group">
-            <li
-              v-for="(configName, index) in configs"
-              :key="index"
-              class="list-group-item"
-              :class="{ active: selectedConfig === configName }"
-              @click="selectConfig(configName)">
-              {{ configName }}
-            </li>
-          </ul>
         </div>
       </div>
     </div>
