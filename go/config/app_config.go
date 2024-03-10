@@ -106,7 +106,14 @@ func Initialize() {
 		configsMap[defaultConfig.Name] = defaultConfig
 
 		currentName = "Default"
-		//currentConfig := configsMap[currentName]
+
+        // Ensure that CurrentConfig reflects the configuration pointed to by currentName.
+        var exists bool
+        CurrentConfig, exists = configsMap[currentName]
+        if !exists {
+            log.Fatalf("Fatal error: default configuration '%s' does not exist.", currentName)
+            // Optionally, handle this more gracefully than just crashing.
+        }
 }
 
 func GetCurrentConfig() AppConfig {
@@ -119,7 +126,7 @@ func GetCurrentConfig() AppConfig {
         log.Printf("Warning: Configuration '%s' does not exist.", currentName)
         // This could happen if the configuration is deleted or not initialized properly
         // You may return a default configuration or handle this case as needed
-        return AppConfig{}
+        return DefaultConfig
     }
     return currentConfig
 }
