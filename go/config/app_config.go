@@ -111,7 +111,7 @@ func Initialize() {
 		configsMap[defaultConfig.Name] = defaultConfig
 
 		currentName = "Default"
-		currentConfig := configsMap[currentName]
+		//currentConfig := configsMap[currentName]
 }
 
 func GetCurrentConfig() AppConfig {
@@ -267,7 +267,7 @@ func RestoreConfigLocal(c echo.Context) error {
     configMutex.Lock()
     defer configMutex.Unlock()
 
-    config, exists := configsMap[request.Name]
+    _, exists := configsMap[request.Name]
     if !exists {
         return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.Name))
     }
