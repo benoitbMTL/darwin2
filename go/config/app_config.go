@@ -12,7 +12,6 @@ import (
 
 // AppConfig defines the structure for your application configuration
 type AppConfig struct {
-	Name            string `json:"name"`
 	DVWAURL         string `json:"dvwaUrl"`
 	BANKURL         string `json:"bankUrl"`
 	JUICESHOPURL    string `json:"juiceShopUrl"`

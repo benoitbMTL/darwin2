@@ -656,10 +656,6 @@ export default {
 
   mounted() {
     // Fetch current configuration from the Go backend
-    console.log(
-      `Making a GET request to ${process.env.VUE_APP_BACKEND_URL}/config`
-    );
-    //fetch(`${process.env.VUE_APP_BACKEND_URL}/config`)
     fetch("/config")
       .then((response) => {
         console.log("HTTP return code:", response.status); // Print HTTP return code
