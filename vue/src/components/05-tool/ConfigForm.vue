@@ -247,46 +247,38 @@
             <h5>Local Backup & Restore</h5>
           </div>
 
-          <!-- Première ligne : boutons et alerte -->
-          <div class="card-body">
-            <div class="row align-items-center">
-              <div class="col">
-                <button
-                  @click="backupConfigLocal"
-                  class="btn btn-primary btn-sm me-2">
-                  Backup
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-success btn-sm me-2"
-                  @click="restoreConfigLocal">
-                  Restore
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-danger btn-sm me-2"
-                  @click="deleteConfigLocal">
-                  Delete
-                </button>
-              </div>
-              <div class="col-auto">
-                <div
-                  v-if="showAlertLocalBackup"
-                  class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
-                  role="alert"
-                  style="font-size: 0.875rem">
-                  <i class="bi bi-check-circle me-1"></i>
-                  {{ alertMessageLocalBackup }}
-                </div>
-              </div>
+          <!-- Line 1 -->
+          <div class="d-flex align-items-center">
+            <button
+              @click="backupConfigLocal"
+              class="btn btn-primary btn-sm me-2">
+              Backup
+            </button>
+            <button
+              type="button"
+              class="btn btn-success btn-sm me-2"
+              @click="restoreConfigLocal">
+              Restore
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger btn-sm me-2"
+              @click="deleteConfigLocal">
+              Delete
+            </button>
+            <div
+              v-if="showAlertLocalBackup"
+              class="alert alert-success alert-dismissible fade show ms-2"
+              role="alert">
+              <i class="bi bi-check-circle me-1"></i>
+              {{ alertMessageLocalBackup }}
             </div>
           </div>
 
-          <!-- Deuxième ligne : liste des configurations -->
+          <!-- Line 2 -->
           <div class="card-body">
             <div class="row">
-              <div class="col-12 col-md-6">
-                <!-- Ajuster les classes col-md-* selon la largeur désirée -->
+              <div class="col-12 col-md-3">
                 <ul class="list-group">
                   <li
                     v-for="(configName, index) in configs"
@@ -314,12 +306,14 @@ export default {
       configs: [], // List of saved configuration names
       selectedConfig: null, // Currently selected configuration
       backupName: "", // Name for the new backup
-      showAlert: false,
+
+      showAlertSaveReset: false,
+      alertMessageSaveReset: "",
+      showAlertExportImport: false,
+      alertMessageExportImport: "",
       showAlertLocalBackup: false,
-      showAlertFileExport: false,
-      alertMessage: "",
       alertMessageLocalBackup: "",
-      alertMessageFileExport: "",
+
       config: {
         Name: "",
         DVWAURL: "",
@@ -596,8 +590,8 @@ export default {
         });
     },
 
-    submitForm() {
-      // Implement API call to update configuration
+    saveConfiguration() {
+      // Appel API pour mettre à jour la configuration
       fetch("/config", {
         method: "POST",
         headers: {
@@ -605,19 +599,26 @@ export default {
         },
         body: JSON.stringify(this.config),
       })
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
         .then((data) => {
-          this.showAlert = true;
-          this.alertMessage = "Configuration saved successfully.";
-          // Reset showAlert after some time if needed
-          setTimeout(() => (this.showAlert = false), 15000);
+          this.showAlertSaveReset = true;
+          this.alertMessageSaveReset = "Configuration saved successfully.";
+          setTimeout(() => {
+            this.showAlertSaveReset = false;
+          }, 15000);
           console.log("Success:", data);
         })
         .catch((error) => {
-          this.showAlert = true;
-          this.alertMessage = "Error saving configuration.";
-          // Reset showAlert after some time if needed
-          setTimeout(() => (this.showAlert = false), 15000);
+          this.showAlertSaveReset = true;
+          this.alertMessageSaveReset = "Error saving configuration.";
+          setTimeout(() => {
+            this.showAlertSaveReset = false;
+          }, 15000);
           console.error("Error:", error);
         });
     },
