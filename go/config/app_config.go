@@ -253,14 +253,14 @@ func BackupConfigLocal(c echo.Context) error {
     defer configMutex.Unlock()
 
     // Ensure not to overwrite an existing configuration unless intended
-    if _, exists := configsMap[request.NAME]; exists {
-        return echo.NewHTTPError(http.StatusConflict, fmt.Sprintf("Configuration '%s' already exists", request.NAME))
+    if _, exists := configsMap[request.Name]; exists {
+        return echo.NewHTTPError(http.StatusConflict, fmt.Sprintf("Configuration '%s' already exists", request.Name))
     }
 
-    configsMap[request.NAME] = GetCurrentConfig() // Use GetCurrentConfig to ensure consistency
-    log.Printf("Configuration '%s' backed up successfully.", request.NAME)
+    configsMap[request.Name] = GetCurrentConfig() // Use GetCurrentConfig to ensure consistency
+    log.Printf("Configuration '%s' backed up successfully.", request.Name)
 
-    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' backed up successfully", request.NAME)})
+    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' backed up successfully", request.Name)})
 }
 
 func RestoreConfigLocal(c echo.Context) error {
@@ -274,15 +274,15 @@ func RestoreConfigLocal(c echo.Context) error {
     configMutex.Lock()
     defer configMutex.Unlock()
 
-    _, exists := configsMap[request.NAME]
+    _, exists := configsMap[request.Name]
     if !exists {
-        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.NAME))
+        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.Name))
     }
 
-    currentName = request.NAME // Correctly update the currentName
-    log.Printf("Configuration '%s' restored successfully.", request.NAME)
+    currentName = request.Name // Correctly update the currentName
+    log.Printf("Configuration '%s' restored successfully.", request.Name)
 
-    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' restored successfully", request.NAME)})
+    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' restored successfully", request.Name)})
 }
 
 func DeleteConfigLocal(c echo.Context) error {
@@ -296,18 +296,18 @@ func DeleteConfigLocal(c echo.Context) error {
     configMutex.Lock()
     defer configMutex.Unlock()
 
-    if _, exists := configsMap[request.NAME]; !exists {
-        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.NAME))
+    if _, exists := configsMap[request.Name]; !exists {
+        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.Name))
     }
 
     // Prevent deletion of the currently active configuration
-    if request.NAME == currentName {
+    if request.Name == currentName {
         return echo.NewHTTPError(http.StatusBadRequest, "Cannot delete the currently active configuration")
     }
 
-    delete(configsMap, request.NAME)
-    log.Printf("Configuration '%s' deleted successfully.", request.NAME)
+    delete(configsMap, request.Name)
+    log.Printf("Configuration '%s' deleted successfully.", request.Name)
 
-    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' deleted successfully", request.NAME)})
+    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' deleted successfully", request.Name)})
 }
 
