@@ -320,13 +320,26 @@
               {{ alertMessageLocalBackup }}
             </div>
 
-            <div>
-              <select class="form-select" v-model="selectedConfig">
-                <option v-for="config in configs" :key="config" :value="config">
-                  {{ config }}
-                </option>
-              </select>
+
+
             </div>
+            <ul class="list-group">
+              <li
+                v-for="(configName, index) in configs"
+                :key="index"
+                class="list-group-item"
+                :class="{ active: selectedConfig === configName }"
+                @click="selectConfig(configName)"
+              >
+                {{ configName }}
+              </li>
+            </ul>
+          </div>
+
+
+
+
+
           </div>
         </div>
       </div>
@@ -367,6 +380,14 @@ export default {
     };
   },
   methods: {
+
+
+        selectConfig(configName) {
+      this.selectedConfig = configName;
+      // Vous pouvez également ajouter ici une logique pour charger les détails
+      // de la configuration sélectionnée si nécessaire
+      // Par exemple, charger la configuration du serveur et mettre à jour `this.config`
+    },
 
 
   fetchConfigsList() {
