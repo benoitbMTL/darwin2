@@ -330,7 +330,6 @@
           </div>
         </div>
       </div>
-      
     </div>
   </form>
 </template>
@@ -339,9 +338,10 @@
 export default {
   data() {
     return {
-      configs: [], // Liste des noms de configuration sauvegardés
-      selectedConfig: null, // Configuration actuellement sélectionnée
-      backupName: "", // Nom pour la nouvelle sauvegarde      activeTab: "applications", // Default active tab
+      activeTab: "applications", // Default active tab
+      configs: [], // List of saved configuration names
+      selectedConfig: null, // Currently selected configuration
+      backupName: "", // Name for the new backup
       showAlert: false,
       showAlertLocalBackup: false,
       showAlertFileExport: false,
