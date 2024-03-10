@@ -78,7 +78,7 @@
             type="text"
             class="form-control"
             id="dvwaUrl"
-            v-model="config.DVWAURL" />
+            v-model="config.dvwaUrl" />
         </div>
         <div class="mb-3">
           <label for="bankUrl" class="form-label">Bank URL</label>

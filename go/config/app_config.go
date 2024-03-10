@@ -12,20 +12,20 @@ import (
 
 // AppConfig defines the structure for your application configuration
 type AppConfig struct {
-    Name            string `json:"Name"`
-	DVWAURL         string `json:"dvwaUrl"`
-	BANKURL         string `json:"bankUrl"`
-	JUICESHOPURL    string `json:"juiceShopUrl"`
-	PETSTOREURL     string `json:"petStoreUrl"`
-	SPEEDTESTURL    string `json:"speedTestUrl"`
-	USERNAMEAPI     string `json:"userNameApi"`
-	PASSWORDAPI     string `json:"passwordApi"`
-	VDOMAPI         string `json:"vdomApi"`
-	FWBMGTIP        string `json:"fwbMgtIp"`
-	FWBMGTPORT      string `json:"fwbMgtPort"`
-	MLPOLICY        string `json:"mlPolicy"`
-	USERAGENT       string `json:"userAgent"`
-	FABRICLABSTORY  string `json:"fabricLabStory"`
+    NAME            string `json:"NAME"`
+	DVWAURL         string `json:"DVWAURL"`
+	BANKURL         string `json:"BANKURL"`
+	JUICESHOPURL    string `json:"JUICESHOPURL"`
+	PETSTOREURL     string `json:"PETSTOREURL"`
+	SPEEDTESTURL    string `json:"SPEEDTESTURL"`
+	USERNAMEAPI     string `json:"USERNAMEAPI"`
+	PASSWORDAPI     string `json:"PASSWORDAPI"`
+	VDOMAPI         string `json:"VDOMAPI"`
+	FWBMGTIP        string `json:"FWBMGTIP"`
+	FWBMGTPORT      string `json:"FWBMGTPORT"`
+	MLPOLICY        string `json:"MLPOLICY"`
+	USERAGENT       string `json:"USERAGENT"`
+	FABRICLABSTORY  string `json:"FABRICLABSTORY"`
 }
 
 
@@ -108,7 +108,7 @@ func Initialize() {
 		FABRICLABSTORY:		"",    }
     
 		// Add your defaultConfig to the configsMap
-		configsMap[defaultConfig.Name] = defaultConfig
+		configsMap[defaultConfig.NAME] = defaultConfig
 
 		currentName = "Default"
 
@@ -167,18 +167,18 @@ func UpdateConfig(c echo.Context) error {
     defer configMutex.Unlock()
 
     // Assuming newConfig includes a 'Name' field to identify the configuration
-    if newConfig.Name == "" {
+    if newConfig.NAME == "" {
         log.Println("Error: Configuration must have a name.")
         return echo.NewHTTPError(http.StatusBadRequest, "Configuration must have a name.")
     }
 
     // Update or add the new configuration in the map
-    configsMap[newConfig.Name] = newConfig
+    configsMap[newConfig.NAME] = newConfig
 
     // Optionally, set this new configuration as the current one
-    currentName = newConfig.Name
+    currentName = newConfig.NAME
 
-    log.Printf("Configuration '%s' updated and set as current.", newConfig.Name)
+    log.Printf("Configuration '%s' updated and set as current.", newConfig.NAME)
     return c.JSON(http.StatusOK, newConfig)
 }
 
@@ -231,13 +231,13 @@ func RestoreConfig(c echo.Context) error {
     configMutex.Lock()
     defer configMutex.Unlock()
 
-    if newConfig.Name == "" {
+    if newConfig.NAME == "" {
         return echo.NewHTTPError(http.StatusBadRequest, "Configuration name is required.")
     }
 
-    configsMap[newConfig.Name] = newConfig
-    currentName = newConfig.Name
-    log.Printf("Configuration '%s' restored and set as current.", newConfig.Name)
+    configsMap[newConfig.NAME] = newConfig
+    currentName = newConfig.NAME
+    log.Printf("Configuration '%s' restored and set as current.", newConfig.NAME)
     return c.JSON(http.StatusOK, newConfig)
 }
 
@@ -253,14 +253,14 @@ func BackupConfigLocal(c echo.Context) error {
     defer configMutex.Unlock()
 
     // Ensure not to overwrite an existing configuration unless intended
-    if _, exists := configsMap[request.Name]; exists {
-        return echo.NewHTTPError(http.StatusConflict, fmt.Sprintf("Configuration '%s' already exists", request.Name))
+    if _, exists := configsMap[request.NAME]; exists {
+        return echo.NewHTTPError(http.StatusConflict, fmt.Sprintf("Configuration '%s' already exists", request.NAME))
     }
 
-    configsMap[request.Name] = GetCurrentConfig() // Use GetCurrentConfig to ensure consistency
-    log.Printf("Configuration '%s' backed up successfully.", request.Name)
+    configsMap[request.NAME] = GetCurrentConfig() // Use GetCurrentConfig to ensure consistency
+    log.Printf("Configuration '%s' backed up successfully.", request.NAME)
 
-    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' backed up successfully", request.Name)})
+    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' backed up successfully", request.NAME)})
 }
 
 func RestoreConfigLocal(c echo.Context) error {
@@ -274,15 +274,15 @@ func RestoreConfigLocal(c echo.Context) error {
     configMutex.Lock()
     defer configMutex.Unlock()
 
-    _, exists := configsMap[request.Name]
+    _, exists := configsMap[request.NAME]
     if !exists {
-        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.Name))
+        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.NAME))
     }
 
-    currentName = request.Name // Correctly update the currentName
-    log.Printf("Configuration '%s' restored successfully.", request.Name)
+    currentName = request.NAME // Correctly update the currentName
+    log.Printf("Configuration '%s' restored successfully.", request.NAME)
 
-    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' restored successfully", request.Name)})
+    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' restored successfully", request.NAME)})
 }
 
 func DeleteConfigLocal(c echo.Context) error {
@@ -296,18 +296,18 @@ func DeleteConfigLocal(c echo.Context) error {
     configMutex.Lock()
     defer configMutex.Unlock()
 
-    if _, exists := configsMap[request.Name]; !exists {
-        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.Name))
+    if _, exists := configsMap[request.NAME]; !exists {
+        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.NAME))
     }
 
     // Prevent deletion of the currently active configuration
-    if request.Name == currentName {
+    if request.NAME == currentName {
         return echo.NewHTTPError(http.StatusBadRequest, "Cannot delete the currently active configuration")
     }
 
-    delete(configsMap, request.Name)
-    log.Printf("Configuration '%s' deleted successfully.", request.Name)
+    delete(configsMap, request.NAME)
+    log.Printf("Configuration '%s' deleted successfully.", request.NAME)
 
-    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' deleted successfully", request.Name)})
+    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' deleted successfully", request.NAME)})
 }
 
