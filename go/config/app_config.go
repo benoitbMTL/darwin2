@@ -311,3 +311,14 @@ func DeleteConfigLocal(c echo.Context) error {
     return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' deleted successfully", request.Name)})
 }
 
+func ListConfigs(c echo.Context) error {
+    configMutex.RLock()
+    defer configMutex.RUnlock()
+
+    var configNames []string
+    for name := range configsMap {
+        configNames = append(configNames, name)
+    }
+
+    return c.JSON(http.StatusOK, configNames)
+}

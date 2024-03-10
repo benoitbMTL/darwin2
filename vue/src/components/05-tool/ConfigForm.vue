@@ -78,7 +78,7 @@
             type="text"
             class="form-control"
             id="dvwaUrl"
-            v-model="config.dvwaUrl" />
+            v-model="config.DVWAURL" />
         </div>
         <div class="mb-3">
           <label for="bankUrl" class="form-label">Bank URL</label>
@@ -367,6 +367,19 @@ export default {
     };
   },
   methods: {
+
+
+  fetchConfigsList() {
+    fetch("/list-configs")
+      .then(response => response.json())
+      .then(data => {
+        this.configs = data; // Supposons que `data` soit un tableau de noms de configuration
+      })
+      .catch(error => {
+        console.error("Error fetching configurations list:", error);
+      });
+  },
+
     performBackup() {
       // Check if the backup name is provided
       if (!this.backupName) {
@@ -653,25 +666,11 @@ export default {
     },
   },
 
-  mounted() {
-    // Fetch current configuration from the Go backend
-    fetch("/config")
-      .then((response) => {
-        console.log("HTTP return code:", response.status); // Print HTTP return code
+mounted() {
+  this.fetchConfig(); // Pour charger la configuration actuelle
+  this.fetchConfigsList(); // Pour charger la liste des noms de configurations
+},
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Received config values:", data); // Print the config values
-        this.config = data; // Update config with fetched data
-      })
-      .catch((error) => {
-        console.error("Fetch error:", error);
-      });
-  },
 };
 </script>
 <style>
