@@ -43,7 +43,6 @@ func Initialize() {
 	defer configMutex.Unlock()
 	
 	defaultConfig := AppConfig{
-		Name:               "Default",
 		DVWAURL:			"https://dvwa.corp.fabriclab.ca",
 		BANKURL:			"https://bank.corp.fabriclab.ca/bank.html",
 		JUICESHOPURL:		"https://juiceshop.corp.fabriclab.ca",
@@ -60,7 +59,6 @@ func Initialize() {
 	}
 
     configsMap["AzureConfig"] = AppConfig{
-		Name:               "AzureConfig",
 		DVWAURL:			"https://dvwa.canadaeast.cloudapp.azure.com/",
 		BANKURL:			"https://bank.canadaeast.cloudapp.azure.com/bank.html",
 		JUICESHOPURL:		"https://juiceshop.canadaeast.cloudapp.azure.com",
@@ -76,7 +74,6 @@ func Initialize() {
 		FABRICLABSTORY:		"",    }
 
     configsMap["FabricLabConfig"] = AppConfig{
-		Name:               "FabricLabConfig",
 		DVWAURL:			"https://dvwa.corp.fabriclab.ca",
 		BANKURL:			"https://bank.corp.fabriclab.ca/bank.html",
 		JUICESHOPURL:		"https://juiceshop.corp.fabriclab.ca",
@@ -92,7 +89,6 @@ func Initialize() {
 		FABRICLABSTORY:		"fortiweb",    }
 
     configsMap["FortiWebCloudConfig"] = AppConfig{
-		Name:               "FortiWebCloudConfig",
 		DVWAURL:			"https://dvwa.96859.fortiwebcloud.net",
 		BANKURL:			"https://bank.96859.fortiwebcloud.net/bank.html",
 		JUICESHOPURL:		"https://juiceshop.96859.fortiwebcloud.net",
