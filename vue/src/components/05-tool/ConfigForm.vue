@@ -46,16 +46,18 @@
         <div class="d-flex align-items-center">
           <!-- Alert Message -->
           <div
-            v-if="showAlert"
+            v-if="showAlertSaveReset"
             class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
             role="alert"
             style="font-size: 0.875rem">
-            <i class="bi bi-check-circle me-1"></i> {{ alertMessage }}
+            <i class="bi bi-check-circle me-1"></i> {{ alertMessageSaveReset }}
           </div>
 
           <!-- Buttons -->
           <div>
-            <button type="submit" class="btn btn-primary btn-sm me-2">Save</button>
+            <button type="submit" class="btn btn-primary btn-sm me-2">
+              Save
+            </button>
             <button
               type="button"
               class="btn btn-secondary btn-sm"
@@ -230,7 +232,7 @@
             <!-- Alert Message -->
             <div
               v-if="showAlertFileExport"
-              class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
+              class="alert alert-success alert-dismissible fade show"
               role="alert"
               style="font-size: 0.875rem">
               <i class="bi bi-check-circle me-1"></i>
@@ -267,7 +269,9 @@
               </button>
               <div
                 v-if="showAlertLocalBackup"
-                class="alert alert-success alert-dismissible fade show ms-auto">
+                class="alert alert-success alert-dismissible fade show"
+                role="alert"
+                style="font-size: 0.875rem">
                 <i class="bi bi-check-circle me-1"></i>
                 {{ alertMessageLocalBackup }}
               </div>
@@ -624,26 +628,24 @@ export default {
       fetch("/reset")
         .then((response) => response.json())
         .then((data) => {
-          this.showAlert = true;
+          this.showAlertSaveReset = true;
           this.alertMessage = "Configuration reset to default.";
-          // Reset showAlert after some time if needed
-          setTimeout(() => (this.showAlert = false), 15000);
+          setTimeout(() => (this.showAlertSaveReset = false), 15000);
           this.config = data;
           console.log("Success:", data);
         })
         .catch((error) => {
-          this.showAlert = true;
+          this.showAlertSaveReset = true;
           this.alertMessage = "Error resetting configuration.";
-          // Reset showAlert after some time if needed
-          setTimeout(() => (this.showAlert = false), 15000);
+          setTimeout(() => (this.showAlertSaveReset = false), 15000);
           console.error("Error:", error);
         });
     },
   },
 
   mounted() {
-    this.fetchConfig(); // Pour charger la configuration actuelle
-    this.fetchConfigsList(); // Pour charger la liste des noms de configurations
+    this.fetchConfig(); // Load config to the form
+    this.fetchConfigsList(); // Load config list to the list
   },
 };
 </script>
