@@ -342,7 +342,7 @@ export default {
   methods: {
     // Method to send a GET request
     performGetRequest() {
-      const url = "/api-get";
+      const url = "localhost:8080/api-get";
       const body = JSON.stringify({ option: this.selectedGetOption });
 
       // Debug: Print the URL and body to the console
@@ -354,7 +354,7 @@ export default {
 
     // Method to send a POST request
     performPostRequest() {
-      const url = "/api-post";
+      const url = "localhost:8080/api-post";
       const body = JSON.stringify({ option: this.selectedPostOption });
 
       this.sendApiRequest(url, body);
@@ -362,7 +362,7 @@ export default {
 
     // Method to send a PUT request
     performPutRequest() {
-      const url = "/api-put";
+      const url = "localhost:8080/api-put";
       const body = JSON.stringify({ option: this.selectedPutOption });
 
       this.sendApiRequest(url, body);
@@ -370,7 +370,7 @@ export default {
 
     // Method to send a DELETE request
     performDeleteRequest() {
-      const url = "/api-delete";
+      const url = "localhost:8080/api-delete";
       const body = JSON.stringify({ option: this.selectedDeleteOption });
 
       this.sendApiRequest(url, body);

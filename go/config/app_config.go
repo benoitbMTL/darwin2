@@ -155,8 +155,8 @@ func GetConfig(c echo.Context) error {
 }
 
 
-// UpdateConfig handles the POST request to update the configuration
-func UpdateConfig(c echo.Context) error {
+// SaveConfig handles the POST request to update the configuration
+func SaveConfig(c echo.Context) error {
     var newConfig AppConfig
     if err := c.Bind(&newConfig); err != nil {
         log.Printf("Error binding new configuration: %v", err)
@@ -201,7 +201,7 @@ func ResetConfig(c echo.Context) error {
 }
 
 
-func BackupConfig(c echo.Context) error {
+func ExportConfig(c echo.Context) error {
     configMutex.RLock()
     defer configMutex.RUnlock()
 
@@ -222,7 +222,7 @@ func BackupConfig(c echo.Context) error {
 
 
 
-func RestoreConfig(c echo.Context) error {
+func ImportConfig(c echo.Context) error {
     var newConfig AppConfig
     if err := c.Bind(&newConfig); err != nil {
         return echo.NewHTTPError(http.StatusBadRequest, err.Error())

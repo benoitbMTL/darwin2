@@ -34,7 +34,7 @@ export default {
   },
   mounted() {
     this.highlightCode();
-    fetch('/bootstrap.txt') // Assurez-vous que le chemin est correct
+    fetch("localhost:8080/bootstrap.txt") // Assurez-vous que le chemin est correct
       .then(response => response.text())
       .then(text => {
         this.fileContent = text; // Stocke le contenu du fichier dans la variable

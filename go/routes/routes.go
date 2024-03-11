@@ -53,16 +53,23 @@ func Configure(e *echo.Echo) {
 	e.POST("/delete-x-forwarded-for-rule", handlers.HandleDeleteXForwardedForRule)
 	e.POST("/delete-policy", handlers.HandleDeletePolicy)
 
-	// System
+	// SYSTEM
 	e.GET("/config", config.GetConfig)
-	e.POST("/config", config.UpdateConfig)
-	e.GET("/backup", config.BackupConfig)
-	e.POST("/restore", config.RestoreConfig)
-	e.GET("/reset", config.ResetConfig)
-	e.GET("/run-health-check", handlers.HandleHealthCheck)
+	e.GET("/list-configs", config.ListConfigs)
+
+	// SAVE, RESET
+	e.POST("/save-config", config.SaveConfig)
+	e.GET("/reset-config", config.ResetConfig)
+
+	// EXPORT, IMPORT
+	e.POST("/export", config.ExportConfig)
+	e.POST("/import", config.ImportConfig)
+
+	// BACKUP, RSETORE, DELETE
 	e.POST("/backup-local", config.BackupConfigLocal)
 	e.POST("/restore-local", config.RestoreConfigLocal)
 	e.POST("/delete-local", config.DeleteConfigLocal)
-	e.GET("/list-configs", config.ListConfigs)
 
+	// HEALTH CHECK
+	e.GET("/run-health-check", handlers.HandleHealthCheck)
 }

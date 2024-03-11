@@ -84,7 +84,7 @@ export default {
       const formData = new URLSearchParams();
       formData.append('username', this.selectedUser);
 
-      fetch('/cookie-security', {
+      fetch("localhost:8080//cookie-security", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

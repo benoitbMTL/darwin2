@@ -57,7 +57,7 @@ export default {
   methods: {
     sendBot(botName) {
       this.CurrentBotName = botName; // Update CurrentBotName when a bot is sent
-      const url = "/known-bots";
+      const url = "localhost:8080/known-bots";
       const formData = new URLSearchParams();
       formData.append("name", botName);
 

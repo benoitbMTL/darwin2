@@ -43,7 +43,7 @@ export default {
 
   methods: {
     runSelenimum(browserName) {
-      const url = "/selenium";
+      const url = "localhost:8080/selenium";
       const formData = new URLSearchParams();
       formData.append("name", browserName);
 
@@ -65,31 +65,8 @@ export default {
     },
 
 
-        runColly(foobar) {
-      const url = "/colly";
-      const formData = new URLSearchParams();
-      formData.append("name", foobar);
-
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: formData.toString(),
-      })
-        .then((response) => response.text())
-        .then((html) => {
-          this.jobResult = html;
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          this.jobResult = "Failed to send Bot";
-        });
-    },
-
-
         runScrapWithApi(foobar) {
-      const url = "/bot-scraper-api";
+      const url = "localhost:8080/bot-scraper-api";
       const formData = new URLSearchParams();
       formData.append("name", foobar);
 

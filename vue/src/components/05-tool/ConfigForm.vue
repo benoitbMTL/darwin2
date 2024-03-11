@@ -213,7 +213,7 @@
           </div>
 
           <div class="card-body d-flex align-items-center">
-            <button @click="backupConfig" class="btn btn-primary btn-sm me-2">
+            <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
               Export
             </button>
 
@@ -227,7 +227,7 @@
               type="file"
               ref="fileInput"
               style="display: none"
-              @change="onFileChange" />
+              @change="importConfig" />
 
             <!-- Alert Message -->
             <div
@@ -334,15 +334,30 @@ export default {
     };
   },
   methods: {
-    selectConfig(configName) {
-      this.selectedConfig = configName;
-      // Vous pouvez également ajouter ici une logique pour charger les détails
-      // de la configuration sélectionnée si nécessaire
-      // Par exemple, charger la configuration du serveur et mettre à jour `this.config`
+    ///////////////////////////////////////////////////////////////////////////////////
+    /// FETCH CONFIG, FETCH LIST
+    ///////////////////////////////////////////////////////////////////////////////////
+
+    fetchConfig() {
+      fetch("localhost:8080/config")
+        .then((response) => {
+          console.log("HTTP return code:", response.status);
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Configuration updated:", data);
+          this.config = data;
+        })
+        .catch((error) => {
+          console.error("Error fetching updated configuration:", error);
+        });
     },
 
     fetchConfigsList() {
-      fetch("/list-configs")
+      fetch("localhost:8080/list-configs")
         .then((response) => response.json())
         .then((data) => {
           this.configs = data; // Supposons que `data` soit un tableau de noms de configuration
@@ -352,7 +367,164 @@ export default {
         });
     },
 
-    performBackup() {
+    mounted() {
+      this.fetchConfig(); // Load config to the form
+      this.fetchConfigsList(); // Load config list
+    },
+
+    ////////////////////////////////////////////////////////
+    /// SAVE / RESET
+    ///////////////////////////////////////////////////////////////////////////////////
+
+    saveConfig() {
+      fetch("localhost:8080/save-config", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.config),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          this.showAlertSaveReset = true;
+          this.alertMessageSaveReset = "Configuration saved successfully.";
+          setTimeout(() => {
+            this.showAlertSaveReset = false;
+          }, 15000);
+          console.log("Success:", data);
+        })
+        .catch((error) => {
+          this.showAlertSaveReset = true;
+          this.alertMessageSaveReset = "Error saving configuration.";
+          setTimeout(() => {
+            this.showAlertSaveReset = false;
+          }, 15000);
+          console.error("Error:", error);
+        });
+    },
+
+    resetConfig() {
+      fetch("localhost:8080/reset-config")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          this.showAlertSaveReset = true;
+          this.alertMessageSaveReset = "Configuration reset to default.";
+          setTimeout(() => {
+            this.showAlertSaveReset = false;
+          }, 15000);
+          this.config = data;
+          console.log("Reset success:", data);
+        })
+        .catch((error) => {
+          this.showAlertSaveReset = true;
+          this.alertMessageSaveReset = "Error resetting configuration.";
+          setTimeout(() => {
+            this.showAlertSaveReset = false;
+          }, 15000);
+          console.error("Reset error:", error);
+        });
+    },
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    /// EXPORT, IMPORT
+    ///////////////////////////////////////////////////////////////////////////////////
+
+    exportConfig() {
+      fetch("localhost:8080/export", {
+        method: "GET",
+      })
+        .then((response) => response.blob())
+        .then((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.style.display = "none";
+          a.href = url;
+          a.download = "config_backup.json";
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          this.showAlertFileExport = true;
+          this.alertMessage = "Configuration backed up successfully";
+          setTimeout(() => (this.showAlertFileExport = false), 15000);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          this.showAlertFileExport = true;
+          this.alertMessage = "Error during backup";
+          setTimeout(() => (this.showAlertFileExport = false), 15000);
+        });
+    },
+
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
+
+    importConfig(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const config = JSON.parse(e.target.result);
+            fetch("localhost:8080/import", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(config),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Network response was not ok");
+                }
+                return response.json();
+              })
+              .then((data) => {
+                console.log("Success:", data);
+                this.showAlertFileExport = true;
+                this.alertMessage = "Configuration restored successfully.";
+                setTimeout(() => (this.showAlertFileExport = false), 15000);
+                this.fetchConfig();
+              })
+              .catch((error) => {
+                console.error("Error during restore:", error);
+                this.showAlertFileExport = true;
+                this.alertMessage = "Error restoring configuration.";
+                setTimeout(() => (this.showAlertFileExport = false), 15000);
+              });
+          } catch (error) {
+            console.error("Error parsing file:", error);
+            this.showAlertFileExport = true;
+            this.alertMessage = "Error parsing configuration file.";
+            setTimeout(() => (this.showAlertFileExport = false), 15000);
+          }
+        };
+        reader.readAsText(file);
+      }
+    },
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    /// BACKUP / RESTORE / DELETE
+    ///////////////////////////////////////////////////////////////////////////////////
+
+    selectConfig(configName) {
+      this.selectedConfig = configName;
+      // Vous pouvez également ajouter ici une logique pour charger les détails
+      // de la configuration sélectionnée si nécessaire
+      // Par exemple, charger la configuration du serveur et mettre à jour `this.config`
+    },
+
+    backupConfigLocal() {
       // Check if the backup name is provided
       if (!this.backupName) {
         alert("Please provide a name for the backup.");
@@ -368,7 +540,7 @@ export default {
 
       // Send a POST request to the "/backup-local" endpoint with the backup data.
       // Use the Fetch API for this purpose.
-      fetch("/backup-local", {
+      fetch("localhost:8080/backup-local", {
         method: "POST", // Use POST method for sending data to the server
         headers: {
           "Content-Type": "application/json", // Indicate that we're sending JSON data
@@ -416,7 +588,7 @@ export default {
       };
 
       // Send a POST request to the "/restore-local" endpoint with the data of the configuration to be restored.
-      fetch("/restore-local", {
+      fetch("localhost:8080/restore-local", {
         method: "POST", // Use POST method for sending data to the server
         headers: {
           "Content-Type": "application/json", // Indicate that we're sending JSON data
@@ -461,7 +633,7 @@ export default {
       };
 
       // Send a POST request to the "/delete-local" endpoint with the data of the configuration to be deleted.
-      fetch("/delete-local", {
+      fetch("localhost:8080/delete-local", {
         method: "POST", // Use POST method for sending data to the server
         headers: {
           "Content-Type": "application/json", // Indicate that we're sending JSON data
@@ -498,168 +670,8 @@ export default {
           this.alertMessageLocalBackup = "Error during deletion.";
         });
     },
-
-    triggerFileInput() {
-      this.$refs.fileInput.click();
-    },
-
-    backupConfig() {
-      fetch("/backup", {
-        method: "GET",
-      })
-        .then((response) => response.blob())
-        .then((blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.style.display = "none";
-          a.href = url;
-          a.download = "config_backup.json";
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          this.showAlertFileExport = true;
-          this.alertMessage = "Configuration backed up successfully";
-          setTimeout(() => (this.showAlertFileExport = false), 15000);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          this.showAlertFileExport = true;
-          this.alertMessage = "Error during backup";
-          setTimeout(() => (this.showAlertFileExport = false), 15000);
-        });
-    },
-
-    onFileChange(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          try {
-            const config = JSON.parse(e.target.result);
-            fetch("/restore", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(config),
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("Network response was not ok");
-                }
-                return response.json();
-              })
-              .then((data) => {
-                console.log("Success:", data);
-                this.showAlertFileExport = true;
-                this.alertMessage = "Configuration restored successfully.";
-                setTimeout(() => (this.showAlertFileExport = false), 15000);
-                this.fetchConfig();
-              })
-              .catch((error) => {
-                console.error("Error during restore:", error);
-                this.showAlertFileExport = true;
-                this.alertMessage = "Error restoring configuration.";
-                setTimeout(() => (this.showAlertFileExport = false), 15000);
-              });
-          } catch (error) {
-            console.error("Error parsing file:", error);
-            this.showAlertFileExport = true;
-            this.alertMessage = "Error parsing configuration file.";
-            setTimeout(() => (this.showAlertFileExport = false), 15000);
-          }
-        };
-        reader.readAsText(file);
-      }
-    },
-
-    fetchConfig() {
-      fetch("/config")
-        .then((response) => {
-          console.log("HTTP return code:", response.status); // Debug: Afficher le code de retour HTTP
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Configuration updated:", data);
-          this.config = data;
-        })
-        .catch((error) => {
-          console.error("Error fetching updated configuration:", error);
-        });
-    },
-
-    saveConfig() {
-      fetch("/config", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(this.config),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          this.showAlertSaveReset = true;
-          this.alertMessageSaveReset = "Configuration saved successfully.";
-          setTimeout(() => {
-            this.showAlertSaveReset = false;
-          }, 15000);
-          console.log("Success:", data);
-        })
-        .catch((error) => {
-          this.showAlertSaveReset = true;
-          this.alertMessageSaveReset = "Error saving configuration.";
-          setTimeout(() => {
-            this.showAlertSaveReset = false;
-          }, 15000);
-          console.error("Error:", error);
-        });
-    },
-
-    resetConfig() {
-      fetch("/reset")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          this.showAlertSaveReset = true;
-          this.alertMessageSaveReset = "Configuration reset to default.";
-          setTimeout(() => {
-            this.showAlertSaveReset = false;
-          }, 15000);
-          this.config = data;
-          console.log("Reset success:", data);
-        })
-        .catch((error) => {
-          this.showAlertSaveReset = true;
-          this.alertMessageSaveReset = "Error resetting configuration.";
-          setTimeout(() => {
-            this.showAlertSaveReset = false;
-          }, 15000);
-          console.error("Reset error:", error);
-        });
-    },
-
-
-    mounted() {
-      this.fetchConfig(); // Load config to the form
-      this.fetchConfigsList(); // Load config list
-    },
-  }
-}
-
-
-
+  },
+};
 </script>
 <style>
 .nav-conf-item a {

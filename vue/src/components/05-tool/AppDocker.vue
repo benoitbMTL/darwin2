@@ -139,7 +139,7 @@ export default {
   },
   mounted() {
     this.highlightCode();
-    fetch("/docker.txt") // Assurez-vous que le chemin est correct
+    fetch("localhost:8080/docker.txt") // Assurez-vous que le chemin est correct
       .then((response) => response.text())
       .then((text) => {
         this.fileContent = text; // Stocke le contenu du fichier dans la variable
