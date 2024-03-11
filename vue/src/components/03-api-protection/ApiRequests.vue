@@ -13,7 +13,7 @@
           </div>
         </div>
         <div class="me-2">
-          <button type="button" class="btn btn-warning btn-sm" @click="resetMachineLearning">
+          <button type="button" class="btn btn-warning btn-sm" @click="resetApiMachineLearning">
             Reset Machine Learning
           </button>
         </div>
