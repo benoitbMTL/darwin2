@@ -59,23 +59,23 @@ func Initialize() {
 	}
 
 	configsMap["AzureConfig"] = AppConfig{
-		NAME:           "AzureConfig",
+		NAME:           "Azure Lab",
 		DVWAURL:        "https://dvwa.canadaeast.cloudapp.azure.com/",
-		BANKURL:        "https://bank.canadaeast.cloudapp.azure.com/bank.html",
+		BANKURL:        "https://dvwa.canadaeast.cloudapp.azure.com/bank.html",
 		JUICESHOPURL:   "https://juiceshop.canadaeast.cloudapp.azure.com",
 		PETSTOREURL:    "https://petstore3.canadaeast.cloudapp.azure.com/api/v3/pet",
 		SPEEDTESTURL:   "https://speedtest.canadaeast.cloudapp.azure.com",
 		USERNAMEAPI:    "userapi",
 		PASSWORDAPI:    "fortinet123!",
 		VDOMAPI:        "root",
-		FWBMGTIP:       "fortiweb.canadaeast.cloudapp.azure.com",
+		FWBMGTIP:       "dvwa.canadaeast.cloudapp.azure.com",
 		FWBMGTPORT:     "8443",
 		MLPOLICY:       "DVWA_POLICY",
 		USERAGENT:      "FortiWeb Demo Tool",
 		FABRICLABSTORY: ""}
 
 	configsMap["FabricLabConfig"] = AppConfig{
-		NAME:           "FabricLabConfig",
+		NAME:           "Fabric Lab",
 		DVWAURL:        "https://dvwa.corp.fabriclab.ca",
 		BANKURL:        "https://bank.corp.fabriclab.ca/bank.html",
 		JUICESHOPURL:   "https://juiceshop.corp.fabriclab.ca",
@@ -91,7 +91,7 @@ func Initialize() {
 		FABRICLABSTORY: "fortiweb"}
 
 	configsMap["FortiWebCloudConfig"] = AppConfig{
-		NAME:           "FortiWebCloudConfig",
+		NAME:           "FortiWeb Cloud",
 		DVWAURL:        "https://dvwa.96859.fortiwebcloud.net",
 		BANKURL:        "https://bank.96859.fortiwebcloud.net/bank.html",
 		JUICESHOPURL:   "https://juiceshop.96859.fortiwebcloud.net",
