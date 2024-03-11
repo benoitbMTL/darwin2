@@ -393,7 +393,7 @@ export default {
 
           setTimeout(() => {
             this.showResetMLMessage = false; // Hide message after 15 seconds
-          }, 15000);
+          }, 5001);
         })
         .catch((error) => console.error("Error:", error));
     },
