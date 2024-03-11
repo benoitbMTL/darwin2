@@ -1,10 +1,31 @@
 <template>
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5>API Traffic generation</h5>
-      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
-      <!-- Bootstrap icon for help -->
+      <div>
+        <h5>API Traffic generation</h5>
+      </div>
+
+
+      <div class="d-flex align-items-center">
+        <div v-if="showResetMLMessage" class="me-2">
+          <div class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0" role="alert"
+            style="font-size: 0.875rem">
+            <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
+          </div>
+        </div>
+        <div class="me-2">
+          <button type="button" class="btn btn-warning btn-sm" @click="resetApiMachineLearning">
+            Reset Machine Learning
+          </button>
+        </div>
+
+
+
+        <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
+        <!-- Bootstrap icon for help -->
+      </div>
     </div>
+
     <div class="card-body">
       <p class="card-text">Launch a random traffic simulation towards the Petstore API to build FortiWeb's ML model.</p>
 
@@ -14,11 +35,13 @@
           <span>{{ isLoading1 ? "Simulating..." : "Send 1 Sample" }}</span>
         </button>
         <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isLoading10">
-          <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status"
+            aria-hidden="true"></span>
           <span>{{ isLoading10 ? "Simulating..." : "Send 10 Samples" }}</span>
         </button>
         <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isLoading500">
-          <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
+            aria-hidden="true"></span>
           <span>{{ isLoading500 ? "Simulating..." : "Send 500 Samples" }}</span>
         </button>
         <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">Reset</button>
@@ -39,12 +62,15 @@
     <div class="card-body">
       <ul>
         <li>
-          The machine learning based API Protection learns the REST API data structure from user traffic samples and then builds a mathematical model to screen
+          The machine learning based API Protection learns the REST API data structure from user traffic samples and
+          then builds a mathematical model to screen
           out malicious API requests.
         </li>
         <li>
-          It analyzes the method, URL, and endpoint data of the API request samples to generate an API data structure file for your application. This model
-          describes the API data schema model of endpoint data. If the incoming API request violates the data structure, it will be detected as an attack.
+          It analyzes the method, URL, and endpoint data of the API request samples to generate an API data structure
+          file for your application. This model
+          describes the API data schema model of endpoint data. If the incoming API request violates the data structure,
+          it will be detected as an attack.
         </li>
         <li>API Protection supports JSON request body.</li>
       </ul>
@@ -71,8 +97,11 @@ export default {
       showHelp: false,
       sendSampleResult: "",
 
-      configSnippet: 
-`config waf api-learning-policy
+      resetMLMessage: "", // To store the response message
+      showResetMLMessage: false, // To control the visibility of the response message
+
+      configSnippet:
+        `config waf api-learning-policy
   edit 1
     set start-training-cnt 400
     set url-replacer-policy PETSTORE_REPLACER
@@ -104,6 +133,38 @@ end`,
       // Use Highlight.js to apply syntax highlighting to the config snippet
       this.highlightedCode = hljs.highlightAuto(this.configSnippet).value;
     },
+
+
+    // Reset API Machine Learning
+    resetApiMachineLearning() {
+      this.resetMLMessage = ""; // Reset message
+      this.showResetMLMessage = false; // Hide message initially
+
+      fetch("/reset-api-machine-learning", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.text();
+        })
+        .then((text) => {
+          this.resetMLMessage = text; // Set the response message
+          this.showResetMLMessage = true; // Show message
+
+          setTimeout(() => {
+            this.showResetMLMessage = false; // Hide message after 15 seconds
+          }, 15000);
+        })
+        .catch((error) => console.error("Error:", error));
+    },
+
+
+
 
     generateTraffic(sampleCount) {
       this.resetResult();

@@ -89,5 +89,5 @@ func HandleResetApiMachineLearning(c echo.Context) error {
 	}
 
 	// Return a string with all domains reset
-	return c.String(http.StatusOK, fmt.Sprintf("ML for %s has been reset.", url.QueryEscape(strings.Join(resetDomains, ", "))))
+	return c.String(http.StatusOK, fmt.Sprintf("Machine Learning for %s has been reset.", strings.Join(resetDomains, ", ")))
 }

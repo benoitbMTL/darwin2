@@ -370,7 +370,7 @@ export default {
   methods: {
 
 
-    // Reset Machine Learning
+    // Reset API Machine Learning
     resetApiMachineLearning() {
       this.resetMLMessage = ""; // Reset message
       this.showResetMLMessage = false; // Hide message initially
