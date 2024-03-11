@@ -368,6 +368,7 @@ export default {
     },
 
     mounted() {
+      console.log("Fetching config");
       this.fetchConfig(); // Load config to the form
       this.fetchConfigsList(); // Load config list
     },
