@@ -4,28 +4,22 @@
       <div>
         <h5>Machine Learning & Zero-Day Attacks</h5>
       </div>
+
       <div class="d-flex align-items-center">
         <div v-if="showResetMLMessage" class="me-2">
-          <div
-            class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
-            role="alert"
+          <div class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0" role="alert"
             style="font-size: 0.875rem">
             <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
-        </div>
+          </div>
         </div>
         <div class="me-2">
-          <button
-            type="button"
-            class="btn btn-warning btn-sm"
-            @click="resetMachineLearning">
-            Reset Machine Learning
+          <button type="button" class="btn btn-warning btn-sm" @click="resetMachineLearning">
+            Reset API Machine Learning
           </button>
         </div>
+
         <div>
-          <i
-            class="bi bi-question-circle-fill bs-icon"
-            style="font-size: 1.5rem"
-            @click="showHelp = !showHelp"></i>
+          <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
           <!-- Bootstrap icon for help -->
         </div>
       </div>
@@ -49,42 +43,24 @@
             model.
           </p>
           <div class="d-flex mb-3">
-            <button
-              class="btn btn-primary btn-sm"
-              @click="generateTraffic(1)"
-              :disabled="isLoading1">
-              <span
-                v-if="isLoading1"
-                class="spinner-border spinner-border-sm me-2"
-                role="status"
+            <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isLoading1">
+              <span v-if="isLoading1" class="spinner-border spinner-border-sm me-2" role="status"
                 aria-hidden="true"></span>
               <span>{{ isLoading1 ? "Simulating..." : "Send 1 Sample" }}</span>
             </button>
-            <button
-              class="btn btn-primary btn-sm ms-2"
-              @click="generateTraffic(10)"
-              :disabled="isLoading10">
-              <span
-                v-if="isLoading10"
-                class="spinner-border spinner-border-sm me-2"
-                role="status"
+            <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isLoading10">
+              <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status"
                 aria-hidden="true"></span>
               <span>{{
                 isLoading10 ? "Simulating..." : "Send 10 Samples"
-              }}</span>
+                }}</span>
             </button>
-            <button
-              class="btn btn-primary btn-sm ms-2"
-              @click="generateTraffic(500)"
-              :disabled="isLoading500">
-              <span
-                v-if="isLoading500"
-                class="spinner-border spinner-border-sm me-2"
-                role="status"
+            <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isLoading500">
+              <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
                 aria-hidden="true"></span>
               <span>{{
                 isLoading500 ? "Simulating..." : "Send 500 Samples"
-              }}</span>
+                }}</span>
             </button>
             <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">
               Reset
@@ -100,10 +76,7 @@
           </p>
 
           <div class="d-flex">
-            <select
-              class="form-select form-select-sm me-2 mb-3"
-              v-model="selectedAttackType"
-              style="width: 350px">
+            <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType" style="width: 350px">
               <option value="zero_day_sqli_1">
                 Zero Day SQL Injection: A 'DIV' B
               </option>
@@ -136,14 +109,10 @@
               </option>
             </select>
 
-            <button
-              class="btn btn-primary btn-sm me-2 mb-3"
-              @click="performAttack">
+            <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
               Run
             </button>
-            <button
-              class="btn btn-secondary btn-sm me-2 mb-3"
-              @click="resetResult">
+            <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
               Reset
             </button>
           </div>
@@ -156,10 +125,7 @@
 
         <div v-if="performAttackResult" class="mt-4 mb-3">
           <h6>{{ currentAttackName }} Result:</h6>
-          <iframe
-            ref="attackIframe"
-            :srcdoc="performAttackResult"
-            @load="adjustIframeHeight"
+          <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
             style="width: 100%; border: 1px solid lightgray"></iframe>
         </div>
       </div>

@@ -1,10 +1,30 @@
 <template>
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5>API Requests</h5>
-      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
-      <!-- Bootstrap icon for help -->
+      <div>
+        <h5>API Requests</h5>
+      </div>
+
+      <div class="d-flex align-items-center">
+        <div v-if="showResetMLMessage" class="me-2">
+          <div class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0" role="alert"
+            style="font-size: 0.875rem">
+            <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
+          </div>
+        </div>
+        <div class="me-2">
+          <button type="button" class="btn btn-warning btn-sm" @click="resetMachineLearning">
+            Reset Machine Learning
+          </button>
+        </div>
+
+        <div>
+          <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
+          <!-- Bootstrap icon for help -->
+        </div>
+      </div>
     </div>
+
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h6 class="card-text mb-0">Swagger Petstore - OpenAPI 3.0</h6>
@@ -13,16 +33,15 @@
 
       <!-- API GET -->
       <div class="d-flex mb-3">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm me-3"
+        <button type="button" class="btn btn-primary btn-sm me-3"
           style="width: 80px; background-color: #64b0fc; border-color: #64b0fc; font-weight: bold"
           @click="performGetRequest()">
           GET
         </button>
 
         <!-- GET list -->
-        <select id="get-pet-list" class="form-select form-select-sm me-3" v-model="selectedGetOption" style="width: 300px">
+        <select id="get-pet-list" class="form-select form-select-sm me-3" v-model="selectedGetOption"
+          style="width: 300px">
           <option v-for="(option, index) in getList" :value="option.value" :key="index">
             {{ option.text }}
           </option>
@@ -31,16 +50,15 @@
 
       <!-- API POST -->
       <div class="mb-3 d-flex align-items-center">
-        <button
-          type="button"
-          class="btn btn-success btn-sm me-3"
+        <button type="button" class="btn btn-success btn-sm me-3"
           style="width: 80px; background-color: #4ecc91; border-color: #4ecc91; font-weight: bold"
           @click="performPostRequest()">
           POST
         </button>
 
         <!-- POST list -->
-        <select id="post-pet-list" class="form-select form-select-sm me-3" v-model="selectedPostOption" style="width: 300px">
+        <select id="post-pet-list" class="form-select form-select-sm me-3" v-model="selectedPostOption"
+          style="width: 300px">
           <option v-for="(option, index) in postList" :value="option.value" :key="index">
             {{ option.text }}
           </option>
@@ -49,16 +67,15 @@
 
       <!-- API PUT -->
       <div class="mb-3 d-flex align-items-center">
-        <button
-          type="button"
-          class="btn btn-success btn-sm me-3"
+        <button type="button" class="btn btn-success btn-sm me-3"
           style="width: 80px; background-color: #faa03c; border-color: #faa03c; font-weight: bold"
           @click="performPutRequest()">
           PUT
         </button>
 
         <!-- PUT list -->
-        <select id="put-pet-list" class="form-select form-select-sm me-3" v-model="selectedPutOption" style="width: 300px">
+        <select id="put-pet-list" class="form-select form-select-sm me-3" v-model="selectedPutOption"
+          style="width: 300px">
           <option v-for="(option, index) in putList" :value="option.value" :key="index">
             {{ option.text }}
           </option>
@@ -67,16 +84,15 @@
 
       <!-- API DELETE -->
       <div class="mb-4 d-flex align-items-center">
-        <button
-          type="button"
-          class="btn btn-success btn-sm me-3"
+        <button type="button" class="btn btn-success btn-sm me-3"
           style="width: 80px; background-color: #f73c43; border-color: #f73c43; font-weight: bold"
           @click="performDeleteRequest()">
           DELETE
         </button>
 
         <!-- DELETE list -->
-        <select id="delete-pet-list" class="form-select form-select-sm me-3" v-model="selectedDeleteOption" style="width: 300px">
+        <select id="delete-pet-list" class="form-select form-select-sm me-3" v-model="selectedDeleteOption"
+          style="width: 300px">
           <option v-for="(option, index) in deleteList" :value="option.value" :key="index">
             {{ option.text }}
           </option>
@@ -87,25 +103,29 @@
         <!-- Display CURL -->
         <div v-if="curlCommand" class="mt-4">
           <h6><i class="bi bi-terminal me-2"></i>Curl</h6>
-          <pre style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ curlCommand }}</pre>
+          <pre
+            style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ curlCommand }}</pre>
         </div>
 
         <!-- Display URL -->
         <div v-if="requestURL" class="mt-4">
           <h6><i class="bi bi-link-45deg me-2"></i>Request URL</h6>
-          <pre style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ requestURL }}</pre>
+          <pre
+            style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ requestURL }}</pre>
         </div>
 
         <!-- Display JSON RESPONSE BODY -->
         <div v-if="jsonResponseBody" class="mt-3">
           <h6><i class="bi bi-filetype-json me-2"></i>Response Body</h6>
-          <pre style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ jsonResponseBody }}</pre>
+          <pre
+            style="white-space: pre-wrap; word-break: keep-all; border: 1px solid lightgray; padding: 10px">{{ jsonResponseBody }}</pre>
         </div>
 
         <!-- Display HTML RESPONSE BODY -->
         <div v-if="htmlResponseBody" class="mt-4">
           <h6><i class="bi bi-filetype-html me-2"></i>Request Result</h6>
-          <iframe ref="responseIframe" :srcdoc="htmlResponseBody" @load="adjustIframeHeight" style="width: 100%; border: 1px solid lightgray"></iframe>
+          <iframe ref="responseIframe" :srcdoc="htmlResponseBody" @load="adjustIframeHeight"
+            style="width: 100%; border: 1px solid lightgray"></iframe>
         </div>
       </div>
 
@@ -119,13 +139,18 @@
     </div>
     <div class="card-body">
       <ul>
-        <li><strong>FortiWeb Protection</strong>: Analyzes API calls and applies WAF policies to defend against malicious traffic and JSON code exploits.</li>
-        <li><strong>JSON Validation</strong>: Configures JSON protection to ensure request contents are free from potential attacks.</li>
+        <li><strong>FortiWeb Protection</strong>: Analyzes API calls and applies WAF policies to defend against
+          malicious traffic and JSON code exploits.</li>
+        <li><strong>JSON Validation</strong>: Configures JSON protection to ensure request contents are free from
+          potential attacks.</li>
         <li>
-          <strong>Machine Learning-based API Protection</strong>: Learns REST API structures from traffic to create models that identify and block malicious
+          <strong>Machine Learning-based API Protection</strong>: Learns REST API structures from traffic to create
+          models that identify and block malicious
           requests.
         </li>
-        <li><strong>Attack Detection</strong>: Identifies attacks by comparing incoming API requests against the defined API data schema model.</li>
+        <li><strong>Attack Detection</strong>: Identifies attacks by comparing incoming API requests against the
+          defined
+          API data schema model.</li>
       </ul>
 
       <div class="card">
@@ -141,8 +166,7 @@ config waf api-learning-policy
     set svm-type extended
     set action-anomaly alert_deny
   next
-end</pre
-          >
+end</pre>
         </div>
       </div>
     </div>
@@ -168,6 +192,10 @@ export default {
       postList: [],
       putList: [],
       deleteList: [],
+
+      resetMLMessage: "", // To store the response message
+      showResetMLMessage: false, // To control the visibility of the response message
+
     };
   },
 
@@ -340,6 +368,39 @@ export default {
   },
 
   methods: {
+
+
+    // Reset Machine Learning
+    resetApiMachineLearning() {
+      this.resetMLMessage = ""; // Reset message
+      this.showResetMLMessage = false; // Hide message initially
+
+      fetch("/reset-api-machine-learning", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.text();
+        })
+        .then((text) => {
+          this.resetMLMessage = text; // Set the response message
+          this.showResetMLMessage = true; // Show message
+
+          setTimeout(() => {
+            this.showResetMLMessage = false; // Hide message after 15 seconds
+          }, 15000);
+        })
+        .catch((error) => console.error("Error:", error));
+    },
+
+
+
+
     // Method to send a GET request
     performGetRequest() {
       const url = "/api-get";
