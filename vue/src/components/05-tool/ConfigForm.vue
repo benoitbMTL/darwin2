@@ -410,31 +410,30 @@ export default {
     },
 
     resetConfig() {
-      fetch("http://localhost:8080/reset-config")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          this.showAlertSaveReset = true;
-          this.alertMessageSaveReset = "Configuration reset to default.";
-          setTimeout(() => {
-            this.showAlertSaveReset = false;
-          }, 15000);
-          this.config = data;
-          console.log("Reset success:", data);
-        })
-        .catch((error) => {
-          this.showAlertSaveReset = true;
-          this.alertMessageSaveReset = "Error resetting configuration.";
-          setTimeout(() => {
-            this.showAlertSaveReset = false;
-          }, 15000);
-          console.error("Reset error:", error);
-        });
-    },
+  fetch("http://localhost:8080/reset-config")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      this.showAlertSaveReset = true;
+      this.alertMessageSaveReset = "Configuration reset to default.";
+      setTimeout(() => {
+        this.showAlertSaveReset = false;
+      }, 15000);
+      this.fetchConfig(); // Rafraîchit la configuration dans le GUI avec la configuration par défaut
+    })
+    .catch((error) => {
+      this.showAlertSaveReset = true;
+      this.alertMessageSaveReset = "Error resetting configuration.";
+      setTimeout(() => {
+        this.showAlertSaveReset = false;
+      }, 15000);
+      console.error("Reset error:", error);
+    });
+},
 
     ///////////////////////////////////////////////////////////////////////////////////
     /// EXPORT, IMPORT

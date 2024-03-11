@@ -187,16 +187,21 @@ func ResetConfig(c echo.Context) error {
     configMutex.Lock()
     defer configMutex.Unlock()
 
-    // Check if the default configuration exists
+    // Recherche de la configuration par défaut dans configsMap (optionnel si déjà fait dans Initialize)
     defaultConfig, exists := configsMap["Default"]
     if !exists {
         log.Println("Default configuration is missing.")
         return echo.NewHTTPError(http.StatusInternalServerError, "Default configuration is missing.")
     }
     
-    // Reset the current configuration to the default configuration
-    currentName = "Default"
+    // Réinitialise la configuration actuelle avec la configuration par défaut
+    CurrentConfig = defaultConfig
+    currentName = "Default" // Assurez-vous que currentName pointe aussi sur la configuration par défaut
     log.Println("Configuration reset to default.")
+
+    // Optionnellement, vous pourriez vouloir mettre à jour la map configsMap avec la configuration réinitialisée
+    configsMap[currentName] = CurrentConfig
+
     return c.JSON(http.StatusOK, defaultConfig)
 }
 

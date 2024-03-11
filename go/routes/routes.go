@@ -62,7 +62,7 @@ func Configure(e *echo.Echo) {
 	e.GET("/reset-config", config.ResetConfig)
 
 	// EXPORT, IMPORT
-	e.POST("/export", config.ExportConfig)
+	e.GET("/export", config.ExportConfig)
 	e.POST("/import", config.ImportConfig)
 
 	// BACKUP, RSETORE, DELETE
