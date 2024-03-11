@@ -70,7 +70,7 @@ export default {
       const formData = new URLSearchParams();
       formData.append("name", foobar);
 
-      url, {
+      fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
