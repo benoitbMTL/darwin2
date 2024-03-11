@@ -69,7 +69,7 @@ export default {
       this.jobResult = ''; // Reset windows result
 
       // Make HTTP POST request to the server
-      fetch("localhost:8080/traffic-generation", {
+      fetch("http://localhost:8080/traffic-generation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

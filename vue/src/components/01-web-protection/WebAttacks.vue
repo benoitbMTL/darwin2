@@ -336,7 +336,7 @@ export default {
     },
 
     sendAttackRequest(attackType) {
-      const url = "localhost:8080/web-attacks";
+      const url = "http://localhost:8080/web-attacks";
       const formData = new URLSearchParams();
       formData.append("type", attackType);
       formData.append("username", this.selectedUser);

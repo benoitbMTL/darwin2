@@ -149,7 +149,7 @@ export default {
 
       const tuningFlag = niktoTuningFlags[this.selectedOption] || "";
 
-      fetch("localhost:8080/web-scan", {
+      fetch("http://localhost:8080/web-scan", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

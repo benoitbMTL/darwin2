@@ -72,7 +72,7 @@ export default {
 
   methods: {
     viewPageSource() {
-      fetch("localhost:8080/bot-page-source", {
+      fetch("http://localhost:8080/bot-page-source", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -93,7 +93,7 @@ export default {
 
     performBotDeception() {
       // Ensure this method matches the button's @click assignment
-      fetch("localhost:8080/bot-deception", {
+      fetch("http://localhost:8080/bot-deception", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

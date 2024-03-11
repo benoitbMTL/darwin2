@@ -74,7 +74,7 @@ export default {
       const formData = new URLSearchParams();
       formData.append('username', this.selectedUser);
 
-      fetch("localhost:8080//user-auth", {
+      fetch("http://localhost:8080//user-auth", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

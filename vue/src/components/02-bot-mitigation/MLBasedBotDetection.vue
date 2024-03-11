@@ -120,7 +120,7 @@ end
 
   methods: {
     fetchConfig() {
-      return fetch("localhost:8080/config", {
+      return fetch("http://localhost:8080/config", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -168,7 +168,7 @@ end
     },
 
     runScrapWithApi() {
-      const url = "localhost:8080/bot-scraper-api";
+      const url = "http://localhost:8080/bot-scraper-api";
 
       fetch(url, {
         method: "POST",
