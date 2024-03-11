@@ -58,7 +58,7 @@ func Initialize() {
 		FABRICLABSTORY: "fortiweb2",
 	}
 
-	configsMap["AzureConfig"] = AppConfig{
+	configsMap["Azure Lab"] = AppConfig{
 		NAME:           "Azure Lab",
 		DVWAURL:        "https://dvwa.canadaeast.cloudapp.azure.com/",
 		BANKURL:        "https://dvwa.canadaeast.cloudapp.azure.com/bank.html",
@@ -74,7 +74,7 @@ func Initialize() {
 		USERAGENT:      "FortiWeb Demo Tool",
 		FABRICLABSTORY: ""}
 
-	configsMap["FabricLabConfig"] = AppConfig{
+	configsMap["Fabric Lab"] = AppConfig{
 		NAME:           "Fabric Lab",
 		DVWAURL:        "https://dvwa.corp.fabriclab.ca",
 		BANKURL:        "https://bank.corp.fabriclab.ca/bank.html",
@@ -90,7 +90,7 @@ func Initialize() {
 		USERAGENT:      "FortiWeb Demo Tool",
 		FABRICLABSTORY: "fortiweb"}
 
-	configsMap["FortiWebCloudConfig"] = AppConfig{
+	configsMap["FortiWeb Cloud"] = AppConfig{
 		NAME:           "FortiWeb Cloud",
 		DVWAURL:        "https://dvwa.96859.fortiwebcloud.net",
 		BANKURL:        "https://bank.96859.fortiwebcloud.net/bank.html",
