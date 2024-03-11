@@ -4,52 +4,32 @@
   <form @submit.prevent="saveConfig">
     <div class="card my-4">
       <!-- Menu -->
-      <div
-        class="card-header d-flex justify-content-between align-items-center">
+      <div class="card-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
           <ul class="nav nav-tabs card-header-tabs" role="button">
             <li class="nav-conf-item">
-              <a
-                class="nav-link"
-                :class="{ active: activeTab === 'applications' }"
-                @click="activeTab = 'applications'"
-                >Applications</a
-              >
+              <a class="nav-link" :class="{ active: activeTab === 'applications' }"
+                @click="activeTab = 'applications'">Applications</a>
             </li>
             <li class="nav-conf-item">
-              <a
-                class="nav-link"
-                :class="{ active: activeTab === 'restApi' }"
-                @click="activeTab = 'restApi'"
-                >REST API</a
-              >
+              <a class="nav-link" :class="{ active: activeTab === 'restApi' }" @click="activeTab = 'restApi'">REST
+                API</a>
             </li>
             <li class="nav-conf-item">
-              <a
-                class="nav-link"
-                :class="{ active: activeTab === 'misc' }"
-                @click="activeTab = 'misc'"
-                >Miscellaneous</a
-              >
+              <a class="nav-link" :class="{ active: activeTab === 'misc' }"
+                @click="activeTab = 'misc'">Miscellaneous</a>
             </li>
             <li class="nav-conf-item">
-              <a
-                class="nav-link"
-                :class="{ active: activeTab === 'backupRestore' }"
-                @click="activeTab = 'backupRestore'"
-                >Backup & Restore</a
-              >
+              <a class="nav-link" :class="{ active: activeTab === 'backupRestore' }"
+                @click="activeTab = 'backupRestore'">Backup & Restore</a>
             </li>
           </ul>
         </div>
 
         <div class="d-flex align-items-center">
           <!-- Alert Message -->
-          <div
-            v-if="showAlertSaveReset"
-            class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
-            role="alert"
-            style="font-size: 0.875rem">
+          <div v-if="showAlertSaveReset" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
+            role="alert" style="font-size: 0.875rem">
             <i class="bi bi-check-circle me-1"></i> {{ alertMessageSaveReset }}
           </div>
 
@@ -58,10 +38,7 @@
             <button type="submit" class="btn btn-primary btn-sm me-2">
               Save
             </button>
-            <button
-              type="button"
-              class="btn btn-secondary btn-sm"
-              @click="resetConfig">
+            <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
               Reset to Default
             </button>
           </div>
@@ -73,43 +50,23 @@
         <!-- Application Form Fields -->
         <div class="mb-3">
           <label for="dvwaUrl" class="form-label">DVWA URL</label>
-          <input
-            type="text"
-            class="form-control"
-            id="dvwaUrl"
-            v-model="config.DVWAURL" />
+          <input type="text" class="form-control" id="dvwaUrl" v-model="config.DVWAURL" />
         </div>
         <div class="mb-3">
           <label for="bankUrl" class="form-label">Bank URL</label>
-          <input
-            type="text"
-            class="form-control"
-            id="bankUrl"
-            v-model="config.BANKURL" />
+          <input type="text" class="form-control" id="bankUrl" v-model="config.BANKURL" />
         </div>
         <div class="mb-3">
           <label for="juiceShopUrl" class="form-label">Juice Shop URL</label>
-          <input
-            type="text"
-            class="form-control"
-            id="juiceShopUrl"
-            v-model="config.JUICESHOPURL" />
+          <input type="text" class="form-control" id="juiceShopUrl" v-model="config.JUICESHOPURL" />
         </div>
         <div class="mb-3">
           <label for="petstoreUrl" class="form-label">Petstore URL</label>
-          <input
-            type="text"
-            class="form-control"
-            id="petstoreUrl"
-            v-model="config.PETSTOREURL" />
+          <input type="text" class="form-control" id="petstoreUrl" v-model="config.PETSTOREURL" />
         </div>
         <div class="mb-3">
           <label for="speedtestUrl" class="form-label">Speedtest URL</label>
-          <input
-            type="text"
-            class="form-control"
-            id="speedtestUrl"
-            v-model="config.SPEEDTESTURL" />
+          <input type="text" class="form-control" id="speedtestUrl" v-model="config.SPEEDTESTURL" />
         </div>
       </div>
 
@@ -119,62 +76,32 @@
 
         <div class="mb-3">
           <label for="usernameApi" class="form-label">API Username</label>
-          <input
-            type="text"
-            class="form-control"
-            id="usernameApi"
-            v-model="config.USERNAMEAPI" />
+          <input type="text" class="form-control" id="usernameApi" v-model="config.USERNAMEAPI" />
         </div>
 
         <div class="mb-3">
           <label for="passwordApi" class="form-label">API Password</label>
-          <input
-            type="text"
-            class="form-control"
-            id="passwordApi"
-            v-model="config.PASSWORDAPI" />
+          <input type="text" class="form-control" id="passwordApi" v-model="config.PASSWORDAPI" />
         </div>
 
         <div class="mb-3">
           <label for="vdomApi" class="form-label">VDOM API</label>
-          <input
-            type="text"
-            class="form-control"
-            id="vdomApi"
-            v-model="config.VDOMAPI" />
+          <input type="text" class="form-control" id="vdomApi" v-model="config.VDOMAPI" />
         </div>
 
         <div class="mb-3">
-          <label for="fwbMgtIp" class="form-label"
-            >FortiWeb Management IP/FQDN</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            id="fwbMgtIp"
-            v-model="config.FWBMGTIP" />
+          <label for="fwbMgtIp" class="form-label">FortiWeb Management IP/FQDN</label>
+          <input type="text" class="form-control" id="fwbMgtIp" v-model="config.FWBMGTIP" />
         </div>
 
         <div class="mb-3">
-          <label for="fwbMgtPort" class="form-label"
-            >FortiWeb Management Port</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            id="fwbMgtPort"
-            v-model="config.FWBMGTPORT" />
+          <label for="fwbMgtPort" class="form-label">FortiWeb Management Port</label>
+          <input type="text" class="form-control" id="fwbMgtPort" v-model="config.FWBMGTPORT" />
         </div>
 
         <div class="mb-3">
-          <label for="mlPolicy" class="form-label"
-            >Machine Learning Policy</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            id="mlPolicy"
-            v-model="config.MLPOLICY" />
+          <label for="mlPolicy" class="form-label">Machine Learning Policy</label>
+          <input type="text" class="form-control" id="mlPolicy" v-model="config.MLPOLICY" />
         </div>
       </div>
 
@@ -183,23 +110,13 @@
         <!-- Misc Form Fields -->
         <div class="mb-3">
           <label for="userAgent" class="form-label">User Agent</label>
-          <input
-            type="text"
-            class="form-control"
-            id="userAgent"
-            v-model="config.USERAGENT" />
+          <input type="text" class="form-control" id="userAgent" v-model="config.USERAGENT" />
         </div>
 
         <div class="mb-3">
-          <label for="fabricLabStory" class="form-label"
-            >Fabric Lab Story (Leave empty if the Demo Tool is not running
-            inside the Fabric Lab)</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            id="fabricLabStory"
-            v-model="config.FABRICLABSTORY" />
+          <label for="fabricLabStory" class="form-label">Fabric Lab Story (Leave empty if the Demo Tool is not running
+            inside the Fabric Lab)</label>
+          <input type="text" class="form-control" id="fabricLabStory" v-model="config.FABRICLABSTORY" />
         </div>
       </div>
 
@@ -217,23 +134,13 @@
               Export
             </button>
 
-            <button
-              type="button"
-              class="btn btn-primary btn-sm me-2"
-              @click="triggerFileInput">
+            <button type="button" class="btn btn-primary btn-sm me-2" @click="triggerFileInput">
               Import
             </button>
-            <input
-              type="file"
-              ref="fileInput"
-              style="display: none"
-              @change="importConfig" />
+            <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
 
             <!-- Alert Message -->
-            <div
-              v-if="showAlertFileExport"
-              class="alert alert-success alert-dismissible fade show"
-              role="alert"
+            <div v-if="showAlertFileExport" class="alert alert-success alert-dismissible fade show" role="alert"
               style="font-size: 0.875rem">
               <i class="bi bi-check-circle me-1"></i>
               {{ alertMessageFileExport }}
@@ -250,27 +157,16 @@
           <div class="card-body">
             <!-- Line 1: Buttons and Alert -->
             <div class="d-flex align-items-center mb-3">
-              <button
-                @click="backupConfigLocal"
-                class="btn btn-primary btn-sm me-2">
+              <button @click="backupConfigLocal" class="btn btn-primary btn-sm me-2">
                 Backup
               </button>
-              <button
-                type="button"
-                class="btn btn-success btn-sm me-2"
-                @click="restoreConfigLocal">
+              <button type="button" class="btn btn-success btn-sm me-2" @click="restoreConfigLocal">
                 Restore
               </button>
-              <button
-                type="button"
-                class="btn btn-danger btn-sm me-2"
-                @click="deleteConfigLocal">
+              <button type="button" class="btn btn-danger btn-sm me-2" @click="deleteConfigLocal">
                 Delete
               </button>
-              <div
-                v-if="showAlertLocalBackup"
-                class="alert alert-success alert-dismissible fade show"
-                role="alert"
+              <div v-if="showAlertLocalBackup" class="alert alert-success alert-dismissible fade show" role="alert"
                 style="font-size: 0.875rem">
                 <i class="bi bi-check-circle me-1"></i>
                 {{ alertMessageLocalBackup }}
@@ -281,12 +177,8 @@
             <div class="row">
               <div class="col-12 col-md-3">
                 <ul class="list-group">
-                  <li
-                    v-for="(configName, index) in configs"
-                    :key="index"
-                    class="list-group-item"
-                    :class="{ active: selectedConfig === configName }"
-                    @click="selectConfig(configName)">
+                  <li v-for="(configName, index) in configs" :key="index" class="list-group-item"
+                    :class="{ active: selectedConfig === configName }" @click="selectConfig(configName)">
                     {{ configName }}
                   </li>
                 </ul>
@@ -360,7 +252,7 @@ export default {
       fetch("http://localhost:8080/list-configs")
         .then((response) => response.json())
         .then((data) => {
-          this.configs = data; // Supposons que `data` soit un tableau de noms de configuration
+          this.configs = data; 
         })
         .catch((error) => {
           console.error("Error fetching configurations list:", error);
@@ -378,6 +270,17 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////////
 
     saveConfig() {
+
+      if (this.config.NAME === "Default") {
+        // Demande un nouveau nom à l'utilisateur
+        const newName = prompt("The 'Default' configuration cannot be overwritten. Please enter a new name for your configuration:");
+        if (!newName || newName.trim() === "") {
+          alert("Saving aborted. A new name is required.");
+          return;
+        }
+        this.config.NAME = newName.trim();
+      }
+
       fetch("http://localhost:8080/save-config", {
         method: "POST",
         headers: {
@@ -396,7 +299,7 @@ export default {
           this.alertMessageSaveReset = "Configuration saved successfully.";
           setTimeout(() => {
             this.showAlertSaveReset = false;
-          }, 15000);
+          }, 5001);
           console.log("Success:", data);
         })
         .catch((error) => {
@@ -404,36 +307,37 @@ export default {
           this.alertMessageSaveReset = "Error saving configuration.";
           setTimeout(() => {
             this.showAlertSaveReset = false;
-          }, 15000);
+          }, 5001);
           console.error("Error:", error);
         });
     },
 
     resetConfig() {
-  fetch("http://localhost:8080/reset-config")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      this.showAlertSaveReset = true;
-      this.alertMessageSaveReset = "Configuration reset to default.";
-      setTimeout(() => {
-        this.showAlertSaveReset = false;
-      }, 15000);
-      this.fetchConfig(); // Rafraîchit la configuration dans le GUI avec la configuration par défaut
-    })
-    .catch((error) => {
-      this.showAlertSaveReset = true;
-      this.alertMessageSaveReset = "Error resetting configuration.";
-      setTimeout(() => {
-        this.showAlertSaveReset = false;
-      }, 15000);
-      console.error("Reset error:", error);
-    });
-},
+      fetch("http://localhost:8080/reset-config")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          this.showAlertSaveReset = true;
+          this.alertMessageSaveReset = "Configuration reset to default.";
+          setTimeout(() => {
+            this.showAlertSaveReset = false;
+          }, 5001);
+          this.config = data;
+          console.log("Configuration saved successfully:", data);
+        })
+        .catch((error) => {
+          this.showAlertSaveReset = true;
+          this.alertMessageSaveReset = "Error resetting configuration.";
+          setTimeout(() => {
+            this.showAlertSaveReset = false;
+          }, 5001);
+          console.error("Reset error:", error);
+        });
+    },
 
     ///////////////////////////////////////////////////////////////////////////////////
     /// EXPORT, IMPORT
@@ -454,14 +358,14 @@ export default {
           a.click();
           window.URL.revokeObjectURL(url);
           this.showAlertFileExport = true;
-          this.alertMessage = "Configuration backed up successfully";
-          setTimeout(() => (this.showAlertFileExport = false), 15000);
+          this.alertMessageFileExport = "Configuration backed up successfully";
+          setTimeout(() => (this.showAlertFileExport = false), 5001);
         })
         .catch((error) => {
           console.error("Error:", error);
           this.showAlertFileExport = true;
-          this.alertMessage = "Error during backup";
-          setTimeout(() => (this.showAlertFileExport = false), 15000);
+          this.alertMessageFileExport = "Error during backup";
+          setTimeout(() => (this.showAlertFileExport = false), 5001);
         });
     },
 
@@ -492,21 +396,21 @@ export default {
               .then((data) => {
                 console.log("Success:", data);
                 this.showAlertFileExport = true;
-                this.alertMessage = "Configuration restored successfully.";
-                setTimeout(() => (this.showAlertFileExport = false), 15000);
+                this.alertMessageFileExport = "Configuration restored successfully.";
+                setTimeout(() => (this.showAlertFileExport = false), 5001);
                 this.fetchConfig();
               })
               .catch((error) => {
                 console.error("Error during restore:", error);
                 this.showAlertFileExport = true;
                 this.alertMessage = "Error restoring configuration.";
-                setTimeout(() => (this.showAlertFileExport = false), 15000);
+                setTimeout(() => (this.showAlertFileExport = false), 5001);
               });
           } catch (error) {
             console.error("Error parsing file:", error);
             this.showAlertFileExport = true;
-            this.alertMessage = "Error parsing configuration file.";
-            setTimeout(() => (this.showAlertFileExport = false), 15000);
+            this.alertMessageFileExport = "Error parsing configuration file.";
+            setTimeout(() => (this.showAlertFileExport = false), 5001);
           }
         };
         reader.readAsText(file);
