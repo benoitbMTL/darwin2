@@ -31,7 +31,7 @@ func Configure(e *echo.Echo) {
 	e.POST("/api-put", handlers.HandleApiPut)
 	e.POST("/api-delete", handlers.HandleApiDelete)
 	e.POST("/api-traffic-generation", handlers.HandleApiMachineLearning)
-	e.POST("/reset-api-machine-learning", handlers.HandleApiResetMachineLearning)
+	e.POST("/reset-api-machine-learning", handlers.HandleResetApiMachineLearning)
 
 	// REST API CREATE
 	e.POST("/create-virtual-ip", handlers.HandleCreateNewVirtualIP)
