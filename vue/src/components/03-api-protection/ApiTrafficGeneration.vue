@@ -129,7 +129,7 @@ end`,
 
       // Make HTTP POST request to the server
       console.log("Making POST request to server");
-      fetch("http://localhost:8080/api-traffic-generation", {
+      fetch("/api-traffic-generation", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

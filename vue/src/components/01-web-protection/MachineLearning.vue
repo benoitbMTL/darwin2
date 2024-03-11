@@ -265,7 +265,7 @@ end`,
 
     fetchConfig() {
       // Fetch config from server
-      fetch("http://localhost:8080/config")
+      fetch("/config")
         .then((response) => response.json())
         .then((data) => {
           this.config = data; // Update config with fetched data
@@ -279,7 +279,7 @@ end`,
       this.resetMLMessage = ""; // Reset message
       this.showResetMLMessage = false; // Hide message initially
 
-      fetch("http://localhost:8080/reset-machine-learning", {
+      fetch("/reset-machine-learning", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -324,7 +324,7 @@ end`,
 
       // Make HTTP POST request to the server
       console.log("Making POST request to server");
-      fetch("http://localhost:8080/machine-learning", {
+      fetch("/machine-learning", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -391,7 +391,7 @@ end`,
     sendAttackRequest(attackType) {
       console.log("Sending attack request with type:", attackType);
 
-      const url = "http://localhost:8080/web-attacks";
+      const url = "/web-attacks";
       const formData = new URLSearchParams();
       formData.append("type", attackType);
 

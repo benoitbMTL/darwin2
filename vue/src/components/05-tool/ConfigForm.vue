@@ -231,7 +231,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////////
 
     fetchConfig() {
-      fetch("http://localhost:8080/config")
+      fetch("/config")
         .then((response) => {
           console.log("HTTP return code:", response.status);
           if (!response.ok) {
@@ -249,7 +249,7 @@ export default {
     },
 
     fetchConfigsList() {
-      fetch("http://localhost:8080/list-configs")
+      fetch("/list-configs")
         .then((response) => response.json())
         .then((data) => {
           this.configs = data; 
@@ -281,7 +281,7 @@ export default {
         this.config.NAME = newName.trim();
       }
 
-      fetch("http://localhost:8080/save-config", {
+      fetch("/save-config", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -313,7 +313,7 @@ export default {
     },
 
     resetConfig() {
-      fetch("http://localhost:8080/reset-config")
+      fetch("/reset-config")
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -344,7 +344,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////////
 
     exportConfig() {
-      fetch("http://localhost:8080/export", {
+      fetch("/export", {
         method: "GET",
       })
         .then((response) => response.blob())
@@ -380,7 +380,7 @@ export default {
         reader.onload = (e) => {
           try {
             const config = JSON.parse(e.target.result);
-            fetch("http://localhost:8080/import", {
+            fetch("/import", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -444,7 +444,7 @@ export default {
 
       // Send a POST request to the "/backup-local" endpoint with the backup data.
       // Use the Fetch API for this purpose.
-      fetch("http://localhost:8080/backup-local", {
+      fetch("/backup-local", {
         method: "POST", // Use POST method for sending data to the server
         headers: {
           "Content-Type": "application/json", // Indicate that we're sending JSON data
@@ -492,7 +492,7 @@ export default {
       };
 
       // Send a POST request to the "/restore-local" endpoint with the data of the configuration to be restored.
-      fetch("http://localhost:8080/restore-local", {
+      fetch("/restore-local", {
         method: "POST", // Use POST method for sending data to the server
         headers: {
           "Content-Type": "application/json", // Indicate that we're sending JSON data
@@ -537,7 +537,7 @@ export default {
       };
 
       // Send a POST request to the "/delete-local" endpoint with the data of the configuration to be deleted.
-      fetch("http://localhost:8080/delete-local", {
+      fetch("/delete-local", {
         method: "POST", // Use POST method for sending data to the server
         headers: {
           "Content-Type": "application/json", // Indicate that we're sending JSON data

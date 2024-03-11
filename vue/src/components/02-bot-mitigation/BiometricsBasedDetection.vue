@@ -43,7 +43,7 @@ export default {
 
   methods: {
     runSelenimum(browserName) {
-      const url = "http://localhost:8080/selenium";
+      const url = "/selenium";
       const formData = new URLSearchParams();
       formData.append("name", browserName);
 
@@ -66,11 +66,11 @@ export default {
 
 
         runScrapWithApi(foobar) {
-      const url = "http://localhost:8080/bot-scraper-api";
+      const url = "/bot-scraper-api";
       const formData = new URLSearchParams();
       formData.append("name", foobar);
 
-      fetch(url, {
+      url, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

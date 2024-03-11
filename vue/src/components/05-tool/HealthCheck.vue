@@ -88,7 +88,7 @@ export default {
     runHealthCheck() {
       this.isLoading = true; // Set loading state to true
       this.jobResult = ""; // Reset Result
-      fetch("http://localhost:8080/run-health-check", {
+      fetch("/run-health-check", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -120,7 +120,7 @@ export default {
   },
   mounted() {
     // Fetch current configuration from the Go backend
-    fetch("http://localhost:8080/config")
+    fetch("/config")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

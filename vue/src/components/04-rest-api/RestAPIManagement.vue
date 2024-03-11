@@ -272,7 +272,7 @@ computed: {
   methods: {
     fetchConfig() {
       // Fetch config from server
-      fetch("http://localhost:8080/config")
+      fetch("/config")
         .then((response) => response.json())
         .then((data) => {
           this.config = data; // Update config with fetched data
