@@ -38,9 +38,9 @@
           the attack surface.
         </p>
 
-        <div class="row">
+        <div class="row g-3"> <!-- Ajout de l'espacement entre les colonnes -->
           <!-- Card #1 (Column 1) -->
-          <div class="col-md-5">
+          <div class="col-md-6">
             <div class="card">
               <div class="card-body">
 
@@ -79,7 +79,7 @@
 
                   <!-- Card #2 content goes here... -->
                   <p class="card-text mt-3">
-                    Select a zero-day and "Run" to generate the attack scenario.
+                    Run a zero-day attack scenario.
                   </p>
 
                   <div class="d-flex">
