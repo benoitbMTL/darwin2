@@ -374,15 +374,15 @@ export default {
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
-          this.showAlertFileExport = true;
-          this.alertMessageFileExport = "Configuration backed up successfully";
-          setTimeout(() => (this.showAlertFileExport = false), 5000);
+          this.showAlert = true;
+          this.alertMessage = "Configuration backed up successfully";
+          setTimeout(() => (this.showAlert = false), 5000);
         })
         .catch((error) => {
           console.error("Error:", error);
-          this.showAlertFileExport = true;
-          this.alertMessageFileExport = "Error during backup";
-          setTimeout(() => (this.showAlertFileExport = false), 5000);
+          this.showAlert = true;
+          this.alertMessage = "Error during backup";
+          setTimeout(() => (this.showAlert = false), 5000);
         });
     },
 
@@ -412,23 +412,23 @@ export default {
               })
               .then((data) => {
                 console.log("Success:", data);
-                this.showAlertFileExport = true;
-                this.alertMessageFileExport = "Configuration restored successfully.";
-                setTimeout(() => (this.showAlertFileExport = false), 5000);
+                this.showAlert = true;
+                this.alertMessage = "Configuration restored successfully.";
+                setTimeout(() => (this.showAlert = false), 5000);
                 this.fetchConfig();
                 this.fetchConfigsList();
               })
               .catch((error) => {
                 console.error("Error during restore:", error);
-                this.showAlertFileExport = true;
+                this.showAlert = true;
                 this.alertMessage = "Error restoring configuration.";
-                setTimeout(() => (this.showAlertFileExport = false), 5000);
+                setTimeout(() => (this.showAlert = false), 5000);
               });
           } catch (error) {
             console.error("Error parsing file:", error);
-            this.showAlertFileExport = true;
-            this.alertMessageFileExport = "Error parsing configuration file.";
-            setTimeout(() => (this.showAlertFileExport = false), 5000);
+            this.showAlert = true;
+            this.alertMessage = "Error parsing configuration file.";
+            setTimeout(() => (this.showAlert = false), 5000);
           }
         };
         reader.readAsText(file);
