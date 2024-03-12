@@ -159,7 +159,8 @@
         </div>
 
         <div class="card my-4">
-          <div class="card-header d-flex justify-content-between align-items-center">
+          <div class="card-header d-flex justify-content-between align-items-center"
+            :class="{ 'debug-border': showBorders }">
             <h5>Local Configurations</h5>
             <div v-if="showAlertLocalBackup" class="alert alert-success alert-dismissible fade show" role="alert"
               style="font-size: 0.875rem; padding: .25rem 1rem; line-height: 1.5;">
@@ -167,6 +168,7 @@
               {{ alertMessageLocalBackup }}
             </div>
           </div>
+
 
           <!-- Card Body -->
           <div class="card-body">
@@ -209,6 +211,7 @@
 export default {
   data() {
     return {
+      showBorders: true,
       activeTab: "applications", // Default active tab
       configs: [], // List of saved configuration names
       selectedConfig: null, // Currently selected configuration
