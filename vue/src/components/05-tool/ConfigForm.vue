@@ -129,7 +129,7 @@
             <h5>Export & Import Configuration</h5>
           </div>
 
-          <div class="card-body d-flex align-items-center">
+          <div class="card-body d-flex align-items-end">
             <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
               Export
             </button>
@@ -157,7 +157,7 @@
           <!-- Card Body -->
           <div class="card-body">
             <!-- Line 1: Buttons and Alert -->
-            <div class="d-flex align-items-center mb-3">
+            <div class="d-flex align-items-end mb-3">
               <button @click="backupConfigLocal" class="btn btn-primary btn-sm me-2">
                 Backup
               </button>
@@ -168,7 +168,7 @@
                 Delete
               </button>
               <div v-if="showAlertLocalBackup" class="alert alert-success alert-dismissible fade show" role="alert"
-              style="font-size: 0.875rem; padding: .25rem 1rem; line-height: 1.5;">
+                style="font-size: 0.875rem; padding: .25rem 1rem; line-height: 1.5;">
                 <i class="bi bi-check-circle me-1"></i>
                 {{ alertMessageLocalBackup }}
               </div>
@@ -186,6 +186,9 @@
               </div>
             </div>
           </div>
+
+
+
         </div>
       </div>
     </div>
