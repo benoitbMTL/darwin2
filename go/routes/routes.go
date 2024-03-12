@@ -67,7 +67,7 @@ func Configure(e *echo.Echo) {
 	e.POST("/import", config.ImportConfig)
 
 	// BACKUP, RSETORE, DELETE
-	e.POST("/backup-local", config.BackupConfigLocal)
+	e.POST("/save-as-local", config.SaveAsConfigLocal)
 	e.POST("/restore-local", config.RestoreConfigLocal)
 	e.POST("/delete-local", config.DeleteConfigLocal)
 

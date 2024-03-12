@@ -11,8 +11,8 @@
       <div class="d-flex align-items-center">
 
         <!-- Alert Message -->
-        <div v-if="showAlert" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
-          role="alert" style="font-size: 0.875rem">
+        <div v-if="showAlert" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0" role="alert"
+          style="font-size: 0.875rem">
           <i class="bi bi-check-circle me-1"></i> {{ alertMessage }}
         </div>
 
@@ -50,16 +50,16 @@
               </div>
               <div class="card-body">
                 <ul class="list-group">
-                  <li v-for="(configName, index) in configs" :key="index" class="list-group-item"
+                  <li v-for="(configName, index) in configs" :key="index"
+                    class="list-group-item d-flex justify-content-between align-items-center"
                     :class="{ active: selectedConfig === configName }" @click="selectConfig(configName)">
                     {{ configName }}
+                    <i v-if="configName === currentConfigName" class="fas fa-arrow-right"></i>
                   </li>
                 </ul>
               </div>
             </div>
           </div>
-
-
 
           <!-- COL 2 -->
           <div class="col-md-8">
@@ -92,7 +92,7 @@
                     <button @click="saveConfig" type="button" class="btn btn-primary btn-sm me-2">
                       Save
                     </button>
-                    <button @click="backupConfigLocal" class="btn btn-primary btn-sm me-2">
+                    <button @click="saveAsConfigLocal" class="btn btn-primary btn-sm me-2">
                       Save as...
                     </button>
                     <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
@@ -195,6 +195,7 @@
 export default {
   data() {
     return {
+      currentConfigName: '',
       showBorders: true,
       activeTab: "applications", // Default active tab
       configs: [], // List of saved configuration names
@@ -240,6 +241,8 @@ export default {
         .then((data) => {
           console.log("Configuration successfully fetched:", data);
           this.config = data;
+          // Update currentConfigName with the name of the currently active configuration
+          this.currentConfigName = data.NAME;
         })
         .catch((error) => {
           console.error("Error fetching updated configuration:", error);
@@ -306,15 +309,7 @@ export default {
             this.showAlert = false;
           }, 5000);
           console.log("Success:", data);
-
-
-
-
           this.fetchConfigsList();
-
-
-
-
         })
         .catch((error) => {
           this.showAlert = true;
@@ -436,7 +431,7 @@ export default {
     },
 
     ///////////////////////////////////////////////////////////////////////////////////
-    /// BACKUP / RESTORE / DELETE
+    /// SAVE AS / RESTORE / DELETE
     ///////////////////////////////////////////////////////////////////////////////////
 
     selectConfig(configName) {
@@ -446,52 +441,51 @@ export default {
       // Par exemple, charger la configuration du serveur et mettre à jour `this.config`
     },
 
-    backupConfigLocal() {
-      // Check if the backup name is provided
-      if (!this.backupName) {
-        alert("Please provide a name for the backup.");
+    saveAsConfigLocal() {
+      // Prompt the user for a new configuration name
+      const newName = prompt("Please enter a name for the new configuration:");
+
+      // Check if a name was provided
+      if (!newName || newName.trim() === "") {
+        alert("Saving aborted. A name is required.");
         return;
       }
 
-      // Prepare the data to be sent to the server. The structure of this data
-      // might vary depending on your backend requirements. Here, we're assuming
-      // the backend needs the name of the backup.
+      // Prepare the data with the provided name
       const data = {
-        name: this.backupName,
+        name: newName.trim(),
       };
 
-      // Send a POST request to the "/backup-local" endpoint with the backup data.
-      // Use the Fetch API for this purpose.
-      fetch("/backup-local", {
-        method: "POST", // Use POST method for sending data to the server
+      // Send a POST request to the "/save-as-local" endpoint with the new configuration data
+      fetch("/save-as-local", {
+        method: "POST",
         headers: {
-          "Content-Type": "application/json", // Indicate that we're sending JSON data
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+        body: JSON.stringify(data),
       })
         .then((response) => {
           if (!response.ok) {
-            // If the server responds with a status code that indicates an error,
-            // throw an error to be caught in the catch block.
-            throw new Error("Failed to backup configuration.");
+            throw new Error("Failed to save configuration.");
           }
-          return response.json(); // Parse the JSON response body
+          return response.json();
         })
         .then((data) => {
-          // Handle the successful backup operation
-          console.log("Backup successful:", data);
-          this.configs.push(this.backupName); // Add the new backup name to the list of configs
-          this.selectedConfig = this.backupName; // Optionally, select the new backup
-          this.backupName = ""; // Reset the backup name input for future backups
-          this.showAlert = true; // Show success alert message
-          this.alertMessage =
-            "Configuration backed up successfully.";
+          console.log("Configuration saved successfully:", data);
+          this.showAlert = true;
+          this.alertMessage = `Configuration '${data.name}' saved successfully.`;
+          this.fetchConfigsList(); // Refresh the list of configurations
+          setTimeout(() => {
+            this.showAlert = false;
+          }, 5000);
         })
         .catch((error) => {
-          // Handle any errors that occurred during the fetch operation
-          console.error("Backup error:", error);
-          this.showAlert = true; // Show error alert message
-          this.alertMessage = "Error during backup.";
+          console.error("Save error:", error);
+          this.showAlert = true;
+          this.alertMessage = "Error during save.";
+          setTimeout(() => {
+            this.showAlert = false;
+          }, 5000);
         });
     },
 
@@ -610,10 +604,5 @@ export default {
   /* Set your desired color, here it's black */
   text-decoration: none;
   /* Removes the underline */
-}
-
-.debug-border {
-  border: 1px solid red;
-  /* Or any color/width you prefer for debugging */
 }
 </style>

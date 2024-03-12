@@ -255,7 +255,7 @@ func ImportConfig(c echo.Context) error {
 	return c.JSON(http.StatusOK, newConfig)
 }
 
-func BackupConfigLocal(c echo.Context) error {
+func SaveAsConfigLocal(c echo.Context) error {
 	var request struct {
 		Name string `json:"name"`
 	}
