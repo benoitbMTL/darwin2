@@ -81,36 +81,37 @@
                   <p class="card-text mt-3">
                     Run a zero-day attack scenario.
                   </p>
+                  <div class="d-flex">
 
-                  <!-- Form -->
+                    <!-- Form -->
 
 
-                  <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
-                    Run
-                  </button>
-                  <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
-                    Reset
-                  </button>
+                    <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
+                      Run
+                    </button>
+                    <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
+                      Reset
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div v-if="sendSampleResult" class="mt-3">
-              <h6>Simulation Result:</h6>
-              <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-            </div>
+              <div v-if="sendSampleResult" class="mt-3">
+                <h6>Simulation Result:</h6>
+                <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+              </div>
 
-            <div v-if="performAttackResult" class="mt-4 mb-3">
-              <h6>{{ currentAttackName }} Result:</h6>
-              <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
-                style="width: 100%; border: 1px solid lightgray"></iframe>
-            </div>
+              <div v-if="performAttackResult" class="mt-4 mb-3">
+                <h6>{{ currentAttackName }} Result:</h6>
+                <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
+                  style="width: 100%; border: 1px solid lightgray"></iframe>
+              </div>
 
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   </div>
 
   <!-- Help Card -->
