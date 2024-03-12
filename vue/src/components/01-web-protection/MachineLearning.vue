@@ -274,8 +274,8 @@ end`,
     },
 
     resetMachineLearning() {
-      this.resetMLMessage = ""; // Reset message
-      this.showResetMLMessage = false; // Hide message initially
+      this.resetMLMessage = "";
+      this.showResetMLMessage = false;
 
       fetch("/reset-machine-learning", {
         method: "POST",
@@ -285,19 +285,29 @@ end`,
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            // Assuming the server responds with a JSON payload in case of errors
+            return response.json().then(error => Promise.reject(error));
           }
           return response.text();
         })
         .then((text) => {
-          this.resetMLMessage = text; // Set the response message
-          this.showResetMLMessage = true; // Show message
+          this.resetMLMessage = text;
+          this.showResetMLMessage = true;
 
           setTimeout(() => {
-            this.showResetMLMessage = false; // Hide message after 15 seconds
-          }, 15000);
+            this.showResetMLMessage = false;
+          }, 6000);
         })
-        .catch((error) => console.error("Error:", error));
+        .catch((error) => {
+          console.error("Error:", error);
+          // Display the error message from the server or a default message
+          this.resetMLMessage = error.message || "An error occurred during the reset process.";
+          this.showResetMLMessage = true;
+
+          setTimeout(() => {
+            this.showResetMLMessage = false;
+          }, 6000);
+        });
     },
 
     generateTraffic(sampleCount) {

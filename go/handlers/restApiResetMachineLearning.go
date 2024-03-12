@@ -7,7 +7,7 @@ import (
 	"darwin2/utils"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -17,7 +17,7 @@ import (
 // Structs to parse JSON responses
 type DomainInfoResponse struct {
 	Results []struct {
-		DbId       int64 `json:"db_id"`
+		DbId       int64  `json:"db_id"`
 		DomainName string `json:"domain_name"`
 	} `json:"results"`
 }
@@ -44,22 +44,25 @@ func HandleResetMachineLearning(c echo.Context) error {
 	// Create and send the request for domain info
 	req, err := http.NewRequest("GET", domainInfoURL, nil)
 	if err != nil {
-		fmt.Printf("Error creating request for domain info: %v\n", err)
-		return err
+		errorMsg := fmt.Sprintf("Error creating request for domain info: %v", err)
+		fmt.Println(errorMsg)
+		return echo.NewHTTPError(http.StatusInternalServerError, errorMsg)
 	}
+
 	req.Header.Add("Authorization", token)
 	req.Header.Add("accept", "application/json")
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Printf("Error sending request for domain info: %v\n", err)
-		return err
+		errorMsg := fmt.Sprintf("Error sending request for domain info: %v", err)
+		fmt.Println(errorMsg)
+		return echo.NewHTTPError(http.StatusInternalServerError, errorMsg)
 	}
 	defer resp.Body.Close()
 
 	fmt.Printf("Received response with status code: %d for domain info request\n", resp.StatusCode)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Printf("Error reading response body: %v\n", err)
 		return err
@@ -73,8 +76,11 @@ func HandleResetMachineLearning(c echo.Context) error {
 		return err
 	}
 
+	// If no domain information found
 	if len(domainInfo.Results) == 0 {
-		return fmt.Errorf("no domain information found")
+		errorMsg := "No domain information found"
+		fmt.Println(errorMsg)
+		return echo.NewHTTPError(http.StatusNotFound, errorMsg)
 	}
 
 	dbId := domainInfo.Results[0].DbId
@@ -98,12 +104,13 @@ func HandleResetMachineLearning(c echo.Context) error {
 
 	resp, err = client.Do(req)
 	if err != nil {
-		fmt.Printf("Error sending request to reset ML: %v\n", err)
-		return err
+		errorMsg := fmt.Sprintf("Error sending request to reset ML: %v", err)
+		fmt.Println(errorMsg)
+		return echo.NewHTTPError(http.StatusInternalServerError, errorMsg)
 	}
 	defer resp.Body.Close()
 
-	fmt.Printf("Machine Learning for domain %s has been reset successfully.\n", domainName)
-
-	return c.String(http.StatusOK, "Machine Learning for domain "+domainName+" has been reset.")
+	successMsg := fmt.Sprintf("Machine Learning for domain %s has been reset.", domainName)
+	fmt.Println(successMsg)
+	return c.String(http.StatusOK, successMsg)
 }
