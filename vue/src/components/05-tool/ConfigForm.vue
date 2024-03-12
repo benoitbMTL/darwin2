@@ -309,8 +309,8 @@ export default {
         }
         this.config.NAME = newName.trim();
       }
-   
-    fetch("/save-config", {
+
+      fetch("/save-config", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -346,7 +346,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////////
     /// RESET
     ///////////////////////////////////////////////////////////////////////////////////
-    
+
     resetConfig() {
       fetch("/reset-config")
         .then((response) => {
@@ -472,7 +472,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////////
     /// SELECT
     ///////////////////////////////////////////////////////////////////////////////////
-    
+
     selectConfig(configName) {
       this.selectedConfig = configName;
       // Vous pouvez également ajouter ici une logique pour charger les détails
@@ -483,7 +483,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////////
     /// CLONE
     ///////////////////////////////////////////////////////////////////////////////////
-    
+
     cloneConfigLocal() {
       // Ensure a configuration has been selected for cloning
       if (!this.selectedConfig) {
@@ -526,8 +526,14 @@ export default {
           setTimeout(() => {
             this.showAlert = false;
           }, 6000);
-          this.fetchConfigsList(); // Refresh the list of configurations
+
+          // After successful cloning, update the current configuration name
+          this.currentConfigName = requestData.newName;
           this.selectedConfig = requestData.newName; // Update the selected configuration to the new clone
+
+          // Refresh the configurations list and fetch the details of the new active configuration
+          this.fetchConfig();
+          this.fetchConfigsList();
         })
         .catch(error => {
           console.error("Clone error:", error);
@@ -542,7 +548,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////////
     /// RESTORE
     ///////////////////////////////////////////////////////////////////////////////////
-    
+
     restoreConfigLocal() {
       // Check if a configuration has been selected
       if (!this.selectedConfig) {
@@ -658,11 +664,11 @@ export default {
   },
 
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    /// MOUNT
-    ///////////////////////////////////////////////////////////////////////////////////
-    
-    mounted() {
+  ///////////////////////////////////////////////////////////////////////////////////
+  /// MOUNT
+  ///////////////////////////////////////////////////////////////////////////////////
+
+  mounted() {
     console.log("Fetching config");
     this.fetchConfig(); // Load config to the form
     this.fetchConfigsList(); // Load config list
