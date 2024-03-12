@@ -139,7 +139,7 @@
             <h5>Export & Import Configuration</h5>
             <!-- Alert Message -->
             <div v-if="showAlertFileExport" class="alert alert-success alert-dismissible fade show" role="alert"
-              style="font-size: 0.875rem; padding: .25rem 1rem; line-height: 1.5;">
+              style="font-size: 0.875rem;">
               <i class="bi bi-check-circle me-1"></i>
               {{ alertMessageFileExport }}
             </div>
@@ -163,7 +163,7 @@
             :class="{ 'debug-border': showBorders }">
             <h5>Local Configurations</h5>
             <div v-if="showAlertLocalBackup" class="alert alert-success alert-dismissible fade show" role="alert"
-              style="font-size: 0.875rem; padding: .25rem 1rem; line-height: 1.5;">
+              style="font-size: 0.875rem;">
               <i class="bi bi-check-circle me-1"></i>
               {{ alertMessageLocalBackup }}
             </div>
@@ -175,7 +175,7 @@
             <!-- Line 1: Buttons and Alert -->
             <div class="d-flex align-items-end mb-3">
               <button @click="backupConfigLocal" class="btn btn-primary btn-sm me-2">
-                Backup
+                Save as...
               </button>
               <button type="button" class="btn btn-success btn-sm me-2" @click="restoreConfigLocal">
                 Restore
@@ -629,4 +629,9 @@ export default {
   text-decoration: none;
   /* Removes the underline */
 }
+
+.debug-border {
+  border: 1px solid red; /* Or any color/width you prefer for debugging */
+}
+
 </style>
