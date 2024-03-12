@@ -36,15 +36,14 @@
 
 
                 <button type="button" class="btn btn-success btn-sm me-2" @click="triggerFileInput">
-                  Import
+                  <i class="bi bi-box-arrow-in-down-right"></i> Import
                 </button>
                 <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
-
                 <button type="button" class="btn btn-success btn-sm me-2" @click="restoreConfigLocal">
-                  Restore
+                  <i class="bi bi-arrow-up-square"></i> Restore
                 </button>
                 <button type="button" class="btn btn-danger btn-sm me-2" @click="deleteConfigLocal">
-                  Delete
+                  <i class="bi bi-trash"></i> Delete
                 </button>
 
               </div>
@@ -54,7 +53,7 @@
                     class="list-group-item d-flex justify-content-between align-items-center"
                     :class="{ active: selectedConfig === configName }" @click="selectConfig(configName)">
                     {{ configName }}
-                    <i v-if="configName === currentConfigName" class="fas fa-arrow-right"></i>
+                    <i v-if="configName === currentConfigName" class="bi bi-arrow-right-circle-fill"></i>
                   </li>
                 </ul>
               </div>
@@ -90,16 +89,16 @@
                   <!-- Buttons on the right -->
                   <div>
                     <button @click="saveConfig" type="button" class="btn btn-primary btn-sm me-2">
-                      Save
+                      <i class="bi bi-floppy-fill"></i> Save
                     </button>
                     <button @click="saveAsConfigLocal" class="btn btn-primary btn-sm me-2">
-                      Save as...
+                      <i class="bi bi-pencil-square"></i> Save as...
                     </button>
                     <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
-                      Export
+                      <i class="bi bi-box-arrow-up-right"></i> Export
                     </button>
                     <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
-                      Reset to Default
+                      <i class="bi bi-arrow-clockwise"></i> Reset to Default
                     </button>
                   </div>
 
@@ -568,17 +567,17 @@ export default {
           return response.json(); // Parse the JSON response body
         })
         .then(() => {
-          // Handle the successful deletion of the configuration
-          console.log("Configuration deleted successfully:", this.selectedConfig);
-          this.showAlert = true;
-          this.alertMessage = "Configuration deleted successfully.";
-          setTimeout(() => { this.showAlert = false; }, 6000);
-
           // Remove the deleted configuration from the 'configs' array
           this.configs = this.configs.filter(
             (config) => config !== this.selectedConfig
           );
           this.selectedConfig = null; // Reset the selected configuration
+
+          // Handle the successful deletion of the configuration
+          console.log("Configuration deleted successfully:", this.selectedConfig);
+          this.showAlert = true;
+          this.alertMessage = "Configuration deleted successfully.";
+          setTimeout(() => { this.showAlert = false; }, 6000);
         })
         .catch((error) => {
           // Handle any errors that occurred during the fetch operation
