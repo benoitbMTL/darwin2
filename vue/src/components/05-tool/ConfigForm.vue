@@ -81,7 +81,7 @@
 
         <div class="mb-3">
           <label for="passwordApi" class="form-label">API Password</label>
-          <input type="text" class="form-control" id="passwordApi" v-model="config.PASSWORDAPI" />
+          <input type="password" class="form-control" id="passwordApi" v-model="config.PASSWORDAPI" />
         </div>
 
         <div class="mb-3">
@@ -141,10 +141,11 @@
 
             <!-- Alert Message -->
             <div v-if="showAlertFileExport" class="alert alert-success alert-dismissible fade show" role="alert"
-              style="font-size: 0.875rem">
+              style="font-size: 0.875rem; padding: .25rem 1rem; line-height: 1.5;">
               <i class="bi bi-check-circle me-1"></i>
               {{ alertMessageFileExport }}
             </div>
+
           </div>
         </div>
 
@@ -167,7 +168,7 @@
                 Delete
               </button>
               <div v-if="showAlertLocalBackup" class="alert alert-success alert-dismissible fade show" role="alert"
-                style="font-size: 0.875rem">
+              style="font-size: 0.875rem; padding: .25rem 1rem; line-height: 1.5;">
                 <i class="bi bi-check-circle me-1"></i>
                 {{ alertMessageLocalBackup }}
               </div>
@@ -252,7 +253,7 @@ export default {
       fetch("/list-configs")
         .then((response) => response.json())
         .then((data) => {
-          this.configs = data; 
+          this.configs = data;
         })
         .catch((error) => {
           console.error("Error fetching configurations list:", error);
@@ -266,7 +267,7 @@ export default {
     saveConfig() {
 
       if (this.config.NAME === "Default") {
-        // Demande un nouveau nom à l'utilisateur
+        // Ask the user for a new name
         const newName = prompt("The 'Default' configuration cannot be overwritten. Please enter a new name for your configuration:");
         if (!newName || newName.trim() === "") {
           alert("Saving aborted. A new name is required.");
@@ -293,7 +294,7 @@ export default {
           this.alertMessageSaveReset = "Configuration saved successfully.";
           setTimeout(() => {
             this.showAlertSaveReset = false;
-          }, 5001);
+          }, 5000);
           console.log("Success:", data);
         })
         .catch((error) => {
@@ -301,7 +302,7 @@ export default {
           this.alertMessageSaveReset = "Error saving configuration.";
           setTimeout(() => {
             this.showAlertSaveReset = false;
-          }, 5001);
+          }, 5000);
           console.error("Error:", error);
         });
     },
@@ -319,7 +320,7 @@ export default {
           this.alertMessageSaveReset = "Configuration reset to default.";
           setTimeout(() => {
             this.showAlertSaveReset = false;
-          }, 5001);
+          }, 5000);
           this.config = data;
           console.log("Configuration saved successfully:", data);
         })
@@ -328,7 +329,7 @@ export default {
           this.alertMessageSaveReset = "Error resetting configuration.";
           setTimeout(() => {
             this.showAlertSaveReset = false;
-          }, 5001);
+          }, 5000);
           console.error("Reset error:", error);
         });
     },
@@ -353,13 +354,13 @@ export default {
           window.URL.revokeObjectURL(url);
           this.showAlertFileExport = true;
           this.alertMessageFileExport = "Configuration backed up successfully";
-          setTimeout(() => (this.showAlertFileExport = false), 5001);
+          setTimeout(() => (this.showAlertFileExport = false), 5000);
         })
         .catch((error) => {
           console.error("Error:", error);
           this.showAlertFileExport = true;
           this.alertMessageFileExport = "Error during backup";
-          setTimeout(() => (this.showAlertFileExport = false), 5001);
+          setTimeout(() => (this.showAlertFileExport = false), 5000);
         });
     },
 
@@ -391,20 +392,20 @@ export default {
                 console.log("Success:", data);
                 this.showAlertFileExport = true;
                 this.alertMessageFileExport = "Configuration restored successfully.";
-                setTimeout(() => (this.showAlertFileExport = false), 5001);
+                setTimeout(() => (this.showAlertFileExport = false), 5000);
                 this.fetchConfig();
               })
               .catch((error) => {
                 console.error("Error during restore:", error);
                 this.showAlertFileExport = true;
                 this.alertMessage = "Error restoring configuration.";
-                setTimeout(() => (this.showAlertFileExport = false), 5001);
+                setTimeout(() => (this.showAlertFileExport = false), 5000);
               });
           } catch (error) {
             console.error("Error parsing file:", error);
             this.showAlertFileExport = true;
             this.alertMessageFileExport = "Error parsing configuration file.";
-            setTimeout(() => (this.showAlertFileExport = false), 5001);
+            setTimeout(() => (this.showAlertFileExport = false), 5000);
           }
         };
         reader.readAsText(file);
@@ -571,10 +572,10 @@ export default {
   },
 
   mounted() {
-      console.log("Fetching config");
-      this.fetchConfig(); // Load config to the form
-      this.fetchConfigsList(); // Load config list
-    },
+    console.log("Fetching config");
+    this.fetchConfig(); // Load config to the form
+    this.fetchConfigsList(); // Load config list
+  },
 
 
 };
