@@ -26,6 +26,52 @@
 
     <div class="card-body">
 
+      <!-- BUTTONS -->
+      <div class="card">
+        <div class="card-body">
+          <!-- Use row and cols to align buttons -->
+          <div class="row justify-content-between">
+            <!-- Left aligned buttons -->
+            <div class="col-auto">
+              <button @click="saveConfig" type="button" class="btn btn-primary btn-sm me-2">
+                <i class="bi bi-floppy"></i> Save
+              </button>
+              <button @click="saveAsConfigLocal" class="btn btn-primary btn-sm me-2">
+                <i class="bi bi-pencil-square"></i> Save as...
+              </button>
+              <button type="button" class="btn btn-success btn-sm me-2" @click="restoreConfigLocal">
+                <i class="bi bi-arrow-up-square"></i> Restore
+              </button>
+              <button type="button" class="btn btn-danger btn-sm me-2" @click="deleteConfigLocal">
+                <i class="bi bi-x-square"></i> Delete
+              </button>
+            </div>
+
+            <!-- Middle aligned buttons -->
+            <div class="col-auto">
+              <button type="button" class="btn btn-success btn-sm me-2" @click="triggerFileInput">
+                <i class="bi bi-box-arrow-in-down-right"></i> Import
+              </button>
+              <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
+              <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
+                <i class="bi bi-box-arrow-up-right"></i> Export
+              </button>
+            </div>
+
+            <!-- Right aligned buttons -->
+            <div class="col-auto">
+              <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
+                <i class="bi bi-arrow-clockwise"></i> Reset to Default
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
       <div class="container">
         <div class="row">
 
@@ -34,17 +80,7 @@
             <div class="card">
               <div class="card-header">
 
-
-                <button type="button" class="btn btn-success btn-sm me-2" @click="triggerFileInput">
-                  <i class="bi bi-box-arrow-in-down-right"></i> Import
-                </button>
-                <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
-                <button type="button" class="btn btn-success btn-sm me-2" @click="restoreConfigLocal">
-                  <i class="bi bi-arrow-up-square"></i> Restore
-                </button>
-                <button type="button" class="btn btn-danger btn-sm me-2" @click="deleteConfigLocal">
-                  <i class="bi bi-trash"></i> Delete
-                </button>
+                Configuration Profiles
 
               </div>
               <div class="card-body">
@@ -53,7 +89,7 @@
                     class="list-group-item d-flex justify-content-between align-items-center"
                     :class="{ active: selectedConfig === configName }" @click="selectConfig(configName)">
                     {{ configName }}
-                    <i v-if="configName === currentConfigName" class="bi bi-arrow-right-circle-fill"></i>
+                    <i v-if="configName === currentConfigName" class="bi bi-arrow-right-circle" style="color: red;"></i>
                   </li>
                 </ul>
               </div>
@@ -67,7 +103,7 @@
 
 
                 <!-- Menu -->
-                <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-header">
 
                   <!-- Navigation links on the left -->
                   <ul class="nav nav-tabs card-header-tabs" role="button">
@@ -86,21 +122,7 @@
                     </li>
                   </ul>
 
-                  <!-- Buttons on the right -->
-                  <div>
-                    <button @click="saveConfig" type="button" class="btn btn-primary btn-sm me-2">
-                      <i class="bi bi-floppy-fill"></i> Save
-                    </button>
-                    <button @click="saveAsConfigLocal" class="btn btn-primary btn-sm me-2">
-                      <i class="bi bi-pencil-square"></i> Save as...
-                    </button>
-                    <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
-                      <i class="bi bi-box-arrow-up-right"></i> Export
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
-                      <i class="bi bi-arrow-clockwise"></i> Reset to Default
-                    </button>
-                  </div>
+
 
                 </div> <!-- Menu -->
 
@@ -271,7 +293,7 @@ export default {
     },
 
 
-    ////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////
     /// SAVE / RESET
     ///////////////////////////////////////////////////////////////////////////////////
 
@@ -308,6 +330,7 @@ export default {
             this.showAlert = false;
           }, 6000);
           console.log("Success:", data);
+          this.fetchConfig();
           this.fetchConfigsList();
         })
         .catch((error) => {
@@ -474,6 +497,7 @@ export default {
           setTimeout(() => {
             this.showAlert = false;
           }, 6000);
+          this.fetchConfig();
           this.fetchConfigsList(); // Refresh the list of configurations
         })
         .catch(error => {
@@ -538,6 +562,12 @@ export default {
       // Check if a configuration has been selected for deletion
       if (!this.selectedConfig) {
         alert("Please select a configuration to delete.");
+        return;
+      }
+
+      // Prevent deletion if the selected configuration is "Default"
+      if (this.selectedConfig === "Default") {
+        alert("The 'Default' configuration cannot be deleted.");
         return;
       }
 
