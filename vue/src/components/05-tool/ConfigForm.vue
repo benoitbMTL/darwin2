@@ -41,7 +41,7 @@
                 <button @click="cloneConfigLocal" class="btn btn-primary btn-sm me-2">
                   <i class="bi bi-copy"></i> Clone
                 </button>
-                <button type="button" class="btn btn-primary btn-sm me-2" @click="restoreConfigLocal">
+                <button type="button" class="btn btn-primary btn-sm me-2" @click="applyConfigLocal">
                   <i class="bi bi-arrow-up-square"></i> Apply
                 </button>
                 <button type="button" class="btn btn-danger btn-sm me-2" @click="deleteConfigLocal">
@@ -546,10 +546,10 @@ export default {
     },
 
     ///////////////////////////////////////////////////////////////////////////////////
-    /// RESTORE
+    /// APPLY
     ///////////////////////////////////////////////////////////////////////////////////
 
-    restoreConfigLocal() {
+    applyConfigLocal() {
       // Check if a configuration has been selected
       if (!this.selectedConfig) {
         alert("Please select a configuration to restore.");
@@ -563,8 +563,8 @@ export default {
         name: this.selectedConfig,
       };
 
-      // Send a POST request to the "/restore-local" endpoint with the data of the configuration to be restored.
-      fetch("/restore-local", {
+      // Send a POST request to the "/apply-config" endpoint with the data of the configuration to be restored.
+      fetch("/apply-config", {
         method: "POST", // Use POST method for sending data to the server
         headers: {
           "Content-Type": "application/json", // Indicate that we're sending JSON data
@@ -581,9 +581,9 @@ export default {
         })
         .then((data) => {
           // Handle the successful configuration restoration
-          console.log("Configuration restored successfully:", data);
-          this.showAlert = true; // Show success alert message
-          this.alertMessage = "Configuration restored successfully.";
+          console.log("Configuration applied successfully:", data);
+          this.showAlert = true;
+          this.alertMessage = "Configuration applied successfully.";
           setTimeout(() => { this.showAlert = false; }, 6000);
           this.fetchConfig();
           this.fetchConfigsList();
