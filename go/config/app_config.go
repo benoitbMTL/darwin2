@@ -235,9 +235,10 @@ func ImportConfig(c echo.Context) error {
 	return c.JSON(http.StatusOK, newConfig)
 }
 
-func SaveAsConfigLocal(c echo.Context) error {
+func CloneConfigLocal(c echo.Context) error {
 	var request struct {
-		Name string `json:"name"`
+		SourceName string `json:"sourceName"`
+		NewName    string `json:"newName"`
 	}
 	if err := c.Bind(&request); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
@@ -246,15 +247,23 @@ func SaveAsConfigLocal(c echo.Context) error {
 	configMutex.Lock()
 	defer configMutex.Unlock()
 
-	// Ensure not to overwrite an existing configuration unless intended
-	if _, exists := configsMap[request.Name]; exists {
-		return echo.NewHTTPError(http.StatusConflict, fmt.Sprintf("Configuration '%s' already exists", request.Name))
+	// Ensure the source configuration exists
+	sourceConfig, exists := configsMap[request.SourceName]
+	if !exists {
+		return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Source configuration '%s' not found", request.SourceName))
 	}
 
-	configsMap[request.Name] = GetCurrentConfig() // Use GetCurrentConfig to ensure consistency
-	log.Printf("Configuration '%s' backed up successfully.", request.Name)
+	// Ensure not to overwrite an existing configuration with the new name
+	if _, exists := configsMap[request.NewName]; exists {
+		return echo.NewHTTPError(http.StatusConflict, fmt.Sprintf("Configuration '%s' already exists", request.NewName))
+	}
 
-	return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' backed up successfully", request.Name)})
+	// Clone the source configuration under the new name
+	configsMap[request.NewName] = sourceConfig
+	currentName = request.NewName // Set the cloned configuration as current
+	log.Printf("Configuration '%s' cloned to '%s' and set as current.", request.SourceName, request.NewName)
+
+	return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' cloned to '%s' and set as current", request.SourceName, request.NewName)})
 }
 
 func RestoreConfigLocal(c echo.Context) error {

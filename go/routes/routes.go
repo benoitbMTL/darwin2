@@ -60,7 +60,7 @@ func Configure(e *echo.Echo) {
 
 	// Configuration Management
 	e.POST("/save-config", config.SaveConfig)
-	e.POST("/save-as-local", config.SaveAsConfigLocal)
+	e.POST("/clone-local", config.CloneConfigLocal)
 	e.POST("/restore-local", config.RestoreConfigLocal) // Apply
 	e.POST("/delete-local", config.DeleteConfigLocal)
 	e.POST("/import", config.ImportConfig)

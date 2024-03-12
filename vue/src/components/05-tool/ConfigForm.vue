@@ -38,8 +38,8 @@
                 <button @click="saveConfig" type="button" class="btn btn-primary btn-sm me-2">
                   <i class="bi bi-floppy"></i> Save
                 </button>
-                <button @click="saveAsConfigLocal" class="btn btn-primary btn-sm me-2">
-                  <i class="bi bi-pencil-square"></i> Save as...
+                <button @click="cloneConfigLocal" class="btn btn-primary btn-sm me-2">
+                  <i class="bi bi-copy"></i> Clone
                 </button>
                 <button type="button" class="btn btn-primary btn-sm me-2" @click="restoreConfigLocal">
                   <i class="bi bi-arrow-up-square"></i> Apply
@@ -294,7 +294,7 @@ export default {
 
 
     ///////////////////////////////////////////////////////////////////////////////////
-    /// SAVE / RESET
+    /// SAVE
     ///////////////////////////////////////////////////////////////////////////////////
 
     saveConfig() {
@@ -309,8 +309,8 @@ export default {
         }
         this.config.NAME = newName.trim();
       }
-
-      fetch("/save-config", {
+   
+    fetch("/save-config", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -343,6 +343,10 @@ export default {
         });
     },
 
+    ///////////////////////////////////////////////////////////////////////////////////
+    /// RESET
+    ///////////////////////////////////////////////////////////////////////////////////
+    
     resetConfig() {
       fetch("/reset-config")
         .then((response) => {
@@ -373,7 +377,7 @@ export default {
     },
 
     ///////////////////////////////////////////////////////////////////////////////////
-    /// EXPORT, IMPORT
+    /// EXPORT
     ///////////////////////////////////////////////////////////////////////////////////
 
     exportConfig() {
@@ -415,6 +419,10 @@ export default {
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    /// IMPORT
+    ///////////////////////////////////////////////////////////////////////////////////
 
     importConfig(e) {
       const file = e.target.files[0];
@@ -462,9 +470,9 @@ export default {
     },
 
     ///////////////////////////////////////////////////////////////////////////////////
-    /// SAVE AS / RESTORE / DELETE
+    /// SELECT
     ///////////////////////////////////////////////////////////////////////////////////
-
+    
     selectConfig(configName) {
       this.selectedConfig = configName;
       // Vous pouvez également ajouter ici une logique pour charger les détails
@@ -472,27 +480,39 @@ export default {
       // Par exemple, charger la configuration du serveur et mettre à jour `this.config`
     },
 
-    saveAsConfigLocal() {
+    ///////////////////////////////////////////////////////////////////////////////////
+    /// CLONE
+    ///////////////////////////////////////////////////////////////////////////////////
+    
+    cloneConfigLocal() {
+      // Ensure a configuration has been selected for cloning
+      if (!this.selectedConfig) {
+        alert("Please select a configuration to clone.");
+        return;
+      }
+
       // Prompt the user for a new configuration name
       const newName = prompt("Please enter a name for the new configuration:");
 
       // Check if a name was provided
       if (!newName || newName.trim() === "") {
-        alert("Saving aborted. A name is required.");
+        alert("Cloning aborted. A new name is required.");
         return;
       }
 
-      // Since we're doing a "Save as...", we directly use the newName for the configuration
-      // without the check for overwriting "Default", because "Save as..." always creates or updates a named configuration
-      this.config.NAME = newName.trim();
+      // Prepare the request data
+      const requestData = {
+        sourceName: this.selectedConfig,
+        newName: newName.trim(),
+      };
 
-      // Proceed to save the configuration under the new name
-      fetch("/save-config", {
+      // Proceed to clone the selected configuration under the new name
+      fetch("/clone-config", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(this.config),
+        body: JSON.stringify(requestData),
       })
         .then(response => {
           if (!response.ok) {
@@ -502,23 +522,27 @@ export default {
         })
         .then(() => {
           this.showAlert = true;
-          this.alertMessage = `Configuration '${this.config.NAME}' saved successfully.`;
+          this.alertMessage = `Configuration '${requestData.sourceName}' cloned to '${requestData.newName}' and set as current.`;
           setTimeout(() => {
             this.showAlert = false;
           }, 6000);
-          this.fetchConfig();
           this.fetchConfigsList(); // Refresh the list of configurations
+          this.selectedConfig = requestData.newName; // Update the selected configuration to the new clone
         })
         .catch(error => {
-          console.error("Save error:", error);
+          console.error("Clone error:", error);
           this.showAlert = true;
-          this.alertMessage = "Error during save.";
+          this.alertMessage = "Error during cloning.";
           setTimeout(() => {
             this.showAlert = false;
           }, 6000);
         });
     },
 
+    ///////////////////////////////////////////////////////////////////////////////////
+    /// RESTORE
+    ///////////////////////////////////////////////////////////////////////////////////
+    
     restoreConfigLocal() {
       // Check if a configuration has been selected
       if (!this.selectedConfig) {
@@ -566,6 +590,10 @@ export default {
           setTimeout(() => { this.showAlert = false; }, 6000);
         });
     },
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    /// DELETE
+    ///////////////////////////////////////////////////////////////////////////////////
 
     deleteConfigLocal() {
       // Check if a configuration has been selected for deletion
@@ -629,7 +657,12 @@ export default {
     },
   },
 
-  mounted() {
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    /// MOUNT
+    ///////////////////////////////////////////////////////////////////////////////////
+    
+    mounted() {
     console.log("Fetching config");
     this.fetchConfig(); // Load config to the form
     this.fetchConfigsList(); // Load config list
