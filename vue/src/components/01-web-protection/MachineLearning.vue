@@ -41,98 +41,34 @@
         <div class="row">
 
           <!-- COL 1 -->
-          <div class="col-md-4">
+          <div class="col-md-6">
             <!-- CARD -->
             <div class="card">
-              <!-- CARD HEADER -->
-
-              <div class="card-header">
-                <strong>TEST</strong>
-              </div>
 
               <!-- CARD BODY -->
               <div class="card-body">
-                <p>
-                  Simulate traffic with random samples to build machine learning
-                  model.
-                </p>
-                <div class="d-flex mb-3"> <!-- TEST -->
 
-                  <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isLoading1">
-                    <span v-if="isLoading1" class="spinner-border spinner-border-sm me-2" role="status"
-                      aria-hidden="true"></span>
-                    <span>{{ isLoading1 ? "Simulating..." : "Send 1 Sample" }}</span>
-                  </button>
-                  <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isLoading10">
-                    <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status"
-                      aria-hidden="true"></span>
-                    <span>{{ isLoading10 ? "Simulating..." : "Send 10 Samples" }}</span>
-                  </button>
-                  <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isLoading500">
-                    <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
-                      aria-hidden="true"></span>
-                    <span>{{ isLoading500 ? "Simulating..." : "Send 500 Samples" }}</span>
-                  </button>
-                  <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">
-                    Reset
-                  </button>
-                </div>
+
+
+test
+
+
+
+
               </div>
             </div>
 
             <!-- COL 2 -->
-            <div class="col-md-8">
+            <div class="col-md-6">
               <div class="card">
                 <div class="card-body">
 
-                  <!-- COL 2 -->
-                  <p>
-                    Run a zero-day attack scenario.
-                  </p>
-                  <div class="d-flex"> <!-- TEST -->
 
-                    <!-- Menu -->
-                    <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType"
-                      style="width: 350px">
-                      <option value="zero_day_sqli_1">
-                        Zero Day SQL Injection: A 'DIV' B
-                      </option>
-                      <option value="zero_day_sqli_2">
-                        Zero Day SQL Injection: A '^' B
-                      </option>
-                      <option value="zero_day_sqli_3">
-                        Zero Day SQL Injection: 3)+1+(0
-                      </option>
-                      <option value="zero_day_sqli_4">
-                        Zero Day SQL Injection: 3||1
-                      </option>
-                      <option value="zero_day_remote_exploit_1">
-                        Zero Day Remote Exploits: %X%X%X%X%X
-                      </option>
-                      <option value="zero_day_remote_exploit_2">
-                        Zero Day Remote Exploits: %p%p%p%p%p
-                      </option>
-                      <option value="zero_day_command_injection_1">
-                        Zero Day Command Injection: /???/l?
-                      </option>
-                      <option value="zero_day_command_injection_2">
-                        Zero Day Command Injection: var1=l var2=s
-                      </option>
-                      <option value="zero_day_xss_1">
-                        Zero Day Cross Site Scripting: window['ale'+'rt'](1)
-                      </option>
-                      <option value="zero_day_xss_2">
-                        Zero Day Cross Site Scripting: ___=1?'ert(123)
-                      </option>
-                    </select>
 
-                    <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
-                      Run
-                    </button>
-                    <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
-                      Reset
-                    </button>
-                  </div>
+test
+
+
+
                 </div>
               </div>
 
