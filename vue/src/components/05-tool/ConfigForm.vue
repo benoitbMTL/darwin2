@@ -10,6 +10,39 @@
     </span>
   </div>
 
+
+
+  <div class="container">
+  <div class="row">
+    <!-- Colonne de gauche -->
+    <div class="col-md-5">
+      <div class="card">
+        <div class="card-header">
+          List
+        </div>
+        <div class="card-body">
+          Test
+        </div>
+      </div>
+    </div>
+    <!-- Colonne de droite -->
+    <div class="col-md-7">
+      <div class="card">
+        <div class="card-header">
+          Configuration
+        </div>
+        <div class="card-body">
+          Test
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
   <form @submit.prevent="saveConfig">
     <div class="card my-4">
       <!-- Menu -->
