@@ -38,136 +38,144 @@
           the attack surface.
         </p>
 
-        <div class="row justify-content-center">
+        <div class="row">
           <!-- Card #1 (Column 1) -->
-          <div class="card col-md-6">
-            <!-- Card #1 content goes here... -->
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
 
-            <p class="card-text mt-3">
-              Simulate traffic with random samples to build machine learning
-              model.
-            </p>
-            <div class="d-flex mb-3">
-              <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isLoading1">
-                <span v-if="isLoading1" class="spinner-border spinner-border-sm me-2" role="status"
-                  aria-hidden="true"></span>
-                <span>{{ isLoading1 ? "Simulating..." : "Send 1 Sample" }}</span>
-              </button>
-              <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isLoading10">
-                <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status"
-                  aria-hidden="true"></span>
-                <span>{{ isLoading10 ? "Simulating..." : "Send 10 Samples" }}</span>
-              </button>
-              <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isLoading500">
-                <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
-                  aria-hidden="true"></span>
-                <span>{{ isLoading500 ? "Simulating..." : "Send 500 Samples" }}</span>
-              </button>
-              <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">
-                Reset
-              </button>
+                <!-- Card #1 content goes here... -->
+                <p class="card-text mt-3">
+                  Simulate traffic with random samples to build machine learning
+                  model.
+                </p>
+                <div class="d-flex mb-3">
+                  <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isLoading1">
+                    <span v-if="isLoading1" class="spinner-border spinner-border-sm me-2" role="status"
+                      aria-hidden="true"></span>
+                    <span>{{ isLoading1 ? "Simulating..." : "Send 1 Sample" }}</span>
+                  </button>
+                  <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isLoading10">
+                    <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status"
+                      aria-hidden="true"></span>
+                    <span>{{ isLoading10 ? "Simulating..." : "Send 10 Samples" }}</span>
+                  </button>
+                  <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isLoading500">
+                    <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
+                      aria-hidden="true"></span>
+                    <span>{{ isLoading500 ? "Simulating..." : "Send 500 Samples" }}</span>
+                  </button>
+                  <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card #2 (Column 2) -->
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-body">
+
+                  <!-- Card #2 content goes here... -->
+                  <p class="card-text mt-3">
+                    Select a zero-day and "Run" to generate the attack scenario.
+                  </p>
+
+                  <div class="d-flex">
+                    <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType"
+                      style="width: 350px">
+                      <option value="zero_day_sqli_1">
+                        Zero Day SQL Injection: A 'DIV' B
+                      </option>
+                      <option value="zero_day_sqli_2">
+                        Zero Day SQL Injection: A '^' B
+                      </option>
+                      <option value="zero_day_sqli_3">
+                        Zero Day SQL Injection: 3)+1+(0
+                      </option>
+                      <option value="zero_day_sqli_4">
+                        Zero Day SQL Injection: 3||1
+                      </option>
+                      <option value="zero_day_remote_exploit_1">
+                        Zero Day Remote Exploits: %X%X%X%X%X
+                      </option>
+                      <option value="zero_day_remote_exploit_2">
+                        Zero Day Remote Exploits: %p%p%p%p%p
+                      </option>
+                      <option value="zero_day_command_injection_1">
+                        Zero Day Command Injection: /???/l?
+                      </option>
+                      <option value="zero_day_command_injection_2">
+                        Zero Day Command Injection: var1=l var2=s
+                      </option>
+                      <option value="zero_day_xss_1">
+                        Zero Day Cross Site Scripting: window['ale'+'rt'](1)
+                      </option>
+                      <option value="zero_day_xss_2">
+                        Zero Day Cross Site Scripting: ___=1?'ert(123)
+                      </option>
+                    </select>
+
+                    <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
+                      Run
+                    </button>
+                    <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
+                      Reset
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="sendSampleResult" class="mt-3">
+                <h6>Simulation Result:</h6>
+                <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+              </div>
+
+              <div v-if="performAttackResult" class="mt-4 mb-3">
+                <h6>{{ currentAttackName }} Result:</h6>
+                <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
+                  style="width: 100%; border: 1px solid lightgray"></iframe>
+              </div>
+
             </div>
           </div>
-
-          <!-- Card #2 (Column 2) -->
-          <div class="card col-md-6">
-            <!-- Card #2 content goes here... -->
-            <p class="card-text mt-3">
-              Select a zero-day and "Run" to generate the attack scenario.
-            </p>
-
-            <div class="d-flex">
-              <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType" style="width: 350px">
-                <option value="zero_day_sqli_1">
-                  Zero Day SQL Injection: A 'DIV' B
-                </option>
-                <option value="zero_day_sqli_2">
-                  Zero Day SQL Injection: A '^' B
-                </option>
-                <option value="zero_day_sqli_3">
-                  Zero Day SQL Injection: 3)+1+(0
-                </option>
-                <option value="zero_day_sqli_4">
-                  Zero Day SQL Injection: 3||1
-                </option>
-                <option value="zero_day_remote_exploit_1">
-                  Zero Day Remote Exploits: %X%X%X%X%X
-                </option>
-                <option value="zero_day_remote_exploit_2">
-                  Zero Day Remote Exploits: %p%p%p%p%p
-                </option>
-                <option value="zero_day_command_injection_1">
-                  Zero Day Command Injection: /???/l?
-                </option>
-                <option value="zero_day_command_injection_2">
-                  Zero Day Command Injection: var1=l var2=s
-                </option>
-                <option value="zero_day_xss_1">
-                  Zero Day Cross Site Scripting: window['ale'+'rt'](1)
-                </option>
-                <option value="zero_day_xss_2">
-                  Zero Day Cross Site Scripting: ___=1?'ert(123)
-                </option>
-              </select>
-
-              <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
-                Run
-              </button>
-              <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
-                Reset
-              </button>
-            </div>
-          </div>
-
-          <div v-if="sendSampleResult" class="mt-3">
-            <h6>Simulation Result:</h6>
-            <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-          </div>
-
-          <div v-if="performAttackResult" class="mt-4 mb-3">
-            <h6>{{ currentAttackName }} Result:</h6>
-            <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
-              style="width: 100%; border: 1px solid lightgray"></iframe>
-          </div>
-
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Help Card -->
-  <div v-if="showHelp" class="card bg-light mb-3">
-    <div class="card-header">
-      <h5>About Machine Learning Traffic Simulation</h5>
-    </div>
-    <div class="card-body">
-      <ul>
-        <li>
-          The simulation tool generates random traffic using data from
-          <a href="https://api.namefake.com/">https://api.namefake.com/</a>.
-        </li>
-        <li>
-          The tool sends random samples to the server to simulate legitimate
-          traffic, which is used to train FortiWeb's Machine Learning (ML).
-        </li>
-        <li>
-          While only 400 requests are necessary for the Machine Learning (ML)
-          system to build its initial model, ongoing traffic generation enables
-          the ML to continue learning and refining its model.
-        </li>
-        <li>
-          Press the "Reset Machine Learning" button to delete all existing
-          learning results and start the demo from scratch.
-        </li>
-      </ul>
-      <p>
-        The following Machine Learning configuration provides an optimized setup
-        for demonstrations.
-      </p>
+      <!-- Help Card -->
+      <div v-if="showHelp" class="card bg-light mb-3">
+        <div class="card-header">
+          <h5>About Machine Learning Traffic Simulation</h5>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li>
+              The simulation tool generates random traffic using data from
+              <a href="https://api.namefake.com/">https://api.namefake.com/</a>.
+            </li>
+            <li>
+              The tool sends random samples to the server to simulate legitimate
+              traffic, which is used to train FortiWeb's Machine Learning (ML).
+            </li>
+            <li>
+              While only 400 requests are necessary for the Machine Learning (ML)
+              system to build its initial model, ongoing traffic generation enables
+              the ML to continue learning and refining its model.
+            </li>
+            <li>
+              Press the "Reset Machine Learning" button to delete all existing
+              learning results and start the demo from scratch.
+            </li>
+          </ul>
+          <p>
+            The following Machine Learning configuration provides an optimized setup
+            for demonstrations.
+          </p>
 
-      <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-    </div>
-  </div>
+          <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+        </div>
+      </div>
 </template>
 
 <script>
