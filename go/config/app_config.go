@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"sync"
 
 	"github.com/labstack/echo/v4"
@@ -231,8 +232,11 @@ func ExportConfig(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
+	// Sanitize currentConfig.NAME
+	safeName := regexp.MustCompile(`[^a-zA-Z0-9]+`).ReplaceAllString(currentConfig.NAME, "_")
+
 	// Dynamically create the filename based on the current configuration name
-	fileName := fmt.Sprintf("fwb_demo_tool_%s.json", currentConfig.NAME)
+	fileName := fmt.Sprintf("fwb_demo_tool_%s.json", safeName)
 
 	c.Response().Header().Set(echo.HeaderContentDisposition, fmt.Sprintf(`attachment; filename="%s"`, fileName))
 	c.Response().Header().Set(echo.HeaderContentType, "application/json")
