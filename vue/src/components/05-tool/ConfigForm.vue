@@ -26,9 +26,18 @@
 
     <div class="card-body">
 
-      <!-- BUTTONS -->
-      <div class="card">
-        <div class="card-body">
+      
+
+
+
+
+
+      <div class="container">
+
+
+<!-- BUTTONS -->
+<div class="card mb-3">
+        <div class="card-header">
           <!-- Use row and cols to align buttons -->
           <div class="row justify-content-between">
             <!-- Left aligned buttons -->
@@ -39,8 +48,8 @@
               <button @click="saveAsConfigLocal" class="btn btn-primary btn-sm me-2">
                 <i class="bi bi-pencil-square"></i> Save as...
               </button>
-              <button type="button" class="btn btn-success btn-sm me-2" @click="restoreConfigLocal">
-                <i class="bi bi-arrow-up-square"></i> Restore
+              <button type="button" class="btn btn-primary btn-sm me-2" @click="restoreConfigLocal">
+                <i class="bi bi-arrow-up-square"></i> Apply
               </button>
               <button type="button" class="btn btn-danger btn-sm me-2" @click="deleteConfigLocal">
                 <i class="bi bi-x-square"></i> Delete
@@ -49,7 +58,7 @@
 
             <!-- Middle aligned buttons -->
             <div class="col-auto">
-              <button type="button" class="btn btn-success btn-sm me-2" @click="triggerFileInput">
+              <button type="button" class="btn btn-primary btn-sm me-2" @click="triggerFileInput">
                 <i class="bi bi-box-arrow-in-down-right"></i> Import
               </button>
               <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
@@ -71,8 +80,6 @@
 
 
 
-
-      <div class="container">
         <div class="row">
 
           <!-- COL 1 -->
