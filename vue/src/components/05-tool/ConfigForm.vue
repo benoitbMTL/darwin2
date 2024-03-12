@@ -10,11 +10,7 @@
       <!-- Container for the alert message and configuration name -->
       <div class="d-flex align-items-center">
 
-        <!-- Alert Message -->
-        <div v-if="showAlert" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0" role="alert"
-          style="font-size: 0.875rem">
-          <i class="bi bi-check-circle me-1"></i> {{ alertMessage }}
-        </div>
+
 
         <!-- Dynamically displayed configuration name on the right -->
         <span v-if="config.NAME" style="color: red;">
@@ -35,8 +31,8 @@
             <div class="row justify-content-between">
               <!-- Left aligned buttons -->
               <div class="col-auto">
-                <button @click="saveConfig" type="button" class="btn btn-primary btn-sm me-2">
-                  <i class="bi bi-floppy"></i> Save
+                <button type="button" class="btn btn-warning btn-sm me-2" @click="promptRenameConfig">
+                  <i class="bi bi-pencil"></i> Rename
                 </button>
                 <button @click="cloneConfigLocal" class="btn btn-primary btn-sm me-2">
                   <i class="bi bi-copy"></i> Clone
@@ -44,6 +40,10 @@
                 <button type="button" class="btn btn-primary btn-sm me-2" @click="applyConfigLocal">
                   <i class="bi bi-arrow-up-square"></i> Apply
                 </button>
+                <button type="button" class="btn btn-primary btn-sm me-2" @click="triggerFileInput">
+                  <i class="bi bi-box-arrow-in-down-right"></i> Import
+                </button>
+                <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
                 <button type="button" class="btn btn-danger btn-sm me-2" @click="deleteConfigLocal">
                   <i class="bi bi-x-square"></i> Delete
                 </button>
@@ -51,13 +51,12 @@
 
               <!-- Middle aligned buttons -->
               <div class="col-auto">
-                <button type="button" class="btn btn-primary btn-sm me-2" @click="triggerFileInput">
-                  <i class="bi bi-box-arrow-in-down-right"></i> Import
-                </button>
-                <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
-                <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
-                  <i class="bi bi-box-arrow-up-right"></i> Export
-                </button>
+                <!-- Alert Message -->
+                <div v-if="showAlert" class="alert alert-success alert-dismissible fade show p-1 mb-0" role="alert"
+                  style="font-size: 0.875rem">
+                  <i class="bi bi-check-circle me-1"></i> {{ alertMessage }}
+                </div>
+
               </div>
 
               <!-- Right aligned buttons -->
@@ -103,7 +102,7 @@
 
 
                 <!-- Menu -->
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between">
 
                   <!-- Navigation links on the left -->
                   <ul class="nav nav-tabs card-header-tabs" role="button">
@@ -113,8 +112,7 @@
                     </li>
                     <li class="nav-conf-item">
                       <a class="nav-link" :class="{ active: activeTab === 'restApi' }"
-                        @click="activeTab = 'restApi'">REST
-                        API</a>
+                        @click="activeTab = 'restApi'">REST API</a>
                     </li>
                     <li class="nav-conf-item">
                       <a class="nav-link" :class="{ active: activeTab === 'misc' }"
@@ -122,10 +120,17 @@
                     </li>
                   </ul>
 
+                  <!-- Buttons on the right -->
+                  <div>
+                    <button @click="saveConfig" type="button" class="btn btn-primary btn-sm me-2">
+                      <i class="bi bi-floppy"></i> Save
+                    </button>
+                    <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
+                      <i class="bi bi-box-arrow-up-right"></i> Export
+                    </button>
+                  </div>
 
-
-                </div> <!-- Menu -->
-
+                </div>
 
                 <!-- Applications Section -->
                 <div class="card-body" v-if="activeTab === 'applications'">
@@ -289,6 +294,58 @@ export default {
         })
         .catch((error) => {
           console.error("Error fetching configurations list:", error);
+        });
+    },
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    /// RENAME
+    ///////////////////////////////////////////////////////////////////////////////////
+
+    promptRenameConfig() {
+      if (!this.selectedConfig) {
+        alert("Please select a configuration to rename.");
+        return;
+      }
+
+      const newName = prompt("Enter a new name for the configuration:");
+      if (!newName || newName.trim() === "") {
+        alert("Renaming aborted. A new name is required.");
+        return;
+      }
+
+      this.renameConfig(this.selectedConfig, newName.trim());
+    },
+
+    renameConfig(oldName, newName) {
+      fetch("/rename-config", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ oldName, newName }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then(() => {
+          this.showAlert = true;
+          this.alertMessage = `Configuration '${oldName}' renamed to '${newName}'.`;
+          setTimeout(() => {
+            this.showAlert = false;
+          }, 3000);
+          this.fetchConfigsList();
+          this.fetchConfig();
+        })
+        .catch(error => {
+          console.error("Rename error:", error);
+          this.showAlert = true;
+          this.alertMessage = "Error during renaming.";
+          setTimeout(() => {
+            this.showAlert = false;
+          }, 3000);
         });
     },
 

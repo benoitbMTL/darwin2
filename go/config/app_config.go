@@ -328,3 +328,35 @@ func ListConfigs(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, configNames)
 }
+
+func RenameConfig(c echo.Context) error {
+    var request struct {
+        OldName string `json:"oldName"`
+        NewName string `json:"newName"`
+    }
+    if err := c.Bind(&request); err != nil {
+        return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
+    }
+
+    configMutex.Lock()
+    defer configMutex.Unlock()
+
+    if _, exists := configsMap[request.NewName]; exists {
+        return echo.NewHTTPError(http.StatusConflict, fmt.Sprintf("Configuration name '%s' already exists", request.NewName))
+    }
+
+    config, exists := configsMap[request.OldName]
+    if !exists {
+        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.OldName))
+    }
+
+    delete(configsMap, request.OldName) // Remove the old config
+    config.NAME = request.NewName       // Update the config name
+    configsMap[request.NewName] = config // Add the renamed config
+
+    if currentName == request.OldName {
+        currentName = request.NewName // Update current config if it was renamed
+    }
+
+    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' renamed to '%s'", request.OldName, request.NewName)})
+}

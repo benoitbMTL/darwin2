@@ -55,17 +55,19 @@ func Configure(e *echo.Echo) {
 	e.POST("/delete-policy", handlers.HandleDeletePolicy)
 
 	// SYSTEM
-	e.GET("/config", config.GetConfig)
+	e.GET("/config", config.GetConfig) // Export
 	e.GET("/list-configs", config.ListConfigs)
 
 	// Configuration Management
-	e.POST("/save-config", config.SaveConfig)
+	e.POST("/rename-config", config.RenameConfig)
 	e.POST("/clone-config", config.CloneConfigLocal)
 	e.POST("/apply-config", config.ApplyConfigLocal) // Apply
 	e.POST("/delete-local", config.DeleteConfigLocal)
 	e.POST("/import", config.ImportConfig)
 	// Export uses /config
 	e.GET("/reset-config", config.ResetConfig)
+	// Save
+	e.POST("/save-config", config.SaveConfig)
 
 	// HEALTH CHECK
 	e.GET("/run-health-check", handlers.HandleHealthCheck)
