@@ -1,14 +1,24 @@
 <template>
 
-  <div class="d-flex justify-content-between align-items-center my-4">
+<div class="d-flex justify-content-between align-items-center my-4">
     <!-- Static title on the left -->
     <h5>Demo Tool Configuration</h5>
 
-    <!-- Dynamically displayed configuration name on the right -->
-    <span v-if="config.NAME" style="color: red;">
-      Active Configuration: {{ config.NAME }}
-    </span>
+    <!-- Container for the alert message and configuration name -->
+    <div class="d-flex align-items-center">
+      <!-- Alert Message -->
+      <div v-if="showAlertSaveReset" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0" role="alert"
+        style="font-size: 0.875rem">
+        <i class="bi bi-check-circle me-1"></i> {{ alertMessageSaveReset }}
+      </div>
+
+      <!-- Dynamically displayed configuration name on the right -->
+      <span v-if="config.NAME" style="color: red;">
+        Active Configuration: {{ config.NAME }}
+      </span>
+    </div>
   </div>
+
 
 
 
@@ -20,16 +30,12 @@
         <div class="card">
           <div class="card-header">
 
-            <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
-              Export
-            </button>
-            <button type="button" class="btn btn-primary btn-sm me-2" @click="triggerFileInput">
+
+            <button type="button" class="btn btn-success btn-sm me-2" @click="triggerFileInput">
               Import
             </button>
             <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
-            <button @click="backupConfigLocal" class="btn btn-primary btn-sm me-2">
-              Save as...
-            </button>
+
             <button type="button" class="btn btn-success btn-sm me-2" @click="restoreConfigLocal">
               Restore
             </button>
@@ -39,7 +45,12 @@
 
           </div>
           <div class="card-body">
-            Test
+            <ul class="list-group">
+              <li v-for="(configName, index) in configs" :key="index" class="list-group-item"
+                :class="{ active: selectedConfig === configName }" @click="selectConfig(configName)">
+                {{ configName }}
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -49,46 +60,45 @@
       <!-- COL 2 -->
       <div class="col-md-7">
         <form @submit.prevent="saveConfig">
-          <div class="card my-4"> // GARDER MY-4 ???
+          <div class="card">
 
 
             <!-- Menu -->
             <div class="card-header d-flex justify-content-between align-items-center">
-              <div class="d-flex align-items-center">
-                <ul class="nav nav-tabs card-header-tabs" role="button">
-                  <li class="nav-conf-item">
-                    <a class="nav-link" :class="{ active: activeTab === 'applications' }"
-                      @click="activeTab = 'applications'">Applications</a>
-                  </li>
-                  <li class="nav-conf-item">
-                    <a class="nav-link" :class="{ active: activeTab === 'restApi' }" @click="activeTab = 'restApi'">REST
-                      API</a>
-                  </li>
-                  <li class="nav-conf-item">
-                    <a class="nav-link" :class="{ active: activeTab === 'misc' }"
-                      @click="activeTab = 'misc'">Miscellaneous</a>
-                  </li>
-                  <li class="nav-conf-item">
-                    <a class="nav-link" :class="{ active: activeTab === 'backupRestore' }"
-                      @click="activeTab = 'backupRestore'">Backup & Restore</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
 
-            <div class="d-flex align-items-center">
-              <!-- Alert Message -->
-              <div v-if="showAlertSaveReset" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
-                role="alert" style="font-size: 0.875rem">
-                <i class="bi bi-check-circle me-1"></i> {{ alertMessageSaveReset }}
+              <!-- Navigation links on the left -->
+              <ul class="nav nav-tabs card-header-tabs" role="button">
+                <li class="nav-conf-item">
+                  <a class="nav-link" :class="{ active: activeTab === 'applications' }"
+                    @click="activeTab = 'applications'">Applications</a>
+                </li>
+                <li class="nav-conf-item">
+                  <a class="nav-link" :class="{ active: activeTab === 'restApi' }" @click="activeTab = 'restApi'">REST
+                    API</a>
+                </li>
+                <li class="nav-conf-item">
+                  <a class="nav-link" :class="{ active: activeTab === 'misc' }"
+                    @click="activeTab = 'misc'">Miscellaneous</a>
+                </li>
+              </ul>
+
+              <!-- Buttons on the right -->
+              <div>
+                <button @click="saveConfig" type="button" class="btn btn-primary btn-sm me-2">
+                  Save
+                </button>
+                <button @click="backupConfigLocal" class="btn btn-primary btn-sm me-2">
+                  Save as...
+                </button>
+                <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
+                  Export
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
+                  Reset to Default
+                </button>
               </div>
-              <button @click="saveConfig" type="button" class="btn btn-primary btn-sm">
-                Save
-              </button>
-              <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
-                Reset to Default
-              </button>
-            </div>
+
+            </div> <!-- Menu -->
 
 
             <!-- Applications Section -->
@@ -172,6 +182,8 @@
 
     </div> // Row
   </div> // Container
+
+
 </template>
 
 <script>

@@ -106,6 +106,22 @@ func Initialize() {
 		USERAGENT:      "FortiWeb Demo Tool",
 		FABRICLABSTORY: ""}
 
+	configsMap["FortiPoc"] = AppConfig{
+		NAME:           "FortiPoc",
+		DVWAURL:        "https://192.168.1.10",
+		BANKURL:        "https://192.168.1.10/bank.html",
+		JUICESHOPURL:   "https://192.168.1.20",
+		PETSTOREURL:    "https://192.168.1.30/api/v3/pet",
+		SPEEDTESTURL:   "https://192.168.1.40",
+		USERNAMEAPI:    "userapi",
+		PASSWORDAPI:    "fortinet123!",
+		VDOMAPI:        "root",
+		FWBMGTIP:       "192.168.1.2",
+		FWBMGTPORT:     "443",
+		MLPOLICY:       "DVWA_POLICY",
+		USERAGENT:      "FortiWeb Demo Tool",
+		FABRICLABSTORY: ""}
+
 	// Add your defaultConfig to the configsMap
 	configsMap[defaultConfig.NAME] = defaultConfig
 
