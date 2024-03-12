@@ -30,7 +30,7 @@
 
         <!-- BUTTONS -->
         <div class="card mb-3">
-          <div class="card-header">
+          <div class="card-body">
             <!-- Use row and cols to align buttons -->
             <div class="row justify-content-between">
               <!-- Left aligned buttons -->
@@ -388,7 +388,7 @@ export default {
         .then((config) => {
           // Sanitize the configuration name for use in the filename
           const safeName = config.NAME.replace(/[^a-zA-Z0-9]+/g, "_");
-          const filename = `fwb_demo_tool_${safeName}.json`;
+          const filename = `fwb_demo_tool_conf_${safeName}.json`;
 
           // Create a blob from the configuration JSON and trigger the download
           const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
