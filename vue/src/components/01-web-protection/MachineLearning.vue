@@ -40,7 +40,7 @@
 
         <div class="row">
           <!-- Card #1 (Column 1) -->
-          <div class="col-md-4">
+          <div class="col-md-5">
             <div class="card">
               <div class="card-body">
 
@@ -73,7 +73,7 @@
             </div>
 
             <!-- Card #2 (Column 2) -->
-            <div class="col-md-8">
+            <div class="col-md-6">
               <div class="card">
                 <div class="card-body">
 
