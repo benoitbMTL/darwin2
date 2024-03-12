@@ -46,7 +46,7 @@
             <div class="card">
               <div class="card-header">
 
-                Build Model
+              <strong>Build Model</strong>
               </div>
 
               <!-- CARD BODY -->
@@ -87,7 +87,7 @@
             <div class="card">
               <div class="card-header">
 
-                Test Model
+                <strong></strong>Test Model</strong>
               </div>
               <div class="card-body">
 
