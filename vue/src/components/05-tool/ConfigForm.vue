@@ -1,5 +1,9 @@
 <template>
-  <h5 class="my-4">Demo Tool Configuration</h5>
+
+  <h5 class="my-4 d-flex justify-content-between align-items-center">
+    Demo Tool Configuration
+    <span v-if="config.Name" style="color: red;">Configuration Name: {{ config.Name }}</span>
+  </h5>
 
   <form @submit.prevent="saveConfig">
     <div class="card my-4">
@@ -151,7 +155,7 @@
 
         <div class="card my-4">
           <div class="card-header">
-            <h5>Local Backup & Restore</h5>
+            <h5>Local Configurations</h5>
           </div>
 
           <!-- Card Body -->
