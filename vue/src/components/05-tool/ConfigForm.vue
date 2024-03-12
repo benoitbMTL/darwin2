@@ -451,35 +451,33 @@ export default {
         return;
       }
 
-      // Prepare the data with the provided name
-      const data = {
-        name: newName.trim(),
-      };
+      // Since we're doing a "Save as...", we directly use the newName for the configuration
+      // without the check for overwriting "Default", because "Save as..." always creates or updates a named configuration
+      this.config.NAME = newName.trim();
 
-      // Send a POST request to the "/save-as-local" endpoint with the new configuration data
-      fetch("/save-as-local", {
+      // Proceed to save the configuration under the new name
+      fetch("/save-config", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(this.config),
       })
-        .then((response) => {
+        .then(response => {
           if (!response.ok) {
-            throw new Error("Failed to save configuration.");
+            throw new Error("Network response was not ok");
           }
           return response.json();
         })
-        .then((data) => {
-          console.log("Configuration saved successfully:", data);
+        .then(data => {
           this.showAlert = true;
-          this.alertMessage = `Configuration '${data.name}' saved successfully.`;
-          this.fetchConfigsList(); // Refresh the list of configurations
+          this.alertMessage = `Configuration '${this.config.NAME}' saved successfully.`;
           setTimeout(() => {
             this.showAlert = false;
           }, 5000);
+          this.fetchConfigsList(); // Refresh the list of configurations
         })
-        .catch((error) => {
+        .catch(error => {
           console.error("Save error:", error);
           this.showAlert = true;
           this.alertMessage = "Error during save.";
