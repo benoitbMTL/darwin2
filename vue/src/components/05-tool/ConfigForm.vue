@@ -44,7 +44,7 @@
 
           <!-- Buttons -->
           <div>
-            <button type="submit" class="btn btn-primary btn-sm me-2">
+            <button @click="saveConfig" type="button" class="btn btn-primary btn-sm">
               Save
             </button>
             <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
@@ -294,6 +294,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////////
 
     saveConfig() {
+      console.log("Saving configuration");
 
       if (this.config.NAME === "Default") {
         // Ask the user for a new name
@@ -379,6 +380,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////////
 
     exportConfig() {
+      console.log("Exporting configuration");
       fetch("/export", {
         method: "GET",
       })
@@ -631,7 +633,7 @@ export default {
 }
 
 .debug-border {
-  border: 1px solid red; /* Or any color/width you prefer for debugging */
+  border: 1px solid red;
+  /* Or any color/width you prefer for debugging */
 }
-
 </style>
