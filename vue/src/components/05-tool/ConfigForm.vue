@@ -235,16 +235,17 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////////
 
     fetchConfig() {
+      console.log("Fetching configuration from /config");
       fetch("/config")
         .then((response) => {
-          console.log("HTTP return code:", response.status);
+          console.log("HTTP return code for /config:", response.status);
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error(`Network response was not ok, status: ${response.status}`);
           }
           return response.json();
         })
         .then((data) => {
-          console.log("Configuration updated:", data);
+          console.log("Configuration successfully fetched:", data);
           this.config = data;
         })
         .catch((error) => {
@@ -252,16 +253,26 @@ export default {
         });
     },
 
+
     fetchConfigsList() {
+      console.log("Fetching configurations list from /list-configs");
       fetch("/list-configs")
-        .then((response) => response.json())
+        .then((response) => {
+          console.log("HTTP return code for /list-configs:", response.status);
+          if (!response.ok) {
+            throw new Error(`Network response was not ok, status: ${response.status}`);
+          }
+          return response.json();
+        })
         .then((data) => {
+          console.log("Configurations list successfully fetched:", data);
           this.configs = data;
         })
         .catch((error) => {
           console.error("Error fetching configurations list:", error);
         });
     },
+
 
     ////////////////////////////////////////////////////////
     /// SAVE / RESET
@@ -326,6 +337,8 @@ export default {
           }, 5000);
           this.config = data;
           console.log("Configuration saved successfully:", data);
+          this.fetchConfig();
+          this.fetchConfigsList();
         })
         .catch((error) => {
           this.showAlertSaveReset = true;
@@ -397,6 +410,7 @@ export default {
                 this.alertMessageFileExport = "Configuration restored successfully.";
                 setTimeout(() => (this.showAlertFileExport = false), 5000);
                 this.fetchConfig();
+                this.fetchConfigsList();
               })
               .catch((error) => {
                 console.error("Error during restore:", error);
@@ -510,7 +524,8 @@ export default {
           console.log("Configuration restored successfully:", data);
           this.showAlertLocalBackup = true; // Show success alert message
           this.alertMessageLocalBackup = "Configuration restored successfully.";
-          // Optionally, update the frontend to reflect the restored configuration
+          this.fetchConfig();
+          this.fetchConfigsList();
         })
         .catch((error) => {
           // Handle any errors that occurred during the fetch operation
@@ -545,18 +560,17 @@ export default {
         .then((response) => {
           if (!response.ok) {
             // If the server responds with a status code that indicates an error,
-            // throw an error to be caught in the catch block.
-            throw new Error("Failed to delete configuration.");
+            // parse the response to get the error message.
+            return response.json().then((errorData) => {
+              throw new Error(errorData.message);
+            });
           }
           return response.json(); // Parse the JSON response body
         })
         .then(() => {
           // Handle the successful deletion of the configuration
-          console.log(
-            "Configuration deleted successfully:",
-            this.selectedConfig
-          );
-          this.showAlertLocalBackup = true; // Show success alert message
+          console.log("Configuration deleted successfully:", this.selectedConfig);
+          this.showAlertLocalBackup = true;
           this.alertMessageLocalBackup = "Configuration deleted successfully.";
 
           // Remove the deleted configuration from the 'configs' array
@@ -569,7 +583,8 @@ export default {
           // Handle any errors that occurred during the fetch operation
           console.error("Delete error:", error);
           this.showAlertLocalBackup = true; // Show error alert message
-          this.alertMessageLocalBackup = "Error during deletion.";
+          // Use the error message from the server response
+          this.alertMessageLocalBackup = error.message;
         });
     },
   },
