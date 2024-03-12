@@ -266,7 +266,9 @@ export default {
         })
         .then((data) => {
           console.log("Configurations list successfully fetched:", data);
-          this.configs = data;
+          // Sort the configurations list from 0 to 9 and then from A to Z
+          const sortedData = data.sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+          this.configs = sortedData;
         })
         .catch((error) => {
           console.error("Error fetching configurations list:", error);
