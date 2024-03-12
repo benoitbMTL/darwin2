@@ -3,7 +3,7 @@
 
     <!-- HEADER -->
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5>Machine Learning & Zero-Day Attacks</h5>
+      <h5>Machine Learning Anomaly Detection</h5>
 
 
 
@@ -46,15 +46,14 @@
             <div class="card">
               <div class="card-header">
 
-              <strong>Build Model</strong>
+                <strong>Build Model</strong>
               </div>
 
               <!-- CARD BODY -->
               <div class="card-body">
 
                 <p>
-                  Simulate traffic with random samples to build machine learning
-                  model.
+                  Simulate legitimate traffic with random samples to build a ML model.
                 </p>
                 <div class="d-flex mb-3"> <!-- TEST -->
 
@@ -142,19 +141,24 @@
               </div>
             </div>
 
-            <div v-if="sendSampleResult" class="mt-3">
-              <h6>Simulation Result:</h6>
-              <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-            </div>
 
-            <div v-if="performAttackResult" class="mt-4 mb-3">
-              <h6>{{ currentAttackName }} Result:</h6>
-              <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
-                style="width: 100%; border: 1px solid lightgray"></iframe>
-            </div>
 
           </div> <!-- COL -->
         </div> <!-- Row -->
+
+
+        <div v-if="sendSampleResult" class="mt-3">
+          <h6>Simulation Result:</h6>
+          <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+        </div>
+
+        <div v-if="performAttackResult" class="mt-4 mb-3">
+          <h6>{{ currentAttackName }} Result:</h6>
+          <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
+            style="width: 100%; border: 1px solid lightgray"></iframe>
+        </div>
+
+
       </div> <!-- Container -->
 
     </div>
