@@ -1,189 +1,194 @@
 <template>
 
-<div class="d-flex justify-content-between align-items-center my-4">
-    <!-- Static title on the left -->
-    <h5>Demo Tool Configuration</h5>
 
-    <!-- Container for the alert message and configuration name -->
-    <div class="d-flex align-items-center">
-      <!-- Alert Message -->
-      <div v-if="showAlertSaveReset" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0" role="alert"
-        style="font-size: 0.875rem">
-        <i class="bi bi-check-circle me-1"></i> {{ alertMessageSaveReset }}
-      </div>
+  <div class="card my-4">
 
-      <!-- Dynamically displayed configuration name on the right -->
-      <span v-if="config.NAME" style="color: red;">
-        Active Configuration: {{ config.NAME }}
-      </span>
-    </div>
-  </div>
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <!-- Static title on the left -->
+      <h5>Demo Tool Configuration</h5>
 
+      <!-- Container for the alert message and configuration name -->
+      <div class="d-flex align-items-center">
 
-
-
-  <div class="container">
-    <div class="row">
-
-      <!-- COL 1 -->
-      <div class="col-md-5">
-        <div class="card">
-          <div class="card-header">
-
-
-            <button type="button" class="btn btn-success btn-sm me-2" @click="triggerFileInput">
-              Import
-            </button>
-            <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
-
-            <button type="button" class="btn btn-success btn-sm me-2" @click="restoreConfigLocal">
-              Restore
-            </button>
-            <button type="button" class="btn btn-danger btn-sm me-2" @click="deleteConfigLocal">
-              Delete
-            </button>
-
-          </div>
-          <div class="card-body">
-            <ul class="list-group">
-              <li v-for="(configName, index) in configs" :key="index" class="list-group-item"
-                :class="{ active: selectedConfig === configName }" @click="selectConfig(configName)">
-                {{ configName }}
-              </li>
-            </ul>
-          </div>
+        <!-- Alert Message -->
+        <div v-if="showAlertSaveReset" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
+          role="alert" style="font-size: 0.875rem">
+          <i class="bi bi-check-circle me-1"></i> {{ alertMessageSaveReset }}
         </div>
+
+        <!-- Dynamically displayed configuration name on the right -->
+        <span v-if="config.NAME" style="color: red;">
+          Active Configuration: {{ config.NAME }}
+        </span>
       </div>
+    </div>
 
 
+    <div class="card-body">
 
-      <!-- COL 2 -->
-      <div class="col-md-7">
-        <form @submit.prevent="saveConfig">
-          <div class="card">
+      <div class="container">
+        <div class="row">
+
+          <!-- COL 1 -->
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
 
 
-            <!-- Menu -->
-            <div class="card-header d-flex justify-content-between align-items-center">
-
-              <!-- Navigation links on the left -->
-              <ul class="nav nav-tabs card-header-tabs" role="button">
-                <li class="nav-conf-item">
-                  <a class="nav-link" :class="{ active: activeTab === 'applications' }"
-                    @click="activeTab = 'applications'">Applications</a>
-                </li>
-                <li class="nav-conf-item">
-                  <a class="nav-link" :class="{ active: activeTab === 'restApi' }" @click="activeTab = 'restApi'">REST
-                    API</a>
-                </li>
-                <li class="nav-conf-item">
-                  <a class="nav-link" :class="{ active: activeTab === 'misc' }"
-                    @click="activeTab = 'misc'">Miscellaneous</a>
-                </li>
-              </ul>
-
-              <!-- Buttons on the right -->
-              <div>
-                <button @click="saveConfig" type="button" class="btn btn-primary btn-sm me-2">
-                  Save
+                <button type="button" class="btn btn-success btn-sm me-2" @click="triggerFileInput">
+                  Import
                 </button>
-                <button @click="backupConfigLocal" class="btn btn-primary btn-sm me-2">
-                  Save as...
+                <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
+
+                <button type="button" class="btn btn-success btn-sm me-2" @click="restoreConfigLocal">
+                  Restore
                 </button>
-                <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
-                  Export
+                <button type="button" class="btn btn-danger btn-sm me-2" @click="deleteConfigLocal">
+                  Delete
                 </button>
-                <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
-                  Reset to Default
-                </button>
-              </div>
 
-            </div> <!-- Menu -->
-
-
-            <!-- Applications Section -->
-            <div class="card-body" v-if="activeTab === 'applications'">
-              <!-- Application Form Fields -->
-              <div class="mb-3">
-                <label for="dvwaUrl" class="form-label">DVWA URL</label>
-                <input type="text" class="form-control" id="dvwaUrl" v-model="config.DVWAURL" />
               </div>
-              <div class="mb-3">
-                <label for="bankUrl" class="form-label">Bank URL</label>
-                <input type="text" class="form-control" id="bankUrl" v-model="config.BANKURL" />
-              </div>
-              <div class="mb-3">
-                <label for="juiceShopUrl" class="form-label">Juice Shop URL</label>
-                <input type="text" class="form-control" id="juiceShopUrl" v-model="config.JUICESHOPURL" />
-              </div>
-              <div class="mb-3">
-                <label for="petstoreUrl" class="form-label">Petstore URL</label>
-                <input type="text" class="form-control" id="petstoreUrl" v-model="config.PETSTOREURL" />
-              </div>
-              <div class="mb-3">
-                <label for="speedtestUrl" class="form-label">Speedtest URL</label>
-                <input type="text" class="form-control" id="speedtestUrl" v-model="config.SPEEDTESTURL" />
-              </div>
-            </div>
-
-            <!-- REST API Section -->
-            <div class="card-body" v-if="activeTab === 'restApi'">
-              <!-- REST API Form Fields -->
-
-              <div class="mb-3">
-                <label for="usernameApi" class="form-label">API Username</label>
-                <input type="text" class="form-control" id="usernameApi" v-model="config.USERNAMEAPI" />
-              </div>
-
-              <div class="mb-3">
-                <label for="passwordApi" class="form-label">API Password</label>
-                <input type="password" class="form-control" id="passwordApi" v-model="config.PASSWORDAPI" />
-              </div>
-
-              <div class="mb-3">
-                <label for="vdomApi" class="form-label">VDOM API</label>
-                <input type="text" class="form-control" id="vdomApi" v-model="config.VDOMAPI" />
-              </div>
-
-              <div class="mb-3">
-                <label for="fwbMgtIp" class="form-label">FortiWeb Management IP/FQDN</label>
-                <input type="text" class="form-control" id="fwbMgtIp" v-model="config.FWBMGTIP" />
-              </div>
-
-              <div class="mb-3">
-                <label for="fwbMgtPort" class="form-label">FortiWeb Management Port</label>
-                <input type="text" class="form-control" id="fwbMgtPort" v-model="config.FWBMGTPORT" />
-              </div>
-
-              <div class="mb-3">
-                <label for="mlPolicy" class="form-label">Machine Learning Policy</label>
-                <input type="text" class="form-control" id="mlPolicy" v-model="config.MLPOLICY" />
-              </div>
-            </div>
-
-            <!-- Misc Section -->
-            <div class="card-body" v-if="activeTab === 'misc'">
-              <!-- Misc Form Fields -->
-              <div class="mb-3">
-                <label for="userAgent" class="form-label">User Agent</label>
-                <input type="text" class="form-control" id="userAgent" v-model="config.USERAGENT" />
-              </div>
-
-              <div class="mb-3">
-                <label for="fabricLabStory" class="form-label">Fabric Lab Story (Leave empty if the Demo Tool is not
-                  running
-                  inside the Fabric Lab)</label>
-                <input type="text" class="form-control" id="fabricLabStory" v-model="config.FABRICLABSTORY" />
+              <div class="card-body">
+                <ul class="list-group">
+                  <li v-for="(configName, index) in configs" :key="index" class="list-group-item"
+                    :class="{ active: selectedConfig === configName }" @click="selectConfig(configName)">
+                    {{ configName }}
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
-        </form>
-      </div> // Col 7
-
-    </div> // Row
-  </div> // Container
 
 
+
+          <!-- COL 2 -->
+          <div class="col-md-8">
+            <form @submit.prevent="saveConfig">
+              <div class="card">
+
+
+                <!-- Menu -->
+                <div class="card-header d-flex justify-content-between align-items-center">
+
+                  <!-- Navigation links on the left -->
+                  <ul class="nav nav-tabs card-header-tabs" role="button">
+                    <li class="nav-conf-item">
+                      <a class="nav-link" :class="{ active: activeTab === 'applications' }"
+                        @click="activeTab = 'applications'">Applications</a>
+                    </li>
+                    <li class="nav-conf-item">
+                      <a class="nav-link" :class="{ active: activeTab === 'restApi' }"
+                        @click="activeTab = 'restApi'">REST
+                        API</a>
+                    </li>
+                    <li class="nav-conf-item">
+                      <a class="nav-link" :class="{ active: activeTab === 'misc' }"
+                        @click="activeTab = 'misc'">Miscellaneous</a>
+                    </li>
+                  </ul>
+
+                  <!-- Buttons on the right -->
+                  <div>
+                    <button @click="saveConfig" type="button" class="btn btn-primary btn-sm me-2">
+                      Save
+                    </button>
+                    <button @click="backupConfigLocal" class="btn btn-primary btn-sm me-2">
+                      Save as...
+                    </button>
+                    <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
+                      Export
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
+                      Reset to Default
+                    </button>
+                  </div>
+
+                </div> <!-- Menu -->
+
+
+                <!-- Applications Section -->
+                <div class="card-body" v-if="activeTab === 'applications'">
+                  <!-- Application Form Fields -->
+                  <div class="mb-3">
+                    <label for="dvwaUrl" class="form-label">DVWA URL</label>
+                    <input type="text" class="form-control" id="dvwaUrl" v-model="config.DVWAURL" />
+                  </div>
+                  <div class="mb-3">
+                    <label for="bankUrl" class="form-label">Bank URL</label>
+                    <input type="text" class="form-control" id="bankUrl" v-model="config.BANKURL" />
+                  </div>
+                  <div class="mb-3">
+                    <label for="juiceShopUrl" class="form-label">Juice Shop URL</label>
+                    <input type="text" class="form-control" id="juiceShopUrl" v-model="config.JUICESHOPURL" />
+                  </div>
+                  <div class="mb-3">
+                    <label for="petstoreUrl" class="form-label">Petstore URL</label>
+                    <input type="text" class="form-control" id="petstoreUrl" v-model="config.PETSTOREURL" />
+                  </div>
+                  <div class="mb-3">
+                    <label for="speedtestUrl" class="form-label">Speedtest URL</label>
+                    <input type="text" class="form-control" id="speedtestUrl" v-model="config.SPEEDTESTURL" />
+                  </div>
+                </div>
+
+                <!-- REST API Section -->
+                <div class="card-body" v-if="activeTab === 'restApi'">
+                  <!-- REST API Form Fields -->
+
+                  <div class="mb-3">
+                    <label for="usernameApi" class="form-label">API Username</label>
+                    <input type="text" class="form-control" id="usernameApi" v-model="config.USERNAMEAPI" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="passwordApi" class="form-label">API Password</label>
+                    <input type="password" class="form-control" id="passwordApi" v-model="config.PASSWORDAPI" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="vdomApi" class="form-label">VDOM API</label>
+                    <input type="text" class="form-control" id="vdomApi" v-model="config.VDOMAPI" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="fwbMgtIp" class="form-label">FortiWeb Management IP/FQDN</label>
+                    <input type="text" class="form-control" id="fwbMgtIp" v-model="config.FWBMGTIP" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="fwbMgtPort" class="form-label">FortiWeb Management Port</label>
+                    <input type="text" class="form-control" id="fwbMgtPort" v-model="config.FWBMGTPORT" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="mlPolicy" class="form-label">Machine Learning Policy</label>
+                    <input type="text" class="form-control" id="mlPolicy" v-model="config.MLPOLICY" />
+                  </div>
+                </div>
+
+                <!-- Misc Section -->
+                <div class="card-body" v-if="activeTab === 'misc'">
+                  <!-- Misc Form Fields -->
+                  <div class="mb-3">
+                    <label for="userAgent" class="form-label">User Agent</label>
+                    <input type="text" class="form-control" id="userAgent" v-model="config.USERAGENT" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="fabricLabStory" class="form-label">Fabric Lab Story (Leave empty if the Demo Tool is not
+                      running
+                      inside the Fabric Lab)</label>
+                    <input type="text" class="form-control" id="fabricLabStory" v-model="config.FABRICLABSTORY" />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div> <!-- Col 7 -->
+        </div> <!-- Row -->
+      </div> <!-- Container -->
+
+    </div> <!-- Card Body -->
+  </div> <!-- Main Card -->
 </template>
 
 <script>
