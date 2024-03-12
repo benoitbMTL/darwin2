@@ -3,9 +3,9 @@
 
     <!-- HEADER -->
     <div class="card-header d-flex justify-content-between align-items-center">
-      <div>
-        <h5>Machine Learning & Zero-Day Attacks</h5>
-      </div>
+      <h5>Machine Learning & Zero-Day Attacks</h5>
+
+
 
       <div class="d-flex align-items-center">
         <div v-if="showResetMLMessage" class="me-2">
@@ -38,18 +38,26 @@
           the attack surface.
         </p>
 
-        <div class="row g-3"> <!-- Ajout de l'espacement entre les colonnes -->
-          <!-- Card #1 (Column 1) -->
-          <div class="col-md-5">
-            <div class="card">
-              <div class="card-body">
+        <div class="row">
 
-                <!-- Card #1 content goes here... -->
-                <p class="card-text mt-3">
+          <!-- COL 1 -->
+          <div class="col-md-4">
+            <!-- CARD -->
+            <div class="card">
+              <!-- CARD HEADER -->
+
+              <div class="card-header">
+                <strong>TEST</strong>
+              </div>
+
+              <!-- CARD BODY -->
+              <div class="card-body">
+                <p>
                   Simulate traffic with random samples to build machine learning
                   model.
                 </p>
-                <div class="d-flex mb-3">
+                <div class="d-flex mb-3"> <!-- TEST -->
+
                   <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isLoading1">
                     <span v-if="isLoading1" class="spinner-border spinner-border-sm me-2" role="status"
                       aria-hidden="true"></span>
@@ -72,16 +80,16 @@
               </div>
             </div>
 
-            <!-- Card #2 (Column 2) -->
-            <div class="col-md-5">
+            <!-- COL 2 -->
+            <div class="col-md-8">
               <div class="card">
                 <div class="card-body">
 
-                  <!-- Card #2 content goes here... -->
-                  <p class="card-text mt-3">
+                  <!-- COL 2 -->
+                  <p>
                     Run a zero-day attack scenario.
                   </p>
-                  <div class="d-flex">
+                  <div class="d-flex"> <!-- TEST -->
 
                     <!-- Menu -->
                     <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType"

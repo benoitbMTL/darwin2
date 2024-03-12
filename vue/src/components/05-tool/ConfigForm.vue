@@ -1,16 +1,13 @@
 <template>
-
-
   <div class="card my-4">
 
+    <!-- HEADER -->
     <div class="card-header d-flex justify-content-between align-items-center">
       <!-- Static title on the left -->
       <h5>Demo Tool Configuration</h5>
 
       <!-- Container for the alert message and configuration name -->
       <div class="d-flex align-items-center">
-
-
 
         <!-- Dynamically displayed configuration name on the right -->
         <span v-if="config.NAME" style="color: red;">
@@ -19,7 +16,7 @@
       </div>
     </div>
 
-
+    <!-- BODY -->
     <div class="card-body">
       <div class="container">
 
@@ -78,10 +75,9 @@
           <div class="col-md-4">
             <div class="card">
               <div class="card-header">
-
                 <strong>Configuration Profiles</strong>
-
               </div>
+              
               <div class="card-body">
                 <ul class="list-group">
                   <li v-for="(configName, index) in configs" :key="index"
