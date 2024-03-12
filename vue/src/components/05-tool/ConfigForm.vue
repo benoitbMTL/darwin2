@@ -11,9 +11,9 @@
       <div class="d-flex align-items-center">
 
         <!-- Alert Message -->
-        <div v-if="showAlertSaveReset" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
+        <div v-if="showAlert" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
           role="alert" style="font-size: 0.875rem">
-          <i class="bi bi-check-circle me-1"></i> {{ alertMessageSaveReset }}
+          <i class="bi bi-check-circle me-1"></i> {{ alertMessage }}
         </div>
 
         <!-- Dynamically displayed configuration name on the right -->
@@ -201,15 +201,11 @@ export default {
       selectedConfig: null, // Currently selected configuration
       backupName: "", // Name for the new backup
 
-      showAlertSaveReset: false,
-      alertMessageSaveReset: "",
-      showAlertExportImport: false,
-      alertMessageExportImport: "",
-      showAlertLocalBackup: false,
-      alertMessageLocalBackup: "",
+      showAlert: false,
+      alertMessage: "",
 
       config: {
-        Name: "",
+        NAME: "",
         DVWAURL: "",
         BANKURL: "",
         JUICESHOPURL: "",
@@ -304,10 +300,10 @@ export default {
           return response.json();
         })
         .then((data) => {
-          this.showAlertSaveReset = true;
-          this.alertMessageSaveReset = "Configuration saved successfully.";
+          this.showAlert = true;
+          this.alertMessage = "Configuration saved successfully.";
           setTimeout(() => {
-            this.showAlertSaveReset = false;
+            this.showAlert = false;
           }, 5000);
           console.log("Success:", data);
 
@@ -321,10 +317,10 @@ export default {
 
         })
         .catch((error) => {
-          this.showAlertSaveReset = true;
-          this.alertMessageSaveReset = "Error saving configuration.";
+          this.showAlert = true;
+          this.alertMessage = "Error saving configuration.";
           setTimeout(() => {
-            this.showAlertSaveReset = false;
+            this.showAlert = false;
           }, 5000);
           console.error("Error:", error);
         });
@@ -339,10 +335,10 @@ export default {
           return response.json();
         })
         .then((data) => {
-          this.showAlertSaveReset = true;
-          this.alertMessageSaveReset = "Configuration reset to default.";
+          this.showAlert = true;
+          this.alertMessage = "Configuration reset to default.";
           setTimeout(() => {
-            this.showAlertSaveReset = false;
+            this.showAlert = false;
           }, 5000);
           this.config = data;
           console.log("Configuration saved successfully:", data);
@@ -350,10 +346,10 @@ export default {
           this.fetchConfigsList();
         })
         .catch((error) => {
-          this.showAlertSaveReset = true;
-          this.alertMessageSaveReset = "Error resetting configuration.";
+          this.showAlert = true;
+          this.alertMessage = "Error resetting configuration.";
           setTimeout(() => {
-            this.showAlertSaveReset = false;
+            this.showAlert = false;
           }, 5000);
           console.error("Reset error:", error);
         });
@@ -487,15 +483,15 @@ export default {
           this.configs.push(this.backupName); // Add the new backup name to the list of configs
           this.selectedConfig = this.backupName; // Optionally, select the new backup
           this.backupName = ""; // Reset the backup name input for future backups
-          this.showAlertLocalBackup = true; // Show success alert message
-          this.alertMessageLocalBackup =
+          this.showAlert = true; // Show success alert message
+          this.alertMessage =
             "Configuration backed up successfully.";
         })
         .catch((error) => {
           // Handle any errors that occurred during the fetch operation
           console.error("Backup error:", error);
-          this.showAlertLocalBackup = true; // Show error alert message
-          this.alertMessageLocalBackup = "Error during backup.";
+          this.showAlert = true; // Show error alert message
+          this.alertMessage = "Error during backup.";
         });
     },
 
@@ -532,16 +528,16 @@ export default {
         .then((data) => {
           // Handle the successful configuration restoration
           console.log("Configuration restored successfully:", data);
-          this.showAlertLocalBackup = true; // Show success alert message
-          this.alertMessageLocalBackup = "Configuration restored successfully.";
+          this.showAlert = true; // Show success alert message
+          this.alertMessage = "Configuration restored successfully.";
           this.fetchConfig();
           this.fetchConfigsList();
         })
         .catch((error) => {
           // Handle any errors that occurred during the fetch operation
           console.error("Restore error:", error);
-          this.showAlertLocalBackup = true; // Show error alert message
-          this.alertMessageLocalBackup = "Error during restoration.";
+          this.showAlert = true; // Show error alert message
+          this.alertMessage = "Error during restoration.";
         });
     },
 
@@ -580,8 +576,8 @@ export default {
         .then(() => {
           // Handle the successful deletion of the configuration
           console.log("Configuration deleted successfully:", this.selectedConfig);
-          this.showAlertLocalBackup = true;
-          this.alertMessageLocalBackup = "Configuration deleted successfully.";
+          this.showAlert = true;
+          this.alertMessage = "Configuration deleted successfully.";
 
           // Remove the deleted configuration from the 'configs' array
           this.configs = this.configs.filter(
@@ -592,9 +588,9 @@ export default {
         .catch((error) => {
           // Handle any errors that occurred during the fetch operation
           console.error("Delete error:", error);
-          this.showAlertLocalBackup = true; // Show error alert message
+          this.showAlert = true; // Show error alert message
           // Use the error message from the server response
-          this.alertMessageLocalBackup = error.message;
+          this.alertMessage = error.message;
         });
     },
   },
