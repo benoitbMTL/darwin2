@@ -1,6 +1,6 @@
 <template>
 
-<div class="d-flex justify-content-between align-items-center my-4">
+  <div class="d-flex justify-content-between align-items-center my-4">
     <!-- Static title on the left -->
     <h5>Demo Tool Configuration</h5>
 
@@ -52,6 +52,7 @@
             </button>
           </div>
         </div>
+
       </div>
 
       <!-- Applications Section -->
@@ -134,8 +135,14 @@
         <!-- Backup & Restore Buttons -->
 
         <div class="card my-4">
-          <div class="card-header">
+          <div class="card-header d-flex justify-content-between align-items-center">
             <h5>Export & Import Configuration</h5>
+            <!-- Alert Message -->
+            <div v-if="showAlertFileExport" class="alert alert-success alert-dismissible fade show" role="alert"
+              style="font-size: 0.875rem; padding: .25rem 1rem; line-height: 1.5;">
+              <i class="bi bi-check-circle me-1"></i>
+              {{ alertMessageFileExport }}
+            </div>
           </div>
 
           <div class="card-body d-flex align-items-end">
@@ -148,19 +155,17 @@
             </button>
             <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
 
-            <!-- Alert Message -->
-            <div v-if="showAlertFileExport" class="alert alert-success alert-dismissible fade show" role="alert"
-              style="font-size: 0.875rem; padding: .25rem 1rem; line-height: 1.5;">
-              <i class="bi bi-check-circle me-1"></i>
-              {{ alertMessageFileExport }}
-            </div>
-
           </div>
         </div>
 
         <div class="card my-4">
-          <div class="card-header">
+          <div class="card-header d-flex justify-content-between align-items-center">
             <h5>Local Configurations</h5>
+            <div v-if="showAlertLocalBackup" class="alert alert-success alert-dismissible fade show" role="alert"
+              style="font-size: 0.875rem; padding: .25rem 1rem; line-height: 1.5;">
+              <i class="bi bi-check-circle me-1"></i>
+              {{ alertMessageLocalBackup }}
+            </div>
           </div>
 
           <!-- Card Body -->
@@ -176,11 +181,7 @@
               <button type="button" class="btn btn-danger btn-sm me-2" @click="deleteConfigLocal">
                 Delete
               </button>
-              <div v-if="showAlertLocalBackup" class="alert alert-success alert-dismissible fade show" role="alert"
-                style="font-size: 0.875rem; padding: .25rem 1rem; line-height: 1.5;">
-                <i class="bi bi-check-circle me-1"></i>
-                {{ alertMessageLocalBackup }}
-              </div>
+
             </div>
 
             <!-- Line 2: List -->
