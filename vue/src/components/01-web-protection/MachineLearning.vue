@@ -44,6 +44,10 @@
           <div class="col-md-6">
             <!-- CARD -->
             <div class="card">
+              <div class="card-header">
+
+                Build Model
+              </div>
 
               <!-- CARD BODY -->
               <div class="card-body">
@@ -81,6 +85,10 @@
           <!-- COL 2 -->
           <div class="col-md-6">
             <div class="card">
+              <div class="card-header">
+
+                Test Model
+              </div>
               <div class="card-body">
 
                 <p>
