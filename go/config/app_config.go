@@ -1,11 +1,9 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"regexp"
 	"sync"
 
 	"github.com/labstack/echo/v4"
