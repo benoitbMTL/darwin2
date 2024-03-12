@@ -87,7 +87,7 @@
             <div class="card">
               <div class="card-header">
 
-                <strong></strong>Test Model</strong>
+                <strong>Test Model</strong>
               </div>
               <div class="card-body">
 
