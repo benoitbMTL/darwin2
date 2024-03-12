@@ -77,7 +77,7 @@
               <div class="card-header">
                 <strong>Configuration Profiles</strong>
               </div>
-              
+
               <div class="card-body">
                 <ul class="list-group">
                   <li v-for="(configName, index) in configs" :key="index"
@@ -205,7 +205,7 @@
                 </div>
               </div>
             </form>
-          </div> <!-- Col 7 -->
+          </div> <!-- COL -->
         </div> <!-- Row -->
       </div> <!-- Container -->
 

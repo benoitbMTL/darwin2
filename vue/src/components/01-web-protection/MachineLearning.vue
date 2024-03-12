@@ -52,27 +52,28 @@
 
               </div>
             </div>
+          </div> <!-- COL -->
 
-            <!-- COL 2 -->
-            <div class="col-md-6">
-              <div class="card">
-                <div class="card-body">
-
-
-
-                  test2
+          <!-- COL 2 -->
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
 
 
 
-                </div>
+                test2
+
+
+
               </div>
-
-              result1
-
             </div>
-          </div>
-        </div>
-      </div>
+
+            result1
+
+          </div> <!-- COL -->
+        </div> <!-- Row -->
+      </div> <!-- Container -->
+
     </div>
   </div>
 
