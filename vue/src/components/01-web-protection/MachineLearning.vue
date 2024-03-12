@@ -87,12 +87,12 @@
             <div class="card">
               <div class="card-header">
 
-                <strong>Test Model</strong>
+                <strong>Evaluate Model</strong>
               </div>
               <div class="card-body">
 
                 <p>
-                  Run a zero-day attack scenario.
+                  Select a zero-day attack scenario and evaluate ML anomaly detection.
                 </p>
                 <div class="d-flex"> <!-- TEST -->
 
