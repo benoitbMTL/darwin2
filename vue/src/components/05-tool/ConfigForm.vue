@@ -1,9 +1,14 @@
 <template>
 
-  <h5 class="my-4 d-flex justify-content-between align-items-center">
-    Demo Tool Configuration
-    <span v-if="config.Name" style="color: red;">Configuration Name: {{ config.Name }}</span>
-  </h5>
+  <div>
+    <!-- Static title -->
+    <h5 class="my-4">Demo Tool Configuration</h5>
+
+    <!-- Dynamically displayed configuration name -->
+    <span v-if="config.Name" style="color: red;">
+      Configuration Name: {{ config.Name }}
+    </span>
+  </div>
 
   <form @submit.prevent="saveConfig">
     <div class="card my-4">
