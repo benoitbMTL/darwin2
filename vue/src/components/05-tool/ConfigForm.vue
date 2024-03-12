@@ -5,8 +5,8 @@
     <h5 class="my-4">Demo Tool Configuration</h5>
 
     <!-- Dynamically displayed configuration name -->
-    <span v-if="config.Name" style="color: red;">
-      Configuration Name: {{ config.Name }}
+    <span v-if="config.NAME" style="color: red;">
+      Configuration Name: {{ config.NAME }}
     </span>
   </div>
 
