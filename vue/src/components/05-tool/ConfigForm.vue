@@ -504,15 +504,15 @@ export default {
               .then((data) => {
                 console.log("Success:", data);
                 this.showAlert = true;
-                this.alertMessage = "Configuration restored successfully.";
+                this.alertMessage = "Configuration imported successfully.";
                 setTimeout(() => (this.showAlert = false), 6000);
                 this.fetchConfig();
                 this.fetchConfigsList();
               })
               .catch((error) => {
-                console.error("Error during restore:", error);
+                console.error("Error during import:", error);
                 this.showAlert = true;
-                this.alertMessage = "Error restoring configuration.";
+                this.alertMessage = "Error importing configuration.";
                 setTimeout(() => (this.showAlert = false), 6000);
               });
           } catch (error) {
@@ -613,14 +613,10 @@ export default {
         return;
       }
 
-      // Prepare the data to be sent to the server. The structure of this data
-      // might vary depending on your backend requirements. Here, we're assuming
-      // the backend needs the name of the configuration to be restored.
       const data = {
         name: this.selectedConfig,
       };
 
-      // Send a POST request to the "/apply-config" endpoint with the data of the configuration to be restored.
       fetch("/apply-config", {
         method: "POST", // Use POST method for sending data to the server
         headers: {

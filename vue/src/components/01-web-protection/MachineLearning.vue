@@ -1,5 +1,7 @@
 <template>
   <div class="card my-4">
+
+    <!-- HEADER -->
     <div class="card-header d-flex justify-content-between align-items-center">
       <div>
         <h5>Machine Learning & Zero-Day Attacks</h5>
@@ -25,108 +27,109 @@
       </div>
     </div>
 
+    <!-- BODY -->
     <div class="card-body">
-      <p>
-        This tool will help you protect a
-        <a :href="bankingFormUrl" target="_blank">banking form</a>
-        with machine learning, thereby blocking zero-day attacks and reducing
-        the attack surface.
-      </p>
+      <div class="container">
 
-      <div class="row justify-content-center">
-        <!-- Card #1 (Column 1) -->
-        <div class="card col-md-5 me-3">
-          <!-- Card #1 content goes here... -->
+        <p>
+          This tool will help you protect a
+          <a :href="bankingFormUrl" target="_blank">banking form</a>
+          with machine learning, thereby blocking zero-day attacks and reducing
+          the attack surface.
+        </p>
 
-          <p class="card-text mt-3">
-            Simulate traffic with random samples to build machine learning
-            model.
-          </p>
-          <div class="d-flex mb-3">
-            <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isLoading1">
-              <span v-if="isLoading1" class="spinner-border spinner-border-sm me-2" role="status"
-                aria-hidden="true"></span>
-              <span>{{ isLoading1 ? "Simulating..." : "Send 1 Sample" }}</span>
-            </button>
-            <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isLoading10">
-              <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status"
-                aria-hidden="true"></span>
-              <span>{{
-                isLoading10 ? "Simulating..." : "Send 10 Samples"
-                }}</span>
-            </button>
-            <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isLoading500">
-              <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
-                aria-hidden="true"></span>
-              <span>{{
-                isLoading500 ? "Simulating..." : "Send 500 Samples"
-                }}</span>
-            </button>
-            <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">
-              Reset
-            </button>
+        <div class="row justify-content-center">
+          <!-- Card #1 (Column 1) -->
+          <div class="card col-md-6">
+            <!-- Card #1 content goes here... -->
+
+            <p class="card-text mt-3">
+              Simulate traffic with random samples to build machine learning
+              model.
+            </p>
+            <div class="d-flex mb-3">
+              <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isLoading1">
+                <span v-if="isLoading1" class="spinner-border spinner-border-sm me-2" role="status"
+                  aria-hidden="true"></span>
+                <span>{{ isLoading1 ? "Simulating..." : "Send 1 Sample" }}</span>
+              </button>
+              <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isLoading10">
+                <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status"
+                  aria-hidden="true"></span>
+                <span>{{ isLoading10 ? "Simulating..." : "Send 10 Samples" }}</span>
+              </button>
+              <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isLoading500">
+                <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
+                  aria-hidden="true"></span>
+                <span>{{ isLoading500 ? "Simulating..." : "Send 500 Samples" }}</span>
+              </button>
+              <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">
+                Reset
+              </button>
+            </div>
           </div>
-        </div>
 
-        <!-- Card #2 (Column 2) -->
-        <div class="card col-md-5">
-          <!-- Card #2 content goes here... -->
-          <p class="card-text mt-3">
-            Select a zero-day and "Run" to generate the attack scenario.
-          </p>
+          <!-- Card #2 (Column 2) -->
+          <div class="card col-md-6">
+            <!-- Card #2 content goes here... -->
+            <p class="card-text mt-3">
+              Select a zero-day and "Run" to generate the attack scenario.
+            </p>
 
-          <div class="d-flex">
-            <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType" style="width: 350px">
-              <option value="zero_day_sqli_1">
-                Zero Day SQL Injection: A 'DIV' B
-              </option>
-              <option value="zero_day_sqli_2">
-                Zero Day SQL Injection: A '^' B
-              </option>
-              <option value="zero_day_sqli_3">
-                Zero Day SQL Injection: 3)+1+(0
-              </option>
-              <option value="zero_day_sqli_4">
-                Zero Day SQL Injection: 3||1
-              </option>
-              <option value="zero_day_remote_exploit_1">
-                Zero Day Remote Exploits: %X%X%X%X%X
-              </option>
-              <option value="zero_day_remote_exploit_2">
-                Zero Day Remote Exploits: %p%p%p%p%p
-              </option>
-              <option value="zero_day_command_injection_1">
-                Zero Day Command Injection: /???/l?
-              </option>
-              <option value="zero_day_command_injection_2">
-                Zero Day Command Injection: var1=l var2=s
-              </option>
-              <option value="zero_day_xss_1">
-                Zero Day Cross Site Scripting: window['ale'+'rt'](1)
-              </option>
-              <option value="zero_day_xss_2">
-                Zero Day Cross Site Scripting: ___=1?'ert(123)
-              </option>
-            </select>
+            <div class="d-flex">
+              <select class="form-select form-select-sm me-2 mb-3" v-model="selectedAttackType" style="width: 350px">
+                <option value="zero_day_sqli_1">
+                  Zero Day SQL Injection: A 'DIV' B
+                </option>
+                <option value="zero_day_sqli_2">
+                  Zero Day SQL Injection: A '^' B
+                </option>
+                <option value="zero_day_sqli_3">
+                  Zero Day SQL Injection: 3)+1+(0
+                </option>
+                <option value="zero_day_sqli_4">
+                  Zero Day SQL Injection: 3||1
+                </option>
+                <option value="zero_day_remote_exploit_1">
+                  Zero Day Remote Exploits: %X%X%X%X%X
+                </option>
+                <option value="zero_day_remote_exploit_2">
+                  Zero Day Remote Exploits: %p%p%p%p%p
+                </option>
+                <option value="zero_day_command_injection_1">
+                  Zero Day Command Injection: /???/l?
+                </option>
+                <option value="zero_day_command_injection_2">
+                  Zero Day Command Injection: var1=l var2=s
+                </option>
+                <option value="zero_day_xss_1">
+                  Zero Day Cross Site Scripting: window['ale'+'rt'](1)
+                </option>
+                <option value="zero_day_xss_2">
+                  Zero Day Cross Site Scripting: ___=1?'ert(123)
+                </option>
+              </select>
 
-            <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
-              Run
-            </button>
-            <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
-              Reset
-            </button>
+              <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
+                Run
+              </button>
+              <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
+                Reset
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div v-if="sendSampleResult" class="mt-3">
-          <h6>Simulation Result:</h6>
-          <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-        </div>
+          <div v-if="sendSampleResult" class="mt-3">
+            <h6>Simulation Result:</h6>
+            <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+          </div>
 
-        <div v-if="performAttackResult" class="mt-4 mb-3">
-          <h6>{{ currentAttackName }} Result:</h6>
-          <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
-            style="width: 100%; border: 1px solid lightgray"></iframe>
+          <div v-if="performAttackResult" class="mt-4 mb-3">
+            <h6>{{ currentAttackName }} Result:</h6>
+            <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
+              style="width: 100%; border: 1px solid lightgray"></iframe>
+          </div>
+
         </div>
       </div>
     </div>

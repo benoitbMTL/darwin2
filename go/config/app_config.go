@@ -231,7 +231,7 @@ func ImportConfig(c echo.Context) error {
 
 	configsMap[newConfig.NAME] = newConfig
 	currentName = newConfig.NAME
-	log.Printf("Configuration '%s' restored and set as current.", newConfig.NAME)
+	log.Printf("Configuration '%s' imported and set as current.", newConfig.NAME)
 	return c.JSON(http.StatusOK, newConfig)
 }
 
@@ -286,9 +286,9 @@ func ApplyConfigLocal(c echo.Context) error {
 	}
 
 	currentName = request.Name // Correctly update the currentName
-	log.Printf("Configuration '%s' restored successfully.", request.Name)
+	log.Printf("Configuration '%s' applied successfully.", request.Name)
 
-	return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' restored successfully", request.Name)})
+	return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' applied successfully", request.Name)})
 }
 
 func DeleteConfigLocal(c echo.Context) error {
