@@ -218,31 +218,6 @@ func ResetConfig(c echo.Context) error {
 	return c.JSON(http.StatusOK, defaultConfig)
 }
 
-func ExportConfig(c echo.Context) error {
-	configMutex.RLock()
-	defer configMutex.RUnlock()
-
-	currentConfig, exists := configsMap[currentName]
-	if !exists {
-		return echo.NewHTTPError(http.StatusNotFound, "Current configuration not found.")
-	}
-
-	formattedJSON, err := json.MarshalIndent(currentConfig, "", "  ")
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
-
-	// Sanitize currentConfig.NAME
-	safeName := regexp.MustCompile(`[^a-zA-Z0-9]+`).ReplaceAllString(currentConfig.NAME, "_")
-
-	// Dynamically create the filename based on the current configuration name
-	fileName := fmt.Sprintf("fwb_demo_tool_%s.json", safeName)
-
-	c.Response().Header().Set(echo.HeaderContentDisposition, fmt.Sprintf(`attachment; filename="%s"`, fileName))
-	c.Response().Header().Set(echo.HeaderContentType, "application/json")
-	return c.Blob(http.StatusOK, "application/json", formattedJSON)
-}
-
 func ImportConfig(c echo.Context) error {
 	var newConfig AppConfig
 	if err := c.Bind(&newConfig); err != nil {

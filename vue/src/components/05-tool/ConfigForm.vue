@@ -80,7 +80,7 @@
             <div class="card">
               <div class="card-header">
 
-                Configuration Profiles
+                <strong>Configuration Profiles</strong>
 
               </div>
               <div class="card-body">
@@ -378,27 +378,36 @@ export default {
 
     exportConfig() {
       console.log("Exporting configuration");
-      fetch("/export", {
-        method: "GET",
-      })
-        .then((response) => response.blob())
-        .then((blob) => {
-          const url = window.URL.createObjectURL(blob);
+      fetch("/config")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Network response was not ok, status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((config) => {
+          // Sanitize the configuration name for use in the filename
+          const safeName = config.NAME.replace(/[^a-zA-Z0-9]+/g, "_");
+          const filename = `fwb_demo_tool_${safeName}.json`;
+
+          // Create a blob from the configuration JSON and trigger the download
+          const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
-          a.style.display = "none";
           a.href = url;
-          a.download = "config_backup.json";
+          a.download = filename;
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
+
           this.showAlert = true;
-          this.alertMessage = "Configuration backed up successfully";
+          this.alertMessage = "Configuration exported successfully";
           setTimeout(() => (this.showAlert = false), 6000);
         })
         .catch((error) => {
-          console.error("Error:", error);
+          console.error("Error during export:", error);
           this.showAlert = true;
-          this.alertMessage = "Error during backup";
+          this.alertMessage = "Error during export";
           setTimeout(() => (this.showAlert = false), 6000);
         });
     },

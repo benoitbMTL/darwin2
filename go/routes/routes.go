@@ -22,7 +22,7 @@ func Configure(e *echo.Echo) {
 	e.POST("/known-bots", handlers.HandleKnownBots)
 	e.POST("/selenium", handlers.HandleSelenium)
 	e.POST("/bot-scraper-api", handlers.HandleScrapWithApi)
-	e.POST("/bot-page-source", handlers.HandlePageSource)	
+	e.POST("/bot-page-source", handlers.HandlePageSource)
 	e.POST("/bot-deception", handlers.HandleBotDeception)
 
 	// API Protection
@@ -58,18 +58,14 @@ func Configure(e *echo.Echo) {
 	e.GET("/config", config.GetConfig)
 	e.GET("/list-configs", config.ListConfigs)
 
-	// SAVE, RESET
+	// Configuration Management
 	e.POST("/save-config", config.SaveConfig)
-	e.GET("/reset-config", config.ResetConfig)
-
-	// EXPORT, IMPORT
-	e.GET("/export", config.ExportConfig)
-	e.POST("/import", config.ImportConfig)
-
-	// BACKUP, RSETORE, DELETE
 	e.POST("/save-as-local", config.SaveAsConfigLocal)
-	e.POST("/restore-local", config.RestoreConfigLocal)
+	e.POST("/restore-local", config.RestoreConfigLocal) // Apply
 	e.POST("/delete-local", config.DeleteConfigLocal)
+	e.POST("/import", config.ImportConfig)
+	// Export uses /config
+	e.GET("/reset-config", config.ResetConfig)
 
 	// HEALTH CHECK
 	e.GET("/run-health-check", handlers.HandleHealthCheck)
