@@ -31,12 +31,7 @@
     <div class="card-body">
       <div class="container">
 
-        <p>
-          This tool will help you protect a
-          <a :href="bankingFormUrl" target="_blank">banking form</a>
-          with machine learning, thereby blocking zero-day attacks and reducing
-          the attack surface.
-        </p>
+        text
 
         <div class="row">
 
@@ -50,7 +45,7 @@
 
 
 
-test
+                test1
 
 
 
@@ -65,23 +60,14 @@ test
 
 
 
-test
+                  test2
 
 
 
                 </div>
               </div>
 
-              <div v-if="sendSampleResult" class="mt-3">
-                <h6>Simulation Result:</h6>
-                <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-              </div>
-
-              <div v-if="performAttackResult" class="mt-4 mb-3">
-                <h6>{{ currentAttackName }} Result:</h6>
-                <iframe ref="attackIframe" :srcdoc="performAttackResult" @load="adjustIframeHeight"
-                  style="width: 100%; border: 1px solid lightgray"></iframe>
-              </div>
+              result1
 
             </div>
           </div>
