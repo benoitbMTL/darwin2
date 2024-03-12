@@ -469,7 +469,7 @@ export default {
           }
           return response.json();
         })
-        .then(data => {
+        .then(_ => {
           this.showAlert = true;
           this.alertMessage = `Configuration '${this.config.NAME}' saved successfully.`;
           setTimeout(() => {
