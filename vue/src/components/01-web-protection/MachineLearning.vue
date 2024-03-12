@@ -142,40 +142,42 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- Help Card -->
-      <div v-if="showHelp" class="card bg-light mb-3">
-        <div class="card-header">
-          <h5>About Machine Learning Traffic Simulation</h5>
-        </div>
-        <div class="card-body">
-          <ul>
-            <li>
-              The simulation tool generates random traffic using data from
-              <a href="https://api.namefake.com/">https://api.namefake.com/</a>.
-            </li>
-            <li>
-              The tool sends random samples to the server to simulate legitimate
-              traffic, which is used to train FortiWeb's Machine Learning (ML).
-            </li>
-            <li>
-              While only 400 requests are necessary for the Machine Learning (ML)
-              system to build its initial model, ongoing traffic generation enables
-              the ML to continue learning and refining its model.
-            </li>
-            <li>
-              Press the "Reset Machine Learning" button to delete all existing
-              learning results and start the demo from scratch.
-            </li>
-          </ul>
-          <p>
-            The following Machine Learning configuration provides an optimized setup
-            for demonstrations.
-          </p>
+  <!-- Help Card -->
+  <div v-if="showHelp" class="card bg-light mb-3">
+    <div class="card-header">
+      <h5>About Machine Learning Traffic Simulation</h5>
+    </div>
+    <div class="card-body">
+      <ul>
+        <li>
+          The simulation tool generates random traffic using data from
+          <a href="https://api.namefake.com/">https://api.namefake.com/</a>.
+        </li>
+        <li>
+          The tool sends random samples to the server to simulate legitimate
+          traffic, which is used to train FortiWeb's Machine Learning (ML).
+        </li>
+        <li>
+          While only 400 requests are necessary for the Machine Learning (ML)
+          system to build its initial model, ongoing traffic generation enables
+          the ML to continue learning and refining its model.
+        </li>
+        <li>
+          Press the "Reset Machine Learning" button to delete all existing
+          learning results and start the demo from scratch.
+        </li>
+      </ul>
+      <p>
+        The following Machine Learning configuration provides an optimized setup
+        for demonstrations.
+      </p>
 
-          <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-        </div>
-      </div>
+      <pre class="code-block"><code v-html="highlightedCode"></code></pre>
+    </div>
+  </div>
 </template>
 
 <script>
