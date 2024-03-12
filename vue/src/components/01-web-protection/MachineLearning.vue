@@ -38,7 +38,7 @@
           the attack surface.
         </p>
 
-        <div class="row">
+        <div class="row g-3">
           <!-- Card #1 (Column 1) -->
           <div class="col-md-6">
             <div class="card">
