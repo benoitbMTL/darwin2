@@ -1,10 +1,10 @@
 <template>
 
-  <div>
-    <!-- Static title -->
-    <h5 class="my-4">Demo Tool Configuration</h5>
+<div class="d-flex justify-content-between align-items-center my-4">
+    <!-- Static title on the left -->
+    <h5>Demo Tool Configuration</h5>
 
-    <!-- Dynamically displayed configuration name -->
+    <!-- Dynamically displayed configuration name on the right -->
     <span v-if="config.NAME" style="color: red;">
       Configuration Name: {{ config.NAME }}
     </span>
