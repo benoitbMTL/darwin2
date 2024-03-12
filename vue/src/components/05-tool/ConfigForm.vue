@@ -307,7 +307,7 @@ export default {
           this.alertMessage = "Configuration saved successfully.";
           setTimeout(() => {
             this.showAlert = false;
-          }, 5000);
+          }, 6000);
           console.log("Success:", data);
           this.fetchConfigsList();
         })
@@ -316,7 +316,7 @@ export default {
           this.alertMessage = "Error saving configuration.";
           setTimeout(() => {
             this.showAlert = false;
-          }, 5000);
+          }, 6000);
           console.error("Error:", error);
         });
     },
@@ -334,7 +334,7 @@ export default {
           this.alertMessage = "Configuration reset to default.";
           setTimeout(() => {
             this.showAlert = false;
-          }, 5000);
+          }, 6000);
           this.config = data;
           console.log("Configuration saved successfully:", data);
           this.fetchConfig();
@@ -345,7 +345,7 @@ export default {
           this.alertMessage = "Error resetting configuration.";
           setTimeout(() => {
             this.showAlert = false;
-          }, 5000);
+          }, 6000);
           console.error("Reset error:", error);
         });
     },
@@ -371,13 +371,13 @@ export default {
           window.URL.revokeObjectURL(url);
           this.showAlert = true;
           this.alertMessage = "Configuration backed up successfully";
-          setTimeout(() => (this.showAlert = false), 5000);
+          setTimeout(() => (this.showAlert = false), 6000);
         })
         .catch((error) => {
           console.error("Error:", error);
           this.showAlert = true;
           this.alertMessage = "Error during backup";
-          setTimeout(() => (this.showAlert = false), 5000);
+          setTimeout(() => (this.showAlert = false), 6000);
         });
     },
 
@@ -409,7 +409,7 @@ export default {
                 console.log("Success:", data);
                 this.showAlert = true;
                 this.alertMessage = "Configuration restored successfully.";
-                setTimeout(() => (this.showAlert = false), 5000);
+                setTimeout(() => (this.showAlert = false), 6000);
                 this.fetchConfig();
                 this.fetchConfigsList();
               })
@@ -417,13 +417,13 @@ export default {
                 console.error("Error during restore:", error);
                 this.showAlert = true;
                 this.alertMessage = "Error restoring configuration.";
-                setTimeout(() => (this.showAlert = false), 5000);
+                setTimeout(() => (this.showAlert = false), 6000);
               });
           } catch (error) {
             console.error("Error parsing file:", error);
             this.showAlert = true;
             this.alertMessage = "Error parsing configuration file.";
-            setTimeout(() => (this.showAlert = false), 5000);
+            setTimeout(() => (this.showAlert = false), 6000);
           }
         };
         reader.readAsText(file);
@@ -474,7 +474,7 @@ export default {
           this.alertMessage = `Configuration '${this.config.NAME}' saved successfully.`;
           setTimeout(() => {
             this.showAlert = false;
-          }, 5000);
+          }, 6000);
           this.fetchConfigsList(); // Refresh the list of configurations
         })
         .catch(error => {
@@ -483,7 +483,7 @@ export default {
           this.alertMessage = "Error during save.";
           setTimeout(() => {
             this.showAlert = false;
-          }, 5000);
+          }, 6000);
         });
     },
 
@@ -522,6 +522,7 @@ export default {
           console.log("Configuration restored successfully:", data);
           this.showAlert = true; // Show success alert message
           this.alertMessage = "Configuration restored successfully.";
+          setTimeout(() => { this.showAlert = false; }, 6000);
           this.fetchConfig();
           this.fetchConfigsList();
         })
@@ -530,6 +531,7 @@ export default {
           console.error("Restore error:", error);
           this.showAlert = true; // Show error alert message
           this.alertMessage = "Error during restoration.";
+          setTimeout(() => { this.showAlert = false; }, 6000);
         });
     },
 
@@ -570,6 +572,7 @@ export default {
           console.log("Configuration deleted successfully:", this.selectedConfig);
           this.showAlert = true;
           this.alertMessage = "Configuration deleted successfully.";
+          setTimeout(() => { this.showAlert = false; }, 6000);
 
           // Remove the deleted configuration from the 'configs' array
           this.configs = this.configs.filter(
@@ -583,6 +586,7 @@ export default {
           this.showAlert = true; // Show error alert message
           // Use the error message from the server response
           this.alertMessage = error.message;
+          setTimeout(() => { this.showAlert = false; }, 6000);
         });
     },
   },
