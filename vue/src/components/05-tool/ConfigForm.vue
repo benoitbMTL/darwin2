@@ -314,7 +314,6 @@ export default {
 
 
 
-          this.fetchConfig();
           this.fetchConfigsList();
 
 
