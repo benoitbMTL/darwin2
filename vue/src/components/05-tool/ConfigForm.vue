@@ -14,22 +14,19 @@
 
   <div class="container">
     <div class="row">
-      <!-- LIST -->
+
+      <!-- COL 1 -->
       <div class="col-md-5">
         <div class="card">
           <div class="card-header">
 
-
             <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
               Export
             </button>
-
             <button type="button" class="btn btn-primary btn-sm me-2" @click="triggerFileInput">
               Import
             </button>
             <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
-
-
             <button @click="backupConfigLocal" class="btn btn-primary btn-sm me-2">
               Save as...
             </button>
@@ -40,18 +37,21 @@
               Delete
             </button>
 
-
           </div>
           <div class="card-body">
             Test
           </div>
         </div>
       </div>
-      <!-- CONFIG -->
-      <div class="col-md-7">
 
+
+
+      <!-- COL 2 -->
+      <div class="col-md-7">
         <form @submit.prevent="saveConfig">
           <div class="card my-4"> // GARDER MY-4 ???
+
+
             <!-- Menu -->
             <div class="card-header d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center">
@@ -74,26 +74,22 @@
                   </li>
                 </ul>
               </div>
-
-              <div class="d-flex align-items-center">
-                <!-- Alert Message -->
-                <div v-if="showAlertSaveReset" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
-                  role="alert" style="font-size: 0.875rem">
-                  <i class="bi bi-check-circle me-1"></i> {{ alertMessageSaveReset }}
-                </div>
-
-
-                <button @click="saveConfig" type="button" class="btn btn-primary btn-sm">
-                  Save
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
-                  Reset to Default
-                </button>
-
-
-              </div>
-
             </div>
+
+            <div class="d-flex align-items-center">
+              <!-- Alert Message -->
+              <div v-if="showAlertSaveReset" class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0"
+                role="alert" style="font-size: 0.875rem">
+                <i class="bi bi-check-circle me-1"></i> {{ alertMessageSaveReset }}
+              </div>
+              <button @click="saveConfig" type="button" class="btn btn-primary btn-sm">
+                Save
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
+                Reset to Default
+              </button>
+            </div>
+
 
             <!-- Applications Section -->
             <div class="card-body" v-if="activeTab === 'applications'">
@@ -170,10 +166,12 @@
                 <input type="text" class="form-control" id="fabricLabStory" v-model="config.FABRICLABSTORY" />
               </div>
             </div>
+          </div>
         </form>
+      </div> // Col 7
 
-      </div>
-    </div>
+    </div> // Row
+  </div> // Container
 </template>
 
 <script>
