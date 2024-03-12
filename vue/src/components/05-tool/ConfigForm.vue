@@ -310,6 +310,16 @@ export default {
             this.showAlertSaveReset = false;
           }, 5000);
           console.log("Success:", data);
+
+
+
+
+          this.fetchConfig();
+          this.fetchConfigsList();
+
+
+
+
         })
         .catch((error) => {
           this.showAlertSaveReset = true;
