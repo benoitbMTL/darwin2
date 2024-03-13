@@ -8,7 +8,12 @@
 
       <!-- Container for the alert message and configuration name -->
       <div class="d-flex align-items-center">
-
+        <!-- Alert Message -->
+        <div v-if="showAlert" class="alert alert-success alert-dismissible fade show p-1 mb-0 me-3" role="alert"
+          style="font-size: 0.875rem">
+          <i class="bi bi-check-circle me-1"></i> {{ alertMessage }}
+        </div>
+        
         <!-- Dynamically displayed configuration name on the right -->
         <span v-if="config.NAME" style="color: red;">
           Active Configuration: {{ config.NAME }}
@@ -48,11 +53,6 @@
 
               <!-- Middle aligned buttons -->
               <div class="col-auto">
-                <!-- Alert Message -->
-                <div v-if="showAlert" class="alert alert-success alert-dismissible fade show p-1 mb-0" role="alert"
-                  style="font-size: 0.875rem">
-                  <i class="bi bi-check-circle me-1"></i> {{ alertMessage }}
-                </div>
 
               </div>
 
