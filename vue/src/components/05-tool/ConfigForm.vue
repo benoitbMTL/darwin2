@@ -13,7 +13,7 @@
           style="font-size: 0.875rem">
           <i class="bi bi-check-circle me-1"></i> {{ alertMessage }}
         </div>
-        
+
         <!-- Dynamically displayed configuration name on the right -->
         <span v-if="config.NAME" style="color: red;">
           Active Configuration: {{ config.NAME }}
@@ -322,7 +322,7 @@ export default {
       })
         .then(response => {
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            return response.json().then(error => Promise.reject(new Error(error.message)));
           }
           return response.json();
         })
@@ -331,20 +331,19 @@ export default {
           this.alertMessage = `Configuration '${oldName}' renamed to '${newName}'.`;
           setTimeout(() => {
             this.showAlert = false;
-          }, 3000);
+          }, 6000);
           this.fetchConfigsList();
           this.fetchConfig();
         })
         .catch(error => {
           console.error("Rename error:", error);
           this.showAlert = true;
-          this.alertMessage = "Error during renaming.";
+          this.alertMessage = error.message; // Display the parsed error message
           setTimeout(() => {
             this.showAlert = false;
-          }, 3000);
+          }, 6000);
         });
     },
-
 
     ///////////////////////////////////////////////////////////////////////////////////
     /// SAVE

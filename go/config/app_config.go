@@ -342,12 +342,12 @@ func RenameConfig(c echo.Context) error {
     defer configMutex.Unlock()
 
     if _, exists := configsMap[request.NewName]; exists {
-        return echo.NewHTTPError(http.StatusConflict, fmt.Sprintf("Configuration name '%s' already exists", request.NewName))
+        return echo.NewHTTPError(http.StatusConflict, `{"message": "Configuration name '`+request.NewName+`' already exists."}`)
     }
 
     config, exists := configsMap[request.OldName]
     if !exists {
-        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.OldName))
+        return echo.NewHTTPError(http.StatusNotFound, `{"message": "Configuration '`+request.OldName+`' not found."}`)
     }
 
     delete(configsMap, request.OldName) // Remove the old config
@@ -360,3 +360,4 @@ func RenameConfig(c echo.Context) error {
 
     return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' renamed to '%s'", request.OldName, request.NewName)})
 }
+
