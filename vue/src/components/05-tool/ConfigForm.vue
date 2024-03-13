@@ -33,14 +33,14 @@
             <div class="row justify-content-between">
               <!-- Left aligned buttons -->
               <div class="col-auto">
-                <button type="button" class="btn btn-warning btn-sm me-2" @click="promptRenameConfig">
+                <button type="button" class="btn btn-success btn-sm me-2" @click="applyConfigLocal">
+                  <i class="bi bi-arrow-up-square"></i> Apply
+                </button>
+                <button type="button" class="btn btn-primary btn-sm me-2" @click="promptRenameConfig">
                   <i class="bi bi-pencil"></i> Rename
                 </button>
                 <button @click="cloneConfigLocal" class="btn btn-primary btn-sm me-2">
                   <i class="bi bi-copy"></i> Clone
-                </button>
-                <button type="button" class="btn btn-primary btn-sm me-2" @click="applyConfigLocal">
-                  <i class="bi bi-arrow-up-square"></i> Apply
                 </button>
                 <button type="button" class="btn btn-primary btn-sm me-2" @click="triggerFileInput">
                   <i class="bi bi-box-arrow-in-down-right"></i> Import
@@ -118,7 +118,7 @@
 
                   <!-- Buttons on the right -->
                   <div>
-                    <button @click="saveConfig" type="button" class="btn btn-primary btn-sm me-2">
+                    <button @click="saveConfig" type="button" class="btn btn-success btn-sm me-2">
                       <i class="bi bi-floppy"></i> Save
                     </button>
                     <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
