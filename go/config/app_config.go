@@ -236,37 +236,37 @@ func ImportConfig(c echo.Context) error {
 }
 
 func CloneConfigLocal(c echo.Context) error {
-    var request struct {
-        SourceName string `json:"sourceName"`
-        NewName    string `json:"newName"`
-    }
-    if err := c.Bind(&request); err != nil {
-        return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
-    }
+	var request struct {
+		SourceName string `json:"sourceName"`
+		NewName    string `json:"newName"`
+	}
+	if err := c.Bind(&request); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
+	}
 
-    configMutex.Lock()
-    defer configMutex.Unlock()
+	configMutex.Lock()
+	defer configMutex.Unlock()
 
-    // Ensure the source configuration exists
-    sourceConfig, exists := configsMap[request.SourceName]
-    if !exists {
-        return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Source configuration '%s' not found", request.SourceName))
-    }
+	// Ensure the source configuration exists
+	sourceConfig, exists := configsMap[request.SourceName]
+	if !exists {
+		return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Source configuration '%s' not found", request.SourceName))
+	}
 
-    // Ensure not to overwrite an existing configuration with the new name
-    if _, exists := configsMap[request.NewName]; exists {
-        return echo.NewHTTPError(http.StatusConflict, fmt.Sprintf("Configuration '%s' already exists", request.NewName))
-    }
+	// Ensure not to overwrite an existing configuration with the new name
+	if _, exists := configsMap[request.NewName]; exists {
+		return echo.NewHTTPError(http.StatusConflict, fmt.Sprintf("Configuration '%s' already exists", request.NewName))
+	}
 
-    // Clone the source configuration under the new name
-    clonedConfig := sourceConfig
-    clonedConfig.NAME = request.NewName // Update the NAME field to reflect the new configuration name
-    configsMap[request.NewName] = clonedConfig // Add the cloned configuration to the map under the new name
-    currentName = request.NewName // Set the cloned configuration as the current configuration
+	// Clone the source configuration under the new name
+	clonedConfig := sourceConfig
+	clonedConfig.NAME = request.NewName        // Update the NAME field to reflect the new configuration name
+	configsMap[request.NewName] = clonedConfig // Add the cloned configuration to the map under the new name
+	currentName = request.NewName              // Set the cloned configuration as the current configuration
 
-    log.Printf("Configuration '%s' cloned to '%s' and set as current.", request.SourceName, request.NewName)
+	log.Printf("Configuration '%s' cloned to '%s' and set as current.", request.SourceName, request.NewName)
 
-    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' cloned to '%s' and set as current", request.SourceName, request.NewName)})
+	return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' cloned to '%s' and set as current", request.SourceName, request.NewName)})
 }
 
 func ApplyConfigLocal(c echo.Context) error {
@@ -280,12 +280,35 @@ func ApplyConfigLocal(c echo.Context) error {
 	configMutex.Lock()
 	defer configMutex.Unlock()
 
-	_, exists := configsMap[request.Name]
+	newConfig, exists := configsMap[request.Name]
 	if !exists {
 		return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' not found", request.Name))
 	}
 
-	currentName = request.Name // Correctly update the currentName
+	// Update the current configuration name
+	currentName = request.Name
+	// Update the CurrentConfig global variable to the newly selected configuration
+	CurrentConfig = newConfig
+
+	// Log configuration details
+	log.Printf("Configuration '%s' applied successfully. Details: NAME: %s, DVWAURL: %s, BANKURL: %s, JUICESHOPURL: %s, PETSTOREURL: %s, SPEEDTESTURL: %s, USERNAMEAPI: %s, PASSWORDAPI: [HIDDEN], VDOMAPI: %s, FWBMGTIP: %s, FWBMGTPORT: %s, MLPOLICY: %s, USERAGENT: %s, FABRICLABSTORY: %s",
+		request.Name,
+		newConfig.NAME,
+		newConfig.DVWAURL,
+		newConfig.BANKURL,
+		newConfig.JUICESHOPURL,
+		newConfig.PETSTOREURL,
+		newConfig.SPEEDTESTURL,
+		newConfig.USERNAMEAPI,
+		// newConfig.PASSWORDAPI, // Intentionally not logging the password
+		newConfig.VDOMAPI,
+		newConfig.FWBMGTIP,
+		newConfig.FWBMGTPORT,
+		newConfig.MLPOLICY,
+		newConfig.USERAGENT,
+		newConfig.FABRICLABSTORY,
+	)
+
 	log.Printf("Configuration '%s' applied successfully.", request.Name)
 
 	return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' applied successfully", request.Name)})
@@ -330,34 +353,33 @@ func ListConfigs(c echo.Context) error {
 }
 
 func RenameConfig(c echo.Context) error {
-    var request struct {
-        OldName string `json:"oldName"`
-        NewName string `json:"newName"`
-    }
-    if err := c.Bind(&request); err != nil {
-        return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
-    }
+	var request struct {
+		OldName string `json:"oldName"`
+		NewName string `json:"newName"`
+	}
+	if err := c.Bind(&request); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request")
+	}
 
-    configMutex.Lock()
-    defer configMutex.Unlock()
+	configMutex.Lock()
+	defer configMutex.Unlock()
 
-    if _, exists := configsMap[request.NewName]; exists {
-        return echo.NewHTTPError(http.StatusConflict, `{"message": "Configuration name '`+request.NewName+`' already exists."}`)
-    }
+	if _, exists := configsMap[request.NewName]; exists {
+		return echo.NewHTTPError(http.StatusConflict, `{"message": "Configuration name '`+request.NewName+`' already exists."}`)
+	}
 
-    config, exists := configsMap[request.OldName]
-    if !exists {
-        return echo.NewHTTPError(http.StatusNotFound, `{"message": "Configuration '`+request.OldName+`' not found."}`)
-    }
+	config, exists := configsMap[request.OldName]
+	if !exists {
+		return echo.NewHTTPError(http.StatusNotFound, `{"message": "Configuration '`+request.OldName+`' not found."}`)
+	}
 
-    delete(configsMap, request.OldName) // Remove the old config
-    config.NAME = request.NewName       // Update the config name
-    configsMap[request.NewName] = config // Add the renamed config
+	delete(configsMap, request.OldName)  // Remove the old config
+	config.NAME = request.NewName        // Update the config name
+	configsMap[request.NewName] = config // Add the renamed config
 
-    if currentName == request.OldName {
-        currentName = request.NewName // Update current config if it was renamed
-    }
+	if currentName == request.OldName {
+		currentName = request.NewName // Update current config if it was renamed
+	}
 
-    return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' renamed to '%s'", request.OldName, request.NewName)})
+	return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' renamed to '%s'", request.OldName, request.NewName)})
 }
-
