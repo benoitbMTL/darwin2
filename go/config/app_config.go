@@ -290,23 +290,12 @@ func ApplyConfigLocal(c echo.Context) error {
 	// Update the CurrentConfig global variable to the newly selected configuration
 	CurrentConfig = newConfig
 
-	// Log configuration details
-	log.Printf("Configuration '%s' applied successfully. Details: NAME: %s, DVWAURL: %s, BANKURL: %s, JUICESHOPURL: %s, PETSTOREURL: %s, SPEEDTESTURL: %s, USERNAMEAPI: %s, PASSWORDAPI: [HIDDEN], VDOMAPI: %s, FWBMGTIP: %s, FWBMGTPORT: %s, MLPOLICY: %s, USERAGENT: %s, FABRICLABSTORY: %s",
+	// Log configuration
+	log.Printf("Configuration '%s' applied successfully. Details: NAME: %s, DVWAURL: %s, BANKURL: %s",
 		request.Name,
 		newConfig.NAME,
 		newConfig.DVWAURL,
 		newConfig.BANKURL,
-		newConfig.JUICESHOPURL,
-		newConfig.PETSTOREURL,
-		newConfig.SPEEDTESTURL,
-		newConfig.USERNAMEAPI,
-		// newConfig.PASSWORDAPI, // Intentionally not logging the password
-		newConfig.VDOMAPI,
-		newConfig.FWBMGTIP,
-		newConfig.FWBMGTPORT,
-		newConfig.MLPOLICY,
-		newConfig.USERAGENT,
-		newConfig.FABRICLABSTORY,
 	)
 
 	log.Printf("Configuration '%s' applied successfully.", request.Name)
