@@ -22,7 +22,8 @@ const Loop = 300
 
 // Define chromeDriverPath
 // https://googlechromelabs.github.io/chrome-for-testing/
-// https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.94/linux64/chromedriver-linux64.zip
+// Chrome Driver - https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.128/linux64/chromedriver-linux64.zip
+// Chrome        - https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.128/linux64/chrome-linux64.zip
 const (
 	defaultChromeDriverPath = "./selenium/chromedriver" // Path to ChromeDriver
 	port             = 4444                      // Port on which ChromeDriver will listen
@@ -56,7 +57,9 @@ func HandleSelenium(c echo.Context) error {
 
 	// Start ChromeDriver service
 	fmt.Printf("\033[1m\033[34m\nStart ChromeDriver service\033[0m\n")
-	opts := []selenium.ServiceOption{}
+	opts := []selenium.ServiceOption{
+		selenium.Output(os.Stderr), // Direct logs to STDERR
+	}
 	service, err := selenium.NewChromeDriverService(chromeDriverPath, port, opts...)
 	if err != nil {
 		fmt.Printf("Error starting the ChromeDriver server: %v\n", err)
