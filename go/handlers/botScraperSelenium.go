@@ -10,8 +10,8 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
-	"time"
 	"os"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/tebeka/selenium"
@@ -26,7 +26,7 @@ const Loop = 300
 // Chrome        - https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.128/linux64/chrome-linux64.zip
 const (
 	defaultChromeDriverPath = "./selenium/chromedriver" // Path to ChromeDriver
-	port             = 4444                      // Port on which ChromeDriver will listen
+	port                    = 4444                      // Port on which ChromeDriver will listen
 )
 
 // Define your variable for the number of seconds
@@ -65,7 +65,7 @@ func HandleSelenium(c echo.Context) error {
 		fmt.Printf("Error starting the ChromeDriver server: %v\n", err)
 		return err
 	}
-	
+
 	defer service.Stop()
 
 	// Set general capabilities for Selenium WebDriver
@@ -81,8 +81,11 @@ func HandleSelenium(c echo.Context) error {
 			// 0 asks user every time (prompt)
 		},
 		Args: []string{
+			"--headless", // Run Chrome in headless mode
 			"--no-sandbox",
+			"--disable-gpu", // Disables GPU hardware acceleration. If software renderer is not in place, then the GPU process won't launch.
 			"--ignore-certificate-errors",
+			"--window-size=1280x800", // Optional, specifies the window size
 		},
 	}
 
