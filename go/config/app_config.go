@@ -59,7 +59,7 @@ func Initialize() {
 
 	configsMap["Azure Lab"] = AppConfig{
 		NAME:           "Azure Lab",
-		DVWAURL:        "https://dvwa.canadaeast.cloudapp.azure.com/",
+		DVWAURL:        "https://dvwa.canadaeast.cloudapp.azure.com",
 		BANKURL:        "https://dvwa.canadaeast.cloudapp.azure.com/bank.html",
 		JUICESHOPURL:   "https://juiceshop.canadaeast.cloudapp.azure.com",
 		PETSTOREURL:    "https://petstore3.canadaeast.cloudapp.azure.com/api/v3/pet",
