@@ -81,7 +81,7 @@ func HandleSelenium(c echo.Context) error {
 			// 0 asks user every time (prompt)
 		},
 		Args: []string{
-			"--headless", // Run Chrome in headless mode
+			// "--headless", // Run Chrome in headless mode
 			"--no-sandbox",
 			"--disable-gpu", // Disables GPU hardware acceleration. If software renderer is not in place, then the GPU process won't launch.
 			"--ignore-certificate-errors",
