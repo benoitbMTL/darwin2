@@ -30,7 +30,7 @@ const (
 )
 
 // Define your variable for the number of seconds
-var waitDurationInSeconds time.Duration = 1 // seconds
+var waitDurationInSeconds time.Duration = 2 // seconds
 
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func HandleSelenium(c echo.Context) error {
