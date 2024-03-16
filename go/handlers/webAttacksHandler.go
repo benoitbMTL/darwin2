@@ -20,7 +20,7 @@ func HandleWebAttacks(c echo.Context) error {
 	password := config.GetDVWAPassword(username) // Get password for the user
 
 	// Print values to console
-	// fmt.Printf("Handling web attack - Type: %s, Username: %s, Password: %s\n", attackType, username, password)
+	fmt.Printf("Handling web attack - Type: %s, Username: %s, Password: %s\n", attackType, username, password)
 
 	return performAttack(c, attackType, username, password)
 }
@@ -112,10 +112,10 @@ func performAttack(c echo.Context, attackType, username, password string) error 
 // User performs login to the web application and returns the session cookie PHPSESSID
 func authenticateUser(username, password string) (*cookiejar.Jar, error) {
 	loginURL := config.CurrentConfig.DVWAURL + "/login.php"
-	// fmt.Println("Login URL:", loginURL)
+	fmt.Println("Login URL:", loginURL)
 
 	formDataString := "username=" + url.QueryEscape(username) + "&password=" + url.QueryEscape(password) + "&Login=Login"
-	// fmt.Println("Encoded Form Data:", formDataString)
+	fmt.Println("Encoded Form Data:", formDataString)
 
 	req, err := http.NewRequest("POST", loginURL, strings.NewReader(formDataString))
 	if err != nil {
