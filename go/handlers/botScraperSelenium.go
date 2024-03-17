@@ -18,30 +18,14 @@ import (
 	"github.com/tebeka/selenium/chrome"
 )
 
-const Loop = 300
-
-// Define chromeDriverPath
-// https://googlechromelabs.github.io/chrome-for-testing/
-// Chrome Driver - https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.128/linux64/chromedriver-linux64.zip
-// Chrome        - https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.128/linux64/chrome-linux64.zip
-const (
-	defaultChromeDriverPath = "./selenium/chromedriver" // Path to ChromeDriver
-	port                    = 4444                      // Port on which ChromeDriver will listen
-)
-
-// Define your variable for the number of seconds
+const Loop = 1
+const chromeDriverPath = "./selenium/chromedriver-linux64/chromedriver"
+const chromePath = "./selenium/chrome-linux64/chrome"
+const port = 4444
 var waitDurationInSeconds time.Duration = 2 // seconds
 
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func HandleSelenium(c echo.Context) error {
-
-	// Attempt to get the chromedriver path from environment variable
-	chromeDriverPath := os.Getenv("CHROMEDRIVER_PATH")
-	if chromeDriverPath == "" {
-		// Fallback to the default path if environment variable is not set
-		chromeDriverPath = defaultChromeDriverPath
-	}
-	fmt.Println("Using ChromeDriver path:", chromeDriverPath)
 
 	// Debug: Check if chromedriver exists
 	fmt.Println("Checking if ChromeDriver exists at:", chromeDriverPath)
@@ -74,6 +58,7 @@ func HandleSelenium(c echo.Context) error {
 
 	// Define Chrome-specific capabilities
 	chromeCaps := chrome.Capabilities{
+		Path: chromePath,
 		Prefs: map[string]interface{}{
 			"profile.default_content_setting_values.notifications": 2,
 			// 1 allows notifications (default)

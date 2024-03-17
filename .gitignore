@@ -1,9 +1,10 @@
-#Tools
+#Tools (for debug)
 conf.txt
 
 # Dependency directories
 node_modules/
 vendor/
+selenium/
 
 # Vue build output
 vue/dist/

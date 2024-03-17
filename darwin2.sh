@@ -2,10 +2,13 @@
 
 # Initialize global variables
 SCRIPT_DIR=$(pwd)
-GOPACKAGE="go1.22.0.linux-amd64.tar.gz"
-GOURL="https://go.dev/dl/${GOPACKAGE}"
 NODE_MAJOR=20
 vue_changes=0
+GOPACKAGE="go1.22.0.linux-amd64.tar.gz"
+GOURL="https://go.dev/dl/${GOPACKAGE}"
+# Download locations: version 122.0.6261.128
+CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.128/linux64/chromedriver-linux64.zip"
+CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.128/linux64/chrome-linux64.zip"
 
 # Function to update from Git
 update_from_git() {
@@ -175,11 +178,37 @@ install_environment() {
     echo "Vue.js application setup completed. You can now run 'npm run serve' to start the application."
     cd "$SCRIPT_DIR"
 
-    # Install Chrome
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    sudo apt install ./google-chrome-stable_current_amd64.deb -y
-    rm -f google-chrome-stable_current_amd64.deb
-    chrome_version=$(google-chrome --version | awk '{print $3}')
+    # Install Chrome & Chromedriver
+    # https://googlechromelabs.github.io/chrome-for-testing/
+
+    echo -e "\n---------------------------------------------------------------------------"
+    echo "Installing Chrome & Chromedriver..."
+
+    cd vue
+    npm install selenium-webdriver
+    cd "$SCRIPT_DIR"
+
+    # Create a directory for the setup
+    cd go
+    rm -Rf ./selenium
+    mkdir -p ./selenium
+    cd selenium
+
+    # Download ChromeDriver and Chrome
+    wget $CHROMEDRIVER_URL -O chromedriver.zip
+    wget $CHROME_URL -O chrome.zip
+
+    # Unzip the downloaded files
+    unzip chromedriver.zip
+    unzip chrome.zip
+
+    # Clean up the setup directory
+    rm -rf *.zip
+    cd "$SCRIPT_DIR"
+
+    # Extract the version numbers
+    CHROMEDRIVER_VERSION=$(./go/selenium/chromedriver-linux64/chromedriver --version)
+    CHROME_VERSION=$(./go/selenium/chrome-linux64/chrome --version)
 
     # Summarize installed package versions
     printf "\n---------------------------------------------------------------------------\n"
@@ -192,7 +221,8 @@ install_environment() {
     # Assuming Bootstrap and Bootstrap Icons versions are fetched from package.json or similar
     printf "Bootstrap:\t\t%s\n" "$bootstrap_version"
     printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
-    printf "Google Chrome:\t\t%s\n" "$chrome_version"
+    printf "Google Chrome:\t\t%s\n" "$CHROME_VERSION"
+    printf "ChromeDriver:\t\t%s\n" "$CHROMEDRIVER_VERSION"
     printf "Environment initialization completed successfully.\n"
     echo -e "---------------------------------------------------------------------------\n"
 }
