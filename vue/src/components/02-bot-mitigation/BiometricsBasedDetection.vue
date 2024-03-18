@@ -103,9 +103,9 @@ export default {
       fetch("/selenium", {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json", 
         },
-        body: formData.toString(),
+        body: JSON.stringify(payload), 
       })
         .then((response) => response.text())
         .then((html) => {

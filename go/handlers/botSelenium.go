@@ -25,35 +25,22 @@ const (
 	port             = 4444
 )
 
-var (
-	loopCount int      // Number of times to loop through the actions
-	actions   []string // Slice to store the selected actions from the frontend
-)
+type requestParams struct {
+	SelectedActions []string `json:"actions"`
+	LoopCount       int      `json:"loopCount"`
+}
 
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func HandleSelenium(c echo.Context) error {
-
-	body, err := io.ReadAll(c.Request().Body)
-	if err != nil {
-		log.Printf("Failed to read request body: %v", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to read request body")
-	}
-
-	// Define a struct to unmarshal the incoming JSON data
-	type requestParams struct {
-		SelectedActions []string `json:"selectedActions"`
-		LoopCount       int      `json:"loopCount"`
-	}
-
 	var reqParams requestParams
-	err = json.Unmarshal(body, &reqParams)
-	if err != nil {
-		log.Printf("Failed to unmarshal request body: %v", err)
+
+	if err := c.Bind(&reqParams); err != nil {
+		log.Printf("Failed to bind request body: %v", err)
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request format")
 	}
 
-	actions = reqParams.SelectedActions
-	loopCount = reqParams.LoopCount
+	// Log the received actions and loop count
+	log.Printf("Received actions: %v, loop count: %d", reqParams.SelectedActions, reqParams.LoopCount)
 
 	// Debug: Check if chromedriver exists
 	fmt.Println("Checking if ChromeDriver exists at:", chromeDriverPath)
