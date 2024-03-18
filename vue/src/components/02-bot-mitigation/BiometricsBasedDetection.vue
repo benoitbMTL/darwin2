@@ -8,7 +8,7 @@
 
     <div class="card-body">
       <div class="mb-3">
-        <label class="form-label">Select Actions:</label>
+        <label class="form-label">Automated Web Interactions on Juice Shop with Selenium. Choose Your Actions:"</label>
         <div class="form-check">
           <input class="form-check-input" type="checkbox" value="clickAllProducts" id="clickAllProducts"
             v-model="selectedActions">
@@ -54,15 +54,10 @@
 
       <div>
         <button class="btn btn-primary me-2" @click="runCustomSelenium">Run Actions</button>
-        <button class="btn btn-secondary" @click="resetResult">Reset</button>
+        <button class="btn btn-secondary me-2" @click="resetResult">Reset</button>
+        <span v-if="jobResult" class="result-message">{{ jobResult }}</span>
       </div>
 
-    </div>
-
-    <div v-if="jobResult" class="mt-4 mb-3">
-      <h6>Result:</h6>
-      <iframe ref="seleniumIframe" :srcdoc="jobResult" @load="adjustIframeHeight"
-        style="width: 100%; border: 1px solid lightgray"></iframe>
     </div>
   </div>
 
@@ -92,7 +87,6 @@ export default {
 
   methods: {
     runCustomSelenium() {
-
       const payload = {
         actions: this.selectedActions,
         loopCount: this.loopCount,
@@ -105,9 +99,14 @@ export default {
         },
         body: JSON.stringify(payload),
       })
-        .then((response) => response.text())
-        .then((html) => {
-          this.jobResult = html;
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json(); 
+        })
+        .then((data) => {
+          this.jobResult = data; 
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -123,9 +122,9 @@ export default {
     },
 
     resetResult() {
-      this.jobResult = ""; // Clear Result
-      this.selectedActions = []; // Reset selected actions
-      this.loopCount = 1; // Reset loop count to default
+      this.jobResult = null;
+      this.selectedActions = [];
+      this.loopCount = 1;
     },
   },
 };

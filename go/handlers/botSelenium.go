@@ -114,7 +114,7 @@ func HandleSelenium(c echo.Context) error {
 		return err // Return any errors encountered during Selenium actions
 	}
 
-	return nil // No error occurred
+	return c.JSON(http.StatusOK, "Done!")
 }
 
 // ACTIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
