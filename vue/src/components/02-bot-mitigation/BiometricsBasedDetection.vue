@@ -92,20 +92,18 @@ export default {
 
   methods: {
     runCustomSelenium() {
-      const formData = new URLSearchParams();
-      formData.append("actions", JSON.stringify(this.selectedActions));
-      formData.append("loopCount", this.loopCount.toString());
 
-      // Print user's choices to the console
-      console.log("User selected actions:", this.selectedActions);
-      console.log("User selected loop count:", this.loopCount);
+      const payload = {
+        actions: this.selectedActions,
+        loopCount: this.loopCount,
+      };
 
       fetch("/selenium", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", 
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload), 
+        body: JSON.stringify(payload),
       })
         .then((response) => response.text())
         .then((html) => {
