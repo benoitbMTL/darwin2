@@ -11,6 +11,8 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -18,14 +20,27 @@ import (
 	"github.com/tebeka/selenium/chrome"
 )
 
-const Loop = 1
-const chromeDriverPath = "./selenium/chromedriver-linux64/chromedriver"
-const chromePath = "./selenium/chrome-linux64/chrome"
-const port = 4444
-var waitDurationInSeconds time.Duration = 2 // seconds
+const (
+	ClickAllProducts = iota + 1
+	CreateAccountLoginLogout
+	CreateAccountLoginAddressPaymentLogout
+	CreateAccountLoginAddressPaymentCartCheckoutLogout
+	chromeDriverPath = "./selenium/chromedriver-linux64/chromedriver"
+	chromePath       = "./selenium/chrome-linux64/chrome"
+	port             = 4444
+)
 
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func HandleSelenium(c echo.Context) error {
+
+	actionSequence := c.QueryParam("actionSequence") // "1,2,3,4"
+	loopCountStr := c.QueryParam("loopCount")        // Loop count as a string
+	loopCount, err := strconv.Atoi(loopCountStr)
+	if err != nil {
+		loopCount = 1 // Default to 1 loop if parsing fails
+	}
+
+	actions := parseActionSequence(actionSequence)
 
 	// Debug: Check if chromedriver exists
 	fmt.Println("Checking if ChromeDriver exists at:", chromeDriverPath)
@@ -42,7 +57,7 @@ func HandleSelenium(c echo.Context) error {
 	// Start ChromeDriver service
 	fmt.Printf("\033[1m\033[34m\nStart ChromeDriver service\033[0m\n")
 	opts := []selenium.ServiceOption{
-		selenium.Output(os.Stderr), // Direct logs to STDERR
+		// selenium.Output(os.Stderr), // Direct logs to STDERR
 	}
 	service, err := selenium.NewChromeDriverService(chromeDriverPath, port, opts...)
 	if err != nil {
@@ -85,24 +100,58 @@ func HandleSelenium(c echo.Context) error {
 	}
 	defer webDriver.Quit() // Ensure that WebDriver is closed when the function returns
 
-	// Execute the Selenium actions defined in SeleniumActions
-	for i := 0; i < Loop; i++ {
-		// Generate random data for each iteration
-		fakeData, err := utils.FetchRandomData()
-		if err != nil {
-			return err
-		}
+	// Generate random data for each iteration
+	fakeData, err := utils.FetchRandomData()
+	if err != nil {
+		return err
+	}
 
-		credentials := utils.RandomCredentials(*fakeData)
-		address := utils.RandomAddress(*fakeData)
-		payment := utils.RandomPayment(*fakeData)
+	credentials := utils.RandomCredentials(*fakeData)
+	address := utils.RandomAddress(*fakeData)
+	payment := utils.RandomPayment(*fakeData)
 
-		if err := SeleniumActions(webDriver, credentials, address, payment); err != nil {
-			return err // Return any errors encountered during Selenium actions
+	if err := SeleniumActions(webDriver, credentials, address, payment); err != nil {
+		return err // Return any errors encountered during Selenium actions
+	}
+
+
+
+
+	for i := 0; i < loopCount; i++ {
+		for _, action := range actions {
+			switch action {
+			case ClickAllProducts:
+				clickAllProducts(webDriver)
+			case CreateAccountLoginLogout:
+				// Perform CreateAccount, Login, Logout sequence
+			case CreateAccountLoginAddressPaymentLogout:
+				// Perform CreateAccount, Login, AddNewAddress, AddNewPayment, Logout sequence
+			case CreateAccountLoginAddressPaymentCartCheckoutLogout:
+				// Perform CreateAccount, Login, AddNewAddress, AddNewPayment, AddItemsToShoppingCart, CheckoutShoppingCart, Logout sequence
+			}
 		}
 	}
 
+
+
+
+
+
+
+
+
 	return nil // No error occurred
+}
+
+// parseActionSequence converts a CSV string into a slice of ints
+func parseActionSequence(seq string) []int {
+	var result []int
+	for _, s := range strings.Split(seq, ",") {
+		if num, err := strconv.Atoi(s); err == nil {
+			result = append(result, num)
+		}
+	}
+	return result
 }
 
 // ACTIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
