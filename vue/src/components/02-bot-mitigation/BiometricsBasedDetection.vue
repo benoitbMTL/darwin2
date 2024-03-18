@@ -53,9 +53,9 @@
       </div>
 
       <div>
-        <button class="btn btn-primary me-2" @click="runCustomSelenium">Run Actions</button>
-        <button class="btn btn-secondary me-2" @click="resetResult">Reset</button>
-        <span v-if="jobResult" class="result-message">{{ jobResult }}</span>
+        <button class="btn btn-primary btn-sm me-2" @click="runCustomSelenium">Run Actions</button>
+        <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
+        <span v-if="jobResult" class="result-message text-danger fw-bold">{{ jobResult }}</span>
       </div>
 
     </div>
@@ -103,10 +103,10 @@ export default {
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
-          return response.json(); 
+          return response.json();
         })
         .then((data) => {
-          this.jobResult = data; 
+          this.jobResult = data;
         })
         .catch((error) => {
           console.error("Error:", error);
