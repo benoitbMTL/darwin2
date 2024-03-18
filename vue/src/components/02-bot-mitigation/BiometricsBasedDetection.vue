@@ -11,39 +11,51 @@
       <div class="d-flex align-items-center mb-3 flex-wrap">
 
 
-        <form @submit.prevent="runCustomSelenium">
-          <div class="mb-3">
-            <label for="loopCount" class="form-label">Loop Count</label>
-            <input type="number" class="form-control" id="loopCount" v-model.number="loopCount" min="1">
+        <div class="mb-3">
+          <label class="form-label">Select Actions:</label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="clickAllProducts" id="clickAllProducts"
+              v-model="selectedActions">
+            <label class="form-check-label" for="clickAllProducts">Click All Products</label>
           </div>
-
-          <div class="mb-3">
-            <label class="form-label">Select Actions:</label>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="clickAllProducts" id="clickAllProducts"
-                v-model="selectedActions">
-              <label class="form-check-label" for="clickAllProducts">Click All Products</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="createAccountLoginLogout"
-                id="createAccountLoginLogout" v-model="selectedActions">
-              <label class="form-check-label" for="createAccountLoginLogout">Create Account and Login/Logout</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="createAccountLoginAddressPaymentLogout"
-                id="createAccountLoginAddressPaymentLogout" v-model="selectedActions">
-              <label class="form-check-label" for="createAccountLoginAddressPaymentLogout">Create Full Account and Login/Logout</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="fullUserExperience" id="fullUserExperience"
-                v-model="selectedActions">
-              <label class="form-check-label" for="fullUserExperience">Full User Experience (Account, Address, Payment,
-                Cart, Checkout)</label>
-            </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="createAccount" id="createAccount"
+              v-model="selectedActions">
+            <label class="form-check-label" for="createAccount">Create Account</label>
           </div>
-
-          <button type="submit" class="btn btn-primary">Run Test</button>
-        </form>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="login" id="login" v-model="selectedActions"
+              :disabled="!selectedActions.includes('createAccount')">
+            <label class="form-check-label" for="login">Login</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="addNewAddress" id="addNewAddress"
+              v-model="selectedActions" :disabled="!selectedActions.includes('login')">
+            <label class="form-check-label" for="addNewAddress">Add New Address</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="addNewPayment" id="addNewPayment"
+              v-model="selectedActions" :disabled="!selectedActions.includes('login')">
+            <label class="form-check-label" for="addNewPayment">Add New Payment</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="addItemsToShoppingCart" id="addItemsToShoppingCart"
+              v-model="selectedActions" :disabled="!selectedActions.includes('login')">
+            <label class="form-check-label" for="addItemsToShoppingCart">Add Items to Shopping Cart</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="checkoutShoppingCart" id="checkoutShoppingCart"
+              v-model="selectedActions"
+              :disabled="!selectedActions.includes('addNewAddress') || !selectedActions.includes('addNewPayment')">
+            <label class="form-check-label" for="checkoutShoppingCart">Checkout Shopping Cart</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="logout" id="logout" v-model="selectedActions"
+              :disabled="!selectedActions.includes('login')">
+            <label class="form-check-label" for="logout">Logout</label>
+          </div>
+        </div>
+        <button @click="runCustomSelenium">Run Actions</button>
 
 
         <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
@@ -76,6 +88,7 @@ export default {
     return {
       showHelp: false,
       jobResult: null,
+      selectedActions: [],
     };
   },
 

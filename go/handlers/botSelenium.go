@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -21,26 +22,40 @@ import (
 )
 
 const (
-	ClickAllProducts = iota + 1
-	CreateAccountLoginLogout
-	CreateAccountLoginAddressPaymentLogout
-	CreateAccountLoginAddressPaymentCartCheckoutLogout
 	chromeDriverPath = "./selenium/chromedriver-linux64/chromedriver"
 	chromePath       = "./selenium/chrome-linux64/chrome"
 	port             = 4444
 )
 
+var (
+	loopCount int      // Number of times to loop through the actions
+	actions   []string // Slice to store the selected actions from the frontend
+)
+
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func HandleSelenium(c echo.Context) error {
 
-	actionSequence := c.QueryParam("actionSequence") // "1,2,3,4"
-	loopCountStr := c.QueryParam("loopCount")        // Loop count as a string
-	loopCount, err := strconv.Atoi(loopCountStr)
+	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {
-		loopCount = 1 // Default to 1 loop if parsing fails
+		log.Printf("Failed to read request body: %v", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to read request body")
 	}
 
-	actions := parseActionSequence(actionSequence)
+	// Define a struct to unmarshal the incoming JSON data
+	type requestParams struct {
+		SelectedActions []string `json:"selectedActions"`
+		LoopCount       int      `json:"loopCount"`
+	}
+
+	var reqParams requestParams
+	err = json.Unmarshal(body, &reqParams)
+	if err != nil {
+		log.Printf("Failed to unmarshal request body: %v", err)
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request format")
+	}
+
+	actions = reqParams.SelectedActions
+	loopCount = reqParams.LoopCount
 
 	// Debug: Check if chromedriver exists
 	fmt.Println("Checking if ChromeDriver exists at:", chromeDriverPath)
@@ -114,44 +129,7 @@ func HandleSelenium(c echo.Context) error {
 		return err // Return any errors encountered during Selenium actions
 	}
 
-
-
-
-	for i := 0; i < loopCount; i++ {
-		for _, action := range actions {
-			switch action {
-			case ClickAllProducts:
-				clickAllProducts(webDriver)
-			case CreateAccountLoginLogout:
-				// Perform CreateAccount, Login, Logout sequence
-			case CreateAccountLoginAddressPaymentLogout:
-				// Perform CreateAccount, Login, AddNewAddress, AddNewPayment, Logout sequence
-			case CreateAccountLoginAddressPaymentCartCheckoutLogout:
-				// Perform CreateAccount, Login, AddNewAddress, AddNewPayment, AddItemsToShoppingCart, CheckoutShoppingCart, Logout sequence
-			}
-		}
-	}
-
-
-
-
-
-
-
-
-
 	return nil // No error occurred
-}
-
-// parseActionSequence converts a CSV string into a slice of ints
-func parseActionSequence(seq string) []int {
-	var result []int
-	for _, s := range strings.Split(seq, ",") {
-		if num, err := strconv.Atoi(s); err == nil {
-			result = append(result, num)
-		}
-	}
-	return result
 }
 
 // ACTIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
