@@ -3,18 +3,21 @@ id:
   app: 81efd0f3-ce73-48e3-8fee-f18b0d5f053c
 
 # If below settings are not configured, scans will be performed for all supported scanners.
-#scanners:
-#  - sast
-#  - sca
-#  - secret
-#  - iac
-#  - container
-#  - dast
+scanners:
+  - sast
+  - sca
+  - secret
+  - iac
+  - container
+  - dast
 
 # Configures languages for sast scanner. If not configured, scans will be performed on all supported languages
-#languages:
-#  - javascript
-#  - python
+languages:
+  - javascript
+  - go
+  - dockerfile
+  - perl
+  - shell
 
 # Configures target url where dynamic scan should be performed.
 dast:
