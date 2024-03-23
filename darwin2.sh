@@ -12,7 +12,7 @@ CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.
 
 # Function to update from Git
 update_from_git() {
-    echo -e "\n---------------------------------------------------------------------------"
+    ##############################################################
     echo "Fetching updates from Git..."
     git fetch || { echo "Failed to fetch updates."; exit 1; }
 
@@ -36,7 +36,7 @@ update_from_git() {
 
 # Function to build Vue.js application
 build_vue_app() {
-    echo -e "\n---------------------------------------------------------------------------"
+    ##############################################################
     echo "Building Vue.js application..."
     cd vue || exit 1
     npm install || { echo "Vue.js installation failed."; exit 1; }
@@ -46,7 +46,7 @@ build_vue_app() {
 
 # Function to build and run Go application
 serve_go_app() {
-    echo -e "\n---------------------------------------------------------------------------"
+    ##############################################################
     echo "Building and running Go server..."
     cd go || exit 1
     go build . || { echo "Go build failed."; exit 1; }
@@ -58,7 +58,7 @@ manage_docker() {
 
     # Install Docker if not present
     if ! command -v docker &> /dev/null; then
-        echo -e "\n---------------------------------------------------------------------------"
+        ##############################################################
         echo "Docker is not installed. Installing Docker..."
         sudo apt-get update -y
         sudo apt-get upgrade -y
@@ -81,7 +81,7 @@ manage_docker() {
     container_name="darwin2"
     running_container=$(docker ps -q -f name=^/${container_name}$)
     if [[ -n "$running_container" ]]; then
-        echo -e "\n---------------------------------------------------------------------------"
+        ##############################################################
         echo "Stopping existing Docker container..."
         docker stop "$container_name"
         echo "Removing existing Docker container..."
@@ -89,7 +89,7 @@ manage_docker() {
     fi
 
     # Build a fresh Docker image
-    echo -e "\n---------------------------------------------------------------------------"
+    ##############################################################
     echo "Building Docker image and running container..."
     docker build -t "$container_name" .
     docker run -dp 8080:8080 --name "$container_name" "$container_name"
@@ -97,21 +97,21 @@ manage_docker() {
 
 # Function to install required packages and setup the environment
 install_environment() {
-    echo -e "\n---------------------------------------------------------------------------"
-    echo "Initializing environment for the application..."
+    ##############################################################
+    print_header "Initializing environment for the application..."
 
     # Install Linux packages
-    echo -e "\n---------------------------------------------------------------------------"
-    echo "Updating package lists..."
+    ##############################################################
+    print_header "Updating package lists..."
     sudo apt update || { echo "Failed to update package lists."; exit 1; }
 
-    echo -e "\n---------------------------------------------------------------------------"
-    echo "Installing required Linux packages..."
+    ##############################################################
+    print_header "Installing required Linux packages..."
     sudo apt install nmap unzip tree net-tools vim perl libnet-ssleay-perl libio-socket-ssl-perl -y || { echo "Failed to install required Linux packages."; exit 1; }
 
     # Install Nikto
-    echo -e "\n---------------------------------------------------------------------------"
-    echo "Installing Nikto..."
+    ##############################################################
+    print_header "Installing Nikto..."
     cd "$SCRIPT_DIR/go" || exit 1
     rm -Rf nikto
     git clone https://github.com/sullo/nikto.git
@@ -120,8 +120,8 @@ install_environment() {
     cd "$SCRIPT_DIR"
 
     # Install Go
-    echo -e "\n---------------------------------------------------------------------------"
-    echo "Installing Go..."
+    ##############################################################
+    print_header "Installing Go..."
     echo "Downloading Go from ${GOURL}..."
     curl -L -s -O ${GOURL} || { echo "Failed to download Go."; exit 1; }
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $GOPACKAGE || { echo "Failed to install Go."; exit 1; }
@@ -130,22 +130,29 @@ install_environment() {
 
 
     # Define GO PATH
-    GOPATH="export PATH=\$PATH:/usr/local/go/bin"
+    echo "Exporting Go binary path..."
 
-    # Check if GOPATH already exists in .bashrc
-    if grep -Fxq "$GOPATH" ~/.bashrc; then
-        echo "GOPATH already exists in .bashrc."
-    else
-        # If GOPATH doesn't exist, add it to .bashrc
-        echo "$GOPATH" >> ~/.bashrc
-        echo "GOPATH has been added to .bashrc."
-        echo "Please log off and log back in for the changes to take effect."
+    # Set GOROOT
+    if ! grep -q "export GOROOT=/usr/local/go" ~/.bashrc; then
+        echo "export GOROOT=/usr/local/go" >> ~/.bashrc
     fi
+
+    # Set GOPATH
+    if ! grep -q "export GOPATH=\$HOME/go" ~/.bashrc; then
+        echo "export GOPATH=\$HOME/go" >> ~/.bashrc
+    fi
+
+    # Set PATH for Go
+    # This checks for the presence of GOROOT and GOPATH in the PATH, rather than the literal line, for flexibility.
+    if ! grep -q "\$GOROOT/bin:\$GOPATH/bin" ~/.bashrc; then
+        echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> ~/.bashrc
+    fi
+
 
     # Install Node.js and npm
     # https://deb.nodesource.com/
-    echo -e "\n---------------------------------------------------------------------------"
-    echo "Installing Node.js..."
+    ##############################################################
+    print_header "Installing Node.js..."
     sudo apt-get update && sudo apt-get install -y ca-certificates curl gnupg
     sudo rm -f /etc/apt/keyrings/nodesource.gpg
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
@@ -154,15 +161,15 @@ install_environment() {
 
 
     # Install Bootstrap and Bootstrap Icons locally within the Vue project
-    echo -e "\n---------------------------------------------------------------------------"
-    echo "Installing Bootstrap and Bootstrap Icons locally..."
+    ##############################################################
+    print_header "Installing Bootstrap and Bootstrap Icons locally..."
     cd "$SCRIPT_DIR/vue" || exit 1
     npm install bootstrap bootstrap-icons || { echo "Failed to install Bootstrap and Bootstrap Icons."; exit 1; }
 
 
     # Setup Vue.js application
-    echo -e "\n---------------------------------------------------------------------------"
-    echo "Setting up Vue.js application..."
+    ##############################################################
+    print_header "Setting up Vue.js application..."
     npm install @vue/cli || { echo "Failed to install Vue CLI."; exit 1; }
     npm install || { echo "Failed to install Vue.js application dependencies."; exit 1; }
     echo "Vue.js application setup completed. You can now run 'npm run serve' to start the application."
@@ -171,8 +178,8 @@ install_environment() {
     # Install Chrome & Chromedriver
     # https://googlechromelabs.github.io/chrome-for-testing/
 
-    echo -e "\n---------------------------------------------------------------------------"
-    echo "Installing Chrome & Chromedriver..."
+    ##############################################################
+    print_header "Installing Chrome & Chromedriver..."
 
     cd vue
     npm install selenium-webdriver
@@ -198,8 +205,19 @@ install_environment() {
 
     echo "Done!"
 
+    ##############################################################
     print_versions
 
+}
+
+# Function to print section headers in bold and color
+print_header() {
+    # ANSI color codes
+    CYAN='\033[0;36m'
+    NC='\033[0m' # No Color
+    echo -e "${CYAN}\n===========================================================================${NC}"
+    echo -e "${CYAN}$1${NC}"
+    echo -e "${CYAN}===========================================================================${NC}\n"
 }
 
 # Function to print installed package versions
@@ -248,7 +266,7 @@ print_versions() {
     else
         bootstrap_icons_version="Not installed"
     fi
-    
+
     cd "$SCRIPT_DIR"
 
     # Check for ChromeDriver version
