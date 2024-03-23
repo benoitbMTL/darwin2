@@ -107,22 +107,16 @@ install_environment() {
 
     echo -e "\n---------------------------------------------------------------------------"
     echo "Installing required Linux packages..."
-    sudo apt install nmap tree net-tools vim perl libnet-ssleay-perl libio-socket-ssl-perl -y || { echo "Failed to install required Linux packages."; exit 1; }
+    sudo apt install nmap unzip tree net-tools vim perl libnet-ssleay-perl libio-socket-ssl-perl -y || { echo "Failed to install required Linux packages."; exit 1; }
 
     # Install Nikto
     echo -e "\n---------------------------------------------------------------------------"
     echo "Installing Nikto..."
     cd "$SCRIPT_DIR/go" || exit 1
-    if [ ! -d "nikto" ]; then
-        git clone https://github.com/sullo/nikto.git
-        echo "Nikto cloned successfully."
-    else
-        nikto_version=$(perl nikto/program/nikto.pl -Version | grep -o 'Nikto [0-9]*\.[0-9]*\.[0-9]*')
-        echo "Nikto version found: $nikto_version"
-        if [ "$nikto_version" != "Nikto 2.5.0" ]; then
-            echo "Warning: Nikto version is not 2.5.0. Current version: $nikto_version"
-        fi
-    fi
+    rm -Rf nikto
+    git clone https://github.com/sullo/nikto.git
+    echo "Done!"
+
     cd "$SCRIPT_DIR"
 
     # Install Go
@@ -133,8 +127,7 @@ install_environment() {
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $GOPACKAGE || { echo "Failed to install Go."; exit 1; }
     rm -f ${GOPACKAGE}
     export PATH=$PATH:/usr/local/go/bin
-    go_version=$(go version)
-    echo "Go version: $go_version"
+
 
     # Define GO PATH
     GOPATH="export PATH=\$PATH:/usr/local/go/bin"
@@ -158,17 +151,14 @@ install_environment() {
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
     echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
     sudo apt-get update && sudo apt-get install nodejs -y
-    node_version=$(node -v)
-    echo "Node version: $node_version"
-    npm_version=$(npm -v)
+
 
     # Install Bootstrap and Bootstrap Icons locally within the Vue project
     echo -e "\n---------------------------------------------------------------------------"
     echo "Installing Bootstrap and Bootstrap Icons locally..."
     cd "$SCRIPT_DIR/vue" || exit 1
     npm install bootstrap bootstrap-icons || { echo "Failed to install Bootstrap and Bootstrap Icons."; exit 1; }
-    bootstrap_version=$(npm list bootstrap | grep bootstrap | head -1 | awk '{print $2}')
-    bootstrap_icons_version=$(npm list bootstrap-icons | grep bootstrap-icons | head -1 | awk '{print $2}')
+
 
     # Setup Vue.js application
     echo -e "\n---------------------------------------------------------------------------"
@@ -206,25 +196,87 @@ install_environment() {
     rm -rf *.zip
     cd "$SCRIPT_DIR"
 
-    # Extract the version numbers
-    CHROMEDRIVER_VERSION=$(./go/selenium/chromedriver-linux64/chromedriver --version)
-    CHROME_VERSION=$(./go/selenium/chrome-linux64/chrome --version)
+    echo "Done!"
 
-    # Summarize installed package versions
+    print_versions
+
+}
+
+# Function to print installed package versions
+print_versions() {
+    # Check for Go version
+    if command -v go &> /dev/null; then
+        go_version=$(go version)
+    else
+        go_version="Not installed"
+    fi
+
+    # Check for Nikto version
+    if [ -d "$SCRIPT_DIR/go/nikto" ]; then
+        nikto_version=$(perl nikto/program/nikto.pl -Version | grep -o 'Nikto [0-9]*\.[0-9]*\.[0-9]*')
+    else
+        nikto_version="Not installed"
+    fi
+
+    # Check for Node.js version
+    if command -v node &> /dev/null; then
+        node_version=$(node -v)
+    else
+        node_version="Not installed"
+    fi
+
+    # Check for npm version
+    if command -v npm &> /dev/null; then
+        npm_version=$(npm -v)
+    else
+        npm_version="Not installed"
+    fi
+
+    # Check for Bootstrap version
+    if npm list bootstrap &> /dev/null; then
+        bootstrap_version=$(npm list bootstrap | grep bootstrap | head -1 | awk '{print $2}')
+    else
+        bootstrap_version="Not installed"
+    fi
+
+    # Check for Bootstrap Icons version
+    if npm list bootstrap-icons &> /dev/null; then
+        bootstrap_icons_version=$(npm list bootstrap-icons | grep bootstrap-icons | head -1 | awk '{print $2}')
+    else
+        bootstrap_icons_version="Not installed"
+    fi
+
+    # Check for ChromeDriver version
+    if [ -f "./go/selenium/chromedriver-linux64/chromedriver" ]; then
+        CHROMEDRIVER_VERSION=$(./go/selenium/chromedriver-linux64/chromedriver --version)
+    else
+        CHROMEDRIVER_VERSION="Not installed"
+    fi
+
+    # Check for Google Chrome version
+    if [ -f "./go/selenium/chrome-linux64/chrome" ]; then
+        CHROME_VERSION=$(./go/selenium/chrome-linux64/chrome --version)
+    else
+        CHROME_VERSION="Not installed"
+    fi
+
+    # Print versions
     printf "\n---------------------------------------------------------------------------\n"
     printf "Summary of installed packages and versions:\n"
     printf "Go:\t\t\t%s\n" "$go_version"
-    # Add similar printf statements for other software versions installed in this script
     printf "Nikto:\t\t\t%s\n" "$nikto_version"
     printf "Node.js:\t\t%s\n" "$node_version"
     printf "npm:\t\t\t%s\n" "$npm_version"
-    # Assuming Bootstrap and Bootstrap Icons versions are fetched from package.json or similar
     printf "Bootstrap:\t\t%s\n" "$bootstrap_version"
     printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
     printf "Google Chrome:\t\t%s\n" "$CHROME_VERSION"
     printf "ChromeDriver:\t\t%s\n" "$CHROMEDRIVER_VERSION"
-    printf "Environment initialization completed successfully.\n"
+    printf "Environment checks completed.\n"
     echo -e "---------------------------------------------------------------------------\n"
+
+    if [ "$nikto_version" != "Nikto 2.5.0" ]; then
+        echo "Warning: Nikto version is not 2.5.0. Current version: $nikto_version"
+    fi
 }
 
 # Build and serve function
@@ -245,12 +297,13 @@ force_build_and_serve() {
 
 # Function to display help
 print_help() {
-    printf "Usage: %s {run|docker|update|force|install|help}\n" "$(basename "$0")"
+    printf "Usage: %s {run|docker|update|force|install|version|help}\n" "$(basename "$0")"
     printf "  %-20s%s\n" "run:" "Build and serve the application."
     printf "  %-20s%s\n" "docker:" "Manage Docker container for the application."
     printf "  %-20s%s\n" "update:" "Update the application from Git."
     printf "  %-20s%s\n" "force:" "Force build and serve the application (ignores changes)."
     printf "  %-20s%s\n" "install:" "Install and initialize environment to run the application."
+    printf "  %-20s%s\n" "version:" "Print the versions of the installed packages."
     printf "  %-20s%s\n" "help:" "Display this help message."
 }
 
@@ -273,6 +326,9 @@ case $1 in
         install_environment
         build_vue_app
         serve_go_app
+        ;;
+    version)
+        print_versions
         ;;
     help)
         print_help

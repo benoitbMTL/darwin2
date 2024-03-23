@@ -8,11 +8,11 @@
 
     <div class="card-body">
       <div class="mb-3">
-        <label class="form-label">Automated Web Interactions on Juice Shop with Selenium. Choose Your Actions:"</label>
+        <label class="form-label">Automated Web Interactions on Juice Shop with Selenium. Choose Your Actions:</label>
         <div class="form-check">
           <input class="form-check-input" type="checkbox" value="clickAllProducts" id="clickAllProducts"
             v-model="selectedActions">
-          <label class="form-check-label" for="clickAllProducts">Click All Products</label>
+          <label class="form-check-label" for="clickAllProducts">View All Products</label>
         </div>
         <div class="form-check">
           <input class="form-check-input" type="checkbox" value="createAccount" id="createAccount"
