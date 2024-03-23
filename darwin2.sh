@@ -213,7 +213,7 @@ print_versions() {
 
     # Check for Nikto version
     if [ -d "$SCRIPT_DIR/go/nikto" ]; then
-        nikto_version=$(perl nikto/program/nikto.pl -Version | grep -o 'Nikto [0-9]*\.[0-9]*\.[0-9]*')
+        nikto_version=$(perl go/nikto/program/nikto.pl -Version | grep -o 'Nikto [0-9]*\.[0-9]*\.[0-9]*')
     else
         nikto_version="Not installed"
     fi
