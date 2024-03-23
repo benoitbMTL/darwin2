@@ -18,7 +18,7 @@ id:
 
 # Configures target url where dynamic scan should be performed.
 #dast:
-url: https://demotool.canadaeast.cloudapp.azure.com/
+url: demotool.canadaeast.cloudapp.azure.com
 full_scan: true
 
 # Language scanners run sequentially by default. Can be configured to run in parallel.
