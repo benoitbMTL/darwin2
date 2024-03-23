@@ -233,6 +233,9 @@ print_versions() {
     fi
 
     # Check for Bootstrap version
+
+    cd "$SCRIPT_DIR/vue"
+
     if npm list bootstrap &> /dev/null; then
         bootstrap_version=$(npm list bootstrap | grep bootstrap | head -1 | awk '{print $2}')
     else
@@ -245,6 +248,8 @@ print_versions() {
     else
         bootstrap_icons_version="Not installed"
     fi
+    
+    cd "$SCRIPT_DIR"
 
     # Check for ChromeDriver version
     if [ -f "./go/selenium/chromedriver-linux64/chromedriver" ]; then
