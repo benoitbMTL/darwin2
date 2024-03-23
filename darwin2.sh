@@ -97,17 +97,17 @@ manage_docker() {
 
 # Function to install required packages and setup the environment
 install_environment() {
-    ##############################################################
-    print_header "Initializing environment for the application..."
-
     # Install Linux packages
     ##############################################################
     print_header "Updating package lists..."
     sudo apt update || { echo "Failed to update package lists."; exit 1; }
+    print_completion "Done!"
 
+    # Install Linux packages
     ##############################################################
     print_header "Installing required Linux packages..."
     sudo apt install nmap unzip tree net-tools vim perl libnet-ssleay-perl libio-socket-ssl-perl -y || { echo "Failed to install required Linux packages."; exit 1; }
+    print_completion "Done!"
 
     # Install Nikto
     ##############################################################
@@ -115,9 +115,8 @@ install_environment() {
     cd "$SCRIPT_DIR/go" || exit 1
     rm -Rf nikto
     git clone https://github.com/sullo/nikto.git
-    echo "Done!"
-
     cd "$SCRIPT_DIR"
+    print_completion "Done!"
 
     # Install Go
     ##############################################################
@@ -127,7 +126,6 @@ install_environment() {
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $GOPACKAGE || { echo "Failed to install Go."; exit 1; }
     rm -f ${GOPACKAGE}
     export PATH=$PATH:/usr/local/go/bin
-
 
     # Define GO PATH
     echo "Exporting Go binary path..."
@@ -147,10 +145,10 @@ install_environment() {
     if ! grep -q "\$GOROOT/bin:\$GOPATH/bin" ~/.bashrc; then
         echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> ~/.bashrc
     fi
+    print_completion "Done!"
+    print_completion "You might need to source ~/.bashrc or log out and back in for this change to take effect"
 
-
-    # Install Node.js and npm
-    # https://deb.nodesource.com/
+    # Install Node.js and npm (https://deb.nodesource.com)
     ##############################################################
     print_header "Installing Node.js..."
     sudo apt-get update && sudo apt-get install -y ca-certificates curl gnupg
@@ -158,14 +156,14 @@ install_environment() {
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
     echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
     sudo apt-get update && sudo apt-get install nodejs -y
-
+    print_completion "Done!"
 
     # Install Bootstrap and Bootstrap Icons locally within the Vue project
     ##############################################################
     print_header "Installing Bootstrap and Bootstrap Icons locally..."
     cd "$SCRIPT_DIR/vue" || exit 1
     npm install bootstrap bootstrap-icons || { echo "Failed to install Bootstrap and Bootstrap Icons."; exit 1; }
-
+    print_completion "Done!"
 
     # Setup Vue.js application
     ##############################################################
@@ -174,11 +172,12 @@ install_environment() {
     npm install || { echo "Failed to install Vue.js application dependencies."; exit 1; }
     echo "Vue.js application setup completed. You can now run 'npm run serve' to start the application."
     cd "$SCRIPT_DIR"
+    print_completion "Done!"
 
     # Install Chrome & Chromedriver
+    ##############################################################
     # https://googlechromelabs.github.io/chrome-for-testing/
 
-    ##############################################################
     print_header "Installing Chrome & Chromedriver..."
 
     cd vue
@@ -203,7 +202,7 @@ install_environment() {
     rm -rf *.zip
     cd "$SCRIPT_DIR"
 
-    echo "Done!"
+    print_completion "Done!"
 
     ##############################################################
     print_versions
@@ -220,6 +219,16 @@ print_header() {
     echo -e "${CYAN}===========================================================================${NC}\n"
 }
 
+# Function to print completion messages in bold and color
+print_completion() {
+    # ANSI color codes
+    GREEN='\033[0;32m'
+    NC='\033[0m' # No Color
+    echo -e "${GREEN}---------------------------------------------------------------------------${NC}"
+    echo -e "${GREEN}$1${NC}"
+    echo -e "${GREEN}---------------------------------------------------------------------------${NC}\n"
+}
+
 # Function to print installed package versions
 print_versions() {
     # Check for Go version
@@ -229,12 +238,19 @@ print_versions() {
         go_version="Not installed"
     fi
 
+    # Print versions
+    printf "\n===========================================================================\n"
+    printf "Summary of installed packages and versions:\n"
+    printf "Go:\t\t\t%s\n" "$go_version"
+
     # Check for Nikto version
     if [ -d "$SCRIPT_DIR/go/nikto" ]; then
-        nikto_version=$(perl go/nikto/program/nikto.pl -Version | grep -o 'Nikto [0-9]*\.[0-9]*\.[0-9]*')
+        nikto_version=$(perl go/nikto/program/nikto.pl -Version)
     else
         nikto_version="Not installed"
     fi
+
+    printf "Nikto:\t\t\t%s\n" "$nikto_version"
 
     # Check for Node.js version
     if command -v node &> /dev/null; then
@@ -243,12 +259,16 @@ print_versions() {
         node_version="Not installed"
     fi
 
+    printf "Node.js:\t\t%s\n" "$node_version"
+
     # Check for npm version
     if command -v npm &> /dev/null; then
         npm_version=$(npm -v)
     else
         npm_version="Not installed"
     fi
+
+    printf "npm:\t\t\t%s\n" "$npm_version"
 
     # Check for Bootstrap version
 
@@ -260,6 +280,8 @@ print_versions() {
         bootstrap_version="Not installed"
     fi
 
+    printf "Bootstrap:\t\t%s\n" "$bootstrap_version"
+    
     # Check for Bootstrap Icons version
     if npm list bootstrap-icons &> /dev/null; then
         bootstrap_icons_version=$(npm list bootstrap-icons | grep bootstrap-icons | head -1 | awk '{print $2}')
@@ -267,14 +289,9 @@ print_versions() {
         bootstrap_icons_version="Not installed"
     fi
 
+    printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
+    
     cd "$SCRIPT_DIR"
-
-    # Check for ChromeDriver version
-    if [ -f "./go/selenium/chromedriver-linux64/chromedriver" ]; then
-        CHROMEDRIVER_VERSION=$(./go/selenium/chromedriver-linux64/chromedriver --version)
-    else
-        CHROMEDRIVER_VERSION="Not installed"
-    fi
 
     # Check for Google Chrome version
     if [ -f "./go/selenium/chrome-linux64/chrome" ]; then
@@ -282,24 +299,19 @@ print_versions() {
     else
         CHROME_VERSION="Not installed"
     fi
-
-    # Print versions
-    printf "\n---------------------------------------------------------------------------\n"
-    printf "Summary of installed packages and versions:\n"
-    printf "Go:\t\t\t%s\n" "$go_version"
-    printf "Nikto:\t\t\t%s\n" "$nikto_version"
-    printf "Node.js:\t\t%s\n" "$node_version"
-    printf "npm:\t\t\t%s\n" "$npm_version"
-    printf "Bootstrap:\t\t%s\n" "$bootstrap_version"
-    printf "Bootstrap Icons:\t%s\n" "$bootstrap_icons_version"
+    
     printf "Google Chrome:\t\t%s\n" "$CHROME_VERSION"
-    printf "ChromeDriver:\t\t%s\n" "$CHROMEDRIVER_VERSION"
-    printf "Environment checks completed.\n"
-    echo -e "---------------------------------------------------------------------------\n"
-
-    if [ "$nikto_version" != "Nikto 2.5.0" ]; then
-        echo "Warning: Nikto version is not 2.5.0. Current version: $nikto_version"
+    
+    # Check for ChromeDriver version
+    if [ -f "./go/selenium/chromedriver-linux64/chromedriver" ]; then
+        CHROMEDRIVER_VERSION=$(./go/selenium/chromedriver-linux64/chromedriver --version)
+    else
+        CHROMEDRIVER_VERSION="Not installed"
     fi
+
+    printf "ChromeDriver:\t\t%s\n" "$CHROMEDRIVER_VERSION"
+    echo -e "===========================================================================\n"
+
 }
 
 # Build and serve function
