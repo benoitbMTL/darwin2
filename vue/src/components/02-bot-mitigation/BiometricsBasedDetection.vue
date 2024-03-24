@@ -2,15 +2,15 @@
   <div class="card my-4">
 
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5>Biometrics-Based Detection</h5>
+      <h5>Selenium Sandbox</h5>
       <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
       <!-- Bootstrap icon for help -->
     </div>
 
     <div class="card-body">
-      <label class="form-label">Automated Web Interactions on Juice Shop with Selenium. Choose Your Actions:</label>
+      <label class="form-label">Automated Web Interactions on Juice Shop with Selenium.</label>
 
-      <div class="d-flex justify-content-start gap-3"> <!-- Use 'gap-3' for space between the lists -->
+      <div class="d-flex justify-content-start gap-3 mb-3"> 
 
         <div> <!-- Actions List -->
           <h6>Actions</h6> <!-- Title for List 1 -->
