@@ -32,7 +32,10 @@ type requestParams struct {
 
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func HandleSelenium(c echo.Context) error {
+
 	var reqParams requestParams
+	fmt.Printf("Received request parameters: %+v\n", reqParams)
+	
 	var actionErrors []string // To record action errors
 
 	if err := c.Bind(&reqParams); err != nil {

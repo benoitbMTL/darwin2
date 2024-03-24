@@ -164,6 +164,7 @@ export default {
         };
 
         try {
+          console.log("Sending payload:", JSON.stringify(payload)); // Print the payload to the console
           const response = await fetch("/selenium", {
             method: "POST",
             headers: {
