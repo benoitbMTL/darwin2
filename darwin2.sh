@@ -20,7 +20,7 @@ update_from_git() {
     git branch -v
 
     echo "Checking for changes in the vue directory..."
-    if git diff --name-only origin/main | grep -q "vue/"; then
+    if git diff --name-only origin/main | grep "vue/" | grep -v "vue/package-lock.json" | grep -v "vue/package.json" | grep -q .; then
         echo "Changes detected in the vue directory."
         vue_changes=1
     else
