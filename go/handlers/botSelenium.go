@@ -40,9 +40,6 @@ func HandleSelenium(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request format")
 	}
 
-	// Log the received actions and loop count
-	log.Printf("Received actions: %v, loop count: %d", reqParams.SelectedActions, reqParams.LoopCount)
-
 	// Debug: Check if chromedriver exists
 	fmt.Println("Checking if ChromeDriver exists at:", chromeDriverPath)
 	if _, err := os.Stat(chromeDriverPath); os.IsNotExist(err) {
@@ -119,6 +116,14 @@ func HandleSelenium(c echo.Context) error {
 		fmt.Println("Failed to load page:", err)
 		return err
 	}
+
+	// Log the received actions and loop count
+	log.Printf("\n----------------------ACTIONS----------------------\nLoop Count %d", reqParams.LoopCount)
+	for _, action := range reqParams.SelectedActions {
+		log.Printf("[+] %s", action)
+	}
+	log.Println("---------------------------------------------------")
+	log.Println() // Empty line
 
 	// Allow time for the page to load
 	sleepForShortDuration()
@@ -647,31 +652,31 @@ func fillInputField(webDriver selenium.WebDriver, xpath string, value string) er
 }
 
 func selectDropdownOption(webDriver selenium.WebDriver, dropdownStrategy string, dropdownValue string, optionStrategy string, optionValue string) error {
-    // Click the dropdown to open the list of options
-    fmt.Println("Clicking the dropdown to show options")
-    dropdown, err := webDriver.FindElement(dropdownStrategy, dropdownValue)
-    if err != nil {
-        fmt.Printf("Error finding the dropdown: %v\n", err)
-        return err
-    }
-    if err := dropdown.Click(); err != nil {
-        fmt.Printf("Error clicking the dropdown: %v\n", err)
-        return err
-    }
-    sleepForShortDuration()
+	// Click the dropdown to open the list of options
+	fmt.Println("Clicking the dropdown to show options")
+	dropdown, err := webDriver.FindElement(dropdownStrategy, dropdownValue)
+	if err != nil {
+		fmt.Printf("Error finding the dropdown: %v\n", err)
+		return err
+	}
+	if err := dropdown.Click(); err != nil {
+		fmt.Printf("Error clicking the dropdown: %v\n", err)
+		return err
+	}
+	sleepForShortDuration()
 
-    // Click the specified option within the dropdown
-    fmt.Println("Selecting an option from the dropdown")
-    option, err := webDriver.FindElement(optionStrategy, optionValue)
-    if err != nil {
-        fmt.Printf("Error finding the dropdown option: %v\n", err)
-        return err
-    }
-    if err := option.Click(); err != nil {
-        fmt.Printf("Error clicking the dropdown option: %v\n", err)
-        return err
-    }
-    sleepForShortDuration()
+	// Click the specified option within the dropdown
+	fmt.Println("Selecting an option from the dropdown")
+	option, err := webDriver.FindElement(optionStrategy, optionValue)
+	if err != nil {
+		fmt.Printf("Error finding the dropdown option: %v\n", err)
+		return err
+	}
+	if err := option.Click(); err != nil {
+		fmt.Printf("Error clicking the dropdown option: %v\n", err)
+		return err
+	}
+	sleepForShortDuration()
 
-    return nil
+	return nil
 }
