@@ -190,6 +190,7 @@ export default {
           this.results.push(`Loop ${i}: Failed to run test`);
         }
       }
+      this.isRunning = false; // Indicate the process has finished
     },
 
     adjustIframeHeight() {
