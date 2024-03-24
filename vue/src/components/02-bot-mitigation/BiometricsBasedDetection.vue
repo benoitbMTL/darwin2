@@ -10,7 +10,7 @@
     <div class="card-body">
       <label class="form-label">Automated Web Interactions on Juice Shop with Selenium.</label>
 
-      <div class="d-flex justify-content-start gap-3 mt-3"> 
+      <div class="d-flex justify-content-start gap-3 mt-3">
 
         <div> <!-- Actions List -->
           <h6>Actions</h6> <!-- Title for List 1 -->
@@ -83,17 +83,20 @@
           <h6>Options</h6> <!-- Title for List 2 -->
           <div class="card" style="width: 18rem;">
             <ul class="list-group list-group-flush">
-              <li class="list-group-item">
+
+              <li class="list-group-item d-flex align-items-center">
                 Number of loops
-                <input type="number" class="form-control" v-model="loopCount" min="1" style="width: 100px;"
-                  placeholder="1">
+                <input type="number" class="form-control form-control-sm ms-2" v-model="loopCount" min="1"
+                  style="width: 75px;" placeholder="1">
               </li>
+
               <li class="list-group-item">
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" id="headless" v-model="isHeadless">
                   <label class="form-check-label" for="headless">Headless</label>
                 </div>
               </li>
+
             </ul>
           </div>
         </div>
