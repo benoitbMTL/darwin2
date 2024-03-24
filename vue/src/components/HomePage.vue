@@ -18,7 +18,8 @@
       <div class="card-header"><i class="bi bi-robot me-2"></i><strong>Bot Mitigation</strong></div>
       <ul class="list-group list-group-flush">
         <li class="list-group-item"><a href="/known-bots">Known Bots</a></li>
-        <li class="list-group-item"><a href="/biometrics-based-detection">Biometrics Based Detection</a></li>
+        <li class="list-group-item"><a href="/bot-biometric">Biometrics Based Detection</a></li>
+        <li class="list-group-item"><a href="/bot-selenium">Selenium Sandbox</a></li>
         <li class="list-group-item"><a href="/bot-deception">Bot Deception</a></li>
         <li class="list-group-item"><a href="/threshold-based-detection">Threshold Based Detection</a></li>
         <li class="list-group-item"><a href="/ml-based-bot-detection">ML Based Bot Detection</a></li>

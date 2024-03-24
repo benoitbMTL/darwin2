@@ -100,12 +100,24 @@
             </ul>
           </div>
         </div>
+
+
+        <div> <!-- Result List -->
+          <h6>Result</h6> <!-- Title for List 3 -->
+          <div class="card" style="width: 18rem;">
+            <ul class="list-group">
+              <li class="list-group-item" v-for="(result, index) in results" :key="index">
+                {{ result }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
       </div>
 
       <div class="mt-3">
         <button class="btn btn-primary btn-sm me-2" @click="runCustomSelenium">Run Actions</button>
         <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
-        <span v-if="jobResult" class="result-message text-danger fw-bold">{{ jobResult }}</span>
       </div>
 
     </div>
@@ -114,13 +126,17 @@
   <!-- Help Card -->
   <div v-if="showHelp" class="card bg-light mb-3">
     <div class="card-header">
-      <h5>About Biometrics-Based Detection</h5>
+      <h5>About Selenium</h5>
     </div>
     <div class="card-body">
-      <p>By checking the client events such as mouse movement, keyboard, screen touch, and scroll, etc in specified
-        period, FortiWeb judges whether the request comes from a human or from a bot. You can configure the
-        biometrics
-        based detection rule to define the client event, collection period, and the request URL, etc.</p>
+      <p>Selenium is a powerful and widely used open-source framework for automating web browsers. It enables testers
+        and developers to write scripts in various programming languages like Python, Java, C#, Ruby, and JavaScript to
+        control browser actions automatically, simulate user behavior, and interact with web pages. This can include
+        tasks like clicking buttons, entering text, navigating through links, and much more, making it a key tool for
+        testing web applications to ensure they work as expected across different environments and browsers. Selenium
+        supports major browsers like Chrome, Firefox, Safari, and Internet Explorer, and can be run on Windows, Linux,
+        and macOS. Its capabilities make it an essential component of quality assurance processes, allowing for both
+        functional and regression testing, and it's also used for web scraping and automated task execution.</p>
     </div>
   </div>
 
@@ -131,42 +147,41 @@ export default {
   data() {
     return {
       showHelp: false,
-      jobResult: null,
+      results: [],
       selectedActions: [],
-      loopCount: 1, // Default value for loop count
-      isHeadless: false, // Default value for headless mode
+      loopCount: 1, // Default value 
+      isHeadless: false, // Default value 
     };
   },
 
   methods: {
-    runCustomSelenium() {
-      // Prepare the payload with actions and options
-      const payload = {
-        actions: this.selectedActions,
-        loopCount: this.loopCount,
-        isHeadless: this.isHeadless, // Include headless option in the payload
-      };
+    async runCustomSelenium() {
+      this.results = []; // Reset results before running
+      for (let i = 1; i <= this.loopCount; i++) {
+        const payload = {
+          actions: this.selectedActions,
+          isHeadless: this.isHeadless,
+        };
 
-      fetch("/selenium", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
-        .then((response) => {
+        try {
+          const response = await fetch("/selenium", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
-          return response.json();
-        })
-        .then((data) => {
-          this.jobResult = data;
-        })
-        .catch((error) => {
+          const data = await response.json();
+          this.results.push(`Loop ${i}: ${data}`); // Push the result of each loop with a message
+        } catch (error) {
           console.error("Error:", error);
-          this.jobResult = "Failed to run test";
-        });
+          this.results.push(`Loop ${i}: Failed to run test`);
+        }
+      }
     },
 
     adjustIframeHeight() {
@@ -177,10 +192,10 @@ export default {
     },
 
     resetResult() {
-      this.jobResult = null;
+      this.results = [];
       this.selectedActions = [];
-      this.loopCount = 1; 
-      this.isHeadless = false; 
+      this.loopCount = 1;
+      this.isHeadless = false;
     },
   },
 };

@@ -40,7 +40,8 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="botMitigationDropdown">
               <li><router-link class="dropdown-item" to="/known-bots">Known Bots</router-link></li>
-              <li><router-link class="dropdown-item" to="/biometrics-based-detection">Biometrics Based Detection</router-link></li>
+              <li><router-link class="dropdown-item" to="/bot-biometric">Biometrics Based Detection</router-link></li>
+              <li><router-link class="dropdown-item" to="/bot-selenium">Selenium Sandbox</router-link></li>
               <li><router-link class="dropdown-item" to="/bot-deception">Bot Deception</router-link></li>
               <li><router-link class="dropdown-item" to="/threshold-based-detection">Threshold Based Detection</router-link></li>
               <li><router-link class="dropdown-item" to="/ml-based-bot-detection">ML Based Bot Detection</router-link></li>

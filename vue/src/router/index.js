@@ -10,8 +10,9 @@ import MachineLearning from '../components/01-web-protection/MachineLearning.vue
 import CookieSecurity from '../components/01-web-protection/CookieSecurity.vue';
 import CredentialStuffingDefense from '../components/01-web-protection/CredentialStuffingDefense.vue';
 
-import BiometricsBasedDetection from '../components/02-bot-mitigation/BiometricsBasedDetection.vue';
+import BotSelenium from '../components/02-bot-mitigation/BotSelenium.vue';
 import BotDeception from '../components/02-bot-mitigation/BotDeception.vue';
+import BotBiometric from '../components/02-bot-mitigation/BotBiometric.vue';
 import KnownBots from '../components/02-bot-mitigation/KnownBots.vue';
 import MLBasedBotDetection from '../components/02-bot-mitigation/MLBasedBotDetection.vue';
 import ThresholdBasedDetection from '../components/02-bot-mitigation/ThresholdBasedDetection.vue';
@@ -36,8 +37,9 @@ const routes = [
   { path: '/cookie-security', component: CookieSecurity },
   { path: '/credential-stuffing-defense', component: CredentialStuffingDefense },
 
-  { path: '/biometrics-based-detection', component: BiometricsBasedDetection },
+  { path: '/bot-biometric', component: BotBiometric },
   { path: '/bot-deception', component: BotDeception },
+  { path: '/bot-selenium', component: BotSelenium },
   { path: '/known-bots', component: KnownBots },
   { path: '/ml-based-bot-detection', component: MLBasedBotDetection },
   { path: '/threshold-based-detection', component: ThresholdBasedDetection },

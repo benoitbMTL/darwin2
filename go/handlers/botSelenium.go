@@ -27,6 +27,7 @@ const (
 type requestParams struct {
 	SelectedActions []string `json:"actions"`
 	LoopCount       int      `json:"loopCount"`
+	Headless        bool     `json:"headless"`
 }
 
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,6 +69,17 @@ func HandleSelenium(c echo.Context) error {
 	fmt.Printf("Set general capabilities for Selenium WebDriver\n")
 	caps := selenium.Capabilities{"browserName": "chrome"}
 
+	// Define Chrome-specific capabilities with conditional headless argument
+	chromeArgs := []string{
+		"--no-sandbox",
+		"--disable-gpu",
+		"--ignore-certificate-errors",
+		"--window-size=1280x800",
+	}
+	if reqParams.Headless {
+		chromeArgs = append(chromeArgs, "--headless") // Add headless if true
+	}
+
 	// Define Chrome-specific capabilities
 	chromeCaps := chrome.Capabilities{
 		Path: chromePath,
@@ -77,13 +89,7 @@ func HandleSelenium(c echo.Context) error {
 			// 2 blocks all notifications
 			// 0 asks user every time (prompt)
 		},
-		Args: []string{
-			// "--headless", // Run Chrome in headless mode
-			"--no-sandbox",
-			"--disable-gpu", // Disables GPU hardware acceleration. If software renderer is not in place, then the GPU process won't launch.
-			"--ignore-certificate-errors",
-			"--window-size=1280x800", // Optional, specifies the window size
-		},
+		Args: chromeArgs,
 	}
 
 	// Merge Chrome-specific capabilities into the general capabilities
@@ -116,8 +122,9 @@ func HandleSelenium(c echo.Context) error {
 		return err
 	}
 
-	// Log the received actions and loop count
-	fmt.Printf("\033[35m\n----------------------ACTIONS------------------------------\nLoop Count %d\n", reqParams.LoopCount)
+	// Log the received actions, loop count, and headless mode
+	fmt.Printf("\033[35m\n----------------------ACTIONS------------------------------\nLoop Count: %d\n", reqParams.LoopCount)
+	fmt.Printf("Headless: %t\n", reqParams.Headless) // Print headless mode status
 	for _, action := range reqParams.SelectedActions {
 		fmt.Printf("[+] %s\n", action)
 	}
