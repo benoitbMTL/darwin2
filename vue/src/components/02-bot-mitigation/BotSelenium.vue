@@ -160,7 +160,8 @@ export default {
       for (let i = 1; i <= this.loopCount; i++) {
         const payload = {
           actions: this.selectedActions,
-          isHeadless: this.isHeadless,
+          loopCount: this.loopCount,
+          headless: this.isHeadless, 
         };
 
         try {
