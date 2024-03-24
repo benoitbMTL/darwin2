@@ -102,7 +102,7 @@
         </div>
 
 
-        <div> <!-- Result List -->
+        <div v-if="results.length > 0"> <!-- Show this portion only if there's at least one result -->
           <h6>Result</h6> <!-- Title for List 3 -->
           <div class="card" style="width: 24rem;">
             <ul class="list-group">
