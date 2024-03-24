@@ -102,15 +102,11 @@
         </div>
       </div>
 
-
-
-
       <div class="mt-3">
         <button class="btn btn-primary btn-sm me-2" @click="runCustomSelenium">Run Actions</button>
         <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
         <span v-if="jobResult" class="result-message text-danger fw-bold">{{ jobResult }}</span>
       </div>
-
 
     </div>
   </div>
@@ -137,15 +133,18 @@ export default {
       showHelp: false,
       jobResult: null,
       selectedActions: [],
-      loopCount: 1, // Define loopCount with a default value
+      loopCount: 1, // Default value for loop count
+      isHeadless: false, // Default value for headless mode
     };
   },
 
   methods: {
     runCustomSelenium() {
+      // Prepare the payload with actions and options
       const payload = {
         actions: this.selectedActions,
         loopCount: this.loopCount,
+        isHeadless: this.isHeadless, // Include headless option in the payload
       };
 
       fetch("/selenium", {
@@ -180,7 +179,8 @@ export default {
     resetResult() {
       this.jobResult = null;
       this.selectedActions = [];
-      this.loopCount = 1;
+      this.loopCount = 1; 
+      this.isHeadless = false; 
     },
   },
 };
