@@ -116,7 +116,11 @@
       </div>
 
       <div class="mt-3">
-        <button class="btn btn-primary btn-sm me-2" @click="runCustomSelenium">Run Actions</button>
+        <button class="btn btn-primary btn-sm me-2" @click="runCustomSelenium" :disabled="isRunning">
+          <span v-if="isRunning" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          <span v-if="!isRunning">Run Actions</span>
+          <span v-if="isRunning">Running...</span>
+        </button>
         <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
       </div>
 
@@ -151,17 +155,19 @@ export default {
       selectedActions: [],
       loopCount: 1, // Default value 
       isHeadless: false, // Default value 
+      isRunning: false, // Add this line
     };
   },
 
   methods: {
     async runCustomSelenium() {
+      this.isRunning = true; // Start running
       this.results = []; // Reset results before running
       for (let i = 1; i <= this.loopCount; i++) {
         const payload = {
           actions: this.selectedActions,
           loopCount: this.loopCount,
-          headless: this.isHeadless, 
+          headless: this.isHeadless,
         };
 
         try {
