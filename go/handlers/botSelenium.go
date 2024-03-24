@@ -124,7 +124,7 @@ func HandleSelenium(c echo.Context) error {
 
 	// Log the received actions, loop count, and headless mode
 	fmt.Printf("\033[35m\n----------------------ACTIONS------------------------------\nLoop Count: %d\n", reqParams.LoopCount)
-	fmt.Printf("Headless: %t\n", reqParams.Headless) // Print headless mode status
+	fmt.Printf("Headless: %t\n", reqParams.IsHeadless) // Print headless mode status
 	for _, action := range reqParams.SelectedActions {
 		fmt.Printf("[+] %s\n", action)
 	}
