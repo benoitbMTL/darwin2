@@ -8,8 +8,8 @@ rm -f "$output_file"
 
 # List of files to process
 files=(
-go/config/app_config.go
-vue/src/components/05-tool/ConfigForm.vue
+go/handlers/botSelenium.go
+vue/src/components/02-bot-mitigation/BiometricsBasedDetection.vue
 go/routes/routes.go
 )
 
