@@ -104,7 +104,7 @@
 
         <div> <!-- Result List -->
           <h6>Result</h6> <!-- Title for List 3 -->
-          <div class="card" style="width: 18rem;">
+          <div class="card" style="width: 24rem;">
             <ul class="list-group">
               <li class="list-group-item" v-for="(result, index) in results" :key="index">
                 {{ result }}

@@ -27,7 +27,7 @@ const (
 type requestParams struct {
 	SelectedActions []string `json:"actions"`
 	LoopCount       int      `json:"loopCount"`
-	Headless        bool     `json:"headless"`
+	IsHeadless      bool     `json:"headless"`
 }
 
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ func HandleSelenium(c echo.Context) error {
 		"--ignore-certificate-errors",
 		"--window-size=1280x800",
 	}
-	if reqParams.Headless {
+	if reqParams.IsHeadless {
 		chromeArgs = append(chromeArgs, "--headless") // Add headless if true
 	}
 
