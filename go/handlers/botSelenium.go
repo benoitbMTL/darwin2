@@ -36,7 +36,7 @@ func HandleSelenium(c echo.Context) error {
 	var actionErrors []string // To record action errors
 
 	if err := c.Bind(&reqParams); err != nil {
-		log.Printf("Failed to bind request body: %v", err)
+		fmt.Printf("Failed to bind request body: %v", err)
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request format")
 	}
 
@@ -118,12 +118,11 @@ func HandleSelenium(c echo.Context) error {
 	}
 
 	// Log the received actions and loop count
-	log.Printf("\n----------------------ACTIONS----------------------\nLoop Count %d", reqParams.LoopCount)
+	fmt.Printf("\033[35m\n----------------------ACTIONS------------------------------\nLoop Count %d\n", reqParams.LoopCount)
 	for _, action := range reqParams.SelectedActions {
-		log.Printf("[+] %s", action)
+		fmt.Printf("[+] %s\n", action)
 	}
-	log.Println("---------------------------------------------------")
-	log.Println() // Empty line
+	fmt.Println("-----------------------------------------------------------\033[0m")
 
 	// Allow time for the page to load
 	sleepForShortDuration()
