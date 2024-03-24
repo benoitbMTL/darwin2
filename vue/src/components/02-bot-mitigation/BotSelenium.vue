@@ -119,7 +119,7 @@
         <button class="btn btn-primary btn-sm me-2" @click="runCustomSelenium" :disabled="isRunning">
           <span v-if="isRunning" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           <span v-if="!isRunning">Run Actions</span>
-          <span v-if="isRunning">Running...</span>
+          <span v-if="isRunning"> Running...</span>
         </button>
         <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
       </div>
