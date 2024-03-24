@@ -1,7 +1,6 @@
 <template>
   <div class="card my-4">
 
-
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>Biometrics-Based Detection</h5>
       <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
@@ -9,12 +8,12 @@
     </div>
 
     <div class="card-body">
+      <label class="form-label">Automated Web Interactions on Juice Shop with Selenium. Choose Your Actions:</label>
 
-      <div class="d-flex justify-content-between">
-        <div>
+      <div class="d-flex justify-content-start gap-3"> <!-- Use 'gap-3' for space between the lists -->
 
-          <label class="form-label">Automated Web Interactions on Juice Shop with Selenium. Choose Your Actions:</label>
-
+        <div> <!-- Actions List -->
+          <h6>Actions</h6> <!-- Title for List 1 -->
           <div class="card" style="width: 18rem;">
             <ul class="list-group list-group-flush">
               <li class="list-group-item">
@@ -77,33 +76,39 @@
               </li>
             </ul>
           </div>
-
-          <div class="mt-3">
-            <button class="btn btn-primary btn-sm me-2" @click="runCustomSelenium">Run Actions</button>
-            <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
-            <span v-if="jobResult" class="result-message text-danger fw-bold">{{ jobResult }}</span>
-          </div>
+        </div>
 
 
-          <div>
-            <div class="card" style="width: 18rem;">
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                  Number of loops
-                  <input type="number" class="form-control" v-model="loopCount" min="1" style="width: 100px;"
-                    placeholder="1">
-                </li>
-                <li class="list-group-item">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="headless" v-model="isHeadless">
-                    <label class="form-check-label" for="headless">Headless</label>
-                  </div>
-                </li>
-              </ul>
-            </div>
+        <div> <!-- Options List -->
+          <h6>Options</h6> <!-- Title for List 2 -->
+          <div class="card" style="width: 18rem;">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Number of loops
+                <input type="number" class="form-control" v-model="loopCount" min="1" style="width: 100px;"
+                  placeholder="1">
+              </li>
+              <li class="list-group-item">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="headless" v-model="isHeadless">
+                  <label class="form-check-label" for="headless">Headless</label>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
+
+
+
+
+      <div class="mt-3">
+        <button class="btn btn-primary btn-sm me-2" @click="runCustomSelenium">Run Actions</button>
+        <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
+        <span v-if="jobResult" class="result-message text-danger fw-bold">{{ jobResult }}</span>
+      </div>
+
+
     </div>
   </div>
 
