@@ -10,7 +10,7 @@
     <div class="card-body">
       <label class="form-label">Automated Web Interactions on Juice Shop with Selenium.</label>
 
-      <div class="d-flex justify-content-start gap-3 mb-3"> 
+      <div class="d-flex justify-content-start gap-3 mt-3"> 
 
         <div> <!-- Actions List -->
           <h6>Actions</h6> <!-- Title for List 1 -->
