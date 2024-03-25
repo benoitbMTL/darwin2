@@ -594,7 +594,7 @@ func sleepForShortDuration(reqParams requestParams) {
             return
         }
         if speed == 10 {
-            duration = 10 
+            duration = 50 
         } else {
             duration = (10 - speed) * 100
         }
