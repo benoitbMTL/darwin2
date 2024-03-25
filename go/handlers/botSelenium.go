@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+    "strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/tebeka/selenium"
@@ -28,6 +29,7 @@ type requestParams struct {
 	SelectedActions []string `json:"actions"`
 	LoopCount       int      `json:"loopCount"`
 	IsHeadless      bool     `json:"headless"`
+    Speed           string   `json:"speed"`
 }
 
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,7 +136,7 @@ func HandleSelenium(c echo.Context) error {
 	fmt.Println("-----------------------------------------------------------\033[0m")
 
 	// Allow time for the page to load
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 
 	// Maximize the Browser Window
 	err = webDriver.MaximizeWindow("")
@@ -143,7 +145,7 @@ func HandleSelenium(c echo.Context) error {
 	}
 
 	// Allow time for the next action
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 
 	// Dismiss Welcome Page - always required
 	fmt.Printf("\033[34m\nDismiss Welcome Page & Cookie Message\033[0m\n")
@@ -196,7 +198,7 @@ func HandleSelenium(c echo.Context) error {
 
 // DISMISS WELCOME PAGE & COOKIE WARNING ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func dismissWelcomePage(webDriver selenium.WebDriver) error {
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 
 	// Click the 'Dismiss' button to close the welcome banner
 	fmt.Println("Clicking the 'Dismiss' button to close the welcome banner")
@@ -212,14 +214,14 @@ func dismissWelcomePage(webDriver selenium.WebDriver) error {
 
 	fmt.Println("[+] Done Dismiss Welcome Page & Cookie Message")
 
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 
 	return nil
 }
 
 // CLICK ALL PRODUCTS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func clickAllProducts(webDriver selenium.WebDriver) error {
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 
 	// Find all product elements on the page
 	products, err := webDriver.FindElements(selenium.ByXPATH, `//div[@aria-label="Click for more information about the product"]`)
@@ -252,7 +254,7 @@ func clickAllProducts(webDriver selenium.WebDriver) error {
 	}
 
 	fmt.Println("[+] Done clicking around on the Startpage")
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 	return nil // No errors encountered, or we've chosen not to return early for errors
 }
 
@@ -333,7 +335,7 @@ func login(webDriver selenium.WebDriver, url string, credentials utils.Credentia
 	}
 
 	fmt.Println("[+] Successfully logged into the Webshop.")
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 
 	return nil
 }
@@ -344,7 +346,7 @@ func addNewAddress(webDriver selenium.WebDriver, url string, address utils.Addre
 	if err := webDriver.Get(url + "/#/address/saved"); err != nil {
 		return fmt.Errorf("error navigating to the address page: %w", err)
 	}
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 
 	if err := clickButton(webDriver, `//button[@aria-label="Add a new address"]`); err != nil {
 		return fmt.Errorf("failed to click 'Add a new address': %w", err)
@@ -581,10 +583,20 @@ func logout(webDriver selenium.WebDriver) error {
 
 // HELPER FUNCTIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func sleepForShortDuration() {
-	// Random duration between 100 and 900 milliseconds
-	duration := rand.Intn(800) + 100 // 100 to 900
-	time.Sleep(time.Duration(duration) * time.Millisecond)
+func sleepForShortDuration(reqParams requestParams) {
+    var duration int
+    if reqParams.Speed == "random" {
+        duration = rand.Intn(800) + 100
+    } else {
+        speed, err := strconv.Atoi(reqParams.Speed)
+        if err != nil {
+            fmt.Println("Error converting speed to integer:", err)
+            return
+        }
+        duration = (10 - speed) * 100
+    }
+    fmt.Printf("Sleeping for %d milliseconds based on speed %s\n", duration, reqParams.Speed)
+    time.Sleep(time.Duration(duration) * time.Millisecond)
 }
 
 func sleepForMediumDuration() {
@@ -612,19 +624,19 @@ func selectFirstOption(webDriver selenium.WebDriver, xpath string) error {
 		fmt.Printf("Error clicking first option with xpath %s: %v\n", xpath, err)
 		return err
 	}
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 	return nil
 }
 
 func clickButton(webDriver selenium.WebDriver, xpath string) error {
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 	button, err := webDriver.FindElement(selenium.ByXPATH, xpath)
 	if err != nil {
 		// Log the error and return it
 		fmt.Printf("Error finding button with xpath %s: %v\n", xpath, err)
 		return fmt.Errorf("error finding button with xpath %s: %w", xpath, err)
 	}
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 
 	// Attempt to click the button
 	if err := button.Click(); err != nil {
@@ -633,7 +645,7 @@ func clickButton(webDriver selenium.WebDriver, xpath string) error {
 		return fmt.Errorf("error clicking on button with xpath %s: %w", xpath, err)
 	}
 
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 	return nil // Return nil if there was no error
 }
 
@@ -655,7 +667,7 @@ func fillInputField(webDriver selenium.WebDriver, xpath string, value string) er
 		return err
 	}
 
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 	return nil
 }
 
@@ -671,7 +683,7 @@ func selectDropdownOption(webDriver selenium.WebDriver, dropdownStrategy string,
 		fmt.Printf("Error clicking the dropdown: %v\n", err)
 		return err
 	}
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 
 	// Click the specified option within the dropdown
 	fmt.Println("Selecting an option from the dropdown")
@@ -684,7 +696,7 @@ func selectDropdownOption(webDriver selenium.WebDriver, dropdownStrategy string,
 		fmt.Printf("Error clicking the dropdown option: %v\n", err)
 		return err
 	}
-	sleepForShortDuration()
+	sleepForShortDuration(reqParams)
 
 	return nil
 }

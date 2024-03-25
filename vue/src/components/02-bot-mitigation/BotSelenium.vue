@@ -83,20 +83,33 @@
           <h6>Options</h6> <!-- Title for List 2 -->
           <div class="card" style="width: 18rem;">
             <ul class="list-group list-group-flush">
-
               <li class="list-group-item d-flex align-items-center">
                 Number of loops
                 <input type="number" class="form-control form-control-sm ms-2" v-model="loopCount" min="1"
                   style="width: 75px;" placeholder="1">
               </li>
-
               <li class="list-group-item">
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" id="headless" v-model="isHeadless">
                   <label class="form-check-label" for="headless">Headless</label>
                 </div>
               </li>
-
+              <li class="list-group-item d-flex align-items-center">
+                Speed
+                <select class="form-select form-select-sm ms-2" v-model="selectedSpeed" style="width: 100px;">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="random">Random</option>
+                </select>
+              </li>
             </ul>
           </div>
         </div>
@@ -156,6 +169,7 @@ export default {
       loopCount: 1, // Default value 
       isHeadless: false, // Default value 
       isRunning: false, // Add this line
+      selectedSpeed: "5", // Default value
     };
   },
 
@@ -168,6 +182,7 @@ export default {
           actions: this.selectedActions,
           loopCount: this.loopCount,
           headless: this.isHeadless,
+          speed: this.selectedSpeed,
         };
 
         try {
@@ -205,6 +220,7 @@ export default {
       this.selectedActions = [];
       this.loopCount = 1;
       this.isHeadless = false;
+      this.selectedSpeed = "5";
     },
   },
 };
