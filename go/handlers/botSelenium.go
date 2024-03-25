@@ -11,8 +11,8 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
-    "strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/tebeka/selenium"
@@ -29,11 +29,10 @@ type requestParams struct {
 	SelectedActions []string `json:"actions"`
 	LoopCount       int      `json:"loopCount"`
 	IsHeadless      bool     `json:"headless"`
-    Speed           string   `json:"speed"`
+	Speed           string   `json:"speed"`
 }
 
 var reqParams requestParams
-
 
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func HandleSelenium(c echo.Context) error {
@@ -584,23 +583,19 @@ func logout(webDriver selenium.WebDriver) error {
 // HELPER FUNCTIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func sleepForShortDuration(reqParams requestParams) {
-    var duration int
-    if reqParams.Speed == "random" {
-        duration = rand.Intn(800) + 100
-    } else {
-        speed, err := strconv.Atoi(reqParams.Speed)
-        if err != nil {
-            fmt.Println("Error converting speed to integer:", err)
-            return
-        }
-        if speed == 10 {
-            duration = 50 
-        } else {
-            duration = (10 - speed) * 100
-        }
-    }
-    fmt.Printf("Sleeping for %d milliseconds based on speed %s\n", duration, reqParams.Speed)
-    time.Sleep(time.Duration(duration) * time.Millisecond)
+	var duration int
+	if reqParams.Speed == "random" {
+		duration = rand.Intn(800) + 100
+	} else {
+		speed, err := strconv.Atoi(reqParams.Speed)
+		if err != nil {
+			fmt.Println("Error converting speed to integer:", err)
+			return
+		}
+		duration = (10 - (speed - 1) ) * 100
+	}
+	fmt.Printf("Sleeping for %d milliseconds based on speed %s\n", duration, reqParams.Speed)
+	time.Sleep(time.Duration(duration) * time.Millisecond)
 }
 
 func sleepForMediumDuration() {
