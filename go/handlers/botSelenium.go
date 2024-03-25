@@ -593,7 +593,11 @@ func sleepForShortDuration(reqParams requestParams) {
             fmt.Println("Error converting speed to integer:", err)
             return
         }
-        duration = (10 - speed) * 100
+        if speed == 10 {
+            duration = 10 
+        } else {
+            duration = (10 - speed) * 100
+        }
     }
     fmt.Printf("Sleeping for %d milliseconds based on speed %s\n", duration, reqParams.Speed)
     time.Sleep(time.Duration(duration) * time.Millisecond)
