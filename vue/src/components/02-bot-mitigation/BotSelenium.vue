@@ -169,6 +169,7 @@ export default {
       isHeadless: false, // Default value 
       isRunning: false, // Add this line
       selectedSpeed: "5", // Default value
+      config: {}, // Initialize config as an empty object
     };
   },
 
