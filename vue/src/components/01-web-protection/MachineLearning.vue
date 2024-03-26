@@ -33,7 +33,7 @@
 
         <p>
           This tool will help you protect a
-          <a :href="bankingFormUrl" target="_blank">banking form</a>
+          <a :href="bankingDynamicUrl" target="_blank">banking form</a>
           with machine learning, thereby blocking zero-day attacks and reducing
           the attack surface.
         </p>
@@ -231,20 +231,19 @@ end`,
     };
   },
 
+  mounted() {
+    this.fetchConfig(); // Fetch config on component mount
+    this.highlightCode();
+  },
+  
   computed: {
-    bankingFormUrl() {
+    bankingDynamicUrl() {
       if (this.config.FABRICLABSTORY) {
         return `https://bank.${this.config.FABRICLABSTORY}.fabriclab.ca`;
       } else {
         return this.config.BANKURL;
       }
     }
-  },
-
-
-  mounted() {
-    this.fetchConfig(); // Fetch config on component mount
-    this.highlightCode();
   },
 
   watch: {

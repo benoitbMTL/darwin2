@@ -8,7 +8,7 @@
     </div>
 
     <div class="card-body">
-      <label class="form-label">Automated Web Interactions on <a :href="juiceShopUrl" target="_blank">Juice Shop</a> web application with Selenium.</label>
+      <label class="form-label">Automated Web Interactions on <a :href="juiceShopDynamicUrl" target="_blank">Juice Shop</a> web application with Selenium.</label>
       <div class="d-flex justify-content-start gap-3 mt-3">
 
         <div> <!-- Actions List -->
@@ -169,24 +169,25 @@ export default {
       isHeadless: false, // Default value 
       isRunning: false, // Add this line
       selectedSpeed: "5", // Default value
-      config: {}, // Initialize config as an empty object
-    };
+      config: {
+        JUICESHOPURL: "",
+      },    };
   },
 
   mounted() {
-    this.fetchConfig(); // Ensure this is correctly fetching and setting config
+    this.fetchConfig(); // Fetch config on component mount
   },
-
+  
   computed: {
-    juiceShopUrl() {
+    juiceShopDynamicUrl() {
       if (this.config.FABRICLABSTORY) {
-        return `https://speedtest.${this.config.FABRICLABSTORY}.fabriclab.ca`;
+        return `https://juiceshop.${this.config.FABRICLABSTORY}.fabriclab.ca`;
       } else {
         return this.config.JUICESHOPURL;
       }
     }
   },
-
+  
 
   methods: {
     fetchConfig() {
