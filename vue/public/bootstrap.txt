@@ -918,7 +918,7 @@
       next
       edit "JUICESHOP_BOT_POLICY"
         set bot-deception JUICESHOP_DECEPTION
-        set biometrics-based-detection JUICESHOP_BIOMETRICS
+        set biometrics-based-detection JUICESHOP_BOT_BIOMETRICS
         set threshold-based-detection JUICESHOP_THRESHOLD
         set known-bots JUICESHOP_KNOWN_BOTS
       next
