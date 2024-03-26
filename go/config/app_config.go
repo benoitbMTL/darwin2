@@ -73,7 +73,7 @@ func Initialize() {
 		USERAGENT:      "FortiWeb Demo Tool",
 		FABRICLABSTORY: ""}
 
-	configsMap["Fabric Lab"] = AppConfig{
+	configsMap["Fabric Lab (fortiweb)"] = AppConfig{
 		NAME:           "Fabric Lab",
 		DVWAURL:        "https://dvwa.corp.fabriclab.ca",
 		BANKURL:        "https://bank.corp.fabriclab.ca/bank.html",
@@ -81,9 +81,9 @@ func Initialize() {
 		PETSTOREURL:    "https://petstore3.corp.fabriclab.ca/api/v3/pet",
 		SPEEDTESTURL:   "https://speedtest.corp.fabriclab.ca",
 		USERNAMEAPI:    "userapi",
-		PASSWORDAPI:    "fortinet123!",
+		PASSWORDAPI:    "userAPI123!",
 		VDOMAPI:        "root",
-		FWBMGTIP:       "fortiweb.corp.fabriclab.ca",
+		FWBMGTIP:       "10.163.7.21",
 		FWBMGTPORT:     "443",
 		MLPOLICY:       "DVWA_POLICY",
 		USERAGENT:      "FortiWeb Demo Tool",
