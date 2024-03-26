@@ -118,7 +118,13 @@ func buildHTMLTable(products []Product, quantities map[int]int) string {
 	var sb strings.Builder
 
 	// Base URL for images
-    juiceshopUrl := config.CurrentConfig.JUICESHOPURL
+	var juiceshopUrl string
+	if len(config.CurrentConfig.FABRICLABSTORY) > 0 {
+		juiceshopUrl = "https://juiceshop." + config.CurrentConfig.FABRICLABSTORY + ".fabriclab.ca"
+	} else {
+		juiceshopUrl = config.CurrentConfig.JUICESHOPURL
+	}
+
     baseURL := juiceshopUrl + "/assets/public/images/products/"
 
 	// Start the HTML table
