@@ -276,7 +276,7 @@ computed: {
         .then((response) => response.json())
         .then((data) => {
           this.config = data; // Update config with fetched data
-          console.log("Config fetched and set: ", this.config);
+          console.log("Config fetched: ", this.config);
         })
         .catch((error) => {
           console.error("Error fetching config:", error);

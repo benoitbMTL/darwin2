@@ -178,7 +178,7 @@ export default {
 
   computed: {
     juiceShopUrl() {
-      if (this.config.JUICESHOPURL) {
+      if (this.config.FABRICLABSTORY) {
         return `https://speedtest.${this.config.FABRICLABSTORY}.fabriclab.ca`;
       } else {
         return this.config.JUICESHOPURL;
@@ -188,14 +188,13 @@ export default {
 
 
   methods: {
-
     fetchConfig() {
       // Fetch config from server
       fetch("/config")
         .then((response) => response.json())
         .then((data) => {
           this.config = data; // Update config with fetched data
-          console.log("Config fetched and set: ", this.config);
+          console.log("Config fetched: ", this.config);
         })
         .catch((error) => {
           console.error("Error fetching config:", error);
