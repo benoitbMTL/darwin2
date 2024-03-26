@@ -8,8 +8,7 @@
     </div>
 
     <div class="card-body">
-      <label class="form-label">Automated Web Interactions on Juice Shop with Selenium.</label>
-
+      <label class="form-label">Automated Web Interactions on <a :href="juiceShopUrl" target="_blank">Juice Shop</a> web application with Selenium.</label>
       <div class="d-flex justify-content-start gap-3 mt-3">
 
         <div> <!-- Actions List -->
@@ -173,7 +172,36 @@ export default {
     };
   },
 
+  mounted() {
+    this.fetchConfig(); // Ensure this is correctly fetching and setting config
+  },
+
+  computed: {
+    juiceShopUrl() {
+      if (this.config.JUICESHOPURL) {
+        return `https://speedtest.${this.config.FABRICLABSTORY}.fabriclab.ca`;
+      } else {
+        return this.config.JUICESHOPURL;
+      }
+    }
+  },
+
+
   methods: {
+
+    fetchConfig() {
+      // Fetch config from server
+      fetch("/config")
+        .then((response) => response.json())
+        .then((data) => {
+          this.config = data; // Update config with fetched data
+          console.log("Config fetched and set: ", this.config);
+        })
+        .catch((error) => {
+          console.error("Error fetching config:", error);
+        });
+    },
+
     async runCustomSelenium() {
       this.isRunning = true; // Start running
       this.results = []; // Reset results before running
