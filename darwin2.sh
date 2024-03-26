@@ -125,28 +125,56 @@ install_environment() {
     curl -L -s -O ${GOURL} || { echo "Failed to download Go."; exit 1; }
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $GOPACKAGE || { echo "Failed to install Go."; exit 1; }
     rm -f ${GOPACKAGE}
-    export PATH=$PATH:/usr/local/go/bin
-
+    echo "Done!"
+    
     # Define GO PATH
     echo "Exporting Go binary path..."
+    export PATH=$PATH:/usr/local/go/bin
 
-    # Set GOROOT
-    if ! grep -q "export GOROOT=/usr/local/go" ~/.bashrc; then
-        echo "export GOROOT=/usr/local/go" >> ~/.bashrc
+    # Get the current user's shell
+    CURRENT_SHELL=$(echo $SHELL | awk -F'/' '{print $NF}')
+
+    FILE_TO_UPDATE=""
+
+    # Determine which configuration file to update based on the shell
+    case $CURRENT_SHELL in
+        bash)
+            FILE_TO_UPDATE="$HOME/.bashrc"
+            ;;
+        zsh)
+            FILE_TO_UPDATE="$HOME/.zshrc"
+            ;;
+        *)
+            echo "Unsupported shell or unable to determine."
+            exit 1
+            ;;
+    esac
+
+    # Update the corresponding configuration file
+    if [ -n "$FILE_TO_UPDATE" ]; then
+        # Set GOROOT
+        if ! grep -q "export GOROOT=/usr/local/go" "$FILE_TO_UPDATE"; then
+            echo "export GOROOT=/usr/local/go" >> "$FILE_TO_UPDATE"
+        fi
+
+        # Set GOPATH
+        if ! grep -q "export GOPATH=\$HOME/go" "$FILE_TO_UPDATE"; then
+            echo "export GOPATH=\$HOME/go" >> "$FILE_TO_UPDATE"
+        fi
+
+        # Set PATH for Go
+        if ! grep -q "\$GOROOT/bin:\$GOPATH/bin" "$FILE_TO_UPDATE"; then
+            echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> "$FILE_TO_UPDATE"
+        fi
+
+        echo "Configuration updated in $FILE_TO_UPDATE"
+    else
+        echo "No configuration file to update."
     fi
 
-    # Set GOPATH
-    if ! grep -q "export GOPATH=\$HOME/go" ~/.bashrc; then
-        echo "export GOPATH=\$HOME/go" >> ~/.bashrc
-    fi
-
-    # Set PATH for Go
-    # This checks for the presence of GOROOT and GOPATH in the PATH, rather than the literal line, for flexibility.
-    if ! grep -q "\$GOROOT/bin:\$GOPATH/bin" ~/.bashrc; then
-        echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> ~/.bashrc
-    fi
     print_completion "Done!"
-    print_completion "You might need to source ~/.bashrc or log out and back in for this change to take effect"
+
+    print_completion "You might need to source $FILE_TO_UPDATE or log out and back in for this change to take effect."
 
     # Install Node.js and npm (https://deb.nodesource.com)
     ##############################################################
