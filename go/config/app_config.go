@@ -137,6 +137,22 @@ func Initialize() {
 		USERAGENT:      "FortiWeb Demo Tool",
 		FABRICLABSTORY: ""}
 
+	configsMap["Local Lab"] = AppConfig{
+		NAME:           "Local Lab",
+		DVWAURL:        "https://dvwa.corp.fabriclab.ca",
+		BANKURL:        "https://bank.corp.fabriclab.ca/bank.html",
+		JUICESHOPURL:   "https://juiceshop.corp.fabriclab.ca",
+		PETSTOREURL:    "https://petstore3.corp.fabriclab.ca/api/v3/pet",
+		SPEEDTESTURL:   "https://speedtest.corp.fabriclab.ca",
+		USERNAMEAPI:    "userapi",
+		PASSWORDAPI:    "fortinet123!",
+		VDOMAPI:        "root",
+		FWBMGTIP:       "192.168.4.2",
+		FWBMGTPORT:     "443",
+		MLPOLICY:       "DVWA_POLICY",
+		USERAGENT:      "FortiWeb Demo Tool",
+		FABRICLABSTORY: ""}
+
 	// Add your defaultConfig to the configsMap
 	configsMap[defaultConfig.NAME] = defaultConfig
 
