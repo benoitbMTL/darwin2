@@ -40,7 +40,7 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="botMitigationDropdown">
               <li><router-link class="dropdown-item" to="/known-bots">Known Bots</router-link></li>
-              <li><router-link class="dropdown-item" to="/bot-selenium">Selenium Sandbox</router-link></li>
+              <li><router-link class="dropdown-item" to="/bot-selenium">Selenium Playground</router-link></li>
               <li><router-link class="dropdown-item" to="/bot-deception">Bot Deception</router-link></li>
               <li><router-link class="dropdown-item" to="/bot-scraping">Web Scraping</router-link></li>
             </ul>
