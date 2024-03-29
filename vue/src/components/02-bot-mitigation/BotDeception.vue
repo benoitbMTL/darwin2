@@ -2,27 +2,34 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>Bot Deception</h5>
-      <i
-        class="bi bi-question-circle-fill bs-icon"
-        style="font-size: 1.5rem"
-        @click="showHelp = !showHelp"></i>
+      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
       <!-- Bootstrap icon for help -->
     </div>
+
 
     <div class="card-body">
       <p class="card-text">
         Bot Deception inserts invisible links in HTML responses to distinguish
-        between regular clients and malicious bots like web crawlers.
+        between regular clients and malicious bots like web crawlers. Select a target and run the bot.
       </p>
-      <button class="btn btn-primary btn-sm me-2" @click="viewPageSource">
-        View Page Source
-      </button>
-      <button class="btn btn-primary btn-sm me-2" @click="performBotDeception">
-        Run Deception
-      </button>
-      <button class="btn btn-secondary btn-sm me-2" @click="resetResult">
-        Reset
-      </button>
+
+      <div class="d-flex align-items-center mb-3">
+        <select class="form-select form-select-sm me-2" id="targetSelection" v-model="selectedTarget" style="width: 125px">
+          <option value="DVWA">dvwa</option>
+          <option value="JuiceShop">Juice Shop</option>
+        </select>
+
+
+        <button class="btn btn-primary btn-sm me-2" @click="viewPageSource">
+          View Page Source
+        </button>
+        <button class="btn btn-primary btn-sm me-2" @click="performBotDeception">
+          Run Deception
+        </button>
+        <button class="btn btn-secondary btn-sm me-2" @click="resetResult">
+          Reset
+        </button>
+      </div>
 
       <div v-if="pageSource" class="mt-3">
         <h6>
@@ -34,10 +41,7 @@
 
       <div v-if="jobResult" class="mt-4 mb-3">
         <h6>Bot Deception Result:</h6>
-        <iframe
-          ref="botIframe"
-          :srcdoc="jobResult"
-          @load="adjustIframeHeight"
+        <iframe ref="botIframe" :srcdoc="jobResult" @load="adjustIframeHeight"
           style="width: 100%; border: 1px solid lightgray"></iframe>
       </div>
     </div>
@@ -67,6 +71,7 @@ export default {
       jobResult: "",
       showHelp: false,
       highlightedCode: "",
+      selectedTarget: 'DVWA', // Valeur par défaut
     };
   },
 
@@ -77,10 +82,10 @@ export default {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
+        body: `selectedTarget=${this.selectedTarget}`,
       })
         .then((response) => response.text())
         .then((html) => {
-          // Process and update pageSource and highlightedCode with last 10 lines
           const lines = html.split("\n");
           const lastTenLines = lines.slice(-10).join("\n");
           this.highlightedCode = this.escapeHtml(lastTenLines);
@@ -92,12 +97,12 @@ export default {
     },
 
     performBotDeception() {
-      // Ensure this method matches the button's @click assignment
       fetch("/bot-deception", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
+        body: `selectedTarget=${this.selectedTarget}`,
       })
         .then((response) => response.text())
         .then((html) => {

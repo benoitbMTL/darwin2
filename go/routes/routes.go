@@ -21,7 +21,6 @@ func Configure(e *echo.Echo) {
 	// Bot Mitigation
 	e.POST("/known-bots", handlers.HandleKnownBots)
 	e.POST("/selenium", handlers.HandleSelenium)
-	e.POST("/bot-biometric", handlers.HandleBiometric)
 	e.POST("/bot-scraper-api", handlers.HandleScrapWithApi)
 	e.POST("/bot-page-source", handlers.HandlePageSource)
 	e.POST("/bot-deception", handlers.HandleBotDeception)

@@ -2,13 +2,14 @@
   <div class="card my-4">
 
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5>Selenium Sandbox</h5>
+      <h5>Selenium Playground</h5>
       <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
       <!-- Bootstrap icon for help -->
     </div>
 
     <div class="card-body">
-      <label class="form-label">Automated Web Interactions on <a :href="juiceShopDynamicUrl" target="_blank">Juice Shop</a> web application with Selenium.</label>
+      <label class="form-label">Automated Web Interactions on <a :href="juiceShopDynamicUrl" target="_blank">Juice
+          Shop</a> web application with Selenium.</label>
       <div class="d-flex justify-content-start gap-3 mt-3">
 
         <div> <!-- Actions List -->
@@ -171,13 +172,14 @@ export default {
       selectedSpeed: "5", // Default value
       config: {
         JUICESHOPURL: "",
-      },    };
+      },
+    };
   },
 
   mounted() {
     this.fetchConfig(); // Fetch config on component mount
   },
-  
+
   computed: {
     juiceShopDynamicUrl() {
       if (this.config.FABRICLABSTORY) {
@@ -187,7 +189,7 @@ export default {
       }
     }
   },
-  
+
 
   methods: {
     fetchConfig() {

@@ -12,10 +12,8 @@ import CredentialStuffingDefense from '../components/01-web-protection/Credentia
 
 import BotSelenium from '../components/02-bot-mitigation/BotSelenium.vue';
 import BotDeception from '../components/02-bot-mitigation/BotDeception.vue';
-import BotBiometric from '../components/02-bot-mitigation/BotBiometric.vue';
 import KnownBots from '../components/02-bot-mitigation/KnownBots.vue';
-import MLBasedBotDetection from '../components/02-bot-mitigation/MLBasedBotDetection.vue';
-import ThresholdBasedDetection from '../components/02-bot-mitigation/ThresholdBasedDetection.vue';
+import BotScraping from '../components/02-bot-mitigation/BotScraping.vue';
 
 import ApiRequests from '../components/03-api-protection/ApiRequests.vue';
 import ApiTrafficGeneration from '../components/03-api-protection/ApiTrafficGeneration.vue';
@@ -37,12 +35,10 @@ const routes = [
   { path: '/cookie-security', component: CookieSecurity },
   { path: '/credential-stuffing-defense', component: CredentialStuffingDefense },
 
-  { path: '/bot-biometric', component: BotBiometric },
   { path: '/bot-deception', component: BotDeception },
   { path: '/bot-selenium', component: BotSelenium },
   { path: '/known-bots', component: KnownBots },
-  { path: '/ml-based-bot-detection', component: MLBasedBotDetection },
-  { path: '/threshold-based-detection', component: ThresholdBasedDetection },
+  { path: '/bot-scraping', component: BotScraping },
 
   { path: '/api-requests', component: ApiRequests },
   { path: '/api-traffic-generation', component: ApiTrafficGeneration },

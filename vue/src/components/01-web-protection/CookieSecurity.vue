@@ -10,6 +10,9 @@
       <p class="card-text">Select a user and perform a Cookie Based Attack.</p>
 
       <div class="d-flex align-items-center mb-3">
+        
+        <button type="button" class="btn btn-light btn-sm me-2">dvwa</button>
+
         <select class="form-select form-select-sm me-2" v-model="selectedUser" style="width: 250px">
           <option value="admin">admin</option>
           <option value="gordonb">gordonb</option>
@@ -17,7 +20,6 @@
           <option value="pablo">pablo</option>
           <option value="smithy">smithy</option>
         </select>
-
 
         <button type="button" class="btn btn-primary btn-sm me-2" @click="performCookieSecurity">Manipulate
           Cookie</button>
@@ -28,11 +30,11 @@
 
       </div>
 
-
       <div>
         <div v-if="initialCookie" class="mt-4">
           <h6><i class="bi bi-1-circle-fill me-2"></i>You are now authenticated. Your cookie security level is set to
-            <span style="color: red;">low</span>.</h6>
+            <span style="color: red;">low</span>.
+          </h6>
           <iframe ref="responseIframe" :srcdoc="initialCookie"
             style="width: 100%; height: 80px; border: 1px solid lightgray;"></iframe>
         </div>
@@ -45,7 +47,8 @@
         </div>
 
         <div v-if="webPageHTML" class="mt-4">
-          <h6><i class="bi bi-3-circle-fill me-2"></i>Let's connect again to the web app with the new crafted cookie.</h6>
+          <h6><i class="bi bi-3-circle-fill me-2"></i>Let's connect again to the web app with the new crafted cookie.
+          </h6>
           <iframe ref="responseIframe" :srcdoc="webPageHTML" @load="adjustIframeHeight"
             style="width: 100%; border: 1px solid lightgray;"></iframe>
         </div>
@@ -133,4 +136,3 @@ export default {
 </script>
 
 <style></style>
-

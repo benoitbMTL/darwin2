@@ -15,10 +15,32 @@ import (
 )
 
 func HandleTrafficGenerator(c echo.Context) error {
+    var requestPayload struct {
+        Target string `json:"target"`
+    }
+    if err := c.Bind(&requestPayload); err != nil {
+        return c.String(http.StatusBadRequest, "Invalid request payload")
+    }
+    fmt.Println("Received target choice:", requestPayload.Target) // Debug log
 
-	dvwaURL := config.CurrentConfig.DVWAURL
+    // Select the target URL based on the user's choice
+    var targetURL string
+    switch requestPayload.Target {
+    case "DVWA":
+        targetURL = config.CurrentConfig.DVWAURL
+    case "Bank":
+        targetURL = config.CurrentConfig.BANKURL
+    case "JuiceShop":
+        targetURL = config.CurrentConfig.JUICESHOPURL
+    case "Petstore":
+        targetURL = config.CurrentConfig.PETSTOREURL
+    case "Speedtest":
+        targetURL = config.CurrentConfig.SPEEDTESTURL
+    default:
+        return c.String(http.StatusBadRequest, "Invalid target choice")
+    }
+    fmt.Println("Using target URL:", targetURL) // Debug log
 
-	// Test if DVWA is responding
 	client := &http.Client{
 		Timeout: 3 * time.Second,
 		Transport: &http.Transport{
@@ -26,9 +48,9 @@ func HandleTrafficGenerator(c echo.Context) error {
 		},
 	}
 
-	_, err := client.Get(dvwaURL)
+	_, err := client.Get(targetURL)
 	if err != nil {
-		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("DVWA (%s) is not responding: %s", dvwaURL, err.Error()))
+		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("The Web Server (%s) is not responding: %s", targetURL, err.Error()))
 	}
 
 	_, err = exec.LookPath("perl")
@@ -55,7 +77,7 @@ func HandleTrafficGenerator(c echo.Context) error {
 		// Construct the nikto command
 		cmd := exec.Command(
 			"perl", "nikto/program/nikto.pl",
-			"-host", dvwaURL,
+			"-host", targetURL,
 			"-ask", "no",
 			"-followredirects",
 			"-maxtime", "60s",

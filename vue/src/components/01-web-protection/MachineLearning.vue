@@ -32,7 +32,7 @@
       <div class="container">
 
         <p>
-          This tool will help you protect a
+          This tool will help protect our
           <a :href="bankingDynamicUrl" target="_blank">banking form</a>
           with machine learning, thereby blocking zero-day attacks and reducing
           the attack surface.

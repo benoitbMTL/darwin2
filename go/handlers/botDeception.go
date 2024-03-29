@@ -6,7 +6,6 @@ import (
 	"darwin2/utils"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -15,13 +14,24 @@ import (
 func HandleBotDeception(c echo.Context) error {
 	fmt.Println("Start BotDeception")
 
+	selectedTarget := c.FormValue("selectedTarget")
+	var targetURL string
+	switch selectedTarget {
+	case "DVWA":
+		targetURL = config.CurrentConfig.DVWAURL
+	case "JuiceShop":
+		targetURL = config.CurrentConfig.JUICESHOPURL
+	default:
+		return c.String(http.StatusBadRequest, "Invalid target selection")
+	}
+
 	userAgent := config.CurrentConfig.USERAGENT
 	randomIP := utils.GenerateRandomPublicIP()
 
 	// Create a new request
-	req, err := http.NewRequest("GET", config.CurrentConfig.DVWAURL+"/fake_url.php", nil)
+	req, err := http.NewRequest("GET", targetURL+"/fake_url.php", nil)
 	if err != nil {
-		return fmt.Errorf("Error creating request: %v", err)
+		return fmt.Errorf("error creating request: %v", err)
 	}
 
 	// Set the User Agent header
@@ -39,7 +49,7 @@ func HandleBotDeception(c echo.Context) error {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("Error sending request: %v", err)
+		return fmt.Errorf("error creating request: %v", err)
 	}
 	defer resp.Body.Close()
 
@@ -54,26 +64,35 @@ func HandleBotDeception(c echo.Context) error {
 	return c.String(http.StatusOK, string(body))
 }
 
-
 func HandlePageSource(c echo.Context) error {
+
+	selectedTarget := c.FormValue("selectedTarget")
+	var targetURL string
+	switch selectedTarget {
+	case "DVWA":
+		targetURL = config.CurrentConfig.DVWAURL
+	case "JuiceShop":
+		targetURL = config.CurrentConfig.JUICESHOPURL
+	default:
+		return c.String(http.StatusBadRequest, "Invalid target selection")
+	}
+
 	client := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
 	}
 
-	resp, err := client.Get(config.CurrentConfig.DVWAURL + "/login.php")
+	resp, err := client.Get(targetURL + "/login.php")
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to get page source: %v", err))
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to read page source: %v", err))
 	}
 
 	return c.String(http.StatusOK, string(body))
 }
-
-

@@ -7,7 +7,10 @@
     <div class="card-body">
       <p class="card-text">Authentication with a stolen username / password.</p>
 
-      <div class="d-flex align-items-center mb-3 flex-wrap">
+      <div class="d-flex align-items-center mb-3 flex-wrap">        
+        
+        <button type="button" class="btn btn-light btn-sm me-2">dvwa</button>
+
         <select class="form-select form-select-sm me-2" v-model="selectedUser" style="width: 250px">
           <option value="pklangdon4@msn.com">pklangdon4@msn.com</option>
           <option value="muldersstan@gmail.com">muldersstan@gmail.com</option>
@@ -29,7 +32,6 @@
           Reset
         </button>
       </div>
-
 
       <div v-if="jobResult" class="mt-4 mb-3">
         <h6>Authentication Result:</h6>

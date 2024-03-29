@@ -2,10 +2,7 @@
   <div class="card my-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5>Web Attacks</h5>
-      <i
-        class="bi bi-question-circle-fill bs-icon"
-        style="font-size: 1.5rem"
-        @click="showHelp = !showHelp"></i>
+      <i class="bi bi-question-circle-fill bs-icon" style="font-size: 1.5rem" @click="showHelp = !showHelp"></i>
       <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
@@ -15,10 +12,11 @@
       </p>
 
       <div class="d-flex align-items-center mb-3 flex-wrap">
-        <select
-          class="form-select form-select-sm me-2"
-          v-model="selectedUser"
-          style="width: 250px">
+
+        <button type="button" class="btn btn-light btn-sm me-2">dvwa</button>
+
+
+        <select class="form-select form-select-sm me-2" v-model="selectedUser" style="width: 125px">
           <option value="admin">admin</option>
           <option value="gordonb">gordonb</option>
           <option value="1337">1337</option>
@@ -26,10 +24,7 @@
           <option value="smithy">smithy</option>
         </select>
 
-        <select
-          class="form-select form-select-sm me-2"
-          v-model="selectedAttackType"
-          style="width: 250px">
+        <select class="form-select form-select-sm me-2" v-model="selectedAttackType" style="width: 250px">
           <option value="command_injection">Command Injection</option>
           <option value="sql_injection">SQL Injection</option>
           <option value="xss">Cross-site Scripting</option>
@@ -69,10 +64,7 @@
 
       <div v-if="jobResult" class="mt-4 mb-3">
         <h6>{{ currentAttackName }} Result:</h6>
-        <iframe
-          ref="attackIframe"
-          :srcdoc="jobResult"
-          @load="adjustIframeHeight"
+        <iframe ref="attackIframe" :srcdoc="jobResult" @load="adjustIframeHeight"
           style="width: 100%; border: 1px solid lightgray"></iframe>
       </div>
     </div>
@@ -102,8 +94,7 @@
             Injects arbitrary commands into a vulnerable application for
             execution by the server.
           </td>
-          <td
-            style="
+          <td style="
               border-bottom: 1px solid #ddd;
               padding: 8px;
               font-family: Courier;
@@ -118,8 +109,7 @@
           <td style="border-bottom: 1px solid #ddd; padding: 8px">
             Exploits vulnerabilities in SQL query execution.
           </td>
-          <td
-            style="
+          <td style="
               border-bottom: 1px solid #ddd;
               padding: 8px;
               font-family: Courier;
@@ -134,8 +124,7 @@
           <td style="border-bottom: 1px solid #ddd; padding: 8px">
             Injects malicious scripts into web pages viewed by other users.
           </td>
-          <td
-            style="
+          <td style="
               border-bottom: 1px solid #ddd;
               padding: 8px;
               font-family: Courier;
@@ -150,8 +139,7 @@
           <td style="border-bottom: 1px solid #ddd; padding: 8px">
             Execution of arbitrary commands via OS command injection.
           </td>
-          <td
-            style="
+          <td style="
               border-bottom: 1px solid #ddd;
               padding: 8px;
               font-family: Courier;
@@ -166,8 +154,7 @@
           <td style="border-bottom: 1px solid #ddd; padding: 8px">
             Manipulates ColdFusion data through unauthorized registry access.
           </td>
-          <td
-            style="
+          <td style="
               border-bottom: 1px solid #ddd;
               padding: 8px;
               font-family: Courier;
@@ -185,8 +172,7 @@
             Exploits web applications that construct LDAP statements from user
             input.
           </td>
-          <td
-            style="
+          <td style="
               border-bottom: 1px solid #ddd;
               padding: 8px;
               font-family: Courier;
@@ -201,8 +187,7 @@
           <td style="border-bottom: 1px solid #ddd; padding: 8px">
             Manipulates session IDs to hijack a user session.
           </td>
-          <td
-            style="
+          <td style="
               border-bottom: 1px solid #ddd;
               padding: 8px;
               font-family: Courier;
@@ -218,8 +203,7 @@
           <td style="border-bottom: 1px solid #ddd; padding: 8px">
             Injects malicious files into a server or application.
           </td>
-          <td
-            style="
+          <td style="
               border-bottom: 1px solid #ddd;
               padding: 8px;
               font-family: Courier;
@@ -235,8 +219,7 @@
             Injects PHP code into an application, leading to unauthorized
             command execution.
           </td>
-          <td
-            style="
+          <td style="
               border-bottom: 1px solid #ddd;
               padding: 8px;
               font-family: Courier;
@@ -378,4 +361,5 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+</style>

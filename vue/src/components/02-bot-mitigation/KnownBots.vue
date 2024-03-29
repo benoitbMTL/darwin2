@@ -6,22 +6,29 @@
       <!-- Bootstrap icon for help -->
     </div>
     <div class="card-body">
-      <p class="card-text">Select a Bot.</p>
+      <p class="card-text">Select a target and a Bot Family.</p>
 
-      <div class="d-flex align-items-center mb-3 flex-wrap">
+      <div class="d-flex align-items-center mb-3">
+        <select class="form-select form-select-sm me-2" id="targetSelection" v-model="selectedTarget"
+          style="width: 125px">
+          <option value="DVWA">dvwa</option>
+          <option value="JuiceShop">Juice Shop</option>
+        </select>
+
         <button class="btn btn-primary btn-sm me-2" @click="sendBot('DoS')">DoS</button>
         <button class="btn btn-primary btn-sm me-2" @click="sendBot('Spam')">Spam</button>
-        <button class="btn btn-primary btn-sm me-2" @click="sendBot('Trojan')">Trojan</button>
+        <!-- <button class="btn btn-primary btn-sm me-2" @click="sendBot('Trojan')">Trojan</button> -->
         <button class="btn btn-primary btn-sm me-2" @click="sendBot('Scanner')">Scanner</button>
         <button class="btn btn-primary btn-sm me-2" @click="sendBot('Crawler')">Crawler</button>
-        <button class="btn btn-primary btn-sm me-2" @click="sendBot('SearchEngine')">Search Engine</button>
+        <!-- <button class="btn btn-primary btn-sm me-2" @click="sendBot('SearchEngine')">Search Engine</button> -->
 
         <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
       </div>
 
       <div v-if="jobResult" class="mt-4 mb-3">
         <h6>{{ CurrentBotName }} Result:</h6>
-        <iframe ref="botIframe" :srcdoc="jobResult" @load="adjustIframeHeight" style="width: 100%; border: 1px solid lightgray"></iframe>
+        <iframe ref="botIframe" :srcdoc="jobResult" @load="adjustIframeHeight"
+          style="width: 100%; border: 1px solid lightgray"></iframe>
       </div>
     </div>
   </div>
@@ -35,10 +42,12 @@
       <ul>
         <li>This tool sends Bot from a specific family.</li>
         <li>
-          Known Bots feature protects websites, mobile applications, and APIs from malicious bots such as DoS, Spam, Crawler, etc... without affecting the flow
+          Known Bots feature protects websites, mobile applications, and APIs from malicious bots such as DoS, Spam,
+          Crawler, etc... without affecting the flow
           of critical traffic.
         </li>
-        <li>This feature identifies and manages a wide range of attacks from automated tools no matter where these applications or APIs are deployed.</li>
+        <li>This feature identifies and manages a wide range of attacks from automated tools no matter where these
+          applications or APIs are deployed.</li>
       </ul>
     </div>
   </div>
@@ -51,6 +60,7 @@ export default {
       jobResult: "",
       showHelp: false,
       CurrentBotName: "",
+      selectedTarget: 'DVWA',
     };
   },
 
@@ -60,7 +70,8 @@ export default {
       const url = "/known-bots";
       const formData = new URLSearchParams();
       formData.append("name", botName);
-
+      formData.append("target", this.selectedTarget); 
+      
       fetch(url, {
         method: "POST",
         headers: {

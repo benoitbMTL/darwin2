@@ -14,6 +14,18 @@ import (
 func HandleKnownBots(c echo.Context) error {
 	fmt.Println("Start HandleKnownBot")
 
+	// Retrieve the target from the form data
+    target := c.FormValue("target")
+    var targetURL string
+    switch target {
+    case "DVWA":
+        targetURL = config.CurrentConfig.DVWAURL
+    case "JuiceShop":
+        targetURL = config.CurrentConfig.JUICESHOPURL
+    default:
+        return c.String(http.StatusBadRequest, "Invalid target selection")
+    }
+
 	// Retrieve the botName from the form data
 	botName := c.FormValue("name")
 	randomIP := utils.GenerateRandomPublicIP()
@@ -27,9 +39,9 @@ func HandleKnownBots(c echo.Context) error {
 	fmt.Printf("BotName: %s | UserAgent: %s | XFF: %s\n", botName, userAgent, randomIP)
 
 	// Create a new request
-	req, err := http.NewRequest("GET", config.CurrentConfig.JUICESHOPURL, nil)
+	req, err := http.NewRequest("GET", targetURL, nil)
 	if err != nil {
-		return fmt.Errorf("Error creating request: %v", err)
+		return fmt.Errorf("error creating request: %v", err)
 	}
 
 	// Set the User Agent header
@@ -47,7 +59,7 @@ func HandleKnownBots(c echo.Context) error {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("Error sending request: %v", err)
+		return fmt.Errorf("error sending request: %v", err)
 	}
 	defer resp.Body.Close()
 

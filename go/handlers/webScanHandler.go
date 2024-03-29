@@ -14,14 +14,34 @@ import (
 )
 
 type RequestData struct {
+	SelectedTarget string `json:"selectedTarget"`
 	SelectedOption string `json:"selectedOption"`
 }
 
 func HandleWebScan(c echo.Context) error {
+	var requestData RequestData
+	if err := c.Bind(&requestData); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request data")
+	}
 
-	dvwaURL := config.CurrentConfig.DVWAURL
+	// Debug: Print received data
+	fmt.Println("Received scan request for target:", requestData.SelectedTarget, "with option:", requestData.SelectedOption)
 
-	// Test if DVWA is responding
+	// Map user choice to actual URL
+	targetURLMapping := map[string]string{
+		"DVWA":      config.CurrentConfig.DVWAURL,
+		"Bank":      config.CurrentConfig.BANKURL,
+		"JuiceShop": config.CurrentConfig.JUICESHOPURL,
+		"Petstore":  config.CurrentConfig.PETSTOREURL,
+		"Speedtest": config.CurrentConfig.SPEEDTESTURL,
+	}
+
+	targetURL, ok := targetURLMapping[requestData.SelectedTarget]
+	if !ok {
+		return c.String(http.StatusBadRequest, "Invalid target selection")
+	}
+
+	// Test if Target is responding
 	client := &http.Client{
 		Timeout: 3 * time.Second,
 		Transport: &http.Transport{
@@ -29,19 +49,15 @@ func HandleWebScan(c echo.Context) error {
 		},
 	}
 
-	_, err := client.Get(dvwaURL)
+	_, err := client.Get(targetURL)
 	if err != nil {
-		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("DVWA (%s) is not responding: %s", dvwaURL, err.Error()))
+		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("The Web Server (%s) is not responding: %s", targetURL, err.Error()))
 	}
 
 	_, err = exec.LookPath("perl")
 	if err != nil {
 		return c.String(200, "Perl is not installed on your system")
 	}
-
-	// Debug: Print the current working directory
-	//wd, _ := os.Getwd()
-	//fmt.Println("Current working directory:", wd)
 
 	niktoScriptPath := "nikto/program/nikto.pl"
 
@@ -54,12 +70,6 @@ func HandleWebScan(c echo.Context) error {
 			// Handle other potential errors from os.Stat
 			return c.String(200, fmt.Sprintf("Error checking Nikto installation: %s", err.Error()))
 		}
-}
-
-
-	var requestData RequestData
-	if err := c.Bind(&requestData); err != nil {
-		return echo.NewHTTPError(400, "Invalid data")
 	}
 
 	randomIP := utils.GenerateRandomPublicIP()
@@ -67,7 +77,7 @@ func HandleWebScan(c echo.Context) error {
 	// Construct the command
 	cmd := exec.Command(
 		"perl", "nikto/program/nikto.pl",
-		"-host", dvwaURL,
+		"-host", targetURL,
 		"-ask", "no",
 		"-followredirects",
 		"-maxtime", "60s",
