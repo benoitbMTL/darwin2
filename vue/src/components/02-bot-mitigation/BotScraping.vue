@@ -14,9 +14,12 @@
 
       <div class="d-flex align-items-center mb-3 flex-wrap">
 
-        <button class="btn btn-primary btn-sm me-2" @click="runScrapWithApi">
-          Scrape Juice Shop
+        <button class="btn btn-primary btn-sm me-2" @click="runScrapWithApi" :disabled="isScraping">
+          <span v-if="isScraping" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span>{{ isScraping ? 'Scraping...' : 'Scrape Juice Shop' }}</span>
         </button>
+
+
         <button class="btn btn-secondary btn-sm me-2" @click="resetResult">
           Reset
         </button>
@@ -42,7 +45,8 @@
         technique is often used for competitive analysis, especially on
         e-commerce websites.
       </p>
-      <p>You can download the Bot Detection ML dat file here: <a href="/juiceshop-ml-bot.dat" download="juiceshop-ml-bot.dat">juiceshop-ml-bot.dat</a></p>
+      <p>You can download the Bot Detection ML dat file here: <a href="/juiceshop-ml-bot.dat"
+          download="juiceshop-ml-bot.dat">juiceshop-ml-bot.dat</a></p>
       <p>
         The following Machine Learning configuration provides an optimized setup for demonstrations.
       </p>
@@ -58,6 +62,7 @@ import "highlight.js/styles/monokai.css"; // Monokai theme for Highlight.js
 export default {
   data() {
     return {
+      isScraping: false,
       highlightedCode: "",
       showHelp: false,
       jobResult: null,
@@ -126,6 +131,8 @@ end`,
     },
 
     runScrapWithApi() {
+      this.isScraping = true; // Start loading/spinning
+
       const url = "/bot-scraper-api";
 
       fetch(url, {
@@ -137,10 +144,12 @@ end`,
         .then((response) => response.text())
         .then((html) => {
           this.jobResult = html;
+          this.isScraping = false;
         })
         .catch((error) => {
           console.error("Error:", error);
           this.jobResult = "Failed to send Bot";
+          this.isScraping = false;
         });
     },
 
