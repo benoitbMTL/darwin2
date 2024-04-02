@@ -470,7 +470,7 @@ export default {
           // Checking the type of the response this.responseBody
           if (typeof this.responseBody === "string") {
             // Check if the string is HTML
-            if (this.responseBody.startsWith("<") && this.responseBody.endsWith(">")) {
+            if (this.responseBody.trim().startsWith("<") && this.responseBody.trim().endsWith(">")) {
               this.htmlResponseBody = this.responseBody;
               this.jsonResponseBody = "";
             } else {
@@ -497,6 +497,7 @@ export default {
       const iframe = this.$refs.responseIframe;
       if (iframe && iframe.contentWindow && iframe.contentWindow.document.body) {
         iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 30 + "px";
+        console.log("Iframe height adjusted.");
       }
     },
 

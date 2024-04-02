@@ -14,6 +14,7 @@ import BotSelenium from '../components/02-bot-mitigation/BotSelenium.vue';
 import BotDeception from '../components/02-bot-mitigation/BotDeception.vue';
 import KnownBots from '../components/02-bot-mitigation/KnownBots.vue';
 import BotScraping from '../components/02-bot-mitigation/BotScraping.vue';
+import HTTPRequest from '../components/02-bot-mitigation/HTTPRequest.vue';
 
 import ApiRequests from '../components/03-api-protection/ApiRequests.vue';
 import ApiTrafficGeneration from '../components/03-api-protection/ApiTrafficGeneration.vue';
@@ -39,6 +40,7 @@ const routes = [
   { path: '/bot-selenium', component: BotSelenium },
   { path: '/known-bots', component: KnownBots },
   { path: '/bot-scraping', component: BotScraping },
+  { path: '/http-request', component: HTTPRequest },
 
   { path: '/api-requests', component: ApiRequests },
   { path: '/api-traffic-generation', component: ApiTrafficGeneration },

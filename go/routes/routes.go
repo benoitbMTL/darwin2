@@ -24,6 +24,7 @@ func Configure(e *echo.Echo) {
 	e.POST("/bot-scraper-api", handlers.HandleScrapWithApi)
 	e.POST("/bot-page-source", handlers.HandlePageSource)
 	e.POST("/bot-deception", handlers.HandleBotDeception)
+	e.POST("/api/http-request", handlers.HandleHTTPRequest)
 
 	// API Protection
 	e.POST("/api-get", handlers.HandleApiGet)

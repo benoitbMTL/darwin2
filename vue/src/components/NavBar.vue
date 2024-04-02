@@ -29,7 +29,7 @@
               <li><router-link class="dropdown-item" to="/web-attacks">Web Attacks</router-link></li>
               <li><router-link class="dropdown-item" to="/machine-learning">Machine Learning</router-link></li>
               <li><router-link class="dropdown-item" to="/cookie-security">Cookie Security</router-link></li>
-              <li><router-link class="dropdown-item" to="/credential-stuffing-defense">Credential Stuffing Defense</router-link></li>
+              <li><router-link class="dropdown-item" to="/credential-stuffing-defense">Credential Stuffing</router-link></li>
             </ul>
           </li>
 
@@ -43,6 +43,7 @@
               <li><router-link class="dropdown-item" to="/bot-selenium">Selenium Playground</router-link></li>
               <li><router-link class="dropdown-item" to="/bot-deception">Bot Deception</router-link></li>
               <li><router-link class="dropdown-item" to="/bot-scraping">Web Scraping</router-link></li>
+              <li><router-link class="dropdown-item" to="/http-request">HTTP Playground</router-link></li>
             </ul>
           </li>
 
