@@ -56,6 +56,10 @@ serve_go_app() {
 # Function to manage Docker
 manage_docker() {
 
+    # Get host mapping configuration from the first script argument or default to 5
+    local config_option="${1:-5}"
+    set_host_mappings "$config_option"
+
     # Install Docker if not present
     if ! command -v docker &> /dev/null; then
         ##############################################################
@@ -92,7 +96,62 @@ manage_docker() {
     ##############################################################
     echo "Building Docker image and running container..."
     docker build -t "$container_name" .
-    docker run -dp 8080:8080 --name "$container_name" "$container_name"
+
+    # Construct the Docker run command with dynamic --add-host options
+    DOCKER_RUN_CMD="docker run -dp 8080:8080 --name \"$container_name\""
+    for HOST_MAPPING in "${HOST_MAPPINGS[@]}"
+    do
+        DOCKER_RUN_CMD+=" $HOST_MAPPING"
+    done
+    DOCKER_RUN_CMD+=" $container_name"
+    
+    # Run the Docker container with the specified host entries
+    eval "$DOCKER_RUN_CMD"
+}
+
+# Function to set host mappings based on selected configuration
+set_host_mappings() {
+    case $1 in
+        1) # FabricLab FortiWeb
+            HOST_MAPPINGS=(
+                "--add-host dvwa.corp.fabriclab.ca:10.163.7.23"
+                "--add-host bank.corp.fabriclab.ca:10.163.7.23"
+                "--add-host juiceshop.corp.fabriclab.ca:10.163.7.24"
+                "--add-host petstore3.corp.fabriclab.ca:10.163.7.25"
+                "--add-host speedtest.corp.fabriclab.ca:10.163.7.26"
+            )
+            ;;
+        2) # FabricLab FortiADC
+            HOST_MAPPINGS=(
+                "--add-host dvwa.corp.fabriclab.ca:10.163.7.31"
+                "--add-host bank.corp.fabriclab.ca:10.163.7.32"
+                "--add-host juiceshop.corp.fabriclab.ca:10.163.7.33"
+                "--add-host petstore3.corp.fabriclab.ca:10.163.7.34"
+                "--add-host speedtest.corp.fabriclab.ca:10.163.7.35"
+            )
+            ;;
+        3) # FabricLab FortiWeb03
+            HOST_MAPPINGS=(
+                "--add-host dvwa.corp.fabriclab.ca:10.163.7.41"
+                "--add-host bank.corp.fabriclab.ca:10.163.7.41"
+                "--add-host juiceshop.corp.fabriclab.ca:10.163.7.42"
+                "--add-host petstore3.corp.fabriclab.ca:10.163.7.43"
+                "--add-host speedtest.corp.fabriclab.ca:10.163.7.44"
+            )
+            ;;
+        4) # NUC FortiWeb
+            HOST_MAPPINGS=(
+                "--add-host dvwa.corp.fabriclab.ca:192.168.4.10"
+                "--add-host bank.corp.fabriclab.ca:192.168.4.10"
+                "--add-host juiceshop.corp.fabriclab.ca:192.168.4.20"
+                "--add-host petstore3.corp.fabriclab.ca:192.168.4.30"
+                "--add-host speedtest.corp.fabriclab.ca:192.168.4.40"
+            )
+            ;;
+        5|*) # No host or default
+            HOST_MAPPINGS=()
+            ;;
+    esac
 }
 
 # Function to install required packages and setup the environment
@@ -360,14 +419,17 @@ force_build_and_serve() {
 
 # Function to display help
 print_help() {
-    printf "Usage: %s {run|docker|update|force|install|version|help}\n" "$(basename "$0")"
+    printf "Usage: %s {run|docker|update|force|install|version|help} [options]\n" "$(basename "$0")"
     printf "  %-20s%s\n" "run:" "Build and serve the application."
-    printf "  %-20s%s\n" "docker:" "Manage Docker container for the application."
+    printf "  %-20s%s\n" "docker:" "Manage Docker container for the application. Optional [config] to set host mappings: 1 for FabricLab FortiWeb, 2 for FabricLab FortiADC, 3 for FabricLab FortiWeb03, 4 for NUC FortiWeb, 5 for no hosts."
     printf "  %-20s%s\n" "update:" "Update the application from Git."
     printf "  %-20s%s\n" "force:" "Force build and serve the application (ignores changes)."
     printf "  %-20s%s\n" "install:" "Install and initialize environment to run the application."
     printf "  %-20s%s\n" "version:" "Print the versions of the installed packages."
     printf "  %-20s%s\n" "help:" "Display this help message."
+    printf "\nExamples:\n"
+    printf "  %-20s%s\n" "$(basename "$0") docker 1" "Use FabricLab FortiWeb host settings."
+    printf "  %-20s%s\n" "$(basename "$0") docker 5" "Run Docker without specific host settings."
 }
 
 # Main script execution
@@ -377,7 +439,7 @@ case $1 in
         ;;
     docker)
         update_from_git
-        manage_docker
+        manage_docker $2  # Pass the second command line argument to manage_docker
         ;;
     update)
         update_from_git
