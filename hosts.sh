@@ -9,11 +9,12 @@ fi
 # Add entries to hosts file
 echo "" >> /etc/hosts
 echo "# Add entries for FabricLab sites" >> /etc/hosts
-echo "dvwa.corp.fabriclab.ca:10.163.7.23" >> /etc/hosts
-echo "bank.corp.fabriclab.ca:10.163.7.23" >> /etc/hosts
-echo "juiceshop.corp.fabriclab.ca:10.163.7.24" >> /etc/hosts
-echo "petstore3.corp.fabriclab.ca:10.163.7.25" >> /etc/hosts
-echo "speedtest.corp.fabriclab.ca:10.163.7.26" >> /etc/hosts
+echo "10.163.7.23 dvwa.corp.fabriclab.ca" >> /etc/hosts
+echo "10.163.7.23 bank.corp.fabriclab.ca" >> /etc/hosts
+echo "10.163.7.24 juiceshop.corp.fabriclab.ca" >> /etc/hosts
+echo "10.163.7.25 petstore3.corp.fabriclab.ca" >> /etc/hosts
+echo "10.163.7.26 speedtest.corp.fabriclab.ca" >> /etc/hosts
+
 
 # Verify entries were added
 echo "The following entries were added to the hosts file:"
