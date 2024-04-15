@@ -81,7 +81,7 @@ func Initialize() {
 		PETSTOREURL:    "https://petstore3.corp.fabriclab.ca/api/v3/pet",
 		SPEEDTESTURL:   "https://speedtest.corp.fabriclab.ca",
 		USERNAMEAPI:    "userapi",
-		PASSWORDAPI:    "userAPI123!",
+		PASSWORDAPI:    "fortinet123!",
 		VDOMAPI:        "root",
 		FWBMGTIP:       "10.163.7.21",
 		FWBMGTPORT:     "443",
