@@ -16,7 +16,7 @@
         </div>
         <div class="me-2">
           <button type="button" class="btn btn-warning btn-sm" @click="resetMachineLearning">
-            Reset API Machine Learning
+            Reset Machine Learning
           </button>
         </div>
 
