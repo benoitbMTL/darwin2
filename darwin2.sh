@@ -166,7 +166,7 @@ install_environment() {
     ##############################################################
     print_header "Installing required Linux packages..."
     sudo apt install nmap unzip tree net-tools vim perl libnet-ssleay-perl libio-socket-ssl-perl -y || { echo "Failed to install required Linux packages."; exit 1; }
-    sudo apt install libatk1.0-0 libatk-bridge2.0-0 libcups2 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libnss3 libnspr4 libcairo2 libpango-1.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libasound2 -y || { echo "Failed to install required Linux packages."; exit 1; }
+    sudo apt install libatk1.0-0t64 libatk-bridge2.0-0t64 libcups2t64 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libnss3 libnspr4 libcairo2 libpango-1.0-0 libgdk-pixbuf2.0-0 libgtk-3-0t64 libasound2t64 -y || { echo "Failed to install required Linux packages."; exit 1; }
     print_completion "Done!"
 
     # Install Nikto
