@@ -1,0 +1,1248 @@
+  config system vip
+    edit "DVWA_VIP"
+      set vip 10.0.1.10/32
+      set interface port1
+    next
+    edit "JUICESHOP_VIP"
+      set vip 10.0.1.20/32
+      set interface port1
+    next
+    edit "PETSTORE_VIP"
+      set vip 10.0.1.30/32
+      set interface port1
+    next
+      edit "CSP_VIP"
+      set vip 10.0.1.50/32
+      set interface port1
+    next
+    next
+      edit "MCP_VIP"
+      set vip 10.0.1.60/32
+      set interface port1
+    next
+  end
+
+
+  config system global
+    set hostname fortiweb-vm
+    set admintimeout 480
+    set timezone 12
+  end
+  config log traffic-log
+    set status enable
+    set packet-log enable
+  end
+  config router setting
+    set ip-forward enable
+  end
+  
+
+  config system admin
+	edit "userapi"
+	 set access-profile prof_admin
+	 set password ENC SH2pmp8YD92eIDsVAwfLYHEjrUT7W1lz36Kv7Kc9ZWewUcOLipw9jp5xqUaZo4=
+	next
+  end
+
+
+    config waf url-access url-access-rule
+      edit "DVWA_URL_ACCCESS_RULE"
+        set action alert_deny
+        config  match-condition
+          edit 1
+            set reg-exp ^/about.php.*
+            set type regex-expression
+          next
+        end
+      next
+    end
+    config waf url-access url-access-policy
+      edit "DVWA_URL_ACCESS_POLICY"
+        config  rule
+          edit 1
+            set url-access-rule-name DVWA_URL_ACCCESS_RULE
+          next
+        end
+      next
+    end
+	
+	
+    config waf http-request-flood-prevention-rule
+      edit "DVWA_HTTP_FLOOD"
+        set access-limit-in-http-session 5
+      next
+    end
+    config waf http-connection-flood-check-rule
+      edit "DVWA_CONNECTION_LIMIT"
+        set http-connection-threshold 100
+      next
+    end
+    config waf layer4-access-limit-rule
+      edit "DVWA_HTTP_LIMIT"
+        set access-limit-standalone-ip 500
+        set access-limit-share-ip 1000
+      next
+    end
+
+    config waf geo-block-list
+      edit "DVWA_GEO_PROTECTION"
+        config  country-list
+          edit 1
+            set country-name Afghanistan
+          next
+        end
+      next
+    end
+
+
+    config waf ip-list
+      edit "DVWA_IP_LIST"
+        set action alert_deny
+        config  members
+          edit 1
+            set type black-ip
+            set ip 1.1.1.1
+          next
+        end
+      next
+    end
+	
+	
+
+    config waf hidden-fields-rule
+      edit "DVWA_HIDDEN_FIELD_RULE"
+        config  hidden-field-name
+          edit 1
+            set argument MAX_FILE_SIZE
+          next
+        end
+        set action alert_deny
+        set request-file /vulnerabilities/upload/
+        set action-url0 /vulnerabilities/upload/
+      next
+    end
+    config waf hidden-fields-protection
+      edit "DVWA_HIDDEN_FIELD"
+        config  hidden_fields_list
+          edit 1
+            set hidden-field-rule DVWA_HIDDEN_FIELD_RULE
+          next
+        end
+      next
+    end
+
+
+	config waf user-tracking rule
+	  edit "DVWA_USER_TRACKING_RULE"
+		set authentication-url /login.php
+		set username-parameter username
+		set password-parameter password
+		set session-id-name PHPSESSID
+		set logoff-path /logout.php
+		set limit-users disable
+		set session-frozen-action alert_deny
+		set credential-stuffing-protection enable
+		config  match-condition
+		  edit 1
+			set value 302
+		  next
+		end
+	  next
+	end	
+	
+	
+    config waf user-tracking policy
+      edit "DVWA_USER_TRACKING"
+        config  input-rule-list
+          edit 1
+            set input-rule DVWA_USER_TRACKING_RULE
+          next
+        end
+      next
+    end
+
+
+    config waf json-validation rule
+      edit "PETSTORE_JSON_RULE"
+        set request-type regular
+        set request-file ^/.*
+        set action alert_deny
+      next
+    end
+    config waf json-validation policy
+      edit "PETSTORE_JSON_POLICY"
+        set enable-attack-signatures enable
+        config  input-rule-list
+          edit 1
+            set input-rule PETSTORE_JSON_RULE
+          next
+        end
+      next
+    end
+
+
+    config waf url-rewrite url-rewrite-rule
+      edit "DVWA_URL_REWRITE_FORTINET"
+        set action redirect-301
+        set location https://www.fortinet.com
+        config  header-insert
+        end
+        config  response-header-insert
+        end
+        config  header-removal
+        end
+        config  response-header-removal
+        end
+        set request-replace-existing-headers enable
+        set response-replace-existing-headers enable
+        config  match-condition
+          edit 1
+            set object http-url
+            set reg-exp ^/fortinet.*
+          next
+        end
+      next
+      edit "DVWA_URL_REWRITE_CHANGE"
+        set url-status enable
+        set url /vulnerabilities/csrf/
+        config  header-insert
+        end
+        config  response-header-insert
+        end
+        config  header-removal
+        end
+        config  response-header-removal
+        end
+        set request-replace-existing-headers enable
+        set response-replace-existing-headers enable
+        config  match-condition
+          edit 1
+            set object http-url
+            set reg-exp ^/change.*
+          next
+        end
+      next
+    end
+    config waf url-rewrite url-rewrite-policy
+      edit "DVWA_URL_REWRITE"
+        config  rule
+          edit 1
+            set url-rewrite-rule-name DVWA_URL_REWRITE_FORTINET
+          next
+          edit 2
+            set url-rewrite-rule-name DVWA_URL_REWRITE_CHANGE
+          next
+        end
+      next
+    end
+    config waf allow-method-policy
+      edit "DVWA_ALLOW_METHOD"
+        set allow-method get post
+      next
+    end
+
+
+    config waf file-upload-restriction-rule
+      edit "DVWA_WEBSHELL_UPLOADING"
+        set request-type regular
+        set request-file ^/.*
+        set type Block
+        set enable_base64_decode disable
+        config  file-types
+          edit 1
+            set file-type-name EXE(.exe)
+            set file-type-id 00126
+          next
+          edit 3
+            set file-type-name JSP(.jsp)
+            set file-type-id 00153
+          next
+          edit 4
+            set file-type-name ASPX(.aspx)
+            set file-type-id 00154
+          next
+          edit 5
+            set file-type-name SQL(.sql)
+            set file-type-id 00166
+          next
+        end
+        config  custom-file-types
+        end
+      next
+      edit "PETSTORE_FILE_UPLOAD"
+        set request-type regular
+        set request-file ^/.*
+        set json-file-support enable
+        set json-key-field status
+        config  file-types
+        end
+        config  custom-file-types
+        end
+      next
+    end
+    config waf csrf-protection
+      edit "DVWA_CSRF_PROTECTION"
+        set action alert_deny
+        config  csrf-url-list
+          edit 1
+            set request-url /vulnerabilities/csrf/
+            set parameter-filter enable
+            set parameter-name password_new
+            set parameter-value-type regular
+            set parameter-value .*
+          next
+        end
+        config  csrf-page-list
+          edit 1
+            set request-url /vulnerabilities/csrf/
+          next
+        end
+      next
+    end
+    config waf mitb-rule
+      edit "DVWA_MAN_IN_THE_BROWSER_RULE"
+        set action alert_deny
+        set severity Medium
+        set request-url /login.php
+        set post-url /login.php
+        config  protected-parameter-list
+          edit "username"
+            set obfuscate enable
+          next
+          edit "password"
+            set type password-input
+            set obfuscate enable
+          next
+        end
+        config  allowed-external-domains-list
+        end
+        set ajaxcheck enable
+      next
+    end
+    config waf mitb-policy
+      edit "DVWA_MAN_IN_THE_BROWSER"
+        config  rule-list
+          edit 1
+            set mitb-rule DVWA_MAN_IN_THE_BROWSER_RULE
+          next
+        end
+      next
+    end
+
+
+    config waf bot-deception
+      edit "DVWA_BOT_DECEPTION"
+        set deception-url /fake_url.php
+        set action alert_deny
+        config  url-list
+          edit 1
+            set url /login.php
+          next
+        end
+      next
+      edit "JUICESHOP_BOT_DECEPTION"
+        set deception-url /fake_url.php
+        set action alert_deny
+        config  url-list
+          edit 1
+            set type regex-expression
+            set url ^/.*
+          next
+        end
+      next
+    end
+    config waf biometrics-based-detection
+      edit "DVWA_BOT_BIOMETRICS"
+        set event-collection-time 10
+        config  url-list
+        end
+      next
+      edit "JUICESHOP_BOT_BIOMETRICS"
+        set screen-touch enable
+        set event-collection-time 10
+        set report-waiting-time 5
+        set bot-effective-time 1
+        config  url-list
+          edit 1
+            set type regex-expression
+            set url ^/.*
+          next
+        end
+      next
+    end
+    config waf input-rule
+      edit "DVWA_PARAMETER_VALIDATION_RULE"
+        set severity Medium
+        set request-type regular
+        set request-file ^/vulnerabilities/exec/.*
+        config  rule-list
+          edit 1
+            set type-checked enable
+            set argument-name ip
+            set location url body
+            set data-type Address
+          next
+        end
+      next
+    end
+    config waf parameter-validation-rule
+      edit "DVWA_PARAMETER_VALIDATION"
+        config  input-rule-list
+          edit 1
+            set input-rule DVWA_PARAMETER_VALIDATION_RULE
+          next
+        end
+      next
+    end
+
+
+	config waf signature
+	  edit "DVWA_SIGNATURE_PROFILE"
+		config  main_class_list
+		  edit "010000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "020000000"
+			set fpm-status disable
+		  next
+		  edit "030000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "040000000"
+			set fpm-status disable
+		  next
+		  edit "050000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "060000000"
+			set fpm-status disable
+		  next
+		  edit "070000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "080000000"
+			set fpm-status disable
+			set action alert_erase
+			set severity High
+		  next
+		  edit "090000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "100000000"
+			set status disable
+			set fpm-status disable
+			set severity High
+		  next
+		end
+		config  sub_class_disable_list
+		end
+		config  signature_disable_list
+		  edit "060030001"
+		  next
+		  edit "060120001"
+		  next
+		  edit "080080005"
+		  next
+		  edit "080200001"
+		  next
+		  edit "080080003"
+		  next
+		  edit "090410001"
+		  next
+		  edit "090410002"
+		  next
+		  edit "040000141"
+		  next
+		  edit "040000136"
+		  next
+		  edit "060180001"
+		  next
+		  edit "060180002"
+		  next
+		  edit "060180003"
+		  next
+		  edit "060180004"
+		  next
+		  edit "060180005"
+		  next
+		  edit "060180006"
+		  next
+		  edit "060180007"
+		  next
+		  edit "060180008"
+		  next
+		end
+		config  alert_only_list
+		end
+		config  fpm_disable_list
+		end
+		config  scoring_override_disable_list
+		end
+		config  score_grade_list
+		end
+		config  filter_list
+		end
+	  next
+	  edit "JUICESHOP_SIGNATURE_PROFILE"
+		config  main_class_list
+		  edit "010000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "020000000"
+			set fpm-status disable
+		  next
+		  edit "030000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "040000000"
+			set fpm-status disable
+		  next
+		  edit "050000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "060000000"
+			set fpm-status disable
+		  next
+		  edit "070000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "080000000"
+			set fpm-status disable
+			set action alert_erase
+			set severity High
+		  next
+		  edit "090000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "100000000"
+			set status disable
+			set fpm-status disable
+			set severity High
+		  next
+		end
+		config  sub_class_disable_list
+		end
+		config  signature_disable_list
+		  edit "060030001"
+		  next
+		  edit "060120001"
+		  next
+		  edit "080080005"
+		  next
+		  edit "080200001"
+		  next
+		  edit "080080003"
+		  next
+		  edit "090410001"
+		  next
+		  edit "090410002"
+		  next
+		  edit "040000141"
+		  next
+		  edit "040000136"
+		  next
+		  edit "060180001"
+		  next
+		  edit "060180002"
+		  next
+		  edit "060180003"
+		  next
+		  edit "060180004"
+		  next
+		  edit "060180005"
+		  next
+		  edit "060180006"
+		  next
+		  edit "060180007"
+		  next
+		  edit "060180008"
+		  next
+		end
+		config  alert_only_list
+		end
+		config  fpm_disable_list
+		end
+		config  scoring_override_disable_list
+		end
+		config  score_grade_list
+		end
+		config  filter_list
+		end
+	  next
+	  edit "PETSTORE_SIGNATURE_PROFILE"
+		config  main_class_list
+		  edit "010000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "020000000"
+			set fpm-status disable
+		  next
+		  edit "030000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "040000000"
+			set fpm-status disable
+		  next
+		  edit "050000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "060000000"
+			set fpm-status disable
+		  next
+		  edit "070000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "080000000"
+			set fpm-status disable
+			set action alert_erase
+			set severity High
+		  next
+		  edit "090000000"
+			set fpm-status disable
+			set action alert_deny
+			set severity High
+		  next
+		  edit "100000000"
+			set status disable
+			set fpm-status disable
+			set severity High
+		  next
+		end
+		config  sub_class_disable_list
+		end
+		config  signature_disable_list
+		  edit "060030001"
+		  next
+		  edit "060120001"
+		  next
+		  edit "080080005"
+		  next
+		  edit "080200001"
+		  next
+		  edit "080080003"
+		  next
+		  edit "090410001"
+		  next
+		  edit "090410002"
+		  next
+		  edit "040000141"
+		  next
+		  edit "040000136"
+		  next
+		  edit "060180001"
+		  next
+		  edit "060180002"
+		  next
+		  edit "060180003"
+		  next
+		  edit "060180004"
+		  next
+		  edit "060180005"
+		  next
+		  edit "060180006"
+		  next
+		  edit "060180007"
+		  next
+		  edit "060180008"
+		  next
+		end
+		config  alert_only_list
+		end
+		config  fpm_disable_list
+		end
+		config  scoring_override_disable_list
+		end
+		config  score_grade_list
+		end
+		config  filter_list
+		end
+	  next
+	end
+
+
+    config waf x-forwarded-for
+      edit "DVWA_X_FORWARDED_FOR"
+        set x-forwarded-for-support enable
+        set tracing-original-ip enable
+        set original-ip-header X-FORWARDED-FOR
+        config  ip-list
+        end
+        set block-based-on-original-ip enable
+      next
+    end
+
+
+    config server-policy health
+      edit "HLTHCK_HTTP_DVWA"
+        config  health-list
+          edit 1
+            set type http
+            set url-path /login.php
+            set method head
+            set match-type response-code
+          next
+        end
+      next
+    end
+
+
+	config server-policy vserver
+	  edit "DVWA_VS"
+		config  vip-list
+		  edit 1
+			set vip DVWA_VIP
+		  next
+		end
+	  next
+	  edit "JUICESHOP_VS"
+		config  vip-list
+		  edit 1
+			set vip JUICESHOP_VIP
+		  next
+		end
+	  next
+	  edit "PETSTORE_VS"
+		config  vip-list
+		  edit 1
+			set vip PETSTORE_VIP
+		  next
+		end
+	  next
+	end
+
+
+    config waf http-protocol-parameter-restriction
+      edit "DVWA_PROTOCOL_CONSTRAINTS"
+        set max-http-header-length 4096
+        set max-http-header-length-severity High
+        set max-http-content-length 65536
+        set max-http-content-length-severity High
+        set max-http-body-length 65536
+        set max-http-body-length-severity High
+        set max-http-request-length 65536
+        set max-http-request-length-severity High
+        set max-url-parameter-length 2048
+        set max-url-parameter-length-severity High
+        set Illegal-http-version-check enable
+        set Illegal-http-version-check-severity High
+        set max-cookie-in-request 16
+        set max-cookie-in-request-severity High
+        set max-header-line-request-severity High
+        set Illegal-http-request-method-check enable
+        set Illegal-http-request-method-severity High
+        set max-url-parameter 16
+        set max-url-parameter-severity High
+        set Illegal-host-name-check enable
+        set Illegal-host-name-check-action alert
+        set Illegal-host-name-check-severity High
+        set number-of-ranges-in-range-header-action alert_deny
+        set number-of-ranges-in-range-header-severity High
+        set http2-max-requests-check enable
+        set http2-max-requests-severity High
+        set block-malformed-request-check enable
+        set block-malformed-request-action alert
+        set block-malformed-request-severity High
+        set Illegal-content-length-check enable
+        set Illegal-content-length-check-severity High
+        set Illegal-content-type-check enable
+        set Illegal-content-type-check-severity High
+        set Illegal-response-code-check enable
+        set Illegal-response-code-check-severity High
+        set Post-request-ctype-check enable
+        set Post-request-ctype-check-severity High
+        set max-http-header-name-length 255
+        set max-http-header-name-length-severity High
+        set max-http-header-value-length 2048
+        set max-http-header-value-length-severity High
+        set parameter-name-check enable
+        set parameter-name-check-severity High
+        set parameter-value-check enable
+        set parameter-value-check-severity High
+        set Illegal-header-name-check enable
+        set Illegal-header-name-check-action alert
+        set Illegal-header-name-check-severity High
+        set Illegal-header-value-check enable
+        set Illegal-header-value-check-action alert
+        set Illegal-header-value-check-severity High
+        set max-http-body-parameter-length 6144
+        set max-http-body-parameter-length-severity High
+        set max-http-request-filename-length-severity High
+        set web-socket-protocol-check enable
+        set web-socket-protocol-severity High
+        set max-setting-header-table-size-severity High
+        set max-setting-current-streams-num-severity High
+        set max-setting-initial-window-size-severity High
+        set max-setting-frame-size-severity High
+        set max-setting-header-list-size-severity High
+        set max-url-param-name-len 2048
+        set max-url-param-name-len-severity High
+        set max-url-param-value-len 2048
+        set max-url-param-value-len-severity High
+        set url-param-name-check-severity High
+        set url-param-value-check-severity High
+        set null-byte-in-url-severity High
+        set illegal-byte-in-url-severity High
+        set malformed-url-severity High
+        set redundant-header-action alert
+        set redundant-header-severity High
+        set chunk-size-severity High
+        set Internal-resource-limits-check enable
+        set Internal-resource-limits-severity High
+        set rpc-protocol-check enable
+        set rpc-protocol-severity High
+        set odd-and-even-space-attack-severity High
+      next
+    end
+
+
+    config waf webshell-detection-policy
+      edit "DVWA_WEBSHELL_UPLOADING"
+        config  fuzzy-disable-list
+        end
+      next
+    end
+    config waf file-upload-restriction-policy
+      edit "DVWA_FILE_SECURITY_POLICY"
+        set av-scan enable
+        config  rule
+          edit 1
+            set file-upload-restriction-rule DVWA_WEBSHELL_UPLOADING
+          next
+        end
+      next
+      edit "PETSTORE_FILE_SECURITY_POLICY"
+        set av-scan enable
+        config  rule
+          edit 1
+            set file-upload-restriction-rule PETSTORE_FILE_UPLOAD
+          next
+        end
+      next
+    end
+
+
+    config waf layer4-connection-flood-check-rule
+      edit "DVWA_TCP_FLOOD"
+        set layer4-connection-threshold 255
+      next
+    end
+    config waf threshold-based-detection policy
+      edit "DVWA_BOT_TRESHOLDS"
+      next
+      edit "JUICESHOP_THRESHOLD"
+        set scanner-detection enable
+        set slow-attack-detection enable
+        set content-scraping-detection enable
+        set brute-login-detection enable
+      next
+    end
+    config waf known-bots
+      edit "DVWA_BOT_SIGNATURES"
+        config  malicious-bot-disable-list
+        end
+        config  known-good-bots-disable-list
+        end
+      next
+      edit "JUICESHOP_KNOWN_BOTS"
+        config  malicious-bot-disable-list
+        end
+        config  known-good-bots-disable-list
+        end
+      next
+    end
+    config waf bot-mitigate-policy
+      edit "DVWA_BOT_POLICY"
+        set bot-deception DVWA_BOT_DECEPTION
+        set biometrics-based-detection DVWA_BOT_BIOMETRICS
+        set threshold-based-detection DVWA_BOT_TRESHOLDS
+        set known-bots DVWA_BOT_SIGNATURES
+      next
+      edit "JUICESHOP_BOT_POLICY"
+        set bot-deception JUICESHOP_DECEPTION
+        set biometrics-based-detection JUICESHOP_BOT_BIOMETRICS
+        set threshold-based-detection JUICESHOP_THRESHOLD
+        set known-bots JUICESHOP_KNOWN_BOTS
+      next
+    end
+    config waf application-layer-dos-prevention
+      edit "DVWA_DOS_POLICY"
+        set enable-http-session-based-prevention enable
+        set http-request-flood-prevention-rule DVWA_HTTP_FLOOD
+        set http-connection-flood-check-rule DVWA_CONNECTION_LIMIT
+        set enable-layer4-dos-prevention enable
+        set layer4-access-limit-rule DVWA_HTTP_LIMIT
+        set layer4-connection-flood-check-rule DVWA_TCP_FLOOD
+        set layer3-fragment-protection enable
+      next
+    end
+
+
+	config waf custom-access rule
+	  edit "DVWA_VULNERABILITY_SCANNING"
+		set severity High
+		config  source-ip-filter
+		end
+		config  geo-filter
+		end
+		config  time-range-filter
+		end
+		config  method
+		end
+		config  url-filter
+		end
+		config  http-header-filter
+		end
+		config  parameter
+		end
+		config  user-filter
+		end
+		config  access-limit-filter
+		end
+		config  http-transaction
+		end
+		config  response-code
+		end
+		config  content-type
+		end
+		config  packet-interval
+		end
+		config  main-class
+		  edit "010000000"
+			set no-subclass enable
+		  next
+		  edit "030000000"
+			set no-subclass enable
+		  next
+		  edit "050000000"
+		  next
+		  edit "090000000"
+		  next
+		  edit "070000000"
+			set no-subclass enable
+		  next
+		end
+		config  sub-class
+		end
+		config  custom-signature
+		end
+		config  occurrence
+		  edit 2
+			set occurrence-num 10
+			set within 60
+		  next
+		end
+	  next
+		 edit "DVWA_BRUTE_FORCE_LOGIN"
+		set severity High
+		config  source-ip-filter
+		end
+		config  geo-filter
+		end
+		config  time-range-filter
+		end
+		config  method
+		end
+		config  url-filter
+		  edit 1
+			set request-file "^/.*\\.(php|asp|aspx|jsp)"
+		  next
+		end
+		config  http-header-filter
+		end
+		config  parameter
+		end
+		config  user-filter
+		end
+		config  access-limit-filter
+		end
+		config  http-transaction
+		end
+		config  response-code
+		end
+		config  content-type
+		end
+		config  packet-interval
+		end
+		config  main-class
+		end
+		config  sub-class
+		end
+		config  custom-signature
+		end
+		config  occurrence
+		  edit 2
+			set occurrence-num 20
+			set within 10
+		  next
+		end
+	  next
+	end
+
+
+    config waf custom-access policy
+      edit "DVWA_CUSTOM_POLICY"
+        config  rule
+          edit 1
+            set rule-name DVWA_VULNERABILITY_SCANNING
+          next
+          edit 2
+            set rule-name DVWA_BRUTE_FORCE_LOGIN
+          next
+        end
+        set threat-weight severe
+      next
+    end
+
+
+    config waf http-header-security
+      edit "DVWA_HEADER_SECURITY"
+        config  http-header-security-list
+          edit 1
+            set name x-content-type-options
+          next
+          edit 2
+            set value sameorigin
+          next
+          edit 3
+            set name x-xss-protection
+            set value sanitizing-mode
+          next
+        end
+      next
+    end
+    config waf cookie-security
+      edit "DVWA_COOKIE_SECURITY"
+        config  cookie-security-exception-list
+          edit 1
+            set cookie-name APSCOOKIE*
+            set wildcard enable
+          next
+          edit 2
+            set cookie-name shortscc
+          next
+        end
+        set security-mode signed
+        set action alert_deny
+        set severity Medium
+        set secure-cookie enable
+        set allow-time 2024/01/01
+      next
+    end
+
+
+    config waf machine-learning url-replacer-rule
+      edit "PETSTORE_URL_REPLACER"
+        set type custom-defined
+        set url "(/api/v3/pet)/(\\d+)"
+        set new-url $0/id
+        set param $1
+        set new-param id
+      next
+    end
+    config waf machine-learning url-replacer-policy
+      edit "PETSTORE_URL_REPLACER"
+        config  rule-list
+          edit 1
+            set plugin-name PETSTORE_URL_REPLACER
+          next
+        end
+      next
+    end
+
+
+    config waf web-protection-profile inline-protection
+      edit "DVWA_PROTECTION_PROFILE"
+        set url-access-policy DVWA_URL_ACCESS_POLICY
+        set signature-rule DVWA_SIGNATURE_PROFILE
+        set x-forwarded-for-rule DVWA_X_FORWARDED_FOR
+        set parameter-validation-rule DVWA_PARAMETER_VALIDATION
+        set hidden-fields-protection DVWA_HIDDEN_FIELD
+        set allow-method-policy DVWA_ALLOW_METHOD
+        set url-rewrite-policy DVWA_URL_REWRITE
+        set file-upload-policy DVWA_FILE_SECURITY_POLICY
+        set webshell-detection-policy DVWA_WEBSHELL_UPLOADING
+        set http-protocol-parameter-restriction DVWA_PROTOCOL_CONSTRAINTS
+        set ip-list-policy DVWA_IP_LIST
+        set application-layer-dos-prevention DVWA_DOS_POLICY
+        set geo-block-list-policy DVWA_GEO_PROTECTION
+        set custom-access-policy DVWA_CUSTOM_POLICY
+        set ip-intelligence enable
+        set cookie-security-policy DVWA_COOKIE_SECURITY
+        set fortigate-quarantined-ips enable
+        set csrf-protection DVWA_CSRF_PROTECTION
+        set user-tracking-policy DVWA_USER_TRACKING
+        set http-header-security DVWA_HEADER_SECURITY
+        set bot-mitigate-policy DVWA_BOT_POLICY
+      next
+      edit "JUICESHOP_PROTECTION_PROFILE"
+        set signature-rule JUICESHOP_SIGNATURE_PROFILE
+        set redirect-url http://
+        set ip-intelligence enable
+        set bot-mitigate-policy JUICESHOP_BOT_POLICY
+      next
+	  edit "PETSTORE_PROTECTION_PROFILE"
+		set signature-rule PETSTORE_SIGNATURE_PROFILE
+		set x-forwarded-for-rule DVWA_X_FORWARDED_FOR
+		set file-upload-policy PETSTORE_FILE_SECURITY_POLICY
+		set redirect-url http://
+		set ip-intelligence enable
+	  next
+	end
+
+
+	config server-policy server-pool
+	  edit "DVWA_POOL"
+		set server-balance enable
+		set health HLTHCK_HTTP_DVWA
+		config  pserver-list
+		  edit 1
+			set ip 10.0.3.4
+			set port 1000
+		  next
+		end
+	  next
+	  edit "BANK_POOL"
+		set server-balance enable
+		set health HLTHCK_HTTP
+		config  pserver-list
+		  edit 1
+			set ip 10.0.3.4
+			set port 2001
+		  next
+		end
+	  next
+	  edit "JUICESHOP_POOL"
+		set server-balance enable
+		set health HLTHCK_HTTP
+		config  pserver-list
+		  edit 1
+			set ip 10.0.3.4
+			set port 3000
+		  next
+		end
+	  next
+	  edit "PETSTORE_POOL"
+		set server-balance enable
+		set health HLTHCK_HTTP
+		config  pserver-list
+		  edit 1
+			set ip 10.0.3.4
+			set port 4000
+		  next
+		end
+	  next
+	  edit "CSP_POOL"
+		set server-balance enable
+		set health HLTHCK_HTTP
+		config  pserver-list
+		  edit 1
+			set ip 10.0.3.4
+			set port 6000
+		  next
+		end
+	  next
+	  edit "MCP_POOL"
+		set server-balance enable
+		set health HLTHCK_HTTP
+		config  pserver-list
+		  edit 1
+			set ip 10.0.3.4
+			set port 7000
+		  next
+		end
+	  next
+	end
+
+
+    config server-policy http-content-routing-policy
+      edit "DVWA_ROUTE"
+        set server-pool DVWA_POOL
+        config  content-routing-match-list
+        end
+      next
+      edit "BANK_ROUTE"
+        set server-pool BANK_POOL
+        config  content-routing-match-list
+          edit 1
+            set match-object http-request
+            set match-condition match-sub
+            set match-expression bank
+          next
+        end
+      next
+    end
+	
+
+    config server-policy policy
+      edit "DVWA_POLICY"
+        set deployment-mode http-content-routing
+        set ssl enable
+        set vserver DVWA_VS
+        set service HTTP
+        set web-protection-profile DVWA_PROTECTION_PROFILE
+        set replacemsg Predefined
+        set https-service HTTPS
+        set syncookie enable
+        config  http-content-routing-list
+          edit 1
+            set content-routing-policy-name BANK_ROUTE
+            set profile-inherit enable
+          next
+          edit 2
+            set content-routing-policy-name DVWA_ROUTE
+            set profile-inherit enable
+            set is-default yes
+          next
+        end
+        set tlog enable
+      next
+      edit "JUICESHOP_POLICY"
+        set ssl enable
+        set vserver JUICESHOP_VS
+        set service HTTP
+        set web-protection-profile JUICESHOP_PROTECTION_PROFILE
+        set replacemsg Predefined
+        set server-pool JUICESHOP_POOL
+        set https-service HTTPS
+        set tlog enable
+      next
+      edit "PETSTORE_POLICY"
+        set ssl enable
+        set vserver PETSTORE_VS
+        set service HTTP
+        set web-protection-profile PETSTORE_PROTECTION_PROFILE
+        set replacemsg Predefined
+        set server-pool PETSTORE_POOL
+        set https-service HTTPS
+        set tlog enable
+      next
+    end
+	

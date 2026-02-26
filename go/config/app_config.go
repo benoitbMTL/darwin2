@@ -42,20 +42,19 @@ func Initialize() {
 
 	defaultConfig := AppConfig{
 		NAME:           "Default",
-		DVWAURL:        "https://dvwa.corp.fabriclab.ca",
-		BANKURL:        "https://bank.corp.fabriclab.ca/bank.html",
-		JUICESHOPURL:   "https://juiceshop.corp.fabriclab.ca",
-		PETSTOREURL:    "https://petstore3.corp.fabriclab.ca/api/v3/pet",
-		SPEEDTESTURL:   "https://speedtest.corp.fabriclab.ca",
+		DVWAURL:        "https://dvwa-xperts.labsec.ca",
+		BANKURL:        "https://bank-xperts.labsec.ca/bank.html",
+		JUICESHOPURL:   "https://juiceshop-xperts.labsec.ca",
+		PETSTOREURL:    "https://petstore3-xperts.labsec.ca/api/v3/pet",
+		SPEEDTESTURL:   "https://speedtest-xperts.labsec.ca",
 		USERNAMEAPI:    "userapi",
 		PASSWORDAPI:    "fortinet123!",
 		VDOMAPI:        "root",
-		FWBMGTIP:       "10.163.7.21",
-		FWBMGTPORT:     "443",
+		FWBMGTIP:       "10.0.1.4",
+		FWBMGTPORT:     "8443",
 		MLPOLICY:       "DVWA_POLICY",
 		USERAGENT:      "FortiWeb Demo Tool",
-		FABRICLABSTORY: "fortiweb",
-	}
+		FABRICLABSTORY: ""}
 
 	configsMap["XPERTS 2026"] = AppConfig{
 		NAME:           "XPERTS 2026",
@@ -72,6 +71,22 @@ func Initialize() {
 		MLPOLICY:       "DVWA_POLICY",
 		USERAGENT:      "FortiWeb Demo Tool",
 		FABRICLABSTORY: ""}
+
+	configsMap["Fabric Lab (fortiweb)"] = AppConfig{
+		NAME:           "Fabric Lab (fortiweb)",
+		DVWAURL:        "https://dvwa.corp.fabriclab.ca",
+		BANKURL:        "https://bank.corp.fabriclab.ca/bank.html",
+		JUICESHOPURL:   "https://juiceshop.corp.fabriclab.ca",
+		PETSTOREURL:    "https://petstore3.corp.fabriclab.ca/api/v3/pet",
+		SPEEDTESTURL:   "https://speedtest.corp.fabriclab.ca",
+		USERNAMEAPI:    "userapi",
+		PASSWORDAPI:    "fortinet123!",
+		VDOMAPI:        "root",
+		FWBMGTIP:       "10.163.7.21",
+		FWBMGTPORT:     "443",
+		MLPOLICY:       "DVWA_POLICY",
+		USERAGENT:      "FortiWeb Demo Tool",
+		FABRICLABSTORY: "fortiweb"}
 
 	configsMap["Fabric Lab (fortiweb2)"] = AppConfig{
 		NAME:           "Fabric Lab (fortiweb2)",

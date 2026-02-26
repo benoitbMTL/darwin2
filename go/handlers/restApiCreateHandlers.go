@@ -263,7 +263,7 @@ func HandleCloneSignatureProtection(c echo.Context) error {
 }
 
 func cloneSignatureProtection(host, port, token, originalKey, cloneKey string) ([]byte, error) {
-	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/waf/signature?mkey=%s&clone_mkey=%s", host, port, url.QueryEscape(originalKey), url.QueryEscape(cloneKey))
+	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/waf/signature?clone_mkey=%s&mkey=%s", host, port, url.QueryEscape(cloneKey), url.QueryEscape(originalKey))
 
 	return utils.SendRequest("POST", url, token, nil)
 }

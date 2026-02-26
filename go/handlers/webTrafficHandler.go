@@ -82,10 +82,10 @@ func HandleTrafficGenerator(c echo.Context) error {
 			"-followredirects",
 			"-maxtime", "60s",
 			"-nointeractive",
-			"-no404",
+            "-404code", "404",
 			"-timeout", "2",
 			"-useragent", "Nikto Traffic Generator\r\nX-Forwarded-For: "+randomIP,
-			"-T", randomTuning,
+            "-Tuning", randomTuning,
 		)
 
 		// Execute the nikto command

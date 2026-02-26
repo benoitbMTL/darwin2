@@ -105,26 +105,6 @@ func generateAttackConfigs() map[string]AttackConfig {
 			Method: "GET",
 			URL:    CurrentConfig.DVWAURL + "/vulnerabilities/sqli/?id=/scripts/root.exe?/c+dir",
 		},
-		"zero_day_sqli_1": {
-			Method:   "POST",
-			URL:      CurrentConfig.BANKURL,
-			PostData: "firstname=A+%27DIV%27+B+-+A+%27DIV%27+B&lastname=Doe&email=john.doe%40gmail.com&phone=%2B1+514+276+0947&address=1145+Av.+Laurier+O%2C+Outremont%2C+QC+H2V+2L3&birthday=2007-05-30&username=johnd&password=73x7c4NYi8FrTt",
-		},
-		"zero_day_sqli_2": {
-			Method:   "POST",
-			URL:      CurrentConfig.BANKURL,
-			PostData: "firstname=A+%27%5E%27+B&lastname=Doe&email=john.doe%40gmail.com&phone=%2B1+514+276+0947&address=1145+Av.+Laurier+O%2C+Outremont%2C+QC+H2V+2L3&birthday=2007-05-30&username=johnd&password=73x7c4NYi8FrTt",
-		},
-		"zero_day_sqli_3": {
-			Method:   "POST",
-			URL:      CurrentConfig.BANKURL,
-			PostData: "firstname=3%29%2B1%2B%280&lastname=Doe&email=john.doe%40gmail.com&phone=%2B1+514+276+0947&address=1145+Av.+Laurier+O%2C+Outremont%2C+QC+H2V+2L3&birthday=2007-05-30&username=johnd&password=73x7c4NYi8FrTt",
-		},
-		"zero_day_sqli_4": {
-			Method:   "POST",
-			URL:      CurrentConfig.BANKURL,
-			PostData: "firstname=3%7C%7C1&lastname=Doe&email=john.doe%40gmail.com&phone=%2B1+514+276+0947&address=1145+Av.+Laurier+O%2C+Outremont%2C+QC+H2V+2L3&birthday=2007-05-30&username=johnd&password=73x7c4NYi8FrTt",
-		},
 		"zero_day_remote_exploit_1": {
 			Method:   "POST",
 			URL:      CurrentConfig.BANKURL,
@@ -135,24 +115,10 @@ func generateAttackConfigs() map[string]AttackConfig {
 			URL:      CurrentConfig.BANKURL,
 			PostData: "firstname=%25p%25p%25p%25p%25p%25p%25p%25p&lastname=Doe&email=john.doe%40gmail.com&phone=%2B1+514+276+0947&address=1145+Av.+Laurier+O%2C+Outremont%2C+QC+H2V+2L3&birthday=2007-05-30&username=johnd&password=73x7c4NYi8FrTt",
 		},
-		"zero_day_command_injection_1": {
-			Method:   "POST",
-			URL:      CurrentConfig.BANKURL,
-			PostData: "firstname=%2F%3F%3F%3F%2Fl%3F&lastname=Doe&email=john.doe%40gmail.com&phone=%2B1+514+276+0947&address=1145+Av.+Laurier+O%2C+Outremont%2C+QC+H2V+2L3&birthday=2007-05-30&username=johnd&password=73x7c4NYi8FrTt",
-		},
-		"zero_day_command_injection_2": {
-			Method:   "POST",
-			URL:      CurrentConfig.BANKURL,
-			PostData: "firstname=xx%26+var1%3Dl+var2%3Ds+%3B+%22%24var1%22%22%24var2%22&lastname=Doe&email=john.doe%40gmail.com&phone=%2B1+514+276+0947&address=1145+Av.+Laurier+O%2C+Outremont%2C+QC+H2V+2L3&birthday=2007-05-30&username=johnd&password=73x7c4NYi8FrTt",
-		},
 		"zero_day_xss_1": {
 			Method:   "POST",
 			URL:      CurrentConfig.BANKURL,
-			PostData: "firstname=window%5B%27ale%27%2B%27rt%27%5D%281%29&lastname=Doe&email=john.doe%40gmail.com&phone=%2B1+514+276+0947&address=1145+Av.+Laurier+O%2C+Outremont%2C+QC+H2V+2L3&birthday=2007-05-30&username=johnd&password=73x7c4NYi8FrTt",
-		}, "zero_day_xss_2": {
-			Method:   "POST",
-			URL:      CurrentConfig.BANKURL,
-			PostData: "firstname=___%3D1%3F%27ert%28123%29%27%3A0%2C+_%3D1%3F%27al%27%3A0%2C+__%3D1%3F%27ev%27%3A0%2C+k%3Dwindow%2C+k%5B__%2B_%5D%28_%2B___%29&lastname=Doe&email=john.doe%40gmail.com&phone=%2B1+514+276+0947&address=1145+Av.+Laurier+O%2C+Outremont%2C+QC+H2V+2L3&birthday=2007-05-30&username=johnd&password=73x7c4NYi8FrTt",
+            PostData: "firstname=javascript%3Aqss%28X160135492Y1_1Z%29&lastname=Doe&email=john.doe%40gmail.com&phone=%2B1+514+276+0947&address=1145+Av.+Laurier+O%2C+Outremont%2C+QC+H2V+2L3&birthday=2007-05-30&username=johnd&password=73x7c4NYi8FrTt",
 		},
 	}
 }
