@@ -61,7 +61,7 @@
           <!-- Card content -->
           <div style="width: 800px; height: 400px; margin: 10px; position: relative;"><iframe allowfullscreen
               frameborder="0" style="width:800px; height:400px"
-              src="https://lucid.app/documents/embedded/5120dff7-a212-4909-a8d9-73dea588f386"
+              src="https://lucid.app/documents/embedded/4e98f702-42d5-455a-bc89-f58a8b56ab10"
               id="J4eoTFCARzfe"></iframe></div>
         </div>
       </div>
