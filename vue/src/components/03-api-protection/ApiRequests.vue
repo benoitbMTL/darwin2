@@ -7,9 +7,11 @@
 
       <div class="d-flex align-items-center">
         <div v-if="showResetMLMessage" class="me-2">
-          <div class="alert alert-success alert-dismissible fade show p-1 me-2 mb-0" role="alert"
+          <div class="alert alert-dismissible fade show p-1 me-2 mb-0"
+            :class="resetMLSuccess ? 'alert-success' : 'alert-danger'" role="alert"
             style="font-size: 0.875rem">
-            <i class="bi bi-check-circle me-1"></i> {{ resetMLMessage }}
+            <i class="bi me-1" :class="resetMLSuccess ? 'bi-check-circle' : 'bi-exclamation-triangle'"></i>
+            {{ resetMLMessage }}
           </div>
         </div>
         <div class="me-2">
@@ -195,6 +197,7 @@ export default {
 
       resetMLMessage: "", // To store the response message
       showResetMLMessage: false, // To control the visibility of the response message
+      resetMLSuccess: true,
 
     };
   },
@@ -381,21 +384,22 @@ export default {
           "Content-Type": "application/json",
         },
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.text();
+        .then(async (response) => {
+          const text = await response.text();
+          this.resetMLSuccess = response.ok;
+          this.resetMLMessage = text || `Reset failed with HTTP status ${response.status}`;
+          this.showResetMLMessage = true;
         })
-        .then((text) => {
-          this.resetMLMessage = text; // Set the response message
-          this.showResetMLMessage = true; // Show message
-
+        .catch((error) => {
+          this.resetMLSuccess = false;
+          this.resetMLMessage = `Unable to contact the backend: ${error.message}`;
+          this.showResetMLMessage = true;
+        })
+        .finally(() => {
           setTimeout(() => {
-            this.showResetMLMessage = false; // Hide message after 15 seconds
+            this.showResetMLMessage = false;
           }, 5001);
-        })
-        .catch((error) => console.error("Error:", error));
+        });
     },
 
 
