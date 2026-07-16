@@ -105,11 +105,11 @@ func Initialize() {
 		FABRICLABSTORY: "fortiweb2"}
 
 	configsMap["FortiAppSec Cloud"] = AppConfig{
-		NAME:           "FortiWeb Cloud",
+		NAME:           "FortiAppSec Cloud",
 		DVWAURL:        "https://dvwa.labsec.ca",
 		BANKURL:        "https://bank.labsec.ca/bank.html",
 		JUICESHOPURL:   "https://juiceshop.labsec.ca",
-		PETSTOREURL:    "https://petstore3.labsec.ca/api/v3/pet",
+		PETSTOREURL:    "https://petstore.labsec.ca/api/v3/pet",
 		SPEEDTESTURL:   "",
 		USERNAMEAPI:    "",
 		PASSWORDAPI:    "",
@@ -117,7 +117,7 @@ func Initialize() {
 		FWBMGTIP:       "",
 		FWBMGTPORT:     "",
 		MLPOLICY:       "",
-		USERAGENT:      "FortiWeb Demo Tool",
+		USERAGENT:      "FortiAppSec Demo Tool",
 		FABRICLABSTORY: ""}
 
 	// Add your defaultConfig to the configsMap
