@@ -44,6 +44,17 @@ build_vue_app() {
     cd ..
 }
 
+# Function to rebuild the Go binary without starting the server
+build_go_app() {
+    ##############################################################
+    echo "Rebuilding Go binary: go/darwin2..."
+    (
+        cd "$SCRIPT_DIR/go" || exit 1
+        go build -o darwin2 . || { echo "Go build failed."; exit 1; }
+    ) || exit 1
+    echo "Go binary rebuilt successfully: $SCRIPT_DIR/go/darwin2"
+}
+
 # Function to build and run Go application
 serve_go_app() {
     ##############################################################
@@ -421,8 +432,9 @@ force_build_and_serve() {
 
 # Function to display help
 print_help() {
-    printf "Usage: %s {run|docker|update|force|install|version|help} [options]\n" "$(basename "$0")"
+    printf "Usage: %s {run|build-go|docker|update|force|install|version|help} [options]\n" "$(basename "$0")"
     printf "  %-20s%s\n" "run:" "Build and serve the application."
+    printf "  %-20s%s\n" "build-go:" "Rebuild go/darwin2 without starting the application."
     printf "  %-20s%s\n" "docker:" "Manage Docker container for the application. Optional [config] to set host mappings: 1 for FabricLab FortiWeb, 2 for FabricLab FortiADC, 3 for FabricLab FortiWeb03, 4 for NUC FortiWeb, 5 for no hosts."
     printf "  %-20s%s\n" "update:" "Update the application from Git."
     printf "  %-20s%s\n" "force:" "Force build and serve the application (ignores changes)."
@@ -438,6 +450,9 @@ print_help() {
 case $1 in
     run)
         build_and_serve
+        ;;
+    build-go)
+        build_go_app
         ;;
     docker)
         update_from_git

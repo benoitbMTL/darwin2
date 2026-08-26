@@ -151,8 +151,8 @@
     <div class="card-body">
       <ul>
         <li>
-          The simulation tool generates random traffic using data from
-          <a href="https://api.namefake.com/">https://api.namefake.com/</a>.
+          The simulation tool generates random traffic using synthetic data
+          created locally, without sending data to a third-party service.
         </li>
         <li>
           The tool sends random samples to the server to simulate legitimate
