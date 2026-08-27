@@ -23,7 +23,7 @@ RUN npm run build
 
 
 # NIKTO
-FROM ubuntu:24.04 AS nikto-builder
+FROM ubuntu:26.04 AS nikto-builder
 
 ARG NIKTO_COMMIT=6e38da24cd9ec20d9239685071999c79288e89df
 
@@ -35,7 +35,7 @@ RUN apt-get update \
 
 
 # FINAL IMAGE
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
