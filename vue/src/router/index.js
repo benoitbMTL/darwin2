@@ -1,30 +1,29 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-// Import components from each folder
 import HomePage from '../components/HomePage.vue';
 
-import WebScan from '../components/01-web-protection/WebScan.vue';
-import TrafficGeneration from '../components/01-web-protection/TrafficGeneration.vue';
-import WebAttacks from '../components/01-web-protection/WebAttacks.vue';
-import MachineLearning from '../components/01-web-protection/MachineLearning.vue';
-import CookieSecurity from '../components/01-web-protection/CookieSecurity.vue';
-import CredentialStuffingDefense from '../components/01-web-protection/CredentialStuffingDefense.vue';
+const WebScan = () => import('../components/01-web-protection/WebScan.vue');
+const TrafficGeneration = () => import('../components/01-web-protection/TrafficGeneration.vue');
+const WebAttacks = () => import('../components/01-web-protection/WebAttacks.vue');
+const MachineLearning = () => import('../components/01-web-protection/MachineLearning.vue');
+const CookieSecurity = () => import('../components/01-web-protection/CookieSecurity.vue');
+const CredentialStuffingDefense = () => import('../components/01-web-protection/CredentialStuffingDefense.vue');
 
-import BotSelenium from '../components/02-bot-mitigation/BotSelenium.vue';
-import BotDeception from '../components/02-bot-mitigation/BotDeception.vue';
-import KnownBots from '../components/02-bot-mitigation/KnownBots.vue';
-import BotScraping from '../components/02-bot-mitigation/BotScraping.vue';
-import HTTPRequest from '../components/02-bot-mitigation/HTTPRequest.vue';
+const BotSelenium = () => import('../components/02-bot-mitigation/BotSelenium.vue');
+const BotDeception = () => import('../components/02-bot-mitigation/BotDeception.vue');
+const KnownBots = () => import('../components/02-bot-mitigation/KnownBots.vue');
+const BotScraping = () => import('../components/02-bot-mitigation/BotScraping.vue');
+const HTTPRequest = () => import('../components/02-bot-mitigation/HTTPRequest.vue');
 
-import ApiRequests from '../components/03-api-protection/ApiRequests.vue';
-import ApiTrafficGeneration from '../components/03-api-protection/ApiTrafficGeneration.vue';
+const ApiRequests = () => import('../components/03-api-protection/ApiRequests.vue');
+const ApiTrafficGeneration = () => import('../components/03-api-protection/ApiTrafficGeneration.vue');
 
-import RestAPIManagement from '../components/04-rest-api/RestAPIManagement.vue';
+const RestAPIManagement = () => import('../components/04-rest-api/RestAPIManagement.vue');
 
-import ConfigForm from '../components/05-tool/ConfigForm.vue';
-import HealthCheck from '../components/05-tool/HealthCheck.vue';
-import AppDocker from '../components/05-tool/AppDocker.vue';
-import FortiWebBootstrap from '../components/05-tool/FortiWebBootstrap.vue';
+const ConfigForm = () => import('../components/05-tool/ConfigForm.vue');
+const HealthCheck = () => import('../components/05-tool/HealthCheck.vue');
+const AppDocker = () => import('../components/05-tool/AppDocker.vue');
+const FortiWebBootstrap = () => import('../components/05-tool/FortiWebBootstrap.vue');
 
 const routes = [
   { path: '/', component: HomePage },

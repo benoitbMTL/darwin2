@@ -56,8 +56,7 @@
 </template>
 
 <script>
-import hljs from "highlight.js";
-import "highlight.js/styles/monokai.css"; // Monokai theme for Highlight.js
+import hljs from "../../utils/highlight";
 
 export default {
   data() {

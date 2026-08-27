@@ -5,16 +5,14 @@ import router from './router';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'highlight.js/styles/monokai.css';
 
-// Import the entire sets of free icons from FontAwesome
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { fas } from '@fortawesome/free-solid-svg-icons';  // Free solid icons
-import { far } from '@fortawesome/free-regular-svg-icons'; // Free regular icons
-import { fab } from '@fortawesome/free-brands-svg-icons'; // Free brand icons
+import { faFileImport, faHeartCircleCheck, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faDocker, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-// Add the imported icons to the library
-library.add(fas, far, fab);
+library.add(faDocker, faFileImport, faGithub, faHeartCircleCheck, faPenToSquare);
 
 import './assets/styles/global.css';
 

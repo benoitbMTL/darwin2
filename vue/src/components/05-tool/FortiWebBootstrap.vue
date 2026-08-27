@@ -22,8 +22,7 @@
 </template>
 
 <script>
-import hljs from 'highlight.js';
-import 'highlight.js/styles/monokai.css';
+import hljs from '../../utils/highlight';
 
 export default {
   data() {
@@ -44,7 +43,7 @@ export default {
   methods: {
     highlightCode() {
       document.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightBlock(block);
+        hljs.highlightElement(block);
       });
     },
   }

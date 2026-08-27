@@ -2,13 +2,16 @@
 
 # Initialize global variables
 SCRIPT_DIR=$(pwd)
-NODE_MAJOR=20
+NODE_MAJOR=24
 vue_changes=0
-GOPACKAGE="go1.22.0.linux-amd64.tar.gz"
+GOPACKAGE="go1.26.7.linux-amd64.tar.gz"
 GOURL="https://go.dev/dl/${GOPACKAGE}"
-# Download locations: version 122.0.6261.128
-CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.128/linux64/chromedriver-linux64.zip"
-CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.128/linux64/chrome-linux64.zip"
+GO_SHA256="ffb5f8de10c62550dfddab66b36b57030721e0a44a3218e9e1181d7b59f121ca"
+# Download locations: Chrome for Testing stable 152.0.7977.64
+CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/152.0.7977.64/linux64/chromedriver-linux64.zip"
+CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/152.0.7977.64/linux64/chrome-linux64.zip"
+CHROMEDRIVER_SHA256="2457e3d1e204ca712d650e1f13c2b524270682471e371b4750fdbe4f15c1f2dc"
+CHROME_SHA256="8b592f066af71f054aab2cc80fc26f73c775c6d44ebb99d16ade924b24756c2e"
 
 # Function to update from Git
 update_from_git() {
@@ -39,7 +42,7 @@ build_vue_app() {
     ##############################################################
     echo "Building Vue.js application..."
     cd vue || exit 1
-    npm install || { echo "Vue.js installation failed."; exit 1; }
+    npm ci || { echo "Vue.js installation failed."; exit 1; }
     npm run build || { echo "Vue.js build failed."; exit 1; }
     cd ..
 }
@@ -194,7 +197,8 @@ install_environment() {
     ##############################################################
     print_header "Installing Go..."
     echo "Downloading Go from ${GOURL}..."
-    curl -L -s -O ${GOURL} || { echo "Failed to download Go."; exit 1; }
+    curl -fsSLO "${GOURL}" || { echo "Failed to download Go."; exit 1; }
+    echo "${GO_SHA256}  ${GOPACKAGE}" | sha256sum -c - || { echo "Go archive checksum verification failed."; exit 1; }
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf $GOPACKAGE || { echo "Failed to install Go."; exit 1; }
     rm -f ${GOPACKAGE}
     echo "Done!"
@@ -258,19 +262,12 @@ install_environment() {
     sudo apt-get update && sudo apt-get install nodejs -y
     print_completion "Done!"
 
-    # Install Bootstrap and Bootstrap Icons locally within the Vue project
-    ##############################################################
-    print_header "Installing Bootstrap and Bootstrap Icons locally..."
-    cd "$SCRIPT_DIR/vue" || exit 1
-    npm install bootstrap bootstrap-icons || { echo "Failed to install Bootstrap and Bootstrap Icons."; exit 1; }
-    print_completion "Done!"
-
     # Setup Vue.js application
     ##############################################################
     print_header "Setting up Vue.js application..."
-    npm install @vue/cli || { echo "Failed to install Vue CLI."; exit 1; }
-    npm install || { echo "Failed to install Vue.js application dependencies."; exit 1; }
-    echo "Vue.js application setup completed. You can now run 'npm run serve' to start the application."
+    cd "$SCRIPT_DIR/vue" || exit 1
+    npm ci || { echo "Failed to install Vue.js application dependencies."; exit 1; }
+    echo "Vue.js application setup completed. You can now run 'npm run dev' to start the development server."
     cd "$SCRIPT_DIR"
     print_completion "Done!"
 
@@ -279,10 +276,6 @@ install_environment() {
     # https://googlechromelabs.github.io/chrome-for-testing/
 
     print_header "Installing Chrome & Chromedriver..."
-
-    cd vue
-    npm install selenium-webdriver
-    cd "$SCRIPT_DIR"
 
     # Create a directory for the setup
     cd go
@@ -293,6 +286,8 @@ install_environment() {
     # Download ChromeDriver and Chrome
     wget $CHROMEDRIVER_URL -O chromedriver.zip
     wget $CHROME_URL -O chrome.zip
+    echo "${CHROMEDRIVER_SHA256}  chromedriver.zip" | sha256sum -c - || { echo "ChromeDriver checksum verification failed."; exit 1; }
+    echo "${CHROME_SHA256}  chrome.zip" | sha256sum -c - || { echo "Chrome checksum verification failed."; exit 1; }
 
     # Unzip the downloaded files
     unzip chromedriver.zip

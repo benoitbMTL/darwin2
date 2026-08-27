@@ -1,0 +1,14 @@
+.git
+.github
+.agents
+.codex
+*.log
+Dockerfile.old
+README.html
+package-lock.json
+test
+go/darwin2
+go/nikto
+go/selenium
+vue/dist
+vue/node_modules

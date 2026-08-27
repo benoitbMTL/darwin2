@@ -41,7 +41,7 @@ Darwin2 is a demonstration tool designed to showcase the capabilities of FortiWe
 
 ## Installation Guide
 
-Darwin2 uses GOLANG and VUEJS frameworks. The `darwin2.sh` utility script facilitates the installation of all necessary components.
+Darwin2 uses Go 1.26 for the backend and Vue 3 with Vite for the frontend. The `darwin2.sh` utility script facilitates the installation of all necessary components.
 
 ### Option 1: Installation on Linux 🐧
 
@@ -52,7 +52,7 @@ The `darwin2.sh` script automatically installs all necessary components for the 
 - ✅ Git
 - ✅ Go
 - ✅ Nikto
-- ✅ Node.js
+- ✅ Node.js 24 LTS
 - ✅ Npm
 - ✅ Bootstrap
 - ✅ Bootstrap Icons
@@ -85,11 +85,23 @@ cd darwin2
 The `darwin2.sh` script supports several options for managing the application:
 
 - **run**: Build and serve the application.
+- **build-go**: Rebuild `go/darwin2` without starting the application.
 - **docker**: Manage Docker container for the application.
 - **update**: Update the application from Git.
 - **force**: Force build and serve the application.
 - **install**: Install and initialize environment to run the application.
+- **version**: Display installed dependency versions.
 - **help**: Display help message with usage instructions.
+
+### Frontend development
+
+```bash
+cd vue
+npm ci
+npm run dev
+```
+
+Use `npm run lint` to check the Vue source and `npm run build` to create the production bundle.
 
 ## Accessing the Application
 

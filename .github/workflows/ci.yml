@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  go:
+    name: Go
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go/go.mod
+          cache-dependency-path: go/go.sum
+      - name: Vet
+        working-directory: go
+        run: go vet ./...
+      - name: Test
+        working-directory: go
+        run: go test -race ./...
+
+  frontend:
+    name: Vue
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: vue
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: vue/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm audit --audit-level=high
+      - run: npm run build
+
+  container:
+    name: Container
+    runs-on: ubuntu-24.04
+    needs: [go, frontend]
+    steps:
+      - uses: actions/checkout@v6
+      - run: docker build --tag darwin2:ci .

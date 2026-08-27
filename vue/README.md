@@ -1,25 +1,27 @@
-# vue
+# Darwin2 frontend
 
 ## Project setup
+
 ```
-npm install
+npm ci
 ```
 
 ### Compiles and hot-reloads for development
+
 ```
-npm run serve
+npm run dev
 ```
+
+The Vite development server proxies backend routes to `VITE_BACKEND_URL`, configured in `.env` and defaulting to `http://127.0.0.1:8080`.
 
 ### Compiles and minifies for production
 ```
 npm run build
 ```
 
-### Lints and fixes files
+### Lints source files
 ```
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
+The frontend uses Vue 3 and Vite. Build configuration is located in `vite.config.js`.
