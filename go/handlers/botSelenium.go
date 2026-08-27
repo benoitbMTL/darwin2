@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"darwin2/config"
+	"darwin2/jobs"
 	"darwin2/utils"
 	"encoding/json"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -33,9 +35,17 @@ type requestParams struct {
 }
 
 var reqParams requestParams
+var seleniumSlot = make(chan struct{}, 1)
 
 // MAIN START ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func HandleSelenium(c echo.Context) error {
+	ctx := c.Request().Context()
+	select {
+	case seleniumSlot <- struct{}{}:
+		defer func() { <-seleniumSlot }()
+	case <-ctx.Done():
+		return ctx.Err()
+	}
 
 	var actionErrors []string // To record action errors
 
@@ -105,7 +115,18 @@ func HandleSelenium(c echo.Context) error {
 		fmt.Printf("Error connecting to ChromeDriver: %v\n", err)
 		return err
 	}
-	defer webDriver.Quit() // Ensure that WebDriver is closed when the function returns
+	var quitOnce sync.Once
+	quitDriver := func() { quitOnce.Do(func() { webDriver.Quit() }) }
+	defer quitDriver()
+	jobFinished := make(chan struct{})
+	defer close(jobFinished)
+	go func() {
+		select {
+		case <-ctx.Done():
+			quitDriver()
+		case <-jobFinished:
+		}
+	}()
 
 	// Generate random data for each iteration
 	fakeData, err := utils.FetchRandomData()
@@ -154,6 +175,9 @@ func HandleSelenium(c echo.Context) error {
 
 	// Performing selected actions
 	for _, action := range reqParams.SelectedActions {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
 		var err error
 		switch action {
 		case "clickAllProducts":
@@ -183,6 +207,7 @@ func HandleSelenium(c echo.Context) error {
 		}
 		if err != nil {
 			actionErrors = append(actionErrors, fmt.Sprintf("%s: %v", action, err))
+			jobs.ReportError(ctx, action, err)
 			fmt.Printf("Error executing %s: %v\n", action, err)
 		}
 	}
@@ -592,7 +617,7 @@ func sleepForShortDuration(reqParams requestParams) {
 			fmt.Println("Error converting speed to integer:", err)
 			return
 		}
-		duration = (10 - (speed - 1) ) * 100
+		duration = (10 - (speed - 1)) * 100
 	}
 	fmt.Printf("Sleeping for %d milliseconds based on speed %s\n", duration, reqParams.Speed)
 	time.Sleep(time.Duration(duration) * time.Millisecond)

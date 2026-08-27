@@ -25,14 +25,13 @@
           <span>{{ isLoading ? 'Generating...' : 'Generate Traffic' }}</span>
         </button>
 
-        <!-- Reset Button -->
-        <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">Reset</button>
+        <!-- Clear display without cancelling the background job -->
+        <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">Clear display</button>
       </div>
 
-      <div v-if="jobResult" class="mt-3">
-        <h6>Traffic Result:</h6>
-        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-      </div>
+      <div v-if="jobResult" class="alert alert-danger py-2">{{ jobResult }}</div>
+      <JobMonitor ref="jobMonitor" :job-id="activeJobId" job-type="traffic-generation"
+        @finished="isLoading = false" />
     </div>
   </div>
 
@@ -54,12 +53,16 @@
 
 <script>
 import hljs from "../../utils/highlight";
+import JobMonitor from "../jobs/JobMonitor.vue";
+import { startJob } from "../../services/jobs";
 
 export default {
+  components: { JobMonitor },
   data() {
     return {
       isLoading: false,
       jobResult: '',
+      activeJobId: '',
       showHelp: false,
       highlightedCode: "",
       selectedTarget: 'DVWA', // Default selection
@@ -74,43 +77,30 @@ export default {
     },
   },
   methods: {
-    generateTraffic() {
+    async generateTraffic() {
       console.log('Starting traffic generation...');
       console.log('Selected target:', this.selectedTarget); // Debug log
       this.isLoading = true;
       this.jobResult = ''; // Reset job result
 
-      // Make HTTP POST request to the server with the selected target
-      fetch("/traffic-generation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ target: this.selectedTarget }), // Include the selected target in the request payload
-      })
-        .then(response => {
-          console.log('Received response from server');
-          if (!response.ok) {
-            console.error('Network response was not ok');
-            throw new Error('Network response was not ok');
-          }
-          return response.text();
-        })
-        .then(data => {
-          console.log('Traffic generation successful:', data);
-          this.jobResult = data;
-          this.isLoading = false;
-        })
-        .catch(error => {
-          console.error('Error during fetch operation:', error);
-          this.jobResult = 'Error: Unable to generate traffic.';
-          this.isLoading = false;
+      try {
+        const job = await startJob("traffic-generation", {
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ target: this.selectedTarget }),
         });
+        this.activeJobId = job.id;
+      } catch (error) {
+        this.jobResult = `Error: ${error.message}`;
+        this.isLoading = false;
+      }
     },
     resetResult() {
       console.log('Resetting Result');
       this.jobResult = '';
       this.selectedTarget = "DVWA"; // Reset selected option
+      this.activeJobId = '';
+      this.isLoading = false;
+      this.$refs.jobMonitor?.clear();
     },
   },
 };

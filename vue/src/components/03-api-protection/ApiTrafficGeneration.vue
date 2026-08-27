@@ -32,27 +32,26 @@
       <p class="card-text">Launch a random traffic simulation towards the Petstore API to build FortiWeb's ML model.</p>
 
       <div class="d-flex align-items-center mb-3">
-        <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isLoading1">
+        <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isTrafficLoading">
           <span v-if="isLoading1" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           <span>{{ isLoading1 ? "Simulating..." : "Send 1 Sample" }}</span>
         </button>
-        <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isLoading10">
+        <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isTrafficLoading">
           <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status"
             aria-hidden="true"></span>
           <span>{{ isLoading10 ? "Simulating..." : "Send 10 Samples" }}</span>
         </button>
-        <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isLoading500">
+        <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isTrafficLoading">
           <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
             aria-hidden="true"></span>
           <span>{{ isLoading500 ? "Simulating..." : "Send 500 Samples" }}</span>
         </button>
-        <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">Reset</button>
+        <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">Clear display</button>
       </div>
 
-      <div v-if="jobResult" class="mt-3">
-        <h6>Scan Result:</h6>
-        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-      </div>
+      <div v-if="jobResult" class="alert alert-danger py-2">{{ jobResult }}</div>
+      <JobMonitor ref="trafficJobMonitor" :job-id="activeJobId" job-type="api-traffic-generation"
+        @finished="finishTrafficJob" />
     </div>
   </div>
 
@@ -86,11 +85,15 @@
 
 <script>
 import hljs from "../../utils/highlight";
+import JobMonitor from "../jobs/JobMonitor.vue";
+import { startJob } from "../../services/jobs";
 
 export default {
+  components: { JobMonitor },
   data() {
     return {
       jobResult: "",
+      activeJobId: "",
       highlightedCode: "",
       isLoading1: false,
       isLoading10: false,
@@ -127,6 +130,12 @@ end`,
 
   mounted() {
     this.highlightCode(); // Call this method to apply syntax highlighting
+  },
+
+  computed: {
+    isTrafficLoading() {
+      return this.isLoading1 || this.isLoading10 || this.isLoading500;
+    },
   },
 
   methods: {
@@ -169,7 +178,7 @@ end`,
 
 
 
-    generateTraffic(sampleCount) {
+    async generateTraffic(sampleCount) {
       this.resetResult();
       console.log(`Starting ML traffic simulation with ${sampleCount} samples...`);
       let isLoadingKey;
@@ -187,43 +196,31 @@ end`,
       }
       this[isLoadingKey] = true;
 
-      // Constructing form data
       const formData = new URLSearchParams();
       formData.append("count", sampleCount);
-
-      // Make HTTP POST request to the server
-      console.log("Making POST request to server");
-      fetch("/api-traffic-generation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: formData,
-      })
-        .then((response) => {
-          console.log("Received response from server:", response);
-          if (!response.ok) {
-            console.error("Network response was not ok", response);
-            throw new Error("Network response was not ok");
-          }
-          return response.text();
-        })
-
-        .then((data) => {
-          console.log("ML traffic simulation successful:", data);
-          this.jobResult = data; // Update this line
-          this[isLoadingKey] = false;
-        })
-
-        .catch((error) => {
-          console.error("Error during fetch operation:", error);
-          this.jobResult = "Error: Unable to simulate ML traffic."; // Update this line
-          this[isLoadingKey] = false;
+      try {
+        const job = await startJob("api-traffic-generation", {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: formData,
         });
+        this.activeJobId = job.id;
+      } catch (error) {
+        this.jobResult = `Error: ${error.message}`;
+        this[isLoadingKey] = false;
+      }
+    },
+
+    finishTrafficJob() {
+      this.isLoading1 = false;
+      this.isLoading10 = false;
+      this.isLoading500 = false;
     },
 
     resetResult() {
       this.jobResult = ""; // Clear Result
+      this.activeJobId = "";
+      this.finishTrafficJob();
+      this.$refs.trafficJobMonitor?.clear();
     },
   },
 };

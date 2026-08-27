@@ -15,6 +15,11 @@
           </div>
         </div>
         <div class="me-2">
+          <button type="button" class="btn btn-secondary btn-sm text-nowrap" @click="resetResult">
+            Clear display
+          </button>
+        </div>
+        <div class="me-2">
           <button type="button" class="btn btn-warning btn-sm" @click="resetMachineLearning">
             Reset Machine Learning
           </button>
@@ -57,23 +62,20 @@
                 </p>
                 <div class="d-flex mb-3"> <!-- TEST -->
 
-                  <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isLoading1">
+                  <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isTrafficLoading">
                     <span v-if="isLoading1" class="spinner-border spinner-border-sm me-2" role="status"
                       aria-hidden="true"></span>
                     <span>{{ isLoading1 ? "Simulating..." : "Send 1 Sample" }}</span>
                   </button>
-                  <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isLoading10">
+                  <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isTrafficLoading">
                     <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status"
                       aria-hidden="true"></span>
                     <span>{{ isLoading10 ? "Simulating..." : "Send 10 Samples" }}</span>
                   </button>
-                  <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isLoading500">
+                  <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isTrafficLoading">
                     <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
                       aria-hidden="true"></span>
                     <span>{{ isLoading500 ? "Simulating..." : "Send 500 Samples" }}</span>
-                  </button>
-                  <button class="btn btn-secondary btn-sm ms-2" @click="resetResult">
-                    Reset
                   </button>
                 </div>
 
@@ -112,9 +114,6 @@
                   <button class="btn btn-primary btn-sm me-2 mb-3" @click="performAttack">
                     Run
                   </button>
-                  <button class="btn btn-secondary btn-sm me-2 mb-3" @click="resetResult">
-                    Reset
-                  </button>
                 </div>
 
               </div>
@@ -126,10 +125,9 @@
         </div> <!-- Row -->
 
 
-        <div v-if="sendSampleResult" class="mt-3">
-          <h6>Simulation Result:</h6>
-          <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-        </div>
+        <div v-if="sendSampleResult" class="alert alert-danger py-2 mt-3">{{ sendSampleResult }}</div>
+        <JobMonitor ref="trafficJobMonitor" :job-id="activeJobId" job-type="machine-learning"
+          @finished="finishTrafficJob" />
 
         <div v-if="performAttackResult" class="mt-4 mb-3">
           <h6>{{ currentAttackName }} Result:</h6>
@@ -180,8 +178,11 @@
 
 <script>
 import hljs from "../../utils/highlight";
+import JobMonitor from "../jobs/JobMonitor.vue";
+import { startJob } from "../../services/jobs";
 
 export default {
+  components: { JobMonitor },
   data() {
     return {
       highlightedCode: "",
@@ -189,6 +190,7 @@ export default {
       isLoading10: false,
       isLoading500: false,
       sendSampleResult: "",
+      activeJobId: "",
       selectedAttackType: "zero_day_xss_1",
       performAttackResult: "",
       showHelp: false,
@@ -215,6 +217,9 @@ end`,
   },
   
   computed: {
+    isTrafficLoading() {
+      return this.isLoading1 || this.isLoading10 || this.isLoading500;
+    },
     bankingDynamicUrl() {
       if (this.config.FABRICLABSTORY) {
         return `https://bank.${this.config.FABRICLABSTORY}.fabriclab.ca`;
@@ -287,7 +292,7 @@ end`,
         });
     },
 
-    generateTraffic(sampleCount) {
+    async generateTraffic(sampleCount) {
       this.resetResult(); // Reset results before generating new traffic
       console.log(
         `Starting ML traffic simulation with ${sampleCount} samples...`
@@ -307,35 +312,22 @@ end`,
       this[isLoadingKey] = true;
       this.sendSampleResult = ""; // Reset result
 
-      // Make HTTP POST request to the server
-      console.log("Making POST request to server");
-      fetch("/machine-learning", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ sampleCount: sampleCount }),
-      })
-        .then((response) => {
-          console.log("Received response from server:", response);
-          if (!response.ok) {
-            console.error("Network response was not ok", response);
-            throw new Error("Network response was not ok");
-          }
-          return response.text();
-        })
-
-        .then((data) => {
-          console.log("ML traffic simulation successful:", data);
-          this.sendSampleResult = data;
-          this[isLoadingKey] = false;
-        })
-
-        .catch((error) => {
-          console.error("Error during fetch operation:", error);
-          this.sendSampleResult = "Error: Unable to simulate ML traffic.";
-          this[isLoadingKey] = false;
+      try {
+        const job = await startJob("machine-learning", {
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sampleCount }),
         });
+        this.activeJobId = job.id;
+      } catch (error) {
+        this.sendSampleResult = `Error: ${error.message}`;
+        this[isLoadingKey] = false;
+      }
+    },
+
+    finishTrafficJob() {
+      this.isLoading1 = false;
+      this.isLoading10 = false;
+      this.isLoading500 = false;
     },
 
     performAttack() {
@@ -418,6 +410,9 @@ end`,
       this.selectedOption = "All"; // Reset selected option
       this.sendSampleResult = "";
       this.performAttackResult = "";
+      this.activeJobId = "";
+      this.finishTrafficJob();
+      this.$refs.trafficJobMonitor?.clear();
     },
   },
 };

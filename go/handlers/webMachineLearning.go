@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"darwin2/config"
+	"darwin2/jobs"
 	"darwin2/utils"
 	"fmt"
 	"github.com/labstack/echo/v4"
@@ -35,8 +37,12 @@ func HandleMachineLearning(c echo.Context) error {
 	bankURL := config.CurrentConfig.BANKURL
 	var fakeData *utils.FakeData
 	var err error
+	ctx := c.Request().Context()
 
 	for i := 0; i < requestCount; i++ {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
 		// Fetch random data
 		fakeData, err = utils.FetchRandomData()
 		if err != nil {
@@ -48,11 +54,14 @@ func HandleMachineLearning(c echo.Context) error {
 		postData := preparePostData(*fakeData)
 
 		// Send POST request
-		_, err = sendPostRequest(bankURL, postData, fakeData.Useragent, fakeData.Ipv4)
+		resp, requestErr := sendPostRequest(ctx, bankURL, postData, fakeData.Useragent, fakeData.Ipv4)
+		err = requestErr
 		if err != nil {
 			log.Printf("Error sending POST request: %v\n", err)
 			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error sending POST request: %v", err))
 		}
+		resp.Body.Close()
+		jobs.ReportProgress(ctx, int64(i+1), int64(requestCount), fmt.Sprintf("Sent sample %d of %d", i+1, requestCount))
 	}
 
 	// Format the last data for display
@@ -94,7 +103,7 @@ func formatDisplayData(data utils.FakeData) string {
 		firstName, lastName, email, phone, sanitizedAddress, data.Birthday, data.Username, data.Password)
 }
 
-func sendPostRequest(url, data, userAgent, ipv4 string) (*http.Response, error) {
+func sendPostRequest(ctx context.Context, url, data, userAgent, ipv4 string) (*http.Response, error) {
 
 	// Create a custom http.Transport with TLSClientConfig
 	tr := &http.Transport{
@@ -104,7 +113,7 @@ func sendPostRequest(url, data, userAgent, ipv4 string) (*http.Response, error) 
 	// Use the custom Transport with http.Client
 	client := &http.Client{Transport: tr}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBufferString(data))
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBufferString(data))
 	if err != nil {
 		return nil, err
 	}

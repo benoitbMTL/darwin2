@@ -134,8 +134,10 @@
           <span v-if="!isRunning">Run Actions</span>
           <span v-if="isRunning"> Running...</span>
         </button>
-        <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Reset</button>
+        <button class="btn btn-secondary btn-sm me-2" @click="resetResult">Clear display</button>
       </div>
+
+      <JobMonitor ref="jobMonitor" :job-id="activeJobId" job-type="selenium" @finished="isRunning = false" />
 
     </div>
   </div>
@@ -160,7 +162,11 @@
 </template>
 
 <script>
+import JobMonitor from "../jobs/JobMonitor.vue";
+import { startJob } from "../../services/jobs";
+
 export default {
+  components: { JobMonitor },
   data() {
     return {
       showHelp: false,
@@ -169,6 +175,7 @@ export default {
       loopCount: 1, // Default value 
       isHeadless: false, // Default value 
       isRunning: false, // Add this line
+      activeJobId: "",
       selectedSpeed: "5", // Default value
       config: {
         JUICESHOPURL: "",
@@ -208,35 +215,23 @@ export default {
     async runCustomSelenium() {
       this.isRunning = true; // Start running
       this.results = []; // Reset results before running
-      for (let i = 1; i <= this.loopCount; i++) {
-        const payload = {
-          actions: this.selectedActions,
-          loopCount: this.loopCount,
-          headless: this.isHeadless,
-          speed: this.selectedSpeed,
-        };
+      const payload = {
+        actions: this.selectedActions,
+        loopCount: Number(this.loopCount),
+        headless: this.isHeadless,
+        speed: this.selectedSpeed,
+      };
 
-        try {
-          console.log("Sending payload:", JSON.stringify(payload)); // Print the payload to the console
-          const response = await fetch("/selenium", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          });
-
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const data = await response.json();
-          this.results.push(`Loop ${i}: ${data}`); // Push the result of each loop with a message
-        } catch (error) {
-          console.error("Error:", error);
-          this.results.push(`Loop ${i}: Failed to run test`);
-        }
+      try {
+        const job = await startJob("selenium", {
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        this.activeJobId = job.id;
+      } catch (error) {
+        this.results.push(`Unable to start Selenium: ${error.message}`);
+        this.isRunning = false;
       }
-      this.isRunning = false; // Indicate the process has finished
     },
 
     adjustIframeHeight() {
@@ -252,6 +247,9 @@ export default {
       this.loopCount = 1;
       this.isHeadless = false;
       this.selectedSpeed = "5";
+      this.activeJobId = "";
+      this.isRunning = false;
+      this.$refs.jobMonitor?.clear();
     },
   },
 };

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"darwin2/config"
 	"darwin2/utils"
 	"fmt"
@@ -24,7 +25,7 @@ func HandleDeletePolicy(c echo.Context) error {
 		Description: "Delete Policy",
 	}
 
-	resultBody, err := deletePolicy(host, port, token, policyName)
+	resultBody, err := deletePolicy(c.Request().Context(), host, port, token, policyName)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error deleting Policy: %v", err)
@@ -40,10 +41,10 @@ func HandleDeletePolicy(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func deletePolicy(host, port, token, policyName string) ([]byte, error) {
+func deletePolicy(ctx context.Context, host, port, token, policyName string) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/server-policy/policy?mkey=%s", host, port, url.QueryEscape(policyName))
 
-	return utils.SendRequest("DELETE", url, token, nil)
+	return utils.SendRequest(ctx, "DELETE", url, token, nil)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ func HandleDeleteInlineProtection(c echo.Context) error {
 		Description: "Delete Inline Protection Profile",
 	}
 
-	resultBody, err := deleteInlineProtection(host, port, token, profileName)
+	resultBody, err := deleteInlineProtection(c.Request().Context(), host, port, token, profileName)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error deleting Inline Protection Profile: %v", err)
@@ -78,10 +79,10 @@ func HandleDeleteInlineProtection(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func deleteInlineProtection(host, port, token, profileName string) ([]byte, error) {
+func deleteInlineProtection(ctx context.Context, host, port, token, profileName string) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/waf/web-protection-profile.inline-protection?mkey=%s", host, port, url.QueryEscape(profileName))
 
-	return utils.SendRequest("DELETE", url, token, nil)
+	return utils.SendRequest(ctx, "DELETE", url, token, nil)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +101,7 @@ func HandleDeleteXForwardedForRule(c echo.Context) error {
 		Description: "Delete X-Forwarded-For Rule",
 	}
 
-	resultBody, err := deleteXForwardedForRule(host, port, token, xff)
+	resultBody, err := deleteXForwardedForRule(c.Request().Context(), host, port, token, xff)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error deleting X-Forwarded-For Rule: %v", err)
@@ -116,10 +117,10 @@ func HandleDeleteXForwardedForRule(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func deleteXForwardedForRule(host, port, token, ruleName string) ([]byte, error) {
+func deleteXForwardedForRule(ctx context.Context, host, port, token, ruleName string) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/waf/x-forwarded-for?mkey=%s", host, port, url.QueryEscape(ruleName))
 
-	return utils.SendRequest("DELETE", url, token, nil)
+	return utils.SendRequest(ctx, "DELETE", url, token, nil)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,7 +139,7 @@ func HandleDeleteSignatureProtection(c echo.Context) error {
 		Description: "Delete Signature Protection",
 	}
 
-	resultBody, err := deleteSignatureProtection(host, port, token, SignatureProtectionName)
+	resultBody, err := deleteSignatureProtection(c.Request().Context(), host, port, token, SignatureProtectionName)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error deleting Signature Protection: %v", err)
@@ -154,10 +155,10 @@ func HandleDeleteSignatureProtection(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func deleteSignatureProtection(host, port, token, signatureName string) ([]byte, error) {
+func deleteSignatureProtection(ctx context.Context, host, port, token, signatureName string) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/waf/signature?mkey=%s", host, port, url.QueryEscape(signatureName))
 
-	return utils.SendRequest("DELETE", url, token, nil)
+	return utils.SendRequest(ctx, "DELETE", url, token, nil)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -176,7 +177,7 @@ func HandleDeleteVirtualServer(c echo.Context) error {
 		Description: "Delete Virtual Server",
 	}
 
-	resultBody, err := deleteVirtualServer(host, port, token, virtualServerName)
+	resultBody, err := deleteVirtualServer(c.Request().Context(), host, port, token, virtualServerName)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error deleting Virtual Server: %v", err)
@@ -192,10 +193,10 @@ func HandleDeleteVirtualServer(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func deleteVirtualServer(host, port, token, virtualServerName string) ([]byte, error) {
+func deleteVirtualServer(ctx context.Context, host, port, token, virtualServerName string) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/server-policy/vserver?mkey=%s", host, port, url.QueryEscape(virtualServerName))
 
-	return utils.SendRequest("DELETE", url, token, nil)
+	return utils.SendRequest(ctx, "DELETE", url, token, nil)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -214,7 +215,7 @@ func HandleDeleteServerPool(c echo.Context) error {
 		Description: "Delete Server Pool",
 	}
 
-	resultBody, err := deleteServerPool(host, port, token, poolName)
+	resultBody, err := deleteServerPool(c.Request().Context(), host, port, token, poolName)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error deleting Server Pool: %v", err)
@@ -230,10 +231,10 @@ func HandleDeleteServerPool(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func deleteServerPool(host, port, token, poolName string) ([]byte, error) {
+func deleteServerPool(ctx context.Context, host, port, token, poolName string) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/server-policy/server-pool?mkey=%s", host, port, url.QueryEscape(poolName))
 
-	return utils.SendRequest("DELETE", url, token, nil)
+	return utils.SendRequest(ctx, "DELETE", url, token, nil)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -252,7 +253,7 @@ func HandleDeleteVirtualIP(c echo.Context) error {
 		Description: "Delete Virtual IP",
 	}
 
-	resultBody, err := deleteVirtualIP(host, port, token, vipName)
+	resultBody, err := deleteVirtualIP(c.Request().Context(), host, port, token, vipName)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error deleting virtual IP: %v", err)
@@ -268,10 +269,10 @@ func HandleDeleteVirtualIP(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func deleteVirtualIP(host, port, token, vipName string) ([]byte, error) {
+func deleteVirtualIP(ctx context.Context, host, port, token, vipName string) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/system/vip?mkey=%s", host, port, url.QueryEscape(vipName))
 
-	return utils.SendRequest("DELETE", url, token, nil)
+	return utils.SendRequest(ctx, "DELETE", url, token, nil)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

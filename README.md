@@ -10,6 +10,7 @@ Darwin2 is a demonstration tool designed to showcase the capabilities of FortiWe
     - [Option 2: Installation with Docker 🐳](#option-2-installation-with-docker-)
     - [Script Options 🛠️](#script-options-)
   - [Accessing the Application](#accessing-the-application)
+  - [Background jobs](#background-jobs)
 
 ## Features
 
@@ -102,6 +103,21 @@ npm run dev
 ```
 
 Use `npm run lint` to check the Vue source and `npm run build` to create the production bundle.
+
+## Background jobs
+
+Long-running ML traffic generation, Nikto scans, Selenium sessions, and grouped FortiWeb object operations run as background jobs. The UI shows live progress, throughput, elapsed time, partial errors, cancellation, final output, and recent history.
+
+The backend keeps the 100 most recent jobs in memory and runs at most four jobs concurrently. History is reset when Darwin2 restarts.
+
+```text
+POST   /jobs/start/:operation  Start a job and return HTTP 202 with its ID
+GET    /jobs?type=&limit=      List recent jobs
+GET    /jobs/:id               Read progress and results
+DELETE /jobs/:id               Request cancellation
+```
+
+Supported operations are `machine-learning`, `api-traffic-generation`, `web-scan`, `traffic-generation`, `selenium`, `fortiweb-create`, and `fortiweb-delete`. The original synchronous endpoints remain available for compatibility.
 
 ## Accessing the Application
 

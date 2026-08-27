@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"darwin2/config"
 	"darwin2/utils"
 	"fmt"
@@ -36,7 +37,7 @@ func HandleCreateNewVirtualIP(c echo.Context) error {
 		Description: "Create new Virtual IP",
 	}
 
-	resultBody, err := createNewVirtualIP(fwbmgtip, fwbmgtport, token, vipData)
+	resultBody, err := createNewVirtualIP(c.Request().Context(), fwbmgtip, fwbmgtport, token, vipData)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error creating virtual IP: %v", err)
@@ -52,10 +53,10 @@ func HandleCreateNewVirtualIP(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func createNewVirtualIP(host, port, token string, data config.VirtualIPData) ([]byte, error) {
+func createNewVirtualIP(ctx context.Context, host, port, token string, data config.VirtualIPData) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/system/vip", host, port)
 
-	return utils.SendRequest("POST", url, token, data)
+	return utils.SendRequest(ctx, "POST", url, token, data)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +80,7 @@ func HandleCreateNewServerPool(c echo.Context) error {
 		Description: "Create new Server Pool",
 	}
 
-	resultBody, err := createNewServerPool(fwbmgtip, fwbmgtport, token, poolData)
+	resultBody, err := createNewServerPool(c.Request().Context(), fwbmgtip, fwbmgtport, token, poolData)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error creating Server Pool: %v", err)
@@ -95,10 +96,10 @@ func HandleCreateNewServerPool(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func createNewServerPool(host, port, token string, data config.ServerPoolData) ([]byte, error) {
+func createNewServerPool(ctx context.Context, host, port, token string, data config.ServerPoolData) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/server-policy/server-pool", host, port)
 
-	return utils.SendRequest("POST", url, token, data)
+	return utils.SendRequest(ctx, "POST", url, token, data)
 
 }
 
@@ -124,7 +125,7 @@ func HandleCreateNewMemberPool(c echo.Context) error {
 	}
 
 	for _, member := range poolMembers {
-		resultBody, err := createNewMemberPool(fwbmgtip, fwbmgtport, token, poolName, member)
+		resultBody, err := createNewMemberPool(c.Request().Context(), fwbmgtip, fwbmgtport, token, poolName, member)
 		if err != nil {
 			result.Status = "failure"
 			result.Message = fmt.Sprintf("Error creating Member Pool: %v", err)
@@ -141,10 +142,10 @@ func HandleCreateNewMemberPool(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func createNewMemberPool(host, port, token, poolName string, data config.MemberPoolData) ([]byte, error) {
+func createNewMemberPool(ctx context.Context, host, port, token, poolName string, data config.MemberPoolData) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/server-policy/server-pool/pserver-list?mkey=%s", host, port, url.QueryEscape(poolName))
 
-	return utils.SendRequest("POST", url, token, data)
+	return utils.SendRequest(ctx, "POST", url, token, data)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -165,7 +166,7 @@ func HandleCreateNewVirtualServer(c echo.Context) error {
 		Description: "Create new Virtual Server",
 	}
 
-	resultBody, err := createNewVirtualServer(fwbmgtip, fwbmgtport, token, vsData)
+	resultBody, err := createNewVirtualServer(c.Request().Context(), fwbmgtip, fwbmgtport, token, vsData)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error creating Virtual Server: %v", err)
@@ -181,10 +182,10 @@ func HandleCreateNewVirtualServer(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func createNewVirtualServer(host, port, token string, data config.VirtualServerData) ([]byte, error) {
+func createNewVirtualServer(ctx context.Context, host, port, token string, data config.VirtualServerData) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/server-policy/vserver", host, port)
 
-	return utils.SendRequest("POST", url, token, data)
+	return utils.SendRequest(ctx, "POST", url, token, data)
 }
 
 // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -207,7 +208,7 @@ func HandleAssignVIPToVirtualServer(c echo.Context) error {
 		Description: "Assign Virtual IP to Virtual Server",
 	}
 
-	resultBody, err := assignVIPToVirtualServer(fwbmgtip, fwbmgtport, token, virtualServerName, assignVIPData)
+	resultBody, err := assignVIPToVirtualServer(c.Request().Context(), fwbmgtip, fwbmgtport, token, virtualServerName, assignVIPData)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error assigning VIP to Virtual Server: %v", err)
@@ -223,10 +224,10 @@ func HandleAssignVIPToVirtualServer(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func assignVIPToVirtualServer(host, port, token, virtualServerName string, data config.AssignVIPData) ([]byte, error) {
+func assignVIPToVirtualServer(ctx context.Context, host, port, token, virtualServerName string, data config.AssignVIPData) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/server-policy/vserver/vip-list?mkey=%s", host, port, url.QueryEscape(virtualServerName))
 
-	return utils.SendRequest("POST", url, token, data)
+	return utils.SendRequest(ctx, "POST", url, token, data)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -246,7 +247,7 @@ func HandleCloneSignatureProtection(c echo.Context) error {
 		Description: "Clone Signature Protection",
 	}
 
-	resultBody, err := cloneSignatureProtection(fwbmgtip, fwbmgtport, token, originalKey, cloneKey)
+	resultBody, err := cloneSignatureProtection(c.Request().Context(), fwbmgtip, fwbmgtport, token, originalKey, cloneKey)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error cloning Signature Protection: %v", err)
@@ -262,10 +263,10 @@ func HandleCloneSignatureProtection(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func cloneSignatureProtection(host, port, token, originalKey, cloneKey string) ([]byte, error) {
+func cloneSignatureProtection(ctx context.Context, host, port, token, originalKey, cloneKey string) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/waf/signature?clone_mkey=%s&mkey=%s", host, port, url.QueryEscape(cloneKey), url.QueryEscape(originalKey))
 
-	return utils.SendRequest("POST", url, token, nil)
+	return utils.SendRequest(ctx, "POST", url, token, nil)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,7 +286,7 @@ func HandleCloneInlineProtection(c echo.Context) error {
 		Description: "Clone Inline Protection",
 	}
 
-	resultBody, err := cloneInlineProtection(fwbmgtip, fwbmgtport, token, originalKey, cloneKey)
+	resultBody, err := cloneInlineProtection(c.Request().Context(), fwbmgtip, fwbmgtport, token, originalKey, cloneKey)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error cloning Inline Protection: %v", err)
@@ -301,10 +302,10 @@ func HandleCloneInlineProtection(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func cloneInlineProtection(host, port, token, originalKey, cloneKey string) ([]byte, error) {
+func cloneInlineProtection(ctx context.Context, host, port, token, originalKey, cloneKey string) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/waf/web-protection-profile.inline-protection?mkey=%s&clone_mkey=%s", host, port, url.QueryEscape(originalKey), url.QueryEscape(cloneKey))
 
-	return utils.SendRequest("POST", url, token, nil)
+	return utils.SendRequest(ctx, "POST", url, token, nil)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,7 +327,7 @@ func HandleCreateNewXForwardedForRule(c echo.Context) error {
 		Description: "Create new X-Forwarded-For Rule",
 	}
 
-	resultBody, err := createNewXForwardedForRule(fwbmgtip, fwbmgtport, token, xffData)
+	resultBody, err := createNewXForwardedForRule(c.Request().Context(), fwbmgtip, fwbmgtport, token, xffData)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error creating new X-Forwarded-For Rule: %v", err)
@@ -342,10 +343,10 @@ func HandleCreateNewXForwardedForRule(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func createNewXForwardedForRule(host, port, token string, data config.XForwardedForData) ([]byte, error) {
+func createNewXForwardedForRule(ctx context.Context, host, port, token string, data config.XForwardedForData) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/waf/x-forwarded-for", host, port)
 
-	return utils.SendRequest("POST", url, token, data)
+	return utils.SendRequest(ctx, "POST", url, token, data)
 }
 
 // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -367,7 +368,7 @@ func HandleConfigureProtectionProfile(c echo.Context) error {
 		Description: "Configure Protection Profile",
 	}
 
-	resultBody, err := configureProtectionProfile(fwbmgtip, fwbmgtport, token, cloneKey, protectionProfileData)
+	resultBody, err := configureProtectionProfile(c.Request().Context(), fwbmgtip, fwbmgtport, token, cloneKey, protectionProfileData)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error configuring Protection Profile: %v", err)
@@ -383,10 +384,10 @@ func HandleConfigureProtectionProfile(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func configureProtectionProfile(host, port, token, mkey string, data config.ProtectionProfileData) ([]byte, error) {
+func configureProtectionProfile(ctx context.Context, host, port, token, mkey string, data config.ProtectionProfileData) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/waf/web-protection-profile.inline-protection?mkey=%s", host, port, url.QueryEscape(mkey))
 
-	return utils.SendRequest("PUT", url, token, data)
+	return utils.SendRequest(ctx, "PUT", url, token, data)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -418,7 +419,7 @@ func HandleCreateNewPolicy(c echo.Context) error {
 		Description: "Configure Protection Profile",
 	}
 
-	resultBody, err := createNewPolicy(fwbmgtip, fwbmgtport, token, policyData)
+	resultBody, err := createNewPolicy(c.Request().Context(), fwbmgtip, fwbmgtport, token, policyData)
 	if err != nil {
 		result.Status = "failure"
 		result.Message = fmt.Sprintf("Error creating new Policy: %v", err)
@@ -434,10 +435,10 @@ func HandleCreateNewPolicy(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func createNewPolicy(host, port, token string, data config.PolicyData) ([]byte, error) {
+func createNewPolicy(ctx context.Context, host, port, token string, data config.PolicyData) ([]byte, error) {
 	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/server-policy/policy", host, port)
 
-	return utils.SendRequest("POST", url, token, data)
+	return utils.SendRequest(ctx, "POST", url, token, data)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

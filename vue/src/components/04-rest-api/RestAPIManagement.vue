@@ -35,7 +35,7 @@
                   <span>{{ createLoading ? "Creating..." : "Create" }}</span>
                 </button>
                 <button class="btn btn-secondary btn-sm" @click="resetResult">
-                  Reset
+                  Clear display
                 </button>
               </div>
 
@@ -51,6 +51,9 @@
                 </li>
               </ul>
             </div>
+            <div v-if="createError" class="alert alert-danger py-2 mt-2">{{ createError }}</div>
+            <JobMonitor ref="createJobMonitor" :job-id="activeCreateJobId" job-type="fortiweb-create"
+              @updated="syncCreateJob" @finished="createLoading = false" />
           </div>
           <div class="col-md-6">
             <div class="card">
@@ -69,7 +72,7 @@
                 <button
                   class="btn btn-secondary btn-sm"
                   @click="resetDeleteResult">
-                  Reset
+                  Clear display
                 </button>
               </div>
 
@@ -86,6 +89,9 @@
                 </li>
               </ul>
             </div>
+            <div v-if="deleteError" class="alert alert-danger py-2 mt-2">{{ deleteError }}</div>
+            <JobMonitor ref="deleteJobMonitor" :job-id="activeDeleteJobId" job-type="fortiweb-delete"
+              @updated="syncDeleteJob" @finished="deleteLoading = false" />
           </div>
         </div>
       </div>
@@ -116,12 +122,20 @@
 </template>
 
 <script>
+import JobMonitor from "../jobs/JobMonitor.vue";
+import { startJob } from "../../services/jobs";
+
 export default {
+  components: { JobMonitor },
   data() {
     return {
       jobResult: [], // Initialize as an empty array
       createLoading: false,
       deleteLoading: false,
+      activeCreateJobId: "",
+      activeDeleteJobId: "",
+      createError: "",
+      deleteError: "",
       showHelp: false,
       config: {
         SPEEDTESTURL: "",
@@ -285,147 +299,69 @@ computed: {
 
     updateTaskStatus(taskId, status) {
       let task = this.tasks.find((t) => t.id === taskId);
-      if (task) {
-        task.status = status;
-        if (status === "success") {
-          task.colorClass = "bg-success";
-          task.statusText = "Done";
-        } else if (status === "failure") {
-          task.colorClass = "bg-danger";
-          task.statusText = "Failed";
-        }
-      }
+      if (task) this.applyStatus(task, status);
     },
 
     updateDeleteTaskStatus(taskId, status) {
       let task = this.deleteTasks.find((t) => t.id === taskId);
-      if (task) {
-        task.status = status;
-        if (status === "success") {
-          task.colorClass = "bg-success";
-          task.statusText = "Done";
-        } else if (status === "failure") {
-          task.colorClass = "bg-danger";
-          task.statusText = "Failed";
-        }
-      }
+      if (task) this.applyStatus(task, status);
+    },
+
+    applyStatus(task, status) {
+      const normalized = { success: "succeeded", failure: "failed" }[status] || status;
+      task.status = normalized;
+      const display = {
+        queued: ["bg-secondary", "Queued"],
+        running: ["bg-primary", "Running"],
+        succeeded: ["bg-success", "Done"],
+        failed: ["bg-danger", "Failed"],
+        cancelled: ["bg-warning text-dark", "Cancelled"],
+      }[normalized] || ["bg-secondary", "Incomplete"];
+      [task.colorClass, task.statusText] = display;
+    },
+
+    syncCreateJob(job) {
+      for (const step of job.steps || []) this.updateTaskStatus(step.id, step.status);
+    },
+
+    syncDeleteJob(job) {
+      for (const step of job.steps || []) this.updateDeleteTaskStatus(step.id, step.status);
     },
 
     async createPolicy() {
       this.resetResult();
       this.resetDeleteResult();
       this.createLoading = true;
+      this.createError = "";
 
-      const endpoints = [
-        { url: "/create-virtual-ip", taskId: "createNewVirtualIP" },
-        { url: "/create-server-pool", taskId: "createNewServerPool" },
-        { url: "/create-member-pool", taskId: "createNewMemberPool" },
-        { url: "/create-virtual-server", taskId: "createNewVirtualServer" },
-        {
-          url: "/assign-vip-to-virtual-server",
-          taskId: "assignVIPToVirtualServer",
-        },
-        {
-          url: "/clone-signature-protection",
-          taskId: "cloneSignatureProtection",
-        },
-        { url: "/clone-inline-protection", taskId: "cloneInlineProtection" },
-        {
-          url: "/create-x-forwarded-for-rule",
-          taskId: "createNewXForwardedForRule",
-        },
-        {
-          url: "/configure-protection-profile",
-          taskId: "configureProtectionProfile",
-        },
-        { url: "/create-policy", taskId: "createNewPolicy" },
-      ];
-
-      for (const endpoint of endpoints) {
-        try {
-          const response = await fetch(`${endpoint.url}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
-          const result = await response.json();
-
-          // Print the response values
-          // console.log(`Response from ${endpoint.url}`);
-          // console.log("TaskID:", result.TaskID);
-          // console.log("Description:", result.Description);
-          // console.log("Status:", result.Status);
-          // console.log("Message:", result.Message);
-
-          this.jobResult.push(result);
-          this.updateTaskStatus(endpoint.taskId, result.Status);
-        } catch (error) {
-          console.error(`Error in ${endpoint.taskId}:`, error);
-          this.updateTaskStatus(endpoint.taskId, "failure");
-        }
+      try {
+        const job = await startJob("fortiweb-create", {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        });
+        this.activeCreateJobId = job.id;
+      } catch (error) {
+        this.createLoading = false;
+        this.createError = error.message;
+        console.error("Unable to start FortiWeb creation job:", error);
       }
-
-      this.createLoading = false;
     },
 
     async deletePolicy() {
       this.resetResult();
       this.resetDeleteResult();
       this.deleteLoading = true;
+      this.deleteError = "";
 
-      const endpoints = [
-        { url: "/delete-policy", taskId: "deletePolicy" },
-        { url: "/delete-inline-protection", taskId: "deleteInlineProtection" },
-        {
-          url: "/delete-x-forwarded-for-rule",
-          taskId: "deleteXForwardedForRule",
-        },
-        {
-          url: "/delete-signature-protection",
-          taskId: "deleteSignatureProtection",
-        },
-        { url: "/delete-virtual-server", taskId: "deleteVirtualServer" },
-        { url: "/delete-server-pool", taskId: "deleteServerPool" },
-        { url: "/delete-virtual-ip", taskId: "deleteVirtualIP" },
-      ];
-
-      for (const endpoint of endpoints) {
-        try {
-          const response = await fetch(`${endpoint.url}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
-          const result = await response.json();
-
-          // Print the response values
-          // console.log(`Response from ${endpoint.url}`);
-          // console.log("TaskID:", result.TaskID);
-          // console.log("Description:", result.Description);
-          // console.log("Status:", result.Status);
-          // console.log("Message:", result.Message);
-
-          this.jobResult.push(result);
-          this.updateDeleteTaskStatus(endpoint.taskId, result.Status);
-        } catch (error) {
-          console.error(`Error in ${endpoint.taskId}:`, error);
-          this.updateDeleteTaskStatus(endpoint.taskId, "failure");
-        }
+      try {
+        const job = await startJob("fortiweb-delete", {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        });
+        this.activeDeleteJobId = job.id;
+      } catch (error) {
+        this.deleteLoading = false;
+        this.deleteError = error.message;
+        console.error("Unable to start FortiWeb deletion job:", error);
       }
-
-      this.deleteLoading = false;
     },
 
     resetResult() {
@@ -435,6 +371,10 @@ computed: {
         colorClass: "bg-secondary",
         statusText: "Incomplete",
       }));
+      this.activeCreateJobId = "";
+      this.createLoading = false;
+      this.createError = "";
+      this.$refs.createJobMonitor?.clear();
     },
 
     resetDeleteResult() {
@@ -444,6 +384,10 @@ computed: {
         colorClass: "bg-secondary",
         statusText: "Incomplete",
       }));
+      this.activeDeleteJobId = "";
+      this.deleteLoading = false;
+      this.deleteError = "";
+      this.$refs.deleteJobMonitor?.clear();
     },
   },
 };

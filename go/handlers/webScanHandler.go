@@ -3,6 +3,7 @@ package handlers
 import (
 	"crypto/tls"
 	"darwin2/config"
+	"darwin2/jobs"
 	"darwin2/utils"
 	"fmt"
 	"net/http"
@@ -48,11 +49,17 @@ func HandleWebScan(c echo.Context) error {
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
 	}
+	ctx := c.Request().Context()
 
-	_, err := client.Get(targetURL)
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, targetURL, nil)
+	if err != nil {
+		return err
+	}
+	response, err := client.Do(request)
 	if err != nil {
 		return c.String(http.StatusServiceUnavailable, fmt.Sprintf("The Web Server (%s) is not responding: %s", targetURL, err.Error()))
 	}
+	response.Body.Close()
 
 	_, err = exec.LookPath("perl")
 	if err != nil {
@@ -75,21 +82,29 @@ func HandleWebScan(c echo.Context) error {
 	randomIP := utils.GenerateRandomPublicIP()
 
 	// Construct the command
-	cmd := exec.Command(
+	jobs.ReportProgress(ctx, 0, 1, "Running Nikto scan")
+	cmd := exec.CommandContext(ctx,
 		"perl", "nikto/program/nikto.pl",
 		"-host", targetURL,
 		"-ask", "no",
 		"-followredirects",
 		"-maxtime", "60s",
 		"-nointeractive",
-        "-404code", "404",
+		"-404code", "404",
 		"-timeout", "2",
 		"-useragent", "Nikto Scan Demo\r\nX-Forwarded-For: "+randomIP,
 		"-Tuning", requestData.SelectedOption,
 	)
 
 	// Execute the command and get its output
-	output, _ := cmd.CombinedOutput()
+	output, commandErr := cmd.CombinedOutput()
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
+	if commandErr != nil {
+		jobs.ReportError(ctx, requestData.SelectedTarget, commandErr)
+	}
+	jobs.ReportProgress(ctx, 1, 1, "Nikto scan completed")
 
 	// Return the command output to the client
 	return c.String(200, string(output))

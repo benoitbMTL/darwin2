@@ -56,20 +56,20 @@
 
     <div class="row mb-4">
       <div class="col-8">
-        <div class="card">
-
-          <!-- Card content -->
-          <div style="width: 800px; height: 400px; margin: 10px; position: relative;"><iframe allowfullscreen
-              frameborder="0" style="width:800px; height:400px"
-              src="https://lucid.app/documents/embedded/4e98f702-42d5-455a-bc89-f58a8b56ab10"
-              id="J4eoTFCARzfe"></iframe></div>
+        <div class="card overflow-hidden">
+          <img
+            :src="homepageDiagram"
+            class="img-fluid w-100"
+            alt="Darwin2 traffic flow through FortiWeb to the demonstration applications"
+            decoding="async" />
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
+import homepageDiagram from "../assets/homepage.png";
 </script>
 
 

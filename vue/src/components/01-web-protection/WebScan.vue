@@ -63,14 +63,12 @@
         </button>
 
         <button class="btn btn-secondary btn-sm" @click="resetResult">
-          Reset
+          Clear display
         </button>
       </div>
 
-      <div v-if="jobResult" class="mt-3">
-        <h6>Scan Result:</h6>
-        <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-      </div>
+      <div v-if="jobResult" class="alert alert-danger py-2">{{ jobResult }}</div>
+      <JobMonitor ref="jobMonitor" :job-id="activeJobId" job-type="web-scan" @finished="isLoading = false" />
     </div>
   </div>
 
@@ -136,13 +134,17 @@
 
 <script>
 import hljs from "../../utils/highlight";
+import JobMonitor from "../jobs/JobMonitor.vue";
+import { startJob } from "../../services/jobs";
 
 export default {
+  components: { JobMonitor },
   data() {
     return {
       selectedOption: "All",
       selectedTarget: 'DVWA', // Default selection
       jobResult: "", // Your scan result data
+      activeJobId: "",
       highlightedCode: "",
       isLoading: false, // Initialize isLoading
       showHelp: false,
@@ -156,7 +158,7 @@ export default {
     },
   },
   methods: {
-    runScan() {
+    async runScan() {
       this.isLoading = true; // Set loading state to true
       this.jobResult = ""; // Reset Result
       console.log('Scan initiated with target:', this.selectedTarget, 'and option:', this.selectedOption); // Debugging line
@@ -181,31 +183,28 @@ export default {
 
       const tuningFlag = niktoTuningFlags[this.selectedOption] || "";
 
-      fetch("/web-scan", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      try {
+        const job = await startJob("web-scan", {
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
           selectedTarget: this.selectedTarget, // Include selectedTarget in the request
           selectedOption: tuningFlag,
-        }),
-      })
-        .then((response) => response.text())
-        .then((data) => {
-          this.jobResult = data;
-          this.isLoading = false; // Set loading state to false when data is received
-        })
-        .catch((error) => {
-          console.error("Error during fetch operation:", error);
-          this.isLoading = false; // Set loading state to false on error
+          }),
         });
+        this.activeJobId = job.id;
+      } catch (error) {
+        this.jobResult = `Error: ${error.message}`;
+        this.isLoading = false;
+      }
     },
 
     resetResult() {
       this.selectedOption = "All"; // Reset selected option
       this.jobResult = ""; // Clear Result
       this.selectedTarget = "DVWA"; // Reset selected option
+      this.activeJobId = "";
+      this.isLoading = false;
+      this.$refs.jobMonitor?.clear();
     },
   },
 };

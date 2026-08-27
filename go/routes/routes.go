@@ -8,6 +8,11 @@ import (
 )
 
 func Configure(e *echo.Echo) {
+	// Asynchronous jobs
+	e.POST("/jobs/start/:operation", handlers.HandleStartJob)
+	e.GET("/jobs", handlers.HandleListJobs)
+	e.GET("/jobs/:id", handlers.HandleGetJob)
+	e.DELETE("/jobs/:id", handlers.HandleCancelJob)
 
 	// Web Protection
 	e.POST("/web-scan", handlers.HandleWebScan)

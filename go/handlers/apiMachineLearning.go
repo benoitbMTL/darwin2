@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"darwin2/config"
+	"darwin2/jobs"
 	"darwin2/utils"
 	"encoding/json"
 	"fmt"
@@ -47,8 +49,12 @@ func HandleApiMachineLearning(c echo.Context) error {
 
 	var lastPetCreated PetstorePet
 	var petNew PetstorePet // Declare petNew outside the loop
+	ctx := c.Request().Context()
 
 	for i := 0; i < requestCount; i++ {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
 		randomName := generateRandomValue(petNames)
 		randomPet := generateRandomValue(petTypes)
 		randomTag := generateRandomValue(petTags)
@@ -96,51 +102,52 @@ func HandleApiMachineLearning(c echo.Context) error {
 		}
 
 		// Send POST request
-		if err := sendApiPostRequestRandom(petStoreURL, userAgent, petNew, randomIP); err != nil {
+		if err := sendApiPostRequestRandom(ctx, petStoreURL, userAgent, petNew, randomIP); err != nil {
 			log.Printf("Error sending POST request: %v\n", err)
 			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error sending POST request: %v", err))
 		}
 
 		// Send PUT request
-		if err := sendApiPutRequestRandom(petStoreURL, userAgent, petModified, randomIP); err != nil {
+		if err := sendApiPutRequestRandom(ctx, petStoreURL, userAgent, petModified, randomIP); err != nil {
 			log.Printf("Error sending PUT request: %v\n", err)
 			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error sending PUT request: %v", err))
 		}
 
 		// Send GET request
-		if err := sendApiGetRequestRandom(petStoreURL, randomStatus, userAgent, randomIP); err != nil {
+		if err := sendApiGetRequestRandom(ctx, petStoreURL, randomStatus, userAgent, randomIP); err != nil {
 			log.Printf("Error sending GET request: %v\n", err)
 			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error sending GET request: %v", err))
 		}
 
 		// Send DELETE request
-		if err := sendApiDeleteRequestRandom(petStoreURL, randomID, userAgent, randomIP); err != nil {
+		if err := sendApiDeleteRequestRandom(ctx, petStoreURL, randomID, userAgent, randomIP); err != nil {
 			log.Printf("Error sending DELETE request: %v\n", err)
 			return c.String(http.StatusInternalServerError, fmt.Sprintf("Error sending DELETE request: %v", err))
 		}
 
-    // Last iteration of the loop
-    if i == requestCount-1 {
-        lastPetCreated = petNew
-    }
+		// Last iteration of the loop
+		if i == requestCount-1 {
+			lastPetCreated = petNew
+		}
+		jobs.ReportProgress(ctx, int64(i+1), int64(requestCount), fmt.Sprintf("Completed API sample %d of %d", i+1, requestCount))
 
 	}
 
-// Format the last pet created as JSON
-lastPetJson, err := json.MarshalIndent(lastPetCreated, "", "  ")
-if err != nil {
-    // handle error
-}
+	// Format the last pet created as JSON
+	lastPetJson, err := json.MarshalIndent(lastPetCreated, "", "  ")
+	if err != nil {
+		// handle error
+	}
 
-// Return the completion message
-var message string
-if requestCount == 1 {
-    message = fmt.Sprintf("The API traffic generation has successfully completed, with a total of %d request each for POST, PUT, GET, and DELETE types.\n\nLast Pet Created (POST):\n\n%s", requestCount, lastPetJson)
-} else {
-    message = fmt.Sprintf("The API traffic generation has successfully completed, with a total of %d requests each for POST, PUT, GET, and DELETE types.\n\nLast Pet Created (POST):\n\n%s", requestCount, lastPetJson)
-}
+	// Return the completion message
+	var message string
+	if requestCount == 1 {
+		message = fmt.Sprintf("The API traffic generation has successfully completed, with a total of %d request each for POST, PUT, GET, and DELETE types.\n\nLast Pet Created (POST):\n\n%s", requestCount, lastPetJson)
+	} else {
+		message = fmt.Sprintf("The API traffic generation has successfully completed, with a total of %d requests each for POST, PUT, GET, and DELETE types.\n\nLast Pet Created (POST):\n\n%s", requestCount, lastPetJson)
+	}
 
-return c.String(http.StatusOK, message)
+	return c.String(http.StatusOK, message)
 
 }
 
@@ -171,14 +178,14 @@ func randomStringPhotoUrl(minLength, maxLength int) string {
 // sendApiPostRequestRandom                                                      //
 ///////////////////////////////////////////////////////////////////////////////////
 
-func sendApiPostRequestRandom(petStoreURL string, userAgent string, pet PetstorePet, xForwardedFor string) error {
+func sendApiPostRequestRandom(ctx context.Context, petStoreURL string, userAgent string, pet PetstorePet, xForwardedFor string) error {
 	jsonData, err := json.Marshal(pet)
 	if err != nil {
 		log.Printf("Error marshalling pet data: %v\n", err)
 		return err
 	}
 
-	req, err := http.NewRequest("POST", petStoreURL, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(ctx, "POST", petStoreURL, bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.Printf("Error creating HTTP request: %v\n", err)
 		return err
@@ -215,13 +222,13 @@ func sendApiPostRequestRandom(petStoreURL string, userAgent string, pet Petstore
 // sendApiPutRequestRandom                                                       //
 ///////////////////////////////////////////////////////////////////////////////////
 
-func sendApiPutRequestRandom(petStoreURL string, userAgent string, pet PetstorePet, xForwardedFor string) error {
+func sendApiPutRequestRandom(ctx context.Context, petStoreURL string, userAgent string, pet PetstorePet, xForwardedFor string) error {
 	jsonData, err := json.Marshal(pet)
 	if err != nil {
 		return err
 	}
 
-	req, err := http.NewRequest("PUT", petStoreURL, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(ctx, "PUT", petStoreURL, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return err
 	}
@@ -260,12 +267,12 @@ func sendApiPutRequestRandom(petStoreURL string, userAgent string, pet PetstoreP
 // sendApiGetRequestRandom                                                       //
 ///////////////////////////////////////////////////////////////////////////////////
 
-func sendApiGetRequestRandom(petStoreURL, randomStatus, userAgent, xForwardedFor string) error {
+func sendApiGetRequestRandom(ctx context.Context, petStoreURL, randomStatus, userAgent, xForwardedFor string) error {
 	// Construct the URL with query parameters
 	fullURL := fmt.Sprintf("%s/findByStatus?status=%s", petStoreURL, url.QueryEscape(randomStatus))
 
 	// Create the request
-	req, err := http.NewRequest("GET", fullURL, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", fullURL, nil)
 	if err != nil {
 		return err
 	}
@@ -305,12 +312,12 @@ func sendApiGetRequestRandom(petStoreURL, randomStatus, userAgent, xForwardedFor
 // sendApiDeleteRequestRandom                                                    //
 ///////////////////////////////////////////////////////////////////////////////////
 
-func sendApiDeleteRequestRandom(petStoreURL string, randomID int, userAgent string, xForwardedFor string) error {
+func sendApiDeleteRequestRandom(ctx context.Context, petStoreURL string, randomID int, userAgent string, xForwardedFor string) error {
 	// Construct the URL
 	fullURL := fmt.Sprintf("%s/%d", petStoreURL, randomID)
 
 	// Create the request
-	req, err := http.NewRequest("DELETE", fullURL, nil)
+	req, err := http.NewRequestWithContext(ctx, "DELETE", fullURL, nil)
 	if err != nil {
 		return err
 	}
