@@ -17,7 +17,7 @@ jobs:
     name: Go
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
         with:
           go-version-file: go/go.mod
@@ -36,7 +36,7 @@ jobs:
       run:
         working-directory: vue
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
@@ -52,5 +52,5 @@ jobs:
     runs-on: ubuntu-24.04
     needs: [go, frontend]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - run: docker build --tag darwin2:ci .
