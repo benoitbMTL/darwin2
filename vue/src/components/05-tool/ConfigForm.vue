@@ -4,7 +4,7 @@
     <!-- HEADER -->
     <div class="card-header d-flex justify-content-between align-items-center">
       <!-- Static title on the left -->
-      <h5>Demo Tool Configuration</h5>
+      <h5>Configuration</h5>
 
       <!-- Container for the alert message and configuration name -->
       <div class="d-flex align-items-center">
@@ -15,8 +15,8 @@
         </div>
 
         <!-- Dynamically displayed configuration name on the right -->
-        <span v-if="config.NAME" style="color: red;">
-          Active Configuration: {{ config.NAME }}
+        <span v-if="currentConfigName" class="badge bg-primary">
+          Active: {{ currentConfigName }}
         </span>
       </div>
     </div>
@@ -29,38 +29,30 @@
         <!-- BUTTONS -->
         <div class="card mb-3">
           <div class="card-body">
-            <!-- Use row and cols to align buttons -->
-            <div class="row justify-content-between">
-              <!-- Left aligned buttons -->
-              <div class="col-auto">
-                <button type="button" class="btn btn-success btn-sm me-2" @click="applyConfigLocal">
-                  <i class="bi bi-arrow-up-square"></i> Apply
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <button type="button" class="btn btn-success btn-sm" @click="saveConfig">
+                  <i class="bi bi-floppy me-1"></i>Save changes
                 </button>
-                <button type="button" class="btn btn-primary btn-sm me-2" @click="promptRenameConfig">
-                  <i class="bi bi-pencil"></i> Rename
-                </button>
-                <button @click="cloneConfigLocal" class="btn btn-primary btn-sm me-2">
-                  <i class="bi bi-copy"></i> Clone
-                </button>
-                <button type="button" class="btn btn-primary btn-sm me-2" @click="triggerFileInput">
-                  <i class="bi bi-box-arrow-in-down-right"></i> Import
-                </button>
-                <input type="file" ref="fileInput" style="display: none" @change="importConfig" />
-                <button type="button" class="btn btn-danger btn-sm me-2" @click="deleteConfigLocal">
-                  <i class="bi bi-x-square"></i> Delete
-                </button>
+                <span v-if="selectedConfig" class="small text-body-secondary">
+                  Editing: <strong>{{ selectedConfig }}</strong>
+                </span>
               </div>
-
-              <!-- Middle aligned buttons -->
-              <div class="col-auto">
-
-              </div>
-
-              <!-- Right aligned buttons -->
-              <div class="col-auto">
-                <button type="button" class="btn btn-secondary btn-sm" @click="resetConfig">
-                  <i class="bi bi-arrow-clockwise"></i> Reset to Default
+              <div class="dropdown">
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  More actions
                 </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><button class="dropdown-item" type="button" :disabled="!selectedConfig" @click="promptRenameConfig"><i class="bi bi-pencil me-2"></i>Rename profile</button></li>
+                  <li><button class="dropdown-item" type="button" :disabled="!selectedConfig" @click="cloneConfigLocal"><i class="bi bi-copy me-2"></i>Clone profile</button></li>
+                  <li><button class="dropdown-item" type="button" @click="triggerFileInput"><i class="bi bi-box-arrow-in-down-right me-2"></i>Import profile</button></li>
+                  <li><button class="dropdown-item" type="button" @click="exportConfig"><i class="bi bi-box-arrow-up-right me-2"></i>Export profile</button></li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li><button class="dropdown-item" type="button" @click="resetConfig"><i class="bi bi-arrow-clockwise me-2"></i>Reset to default</button></li>
+                  <li><button class="dropdown-item text-danger" type="button" :disabled="!canDeleteSelected" @click="deleteConfigLocal"><i class="bi bi-trash me-2"></i>Delete profile</button></li>
+                </ul>
+                <input type="file" ref="fileInput" class="d-none" accept="application/json,.json" @change="importConfig" />
               </div>
             </div>
           </div>
@@ -84,9 +76,13 @@
                     class="list-group-item d-flex justify-content-between align-items-center"
                     :class="{ active: selectedConfig === configName }" @click="selectConfig(configName)">
                     {{ configName }}
-                    <i v-if="configName === currentConfigName" class="bi bi-arrow-right-circle" style="color: red;"></i>
+                    <span v-if="configName === currentConfigName" class="badge bg-light text-primary border">Active</span>
                   </li>
                 </ul>
+                <button type="button" class="btn btn-primary btn-sm w-100 mt-3" :disabled="!canApplySelected"
+                  @click="applyConfigLocal">
+                  <i class="bi bi-check2-circle me-1"></i>Apply selected
+                </button>
               </div>
             </div>
           </div>
@@ -115,16 +111,6 @@
                         @click="activeTab = 'misc'">Miscellaneous</a>
                     </li>
                   </ul>
-
-                  <!-- Buttons on the right -->
-                  <div>
-                    <button @click="saveConfig" type="button" class="btn btn-success btn-sm me-2">
-                      <i class="bi bi-floppy"></i> Save
-                    </button>
-                    <button @click="exportConfig" class="btn btn-primary btn-sm me-2">
-                      <i class="bi bi-box-arrow-up-right"></i> Export
-                    </button>
-                  </div>
 
                 </div>
 
@@ -211,10 +197,15 @@
 
     </div> <!-- Card Body -->
   </div> <!-- Main Card -->
+
+  <HealthPanel ref="healthPanel" />
 </template>
 
 <script>
+import HealthPanel from "./HealthPanel.vue";
+
 export default {
+  components: { HealthPanel },
   data() {
     return {
       currentConfigName: '',
@@ -245,12 +236,20 @@ export default {
       },
     };
   },
+  computed: {
+    canApplySelected() {
+      return Boolean(this.selectedConfig && this.selectedConfig !== this.currentConfigName);
+    },
+    canDeleteSelected() {
+      return Boolean(this.selectedConfig && this.selectedConfig !== "Default" && this.selectedConfig !== this.currentConfigName);
+    },
+  },
   methods: {
     ///////////////////////////////////////////////////////////////////////////////////
     /// FETCH CONFIG, FETCH LIST
     ///////////////////////////////////////////////////////////////////////////////////
 
-    fetchConfig() {
+    fetchConfig(selectActive = false) {
       console.log("Fetching configuration from /config");
       fetch("/config")
         .then((response) => {
@@ -262,9 +261,11 @@ export default {
         })
         .then((data) => {
           console.log("Configuration successfully fetched:", data);
-          this.config = data;
-          // Update currentConfigName with the name of the currently active configuration
           this.currentConfigName = data.NAME;
+          if (!this.selectedConfig || selectActive) {
+            this.selectedConfig = data.NAME;
+            this.config = { ...data };
+          }
         })
         .catch((error) => {
           console.error("Error fetching updated configuration:", error);
@@ -327,6 +328,8 @@ export default {
           return response.json();
         })
         .then(() => {
+          this.selectedConfig = newName;
+          this.config.NAME = newName;
           this.showAlert = true;
           this.alertMessage = `Configuration '${oldName}' renamed to '${newName}'.`;
           setTimeout(() => {
@@ -376,6 +379,9 @@ export default {
           return response.json();
         })
         .then((data) => {
+          const savedActiveProfile = data.NAME === this.currentConfigName;
+          this.selectedConfig = data.NAME;
+          this.config = { ...data };
           this.showAlert = true;
           this.alertMessage = "Configuration saved successfully.";
           setTimeout(() => {
@@ -384,6 +390,7 @@ export default {
           console.log("Success:", data);
           this.fetchConfig();
           this.fetchConfigsList();
+          if (savedActiveProfile) this.$refs.healthPanel?.clear();
         })
         .catch((error) => {
           this.showAlert = true;
@@ -400,6 +407,7 @@ export default {
     ///////////////////////////////////////////////////////////////////////////////////
 
     resetConfig() {
+      if (!window.confirm("Reset the active configuration to Default?")) return;
       fetch("/reset-config")
         .then((response) => {
           if (!response.ok) {
@@ -413,10 +421,12 @@ export default {
           setTimeout(() => {
             this.showAlert = false;
           }, 6000);
-          this.config = data;
+          this.config = { ...data };
+          this.selectedConfig = data.NAME;
           console.log("Configuration saved successfully:", data);
-          this.fetchConfig();
+          this.fetchConfig(true);
           this.fetchConfigsList();
+          this.$refs.healthPanel?.clear();
         })
         .catch((error) => {
           this.showAlert = true;
@@ -434,13 +444,7 @@ export default {
 
     exportConfig() {
       console.log("Exporting configuration");
-      fetch("/config")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Network response was not ok, status: ${response.status}`);
-          }
-          return response.json();
-        })
+      Promise.resolve(this.config)
         .then((config) => {
           // Sanitize the configuration name for use in the filename
           const safeName = config.NAME.replace(/[^a-zA-Z0-9]+/g, "_");
@@ -498,6 +502,8 @@ export default {
               })
               .then((data) => {
                 console.log("Success:", data);
+                this.selectedConfig = data.NAME;
+                this.config = { ...data };
                 this.showAlert = true;
                 this.alertMessage = "Configuration imported successfully.";
                 setTimeout(() => (this.showAlert = false), 6000);
@@ -519,6 +525,7 @@ export default {
         };
         reader.readAsText(file);
       }
+      e.target.value = "";
     },
 
     ///////////////////////////////////////////////////////////////////////////////////
@@ -527,9 +534,19 @@ export default {
 
     selectConfig(configName) {
       this.selectedConfig = configName;
-      // Vous pouvez également ajouter ici une logique pour charger les détails
-      // de la configuration sélectionnée si nécessaire
-      // Par exemple, charger la configuration du serveur et mettre à jour `this.config`
+      fetch(`/configs/${encodeURIComponent(configName)}`)
+        .then((response) => {
+          if (!response.ok) throw new Error(`Unable to load '${configName}'`);
+          return response.json();
+        })
+        .then((data) => {
+          if (this.selectedConfig === configName) this.config = { ...data };
+        })
+        .catch((error) => {
+          this.showAlert = true;
+          this.alertMessage = error.message;
+          setTimeout(() => { this.showAlert = false; }, 6000);
+        });
     },
 
     ///////////////////////////////////////////////////////////////////////////////////
@@ -574,18 +591,14 @@ export default {
         })
         .then(() => {
           this.showAlert = true;
-          this.alertMessage = `Configuration '${requestData.sourceName}' cloned to '${requestData.newName}' and set as current.`;
+          this.alertMessage = `Configuration '${requestData.sourceName}' cloned to '${requestData.newName}'.`;
           setTimeout(() => {
             this.showAlert = false;
           }, 6000);
 
-          // After successful cloning, update the current configuration name
-          this.currentConfigName = requestData.newName;
-          this.selectedConfig = requestData.newName; // Update the selected configuration to the new clone
-
-          // Refresh the configurations list and fetch the details of the new active configuration
-          this.fetchConfig();
+          this.selectedConfig = requestData.newName;
           this.fetchConfigsList();
+          this.selectConfig(requestData.newName);
         })
         .catch(error => {
           console.error("Clone error:", error);
@@ -633,8 +646,9 @@ export default {
           this.showAlert = true;
           this.alertMessage = "Configuration applied successfully.";
           setTimeout(() => { this.showAlert = false; }, 6000);
-          this.fetchConfig();
+          this.fetchConfig(true);
           this.fetchConfigsList();
+          this.$refs.healthPanel?.clear();
         })
         .catch((error) => {
           // Handle any errors that occurred during the fetch operation
@@ -661,6 +675,8 @@ export default {
         alert("The 'Default' configuration cannot be deleted.");
         return;
       }
+
+      if (!window.confirm(`Delete configuration '${this.selectedConfig}'?`)) return;
 
       // Prepare the data to be sent to the server. The structure of this data
       // might vary depending on your backend requirements. Here, we're assuming
@@ -699,6 +715,7 @@ export default {
           this.showAlert = true;
           this.alertMessage = "Configuration deleted successfully.";
           setTimeout(() => { this.showAlert = false; }, 6000);
+          this.fetchConfig(true);
         })
         .catch((error) => {
           // Handle any errors that occurred during the fetch operation

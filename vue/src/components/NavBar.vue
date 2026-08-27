@@ -74,9 +74,6 @@
                 <router-link class="dropdown-item" to="/configuration"><font-awesome-icon :icon="['fas', 'pen-to-square']" class="me-3" />Configuration</router-link>
               </li>
               <li>
-                <router-link class="dropdown-item" to="/health-check"><font-awesome-icon :icon="['fas', 'heart-circle-check']" class="me-3" />Health Check</router-link>
-              </li>
-              <li>
                 <router-link class="dropdown-item" to="/app-docker"><font-awesome-icon :icon="['fab', 'docker']" class="me-3" />Docker Images</router-link>
               </li>
               <li>

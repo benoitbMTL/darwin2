@@ -60,22 +60,27 @@
                 <p>
                   Simulate legitimate traffic with random samples to build a ML model.
                 </p>
-                <div class="d-flex mb-3"> <!-- TEST -->
+                <div class="d-flex flex-wrap gap-2 mb-3">
 
                   <button class="btn btn-primary btn-sm" @click="generateTraffic(1)" :disabled="isTrafficLoading">
                     <span v-if="isLoading1" class="spinner-border spinner-border-sm me-2" role="status"
                       aria-hidden="true"></span>
                     <span>{{ isLoading1 ? "Simulating..." : "Send 1 Sample" }}</span>
                   </button>
-                  <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(10)" :disabled="isTrafficLoading">
+                  <button class="btn btn-primary btn-sm" @click="generateTraffic(10)" :disabled="isTrafficLoading">
                     <span v-if="isLoading10" class="spinner-border spinner-border-sm me-2" role="status"
                       aria-hidden="true"></span>
                     <span>{{ isLoading10 ? "Simulating..." : "Send 10 Samples" }}</span>
                   </button>
-                  <button class="btn btn-primary btn-sm ms-2" @click="generateTraffic(500)" :disabled="isTrafficLoading">
+                  <button class="btn btn-primary btn-sm" @click="generateTraffic(500)" :disabled="isTrafficLoading">
                     <span v-if="isLoading500" class="spinner-border spinner-border-sm me-2" role="status"
                       aria-hidden="true"></span>
                     <span>{{ isLoading500 ? "Simulating..." : "Send 500 Samples" }}</span>
+                  </button>
+                  <button class="btn btn-primary btn-sm" @click="generateTraffic(3000)" :disabled="isTrafficLoading">
+                    <span v-if="isLoading3000" class="spinner-border spinner-border-sm me-2" role="status"
+                      aria-hidden="true"></span>
+                    <span>{{ isLoading3000 ? "Simulating..." : "Send 3000 Samples" }}</span>
                   </button>
                 </div>
 
@@ -189,6 +194,7 @@ export default {
       isLoading1: false,
       isLoading10: false,
       isLoading500: false,
+      isLoading3000: false,
       sendSampleResult: "",
       activeJobId: "",
       selectedAttackType: "zero_day_xss_1",
@@ -218,7 +224,7 @@ end`,
   
   computed: {
     isTrafficLoading() {
-      return this.isLoading1 || this.isLoading10 || this.isLoading500;
+      return this.isLoading1 || this.isLoading10 || this.isLoading500 || this.isLoading3000;
     },
     bankingDynamicUrl() {
       if (this.config.FABRICLABSTORY) {
@@ -308,6 +314,9 @@ end`,
         case 500:
           isLoadingKey = "isLoading500";
           break;
+        case 3000:
+          isLoadingKey = "isLoading3000";
+          break;
       }
       this[isLoadingKey] = true;
       this.sendSampleResult = ""; // Reset result
@@ -328,6 +337,7 @@ end`,
       this.isLoading1 = false;
       this.isLoading10 = false;
       this.isLoading500 = false;
+      this.isLoading3000 = false;
     },
 
     performAttack() {

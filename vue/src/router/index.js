@@ -21,7 +21,6 @@ const ApiTrafficGeneration = () => import('../components/03-api-protection/ApiTr
 const RestAPIManagement = () => import('../components/04-rest-api/RestAPIManagement.vue');
 
 const ConfigForm = () => import('../components/05-tool/ConfigForm.vue');
-const HealthCheck = () => import('../components/05-tool/HealthCheck.vue');
 const AppDocker = () => import('../components/05-tool/AppDocker.vue');
 const FortiWebBootstrap = () => import('../components/05-tool/FortiWebBootstrap.vue');
 
@@ -47,7 +46,7 @@ const routes = [
   { path: '/rest-api-management', component: RestAPIManagement },
 
   { path: '/configuration', component: ConfigForm },
-  { path: '/health-check', component: HealthCheck },
+  { path: '/health-check', redirect: { path: '/configuration', hash: '#health' } },
   { path: '/app-docker', component: AppDocker },
   { path: '/bootstrap', component: FortiWebBootstrap },
 
@@ -56,6 +55,10 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to) {
+    if (to.hash) return { el: to.hash, top: 80, behavior: 'smooth' };
+    return { top: 0 };
+  },
 });
 
 export default router;

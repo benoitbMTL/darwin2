@@ -80,12 +80,12 @@ func TestJobHTTPHandlersExposeAndCancelJob(t *testing.T) {
 }
 
 func TestMachineLearningJobCountIsReadBeforeStart(t *testing.T) {
-	request := capturedRequest{body: []byte(`{"sampleCount":500}`)}
+	request := capturedRequest{body: []byte(`{"sampleCount":3000}`)}
 	operation, err := buildJobOperation("machine-learning", request)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if operation.total != 500 || operation.unit != "samples" {
+	if operation.total != 3000 || operation.unit != "samples" {
 		t.Fatalf("unexpected operation: %#v", operation)
 	}
 }

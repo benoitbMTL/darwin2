@@ -117,7 +117,7 @@ GET    /jobs/:id               Read progress and results
 DELETE /jobs/:id               Request cancellation
 ```
 
-Supported operations are `machine-learning`, `api-traffic-generation`, `web-scan`, `traffic-generation`, `selenium`, `fortiweb-create`, and `fortiweb-delete`. The original synchronous endpoints remain available for compatibility.
+Supported operations are `machine-learning`, `api-traffic-generation`, `web-scan`, `traffic-generation`, `selenium`, `fortiweb-create`, `fortiweb-delete`, and `health-check`. The original synchronous endpoints remain available for compatibility.
 
 ## Accessing the Application
 

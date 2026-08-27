@@ -1,156 +1,171 @@
 package handlers
 
 import (
+	"context"
 	"crypto/tls"
+	"darwin2/config"
+	"darwin2/jobs"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
-	"encoding/json"
-	"darwin2/utils"
-	"darwin2/config"
 
 	"github.com/labstack/echo/v4"
 )
 
-///////////////////////////////////////////////////////////////////////////////////
-// HEALTH CHECK                                                                  //
-///////////////////////////////////////////////////////////////////////////////////
+type HealthCheckResult struct {
+	ID                   string `json:"id"`
+	Name                 string `json:"name"`
+	URL                  string `json:"url"`
+	Status               string `json:"status"`
+	HTTPCode             int    `json:"httpCode,omitempty"`
+	DurationMilliseconds int64  `json:"durationMilliseconds"`
+	Message              string `json:"message,omitempty"`
+}
+
+type HealthCheckSummary struct {
+	Up            int `json:"up"`
+	Down          int `json:"down"`
+	NotConfigured int `json:"notConfigured"`
+	Total         int `json:"total"`
+}
+
+type HealthCheckResponse struct {
+	Status               string              `json:"status"`
+	CheckedAt            time.Time           `json:"checkedAt"`
+	DurationMilliseconds int64               `json:"durationMilliseconds"`
+	Summary              HealthCheckSummary  `json:"summary"`
+	Results              []HealthCheckResult `json:"results"`
+}
+
+type healthTarget struct {
+	id      string
+	name    string
+	url     string
+	apiTest bool
+	token   string
+}
 
 func HandleHealthCheck(c echo.Context) error {
-	urls := []string{config.CurrentConfig.DVWAURL, config.CurrentConfig.BANKURL, config.CurrentConfig.JUICESHOPURL, config.CurrentConfig.PETSTOREURL, config.CurrentConfig.SPEEDTESTURL, "https://www.fortiguard.com"}
+	startedAt := time.Now()
+	currentConfig := config.GetCurrentConfig()
+	tokenData := fmt.Sprintf(`{"username":"%s","password":"%s","vdom":"%s"}`, currentConfig.USERNAMEAPI, currentConfig.PASSWORDAPI, currentConfig.VDOMAPI)
+	apiToken := base64.StdEncoding.EncodeToString([]byte(tokenData))
+	managementURL := ""
+	if currentConfig.FWBMGTIP != "" && currentConfig.FWBMGTPORT != "" {
+		managementURL = fmt.Sprintf("https://%s:%s", currentConfig.FWBMGTIP, currentConfig.FWBMGTPORT)
+	}
 
-	// Define a custom HTTP client with a redirect policy that returns an error
+	targets := []healthTarget{
+		{"dvwa", "DVWA", currentConfig.DVWAURL, false, ""},
+		{"bank", "Bank", currentConfig.BANKURL, false, ""},
+		{"juice-shop", "Juice Shop", currentConfig.JUICESHOPURL, false, ""},
+		{"petstore", "Petstore API", currentConfig.PETSTOREURL, false, ""},
+		{"speedtest", "Speedtest", currentConfig.SPEEDTESTURL, false, ""},
+		{"fortiguard", "FortiGuard", "https://www.fortiguard.com", false, ""},
+		{"fortiweb-management", "FortiWeb Management", managementURL, false, ""},
+		{"fortiweb-api", "FortiWeb API", managementURL + "/api/v2.0/cmdb/system/global", true, apiToken},
+	}
+
 	client := &http.Client{
-		Timeout: time.Second * 2,
+		Timeout: 2 * time.Second,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+		CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
 			return http.ErrUseLastResponse
 		},
 	}
 
-	// Start HTML Table with CSS
-	result := `<style>
-			table	{width: 100%; border-collapse: collapse; font-size: 1em; font-family: 'Courier New', monospace;}
-			td		{border: 1px solid #ddd; padding: 8px;}
-			th		{border: 1px solid #ddd; padding: 8px; text-align: left; line-height: normal;}
-			th h3	{margin: 0;  line-height: normal;}
-			.down	{color: red; font-weight: bold;}
-			.up		{color: green; font-weight: bold;}
-		</style><table>
-		<tr>
-			<th><h3>URL</h3></th>
-			<th><h3>Result</h3></th>
-			<th><h3>Code</h3></th>
-			<th><h3>Message</h3></th>
-		</tr>`
+	results := make([]HealthCheckResult, len(targets))
+	var waitGroup sync.WaitGroup
+	var completed atomic.Int64
+	for index, target := range targets {
+		waitGroup.Add(1)
+		go func() {
+			defer waitGroup.Done()
+			results[index] = checkHealthTarget(c.Request().Context(), client, target)
+			current := completed.Add(1)
+			jobs.ReportProgress(c.Request().Context(), current, int64(len(targets)), fmt.Sprintf("Checked %d of %d resources", current, len(targets)))
+		}()
+	}
+	waitGroup.Wait()
 
-	// Loop over the URLs
-	for _, url := range urls {
-		res, err := client.Get(url)
-		if err != nil {
-			shortErr := strings.TrimPrefix(err.Error(), fmt.Sprintf(`Get "%s": `, url))
-			result += fmt.Sprintf(`<tr>
-				<td>%s</td>
-				<td class="down">Down</td>
-				<td>N/A</td>
-				<td>%s</td>
-			</tr>`, url, shortErr)
-		} else {
-			result += fmt.Sprintf(`<tr>
-				<td>%s</td>
-				<td class="up">Up</td>
-				<td>%d</td>
-				<td>N/A</td>
-			</tr>`, url, res.StatusCode)
+	summary := HealthCheckSummary{Total: len(results)}
+	for _, result := range results {
+		switch result.Status {
+		case "up":
+			summary.Up++
+		case "not-configured":
+			summary.NotConfigured++
+		default:
+			summary.Down++
 		}
 	}
-
-	// Handle FortiWeb Management IP/FQDN separately to add scheme and port
-	fwbManagementURL := "https://" + config.CurrentConfig.FWBMGTIP + ":" + config.CurrentConfig.FWBMGTPORT
-	res, err := client.Get(fwbManagementURL)
-	if err != nil {
-		shortErr := strings.TrimPrefix(err.Error(), fmt.Sprintf(`Get "%s": `, fwbManagementURL))
-		result += fmt.Sprintf(`<tr>
-			<td>%s</td>
-			<td class="down">Down</td>
-			<td>N/A</td>
-			<td>%s</td>
-		</tr>`, fwbManagementURL, shortErr)
-	} else {
-		result += fmt.Sprintf(`<tr>
-			<td>%s</td>
-			<td class="up">Up</td>
-			<td>%d</td>
-			<td>N/A</td>
-		</tr>`, fwbManagementURL, res.StatusCode)
+	status := "healthy"
+	if summary.Down > 0 {
+		status = "degraded"
 	}
 
-	// API Test
-	resultStatus, resultCode, resultMessage, err := TestAPI(config.CurrentConfig.FWBMGTIP, config.CurrentConfig.FWBMGTPORT, utils.GenerateAPIToken())
-	if err != nil {
-		result += fmt.Sprintf(`<tr>
-			<td>%s</td>
-			<td class="down">%s</td>
-			<td>%s</td>
-			<td>%v</td>
-		</tr>`, fwbManagementURL+"/api/v2.0/cmdb/system/global", resultStatus, "N/A", err)
-	} else {
-		result += fmt.Sprintf(`<tr>
-			<td>%s</td>
-			<td class="%s">%s</td>
-			<td>%d</td>
-			<td>%s</td>
-		</tr>`, fwbManagementURL+"/api/v2.0/cmdb/system/global", strings.ToLower(resultStatus), resultStatus, resultCode, resultMessage)
-	}
-
-	// End HTML Table
-	result += `</table>`
-
-	return c.HTML(http.StatusOK, result)
+	return c.JSON(http.StatusOK, HealthCheckResponse{
+		Status:               status,
+		CheckedAt:            time.Now().UTC(),
+		DurationMilliseconds: time.Since(startedAt).Milliseconds(),
+		Summary:              summary,
+		Results:              results,
+	})
 }
 
+func checkHealthTarget(ctx context.Context, client *http.Client, target healthTarget) HealthCheckResult {
+	result := HealthCheckResult{ID: target.id, Name: target.name, URL: target.url}
+	if target.url == "" || (target.apiTest && target.url == "/api/v2.0/cmdb/system/global") {
+		result.Status = "not-configured"
+		result.Message = "Not configured"
+		return result
+	}
 
-func TestAPI(host, port, token string) (string, int, string, error) {
-	url := fmt.Sprintf("https://%s:%s/api/v2.0/cmdb/system/global", host, port)
-	req, err := http.NewRequest("GET", url, nil)
+	startedAt := time.Now()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, target.url, nil)
 	if err != nil {
-		return "", 0, "", err
+		result.Status = "down"
+		result.Message = err.Error()
+		return result
 	}
-	req.Header.Add("Authorization", token)
-	req.Header.Add("Accept", "application/json")
+	if target.apiTest {
+		req.Header.Set("Authorization", target.token)
+		req.Header.Set("Accept", "application/json")
+	}
 
-    client := &http.Client{
-        Transport: &http.Transport{
-            TLSClientConfig: &tls.Config{
-                InsecureSkipVerify: true,
-            },
-        },
-        Timeout: time.Second * 2, 
-    }
-	
-	resp, err := client.Do(req)
+	response, err := client.Do(req)
+	result.DurationMilliseconds = time.Since(startedAt).Milliseconds()
 	if err != nil {
-		return "Down", 0, "", err // Port is Down
+		result.Status = "down"
+		result.Message = err.Error()
+		return result
 	}
-	defer resp.Body.Close()
+	defer response.Body.Close()
+	result.HTTPCode = response.StatusCode
 
-	var response struct {
-		Results struct {
-			Hostname string `json:"hostname"`
-		} `json:"results"`
+	if target.apiTest {
+		var payload struct {
+			Results struct {
+				Hostname string `json:"hostname"`
+			} `json:"results"`
+		}
+		if err := json.NewDecoder(response.Body).Decode(&payload); err != nil || payload.Results.Hostname == "" {
+			result.Status = "down"
+			result.Message = "API configuration is incorrect"
+			return result
+		}
+		result.Status = "up"
+		result.Message = payload.Results.Hostname
+		return result
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
-		return "Down", resp.StatusCode, "", fmt.Errorf("The API configuration is incorrect") // The API is not working correctly
-	}
-
-	if response.Results.Hostname == "" {
-		return "Down", resp.StatusCode, "", fmt.Errorf("The API configuration is incorrect") // No Hostname returned
-	}
-
-	return "Up", resp.StatusCode, response.Results.Hostname, nil // All Good
+	result.Status = "up"
+	result.Message = response.Status
+	return result
 }

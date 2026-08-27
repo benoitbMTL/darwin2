@@ -62,6 +62,7 @@ func Configure(e *echo.Echo) {
 
 	// SYSTEM
 	e.GET("/config", config.GetConfig) // Export
+	e.GET("/configs/:name", config.GetConfigByName)
 	e.GET("/list-configs", config.ListConfigs)
 
 	// Configuration Management

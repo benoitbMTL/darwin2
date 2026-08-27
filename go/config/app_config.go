@@ -167,6 +167,19 @@ func GetConfig(c echo.Context) error {
 	return c.JSON(http.StatusOK, currentConfig)
 }
 
+// GetConfigByName returns a saved configuration without making it active.
+func GetConfigByName(c echo.Context) error {
+	name := c.Param("name")
+	configMutex.RLock()
+	defer configMutex.RUnlock()
+
+	savedConfig, exists := configsMap[name]
+	if !exists {
+		return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("Configuration '%s' does not exist", name))
+	}
+	return c.JSON(http.StatusOK, savedConfig)
+}
+
 // SaveConfig handles the POST request to update the configuration
 func SaveConfig(c echo.Context) error {
 	var newConfig AppConfig
@@ -186,11 +199,11 @@ func SaveConfig(c echo.Context) error {
 	// Sauvegarder la nouvelle configuration sans affecter DefaultConfig
 	configsMap[newConfig.NAME] = newConfig
 
-	// Optionnel: définir cette nouvelle configuration comme la configuration actuelle
-	currentName = newConfig.NAME
-	CurrentConfig = newConfig
+	if currentName == newConfig.NAME {
+		CurrentConfig = newConfig
+	}
 
-	log.Printf("Configuration '%s' updated and set as current.", newConfig.NAME)
+	log.Printf("Configuration '%s' saved.", newConfig.NAME)
 	return c.JSON(http.StatusOK, newConfig)
 }
 
@@ -229,8 +242,7 @@ func ImportConfig(c echo.Context) error {
 	}
 
 	configsMap[newConfig.NAME] = newConfig
-	currentName = newConfig.NAME
-	log.Printf("Configuration '%s' imported and set as current.", newConfig.NAME)
+	log.Printf("Configuration '%s' imported.", newConfig.NAME)
 	return c.JSON(http.StatusOK, newConfig)
 }
 
@@ -261,11 +273,10 @@ func CloneConfigLocal(c echo.Context) error {
 	clonedConfig := sourceConfig
 	clonedConfig.NAME = request.NewName        // Update the NAME field to reflect the new configuration name
 	configsMap[request.NewName] = clonedConfig // Add the cloned configuration to the map under the new name
-	currentName = request.NewName              // Set the cloned configuration as the current configuration
 
-	log.Printf("Configuration '%s' cloned to '%s' and set as current.", request.SourceName, request.NewName)
+	log.Printf("Configuration '%s' cloned to '%s'.", request.SourceName, request.NewName)
 
-	return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' cloned to '%s' and set as current", request.SourceName, request.NewName)})
+	return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' cloned to '%s'", request.SourceName, request.NewName)})
 }
 
 func ApplyConfigLocal(c echo.Context) error {
@@ -367,6 +378,7 @@ func RenameConfig(c echo.Context) error {
 
 	if currentName == request.OldName {
 		currentName = request.NewName // Update current config if it was renamed
+		CurrentConfig = config
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{"message": fmt.Sprintf("Configuration '%s' renamed to '%s'", request.OldName, request.NewName)})

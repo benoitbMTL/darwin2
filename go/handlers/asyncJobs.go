@@ -121,6 +121,8 @@ func buildJobOperation(name string, request capturedRequest) (jobOperation, erro
 		return fortiWebJob(true, request), nil
 	case "fortiweb-delete":
 		return fortiWebJob(false, request), nil
+	case "health-check":
+		return legacyJob("health-check", "Configuration health check", 8, "checks", request, HandleHealthCheck), nil
 	default:
 		return jobOperation{}, fmt.Errorf("unknown job operation %q", name)
 	}
