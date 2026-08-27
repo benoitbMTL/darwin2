@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -88,7 +89,9 @@ func HandleResetApiMachineLearning(c echo.Context) error {
 			}
 
 			resetMLURL := fmt.Sprintf("https://%s:%s/api/v2.0/machine_learning/api_learning_policy.refreshdomain?rule_id=%v", host, port, ruleID)
-			req, err := http.NewRequest("POST", resetMLURL, nil)
+			// FortiWeb rejects this endpoint when the POST has no HTTP body
+			// (errcode -20014). Send an explicit, valid empty JSON object.
+			req, err := http.NewRequest("POST", resetMLURL, bytes.NewBufferString("{}"))
 			if err != nil {
 				errorMsg := fmt.Sprintf("rule_id=%v: unable to create reset request: %v", ruleID, err)
 				fmt.Println(errorMsg)

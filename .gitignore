@@ -5,6 +5,7 @@ conf.txt
 node_modules/
 vendor/
 selenium/
+/package-lock.json
 
 # Vue build output
 vue/dist/
