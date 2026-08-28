@@ -77,20 +77,23 @@ func HandleMachineLearning(c echo.Context) error {
 }
 
 func preparePostData(data utils.FakeData) string {
-	names := strings.Split(data.Name, " ")
-	firstName := names[0]
-	lastName := names[len(names)-1]
+	firstName, lastName := identityNames(data)
 	email := fmt.Sprintf("%s@%s", data.EmailU, data.EmailD)
-	phone := data.PhoneH
 
-	return fmt.Sprintf("firstname=%s&lastname=%s&email=%s&phone=%s&address=%s&birthday=%s&username=%s&password=%s",
-		firstName, lastName, email, phone, url.QueryEscape(data.Address), data.Birthday, data.Username, url.QueryEscape(data.Password))
+	return url.Values{
+		"firstname": {firstName},
+		"lastname":  {lastName},
+		"email":     {email},
+		"phone":     {data.PhoneH},
+		"address":   {data.Address},
+		"birthday":  {data.Birthday},
+		"username":  {data.Username},
+		"password":  {data.Password},
+	}.Encode()
 }
 
 func formatDisplayData(data utils.FakeData) string {
-	names := strings.Split(data.Name, " ")
-	firstName := names[0]
-	lastName := names[len(names)-1]
+	firstName, lastName := identityNames(data)
 	email := fmt.Sprintf("%s@%s", data.EmailU, data.EmailD)
 	phone := data.PhoneH
 
@@ -101,6 +104,20 @@ func formatDisplayData(data utils.FakeData) string {
 	return fmt.Sprintf(
 		"Firstname:\t%s\nLastname:\t%s\nEmail:\t\t%s\nPhone:\t\t%s\nAddress:\t%s\nBirthday:\t%s\nUsername:\t%s\nPassword:\t%s",
 		firstName, lastName, email, phone, sanitizedAddress, data.Birthday, data.Username, data.Password)
+}
+
+func identityNames(data utils.FakeData) (string, string) {
+	if data.FirstName != "" || data.LastName != "" {
+		return data.FirstName, data.LastName
+	}
+	names := strings.Fields(data.Name)
+	if len(names) == 0 {
+		return "", ""
+	}
+	if len(names) == 1 {
+		return names[0], ""
+	}
+	return names[0], names[len(names)-1]
 }
 
 func sendPostRequest(ctx context.Context, url, data, userAgent, ipv4 string) (*http.Response, error) {

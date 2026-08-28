@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
+	"sync/atomic"
 	"time"
 )
 
 // FakeData contains the locally generated identity data used by traffic simulations.
 type FakeData struct {
 	Name       string `json:"name"`
+	FirstName  string `json:"first_name,omitempty"`
+	LastName   string `json:"last_name,omitempty"`
 	Address    string `json:"address"`
 	Birthday   string `json:"birth_data"`
 	Username   string `json:"username"`
@@ -22,6 +25,32 @@ type FakeData struct {
 	MiddleName string `json:"maiden_name"`
 	CreditCard string `json:"plasticcard"`
 }
+
+var sampleSequence atomic.Uint64
+
+var firstNames = []string{
+	"Alex", "Benoît", "Camille", "Élodie",
+	"Jean-Pierre", "Anne-Sophie", "José-Luis", "Marie-Claire",
+	"Jean Benoît", "Marie France", "Mary Jane", "Louis Philippe",
+}
+
+var lastNames = []string{
+	"Martin", "Lévesque", "García", "Smith",
+	"Saint-Pierre", "O'Connor", "D'Amours", "Smith-Jones",
+	"De la Cruz", "Van Den Berg", "Le Blanc", "Des Rivières",
+}
+
+var passwordLetterBlocks = []string{
+	"Maple", "River", "Aurora", "Montreal", "Voyage", "Galaxy", "Coffee", "Winter",
+}
+
+var passwordSpecialBlocks = []string{"!", "@", "#", "$", "%", "-", "_", ".", "?", "+", "=", "!@"}
+
+// passwordBlockPatterns contains every C/N/S sequence of metric length 3 to 9
+// that uses all three categories and never repeats a category in adjacent blocks.
+// This produces 1,482 mixed password patterns, so a 3,000-sample run covers
+// every pattern at least once regardless of the sequence's starting position.
+var passwordBlockPatterns = buildPasswordBlockPatterns()
 
 // Credentials for Juice Shop
 type Credentials struct {
@@ -49,56 +78,196 @@ type Payment struct {
 }
 
 func FetchRandomData() (*FakeData, error) {
-	firstNames := []string{
-		"Alex", "Camille", "Charlie", "Jordan", "Morgan", "Robin", "Sam", "Taylor",
-		"Anne-Sophie", "Jean-Pierre", "Louis-Philippe", "Marie-Claire",
-	}
-	lastNames := []string{"Bernard", "Brown", "Garcia", "Johnson", "Martin", "Miller", "Smith", "Wilson"}
-	streetNames := []string{"Cedar Street", "Lake Avenue", "Maple Road", "Oak Street", "Park Avenue", "Pine Road"}
-	maidenNames := []string{"Anderson", "Clark", "Davis", "Moore", "Thomas", "White"}
+	return generateFakeData(sampleSequence.Add(1) - 1), nil
+}
+
+func generateFakeData(sequence uint64) *FakeData {
+	index := int(sequence)
+	firstName := firstNames[index%len(firstNames)]
+	lastName := lastNames[(index/len(firstNames))%len(lastNames)]
+	firstAlias := []string{"alex", "benoit", "camille", "elodie", "jean", "anne", "jose", "marie"}[index%8]
+	lastAlias := []string{"martin", "levesque", "garcia", "smith", "pierre", "oconnor", "damours", "rivers"}[(index/8)%8]
 	userAgents := []string{
 		"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0 Safari/537.36",
 		"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Version/17.4 Safari/605.1.15",
 		"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0 Safari/537.36",
 		"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0",
+		"Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1",
+		"Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/124.0 Mobile Safari/537.36",
 	}
 
-	firstName := firstNames[rand.Intn(len(firstNames))]
-	lastName := lastNames[rand.Intn(len(lastNames))]
-	username := fmt.Sprintf("%s.%s%d", strings.ToLower(firstName), strings.ToLower(lastName), rand.Intn(10000))
 	birthday := time.Date(1950+rand.Intn(53), time.Month(1+rand.Intn(12)), 1+rand.Intn(28), 0, 0, 0, 0, time.UTC)
+	emailLocal := emailLocalPart(index, firstAlias, lastAlias)
 
 	return &FakeData{
 		Name:       firstName + " " + lastName,
-		Address:    fmt.Sprintf("%d %s", 1+rand.Intn(9999), streetNames[rand.Intn(len(streetNames))]),
+		FirstName:  firstName,
+		LastName:   lastName,
+		Address:    realisticAddress(index),
 		Birthday:   birthday.Format("2006-01-02"),
-		Username:   username,
-		Password:   fmt.Sprintf("Demo!%06d", rand.Intn(1000000)),
-		EmailU:     strings.ReplaceAll(username, ".", "-"),
-		EmailD:     randomEmailDomain(),
-		PhoneH:     fmt.Sprintf("+1-555-%03d-%04d", rand.Intn(1000), rand.Intn(10000)),
-		Useragent:  userAgents[rand.Intn(len(userAgents))],
+		Username:   realisticUsername(index, firstAlias, lastAlias),
+		Password:   realisticPassword(index),
+		EmailU:     emailLocal,
+		EmailD:     emailDomain(index / 10),
+		PhoneH:     realisticPhone(index),
+		Useragent:  userAgents[index%len(userAgents)],
 		Ipv4:       randomPublicIPv4(),
-		MiddleName: maidenNames[rand.Intn(len(maidenNames))],
+		MiddleName: lastNames[(index+5)%len(lastNames)],
 		CreditCard: fmt.Sprintf("41111111%08d", rand.Intn(100000000)),
-	}, nil
+	}
 }
 
-func randomEmailDomain() string {
-	words := []string{"alpine", "atlas", "blue", "cedar", "cloud", "green", "harbor", "maple", "north", "river", "star", "stone"}
-	first := words[rand.Intn(len(words))]
+func emailLocalPart(index int, first, last string) string {
+	digits := fmt.Sprintf("%02d", index%100)
+	switch index % 10 {
+	case 0:
+		return first
+	case 1:
+		return first + digits
+	case 2:
+		return first + "." + last
+	case 3:
+		return first + "." + last + digits
+	case 4:
+		return first + "-" + digits
+	case 5:
+		return first + digits + "." + last
+	case 6:
+		return first + "." + last + "+promo"
+	case 7:
+		return first + "_" + last + "-" + digits
+	case 8:
+		return first + digits + "-" + last + digits
+	default:
+		return first + "-" + digits + "." + last
+	}
+}
 
-	// Generate both single-label domains (atlas.test) and hyphenated domains
-	// (blue-harbor.test). The reserved .test suffix prevents real delivery.
-	if rand.Intn(2) == 0 {
+func emailDomain(index int) string {
+	words := []string{"atlas", "cedar", "harbor", "maple", "north", "river", "stone", "cloud"}
+	first := words[index%len(words)]
+	second := words[(index+3)%len(words)]
+	digits := fmt.Sprintf("%d", 2+index%97)
+
+	switch index % 10 {
+	case 0:
 		return first + ".test"
+	case 1:
+		return first + digits + ".test"
+	case 2:
+		return first + "-" + second + ".test"
+	case 3:
+		return digits + ".mail.test"
+	case 4:
+		return "team-" + digits + ".test"
+	case 5:
+		return "team-" + digits + ".mail.test"
+	case 6:
+		return "mail.node" + digits + ".test"
+	case 7:
+		return "team-" + digits + ".node7.test"
+	case 8:
+		return first + digits + "-mail.test"
+	default:
+		return first + digits + "-node7.test"
 	}
+}
 
-	second := words[rand.Intn(len(words))]
-	for second == first {
-		second = words[rand.Intn(len(words))]
+func realisticUsername(index int, first, last string) string {
+	digits := fmt.Sprintf("%03d", index%1000)
+	variants := []string{
+		first,
+		first + digits,
+		first + "." + last,
+		first + "-" + last,
+		first + "_" + last,
+		first[:1] + last + digits,
+		last + "." + first + digits,
+		first + "-" + digits + "-" + last,
 	}
-	return first + "-" + second + ".test"
+	return variants[index%len(variants)]
+}
+
+func realisticPassword(index int) string {
+	pattern := passwordBlockPatterns[index%len(passwordBlockPatterns)]
+	var password strings.Builder
+	for blockIndex, category := range pattern {
+		switch category {
+		case 'C':
+			word := passwordLetterBlocks[(index+blockIndex)%len(passwordLetterBlocks)]
+			if (index+blockIndex)%3 == 0 {
+				word = strings.ToUpper(word[:1]) + word[1:]
+			}
+			password.WriteString(word)
+		case 'N':
+			width := 2 + (index+blockIndex)%5
+			password.WriteString(fmt.Sprintf("%0*d", width, rand.Intn(powerOfTen(width))))
+		case 'S':
+			password.WriteString(passwordSpecialBlocks[(index+blockIndex)%len(passwordSpecialBlocks)])
+		}
+	}
+	return password.String()
+}
+
+func buildPasswordBlockPatterns() []string {
+	patterns := make([]string, 0, 1482)
+	var visit func(prefix string, targetLength int)
+	visit = func(prefix string, targetLength int) {
+		if len(prefix) == targetLength {
+			if strings.Contains(prefix, "C") && strings.Contains(prefix, "N") && strings.Contains(prefix, "S") {
+				patterns = append(patterns, prefix)
+			}
+			return
+		}
+		for _, category := range []byte{'C', 'N', 'S'} {
+			if len(prefix) == 0 || prefix[len(prefix)-1] != category {
+				visit(prefix+string(category), targetLength)
+			}
+		}
+	}
+	for length := 3; length <= 9; length++ {
+		visit("", length)
+	}
+	return patterns
+}
+
+func powerOfTen(exponent int) int {
+	result := 1
+	for range exponent {
+		result *= 10
+	}
+	return result
+}
+
+func realisticAddress(index int) string {
+	number := 1 + index%9999
+	unit := 1 + index%400
+	addresses := []string{
+		fmt.Sprintf("%d Cedar Street", number),
+		fmt.Sprintf("%d rue Saint-Paul", number),
+		fmt.Sprintf("%dB Maple Road", number),
+		fmt.Sprintf("%d avenue du Parc, Apt. %d", number, unit),
+		fmt.Sprintf("%d-12 chemin des Érables", number),
+		fmt.Sprintf("%d 1/2 boulevard René-Lévesque", number),
+		fmt.Sprintf("PO Box %d, Station A", 1000+index%9000),
+		fmt.Sprintf("Unit %d, %d North River Drive", unit, number),
+	}
+	return addresses[index%len(addresses)]
+}
+
+func realisticPhone(index int) string {
+	area := 200 + index%700
+	prefix := 200 + (index*7)%700
+	line := (index * 7919) % 10000
+	phones := []string{
+		fmt.Sprintf("+1-%03d-%03d-%04d", area, prefix, line),
+		fmt.Sprintf("+1 %03d %03d %04d", area, prefix, line),
+		fmt.Sprintf("(%03d) %03d-%04d", area, prefix, line),
+		fmt.Sprintf("%03d.%03d.%04d", area, prefix, line),
+		fmt.Sprintf("%03d-%03d-%04d", area, prefix, line),
+		fmt.Sprintf("1%03d%03d%04d", area, prefix, line),
+	}
+	return phones[index%len(phones)]
 }
 
 func randomPublicIPv4() string {

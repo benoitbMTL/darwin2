@@ -58,7 +58,7 @@
               <div class="card-body">
 
                 <p>
-                  Simulate legitimate traffic with random samples to build a ML model.
+                  Simulate legitimate traffic with diverse synthetic samples to build a ML model.
                 </p>
                 <div class="d-flex flex-wrap gap-2 mb-3">
 
@@ -156,6 +156,10 @@
         <li>
           The simulation tool generates random traffic using synthetic data
           created locally, without sending data to a third-party service.
+        </li>
+        <li>
+          Samples rotate through realistic name, email, username, phone, address,
+          and password structures to expose the ML model to varied C/N/S patterns.
         </li>
         <li>
           The tool sends random samples to the server to simulate legitimate
