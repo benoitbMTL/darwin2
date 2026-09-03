@@ -11,7 +11,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o darwin2 .
 
 
 # VUE BUILD
-FROM node:24.19.0-bookworm-slim AS vue-builder
+FROM node:26.8.1-bookworm-slim AS vue-builder
 
 WORKDIR /app
 
