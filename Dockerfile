@@ -1,5 +1,5 @@
 # GO BUILD
-FROM golang:1.26.7-bookworm AS go-builder
+FROM golang:1.27.1-bookworm AS go-builder
 
 WORKDIR /app
 
